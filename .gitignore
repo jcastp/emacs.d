@@ -1,0 +1,20 @@
+# excluded directories
+/elpa/
+/quelpa/
+/eshell/
+/auto-save-list/
+/transient/
+/url/
+/eln-cache/
+/elpaca/
+/straight/
+
+# excluded files
+emacs-org-init.el
+emacs-org-init-trabajo.el
+custom.el
+network-security.data
+projectile-bookmarks.eld
+recentf
+eww-bookmarks
+*~undo-tree~

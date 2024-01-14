@@ -1,0 +1,20 @@
+This is my personal repo for my emacs config.
+
+* Installation
+How to install it:
+
+#+begin_src bash
+  git clone ~/Nextcloud/config/emacs.d ~/.emacs.d
+#+end_src
+
+and then launch emacs.
+
+It will download all the required packages to work.
+
+=~/Nextcloud/config/emacs.d= is an empty repository.
+
+* Update
+from the =~/.emacs.d= directory:
+#+begin_src bash
+  git pull
+#+end_src

@@ -1,0 +1,158 @@
+;; ~/.config/emacs/templates
+
+;; fundamental mode
+;; Available everywhere
+fundamental-mode 
+
+(today (format-time-string "%Y-%m-%d"))
+
+;; for test mode
+text-mode
+
+(box
+	"┌─" (make-string (length str) ?─) "─┐" n
+	"│ " (s str)                       " │" n
+	"└─" (make-string (length str) ?─) "─┘" n
+	)
+     
+(abox
+	"+-" (make-string (length str) ?-) "-+" n
+	"| " (s str)                       " |" n
+	"+-" (make-string (length str) ?-) "-+" n
+	)
+      
+(cut
+	"--8<---------------cut here---------------start------------->8---" n r n
+	"--8<---------------cut here---------------end--------------->8---" n
+	)
+
+
+;; Templates for org-mode
+org-mode
+
+(title
+	"#+title: " p n
+	"#+author: Javier Castilla" n
+	"#+EMAIL: jcastp@pm.me" n
+	"#+language: es"
+       )
+
+(export
+	"* Export config :ignore:" n
+	"# ############################" n
+	"# General options" n
+	"# ############################" n
+	"#+OPTIONS: ':t *:t -:t ::t <:t H:3 \\n:nil ^:t arch:headline author:t" n
+	"#+OPTIONS: broken-links:nil c:nil creator:nil d:(not \"LOGBOOK\")" n
+	"#+OPTIONS: date:t e:t email:nil f:t inline:t num:t p:nil pri:nil" n
+	"#+OPTIONS: prop:nil stat:t tags:t tasks:t tex:t timestamp:t title:t" n
+	"#+OPTIONS: toc:2 todo:t |:t\n" n
+	"#+EXCLUDE_TAGS: noexport" n
+	"#+EXPORT_FILE_NAME:" n
+	"" n
+	"# ######################" n
+	"# latex related options" n
+	"# ######################" n
+	"#+LATEX_CLASS: memoir_draft" n
+	"#+LATEX_HEADER:" n
+	"#+LATEX_HEADER_EXTRA:" n
+	"#+DESCRIPTION:" n
+	"#+KEYWORDS:" n
+	"#+SUBTITLE:" n
+	"" n
+	"# ######################" n
+	"# odt related options" n
+	"# ######################" n
+	"#+OPTIONS: tex:t" n
+	"#+ODT_STYLES_FILE: \"~/Nextcloud/escritura/recursos/orgtemplate2odt.ott\"" n
+	"#+DESCRIPTION:" n
+	"#+KEYWORDS:" n
+	"#+SUBTITLE:" n
+	"#+LATEX_HEADER:" n
+	"" n
+	"# ######################" n
+	"# HTML related options" n
+	"# ######################" n
+	"#+DESCRIPTION:" n
+	"#+HTML_DOCTYPE: html5" n
+	"#+HTML_HEAD: <link rel=\"stylesheet\" type=\"text/css\" href=\"file:///home/jcastp/Nextcloud/config/org.css\"/>" n
+	"#+HTML_HEAD_EXTRA:" n
+	"" n
+	"# ######################" n
+	"# epub related options" n
+	"# ######################" n
+	"#+UID:" n
+	"#+Subject:" n
+	"#+Description:" n
+	"#+Publisher:" n
+	"#+License:" n
+	"#+EPUBSTYLE:" n
+	"#+EPUBCOVER:" n
+	"#+HTML_DOCTYPE: xhtml" n
+	"" n
+	"# Local Variables:" n
+	"# ispell-local-dictionary: "spanish"" n
+	"# end:"
+)
+
+(fin
+	"#+LATEX: ~\\\\" n
+	"#+LATEX: ~\\\\" n
+	"#+HTML:<br><br>" n
+)
+
+(edit
+	"##" (make-string (length str) ?#) "#" n
+	"# " (s str)                       "#" n
+	"##" (make-string (length str) ?#) "#" n)
+	
+(escena
+	":PROPERTIES:" n
+	":PoV: "p n
+	":Personajes: " n
+	":Trama: " n
+	":Linea_temporal: " n
+	":Localizacion: " n
+	":Descripcion: " n
+	":Resumen: " n
+	":Motivacion_escena: " n
+	":Fuente_conflicto: " n
+	":Que_esta_juego: " n
+	":Emocion: " n
+	":END:")
+
+(5how
+	"#+begin_comment" n
+	"- *Quién*:" n
+	"- *Qué*:" n
+	"- *Cuándo*:" n
+	"- *Dónde*:" n
+	"- *Por qué*:" n
+	"- *Cómo*:" n
+	"#+end_comment"
+)
+
+(pers
+	"** Personaje :personaje:" n
+	"# resumen breve del personaje" n
+	"*** Apariencia" n
+	"# Descripción, pero no solo física, sino de actitud y capacidad" n
+	"*** Objetivos y motivación" n
+	"# Qué mueve y por qué al personaje. Puede ser el resumen del Goal, Motivation, Conflict" n
+	"*** Expectativas y paradojas" n
+	"# Cada personaje tiene unas expectativas depositadas en él desde el momento de su creación, ya sea por su origen, su profesión, su ambiente. También ha de tener paradojas, rasgos inesperados para su trasfondo." n
+	"*** Defecto, deseo, necesidad" n
+	"*** Pensamientos, creencias y valores" n
+	"# Cómo ve el mundo" n
+	"*** Los 5 rasgos de personalidad" n
+	"**** Sociabilidad" n
+	"# Extraversión - Introversión" n
+	"**** Amabilidad" n
+	"# Agradable - Rudo" n
+	"**** Neuroticismo" n
+	"# Estabilidad emocional" n
+	"**** Responsabilidad" n
+	"# " n
+	"**** Apertura a la Experiencia" n
+	"# Conservador - Experimentador" n
+)

@@ -1,0 +1,16 @@
+* Source
+
+Author: %^{Author}
+Title: ${title}
+Year: %^{Year}
+
+* ${title} Summary
+%?
+
+* Personajes
+
+* Temas
+
+* Conceptos
+
+* Frases
