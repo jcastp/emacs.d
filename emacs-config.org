@@ -9,13 +9,13 @@ This is the literate config for my emacs use cases.
 
 I will try to document and compartmentalize the files, so it's easier to follow up.
 
-In order to make this work, we need to use the =org-babel-tangle= command, bound to =C-c C-v C-t=. This will generate the different files needed, shown in the structure below:
+In order to make this work, you need to load this file in =emacs= and use the =org-babel-tangle= command (bound to =C-c C-v C-t= in a vanilla =emacs=). This will generate the different config files needed, shown in the structure below:
 
 #+begin_example
 .emacs.d/
 ├── early-init.el
 ├── init.el
-├── emacs-config.org
+├── emacs-config.org        <-- this file
 ├── modules
 │   └── my-org.el
 │   └── my-org-visuals.el
