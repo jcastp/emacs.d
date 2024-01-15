@@ -3,18 +3,20 @@ This is my personal repo for my emacs config.
 * Installation
 How to install it:
 
+- clone the repository
 #+begin_src bash
-  git clone ~/Nextcloud/config/emacs.d ~/.emacs.d
+  git clone https://codeberg.org/jcastp/emacs.d ~/.emacs.d
 #+end_src
-
-and then launch emacs.
+- launch =emacs=
+- Open the file ~~/.emacs.d/emacs-config.org~
+- Launch =org-babel-tangle= (tied to =C-c C-v C-t= in a vanilla =emacs=)
+- exit =emacs= and launch it again
 
 It will download all the required packages to work.
-
-=~/Nextcloud/config/emacs.d= is an empty repository.
 
 * Update
 from the =~/.emacs.d= directory:
 #+begin_src bash
   git pull
 #+end_src
+This will download all the changes from the remote repository.
