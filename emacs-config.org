@@ -4356,7 +4356,7 @@ I need a different custom agenda commands to see the tasks better.
   (setq org-todo-keywords
         '(
           ;; Status for tasks
-          (sequence "TODO(t)" "WAITING(w@/!)" "ONGOING(o@/!)" "|" "DONE(d@/!)" "CANCELED(c@/!)")
+          (sequence "TODO(t)" "WAITING(w@/!)" "ONGOING(o@/!)" "|" "DONE(d@/!)" "DELEGATED(D@/!)" "CANCELED(c@/!)")
           )
         )
 #+end_src
