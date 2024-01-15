@@ -158,7 +158,7 @@ Defining variables for conditional execution, based on machine names:
   			    (equal (system-name) "caliope")))
 #+end_src
 
-*** bases on environment variables
+*** based on environment variables
 Home or work environment. We establish the variable from the command line, with this line.
 #+begin_src bash
   export WORKING=HOME && emacs &
