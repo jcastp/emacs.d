@@ -323,8 +323,7 @@ Here, I put my personal information and all the packages related to accounts.
 
 ** TODO mastodon from emacs
 I can now check mastodon from emacs.
-Only evaluated if in my home env, and my encrypted directory is mounted.
-Auth information is stored in my encrypted directory.
+Only evaluated if in my home env, and my encrypted directory is mounted, as the auth information is stored there.
 
 #+begin_src emacs-lisp :tangle "modules/my-testing.el" :mkdirp yes
   (if (and my-clear-directory-is-mounted-p my-homeenvironment-p)
