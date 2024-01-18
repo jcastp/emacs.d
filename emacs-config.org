@@ -4146,6 +4146,12 @@ As seen here: https://xenodium.com/building-your-own-bookmark-launcher/
     (browse-url (seq-elt (split-string (completing-read "Open: " (browser-bookmarks bookmark-file)) "\n") 1)))
 #+end_src
 
+** TODO Show diffs: buffer with file
+I want to see the difference between the buffer and its file.
+
+#+begin_src emacs-lisp :tangle "modules/my-testing.el" :mkdirp yes
+  (global-set-key (kbd "C-c d c") 'diff-buffer-with-file)
+#+end_src
 * home related load and startup
 This will be loaded automatically when at home.
 
