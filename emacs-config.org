@@ -4152,6 +4152,82 @@ I want to see the difference between the buffer and its file.
 #+begin_src emacs-lisp :tangle "modules/my-testing.el" :mkdirp yes
   (global-set-key (kbd "C-c d c") 'diff-buffer-with-file)
 #+end_src
+
+** TODO My editing function
+I want to open my own view to edit my writing.
+- I want to have a left window with the index of the file, usually an org mode file, so =imenu-list= is a good candidate.
+- I want the central window to have the text, so it will host the main file I want to edit, for readability.
+- I want the right window to host the file with notes. In my case, I use org-remark, so I have to find the associated filename.
+
+#+begin_src emacs-lisp :tangle "modules/my-testing.el" :mkdirp yes
+  ;; different widths for windows, based on the frame width.
+  ;; The number is the percentage of the screen.
+  (defvar my-75-window (floor (* (frame-width) 0.75)))
+  (defvar my-50-window (floor (* (frame-width) 0.50)))
+  (defvar my-60-window (floor (* (frame-width) 0.60)))
+  (defvar my-25-window (floor (* (frame-width) 0.25)))
+  (defvar my-30-window (floor (* (frame-width) 0.30)))
+  (defvar my-20-window (floor (* (frame-width) 0.20)))
+
+  (defun my/file-notes-filename (my-file)
+    ;;(interactive)
+    "Get a filename, and returns the associated org-remark notes filename.
+  If the filename is ~/tmp/test.org, the associated notes filename will be test-notes.org"
+    ;; we decompose the filename into name and extension, and concat the notes bit.
+    (setq my-notes-file (concat (file-name-sans-extension (file-name-nondirectory my-file))
+          		      "-notes."
+          		      (file-name-extension (file-name-nondirectory my-file))
+          		      )))
+
+  (defun my/editing-windows ()
+    "Divides the frame into useful windows to edit my work.
+    Disposition:
+    - Left window: imenu-list.
+    - Central window: the main file we want to review.
+    - Right window: the org-remark file associated to the main file.
+    "
+    (interactive)
+    (let
+        (
+         ;; ask for the file to open
+         (my-file (read-file-name "Enter file name: "))
+         ;; store the current window for later reference
+         (my-current-window (selected-window))
+         ;; calculate dynamically the windows' sizes when calling the function
+         (my-75-window (floor (* (frame-width) 0.75)))
+         (my-50-window (floor (* (frame-width) 0.50)))
+         (my-60-window (floor (* (frame-width) 0.60)))
+         (my-25-window (floor (* (frame-width) 0.25)))
+         (my-30-window (floor (* (frame-width) 0.30)))
+         (my-20-window (floor (* (frame-width) 0.20)))
+         )
+      ;; ;;;;;;;;;;;;;;;;;;;;
+      ;; body of the function
+      ;; delete other windows before starting
+      (delete-other-windows)
+      ;; Set the imenu-list-smart-toggle width
+      (setq imenu-list-size my-25-window)
+      ;; dont jump to imenu-list after activation
+      (setq imenu-list-focus-after-activation nil)
+      (imenu-list-smart-toggle)
+      ;; open the main file in the central window
+      (select-window my-current-window)
+      (find-file my-file)
+      ;; Create the right window
+      (setq q-window-1 (split-window-right (- my-25-window)))
+      ;; move to the right window
+      (select-window q-window-1)
+      ;; open the notes file.
+      (setq my-notes-file (my/file-notes-filename my-file))
+      (find-file my-notes-file)
+      ;; go back to the original window
+      (select-window my-current-window)
+      )
+    )
+
+  (global-set-key (kbd "C-c d e") 'my/editing-windows)
+
+#+end_src
 * home related load and startup
 This will be loaded automatically when at home.
 
