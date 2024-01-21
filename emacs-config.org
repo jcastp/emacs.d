@@ -4180,6 +4180,18 @@ I want to open my own view to edit my writing.
             			(file-name-extension (file-name-nondirectory my-file))
             			)))
 
+    (defun my/editing-profile ()
+      "The visual style of window I want to have for editing."
+      (consult-theme 'leuven)
+      (setq visual-fill-column-width 90)
+      (fontaine-set-preset 'editing)      
+      )
+
+    ;; from https://stackoverflow.com/questions/24955253/centre-emacs-buffer-within-window
+    (defun my/resize-margins (cur-window)
+      (let ((margin-size (/ (- (frame-width) visual-fill-column-width) 2)))
+        (set-window-margins cur-window margin-size margin-size)))
+
     (defun my/editing-windows ()
       "Divides the frame into useful windows to edit my work.
       Disposition:
@@ -4223,6 +4235,10 @@ I want to open my own view to edit my writing.
         (find-file my-notes-file)
         ;; go back to the original window
         (select-window my-current-window)
+        (my/resize-margins my-current-window) ;; this doesn't work, probably some margin property.
+        ;; Here we apply the stylistic changes
+        ;; This part here should be done as a hook, if this was a package.
+        (my/editing-profile)
         )
       )
 
