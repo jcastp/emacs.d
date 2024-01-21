@@ -1323,7 +1323,7 @@ When reaching the established width defined, the line will wrap, even before get
     :straight t
     :config
     ;; This sets the value to all the buffers, as initially it is a per-buffer variable
-    (setq-default visual-fill-column-width 90)
+    (setq-default visual-fill-column-width 110)
     ;; enable it only for text buffers: org, text, ...
     (add-hook 'text-mode-hook 'visual-fill-column-mode)
     )
