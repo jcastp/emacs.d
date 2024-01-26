@@ -4298,16 +4298,15 @@ My work require a different set of agendas:
 Since this is a different environment, I also have to change this to refile things in a different way.
 
 #+begin_src emacs-lisp :tangle "modules/my-work.el" :mkdirp
-;;  (setq org-refile-targets (quote (("trabajo.org" :maxlevel . 9))))
+    (setq org-refile-targets '(
+                              (nil :maxlevel . 9)
+                              (org-agenda-files :maxlevel . 9)
+  			    ("~/Nextcloud/agenda/trabajo/trabajo_backlog.org" :maxlevel . 9)
+                              )
+    )
 
-  (setq org-refile-targets '(
-                            (nil :maxlevel . 9)
-                            (org-agenda-files :maxlevel . 9)
-                            )
-  )
-
-  (setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
-  (setq org-refile-use-outline-path t)                  ; Show full paths for refiling
+    (setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
+    (setq org-refile-use-outline-path t)                  ; Show full paths for refiling
 #+end_src
 
 ** TOREVIEW Better searches with custom agenda commands
