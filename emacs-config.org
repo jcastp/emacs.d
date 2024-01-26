@@ -4189,7 +4189,7 @@ I want to open my own view to edit my writing.
 
     ;; from https://stackoverflow.com/questions/24955253/centre-emacs-buffer-within-window
     (defun my/resize-margins (cur-window)
-      (let ((margin-size (/ (- (frame-width) visual-fill-column-width) 2)))
+      (let ((margin-size (/ (- (window-width) visual-fill-column-width) 2)))
         (set-window-margins cur-window margin-size margin-size)))
 
     (defun my/editing-windows ()
