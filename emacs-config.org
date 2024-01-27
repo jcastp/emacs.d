@@ -1848,7 +1848,8 @@ All the agenda configs
    org-agenda-tags-column 'auto
    org-agenda-block-separator ?─
    org-agenda-breadcrumbs-separator " ❱ "
-   org-agenda-prefix-format '((agenda . " %i %-12:c%?-12t%b% s")
+   ;;org-agenda-prefix-format '((agenda . " %i %-12:c%?-12t%b% s")
+   org-agenda-prefix-format '((agenda . " %i %-12:c%?-12t% s")  			    
   			       (todo . " %i %-12:c")
   			       (tags . " %i %-12:c")
   			       (search . " %i %-12:c"))
