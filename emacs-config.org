@@ -863,7 +863,7 @@ https://github.com/minad/consult
   	 ("C-c d t" . consult-theme)
            ;; Go commands
            ("M-g M-g" . consult-goto-line)
-  	 ("C-c d i" . consult-outline)
+  	 ("C-c d o" . consult-outline)
            ("M-g i" . consult-imenu-multi)
            ;;("M-g o" . consult-outline)
            ("M-g h" . consult-org-heading)
@@ -4097,7 +4097,8 @@ https://github.com/minad/tempel
     (add-hook 'conf-mode-hook 'tempel-setup-capf)
     (add-hook 'prog-mode-hook 'tempel-setup-capf)
     (add-hook 'text-mode-hook 'tempel-setup-capf)
-    
+    :bind
+    ("C-c d i" . tempel-insert)
     :config
     (setq tempel-path "~/.emacs.d/templates")
     )
