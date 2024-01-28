@@ -3472,26 +3472,6 @@ https://ox-hugo.scripter.co/
 
 * Programming
 ** General
-*** CANCELED Yasnipet mode
-#+begin_comment
-Canceled, because we use =tempel= now.
-#+end_comment
-
-YASnippet is a template system for Emacs. It allows you to type an abbreviation and automatically expand it into function templates. Bundled language templates include: C, C++, C#, Perl, Python, Ruby, SQL, LaTeX, HTML, CSS and more. The snippet syntax is inspired from TextMate's syntax, you can even import most TextMate templates to YASnippet.
-
-https://github.com/joaotavora/yasnippet
-
-https://joaotavora.github.io/yasnippet/
-
-#+begin_src emacs-lisp :tangle "modules/my-programming.el" :mkdirp yes
-  ;; (use-package yasnippet
-  ;;   :straight t
-  ;;   :init
-  ;;   (yas-global-mode 1)
-  ;;   :config
-  ;;   (add-to-list 'yas-snippet-dirs (locate-user-emacs-file "snippets"))
-  ;;   )
-#+end_src
 
 *** TODO flycheck config
 Check language syntax on the fly.
@@ -4690,6 +4670,27 @@ Fancy priorities
        beacon-blink-delay 0.5
        beacon-blink-when-focused t
        beacon-color "deep sky blue")
+     )
+#+end_src
+
+** Yasnipet mode
+#+begin_comment
+Canceled, because we use =tempel= now.
+#+end_comment
+
+YASnippet is a template system for Emacs. It allows you to type an abbreviation and automatically expand it into function templates. Bundled language templates include: C, C++, C#, Perl, Python, Ruby, SQL, LaTeX, HTML, CSS and more. The snippet syntax is inspired from TextMate's syntax, you can even import most TextMate templates to YASnippet.
+
+https://github.com/joaotavora/yasnippet
+
+https://joaotavora.github.io/yasnippet/
+
+#+begin_src emacs-lisp :tangle no :mkdirp yes
+   (use-package yasnippet
+     :straight t
+     :init
+     (yas-global-mode 1)
+     :config
+     (add-to-list 'yas-snippet-dirs (locate-user-emacs-file "snippets"))
      )
 #+end_src
 
