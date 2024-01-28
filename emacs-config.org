@@ -4219,6 +4219,8 @@ I want to open my own view to edit my writing.
         (find-file my-notes-file)
         ;; go back to the original window
         (select-window my-current-window)
+        ;; remove the line numbering
+        (display-line-numbers-mode -1)
         (my/resize-margins my-current-window) ;; this doesn't work, probably some margin property.
         ;; Here we apply the stylistic changes
         ;; This part here should be done as a hook, if this was a package.
