@@ -102,6 +102,12 @@ org-mode
 )
 
 (edit
+	"#+begin_comment" n
+	"*EDIT*: " p n
+	"#+end_comment"
+)
+
+(deprecated-edit2
 	"# ######" (make-string (length str) ?#) "#" n
 	"# EDIT: " (s str)                       "#" n
 	"# ######" (make-string (length str) ?#) "#")
