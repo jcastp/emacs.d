@@ -103,8 +103,8 @@ org-mode
 
 (edit
 	"# ######" (make-string (length str) ?#) "#" n
-	"# EDIT:" (s str)                       "#" n
-	"# ######" (make-string (length str) ?#) "#" n)
+	"# EDIT: " (s str)                       "#" n
+	"# ######" (make-string (length str) ?#) "#")
 	
 (escena
 	":PROPERTIES:" n
