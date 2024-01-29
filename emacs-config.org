@@ -1159,8 +1159,8 @@ But I want to automatically load some perspectives when I'm at home:
 Put the number of lines and columns in the mini line.
 
 #+begin_src emacs-lisp :tangle "modules/my-ui.el" :mkdirp yes
-  (setq line-number-mode t)
-  (setq column-number-mode t)
+  (setq line-number-mode nil)
+  (setq column-number-mode nil)
 #+end_src
 
 ** CANCELED tab-bar-mode
@@ -1382,13 +1382,15 @@ doom modeline
     ;; remove the modes from `doom-modeline-continuous-word-count-modes'.
     ;; (setq doom-modeline-continuous-word-count-modes '(markdown-mode gfm-mode org-mode))
     (setq doom-modeline-env-version t)
-    (setq doom-modeline-buffer-encoding t)
+    (setq doom-modeline-buffer-encoding nil)
     (setq doom-modeline-indent-info nil)
     (setq doom-modeline-buffer-file-name-style 'auto)
     ;; github status in the modeline
-    (setq doom-modeline-github t)
+    (setq doom-modeline-github nil)
     ;; Whether display the `lsp' state. Non-nil to display in the mode-line.
     (setq doom-modeline-lsp t)
+    ;; Whether display the time. It respects `display-time-mode'.
+    (setq doom-modeline-time t)
     )
 #+end_src
 
