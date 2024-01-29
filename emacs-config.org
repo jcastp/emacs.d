@@ -3394,7 +3394,7 @@ https://protesilaos.com/emacs/fontaine
              :variable-pitch-height 150
              :bold-family nil ; use whatever the underlying face has
              :bold-weight bold
-             :italic-family "Iosevka"
+             :italic-family "Gentium"
              :italic-slant italic
              :line-spacing 1
              )
