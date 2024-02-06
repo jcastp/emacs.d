@@ -3472,6 +3472,62 @@ https://ox-hugo.scripter.co/
     :after ox)
 #+end_src
 
+** org-remark
+Text annotations in org mode
+https://github.com/nobiot/org-remark
+Manual: https://nobiot.github.io/org-remark/
+
+#+begin_src emacs-lisp :tangle "modules/my-writing.el" :mkdirp yes
+  (use-package org-remark
+    :straight t
+    :after org
+    :config
+    (require 'org-remark-global-tracking)
+    (org-remark-global-tracking-mode +1)
+
+    ;; Create a file of notes for each file, with the buffer name appended by "-notes"
+    (defun my/org-remark-file-name ()
+      (concat (file-name-base (org-remark-notes-file-name-function))
+              ".org"))
+    (setq org-remark-notes-file-name
+          #'my/org-remark-file-name)
+
+    ;; Key-bind `org-remark-mark' to global-map so that you can call it
+    ;; globally before the library is loaded.
+    (define-key global-map (kbd "C-c n m") #'org-remark-mark)
+    ;; The rest of keybidings are done only on loading `org-remark'
+    (with-eval-after-load 'org-remark
+      (define-key org-remark-mode-map (kbd "C-c n o") #'org-remark-open)
+      (define-key org-remark-mode-map (kbd "C-c n n") #'org-remark-view-next)
+      (define-key org-remark-mode-map (kbd "C-c n p") #'org-remark-view-prev)
+      (define-key org-remark-mode-map (kbd "C-c n r") #'org-remark-remove)
+      (define-key org-remark-mode-map (kbd "C-c n j") #'org-remark-change)
+      )
+    )
+  ;; Create highlighter pens for different parts
+  (with-eval-after-load 'org-remark
+    ;; Since I use alternate dark and clear themes, these must be useful for both
+    (org-remark-create "blue"
+                       '(:underline "sky blue" :background "deep sky blue")
+                       '(CATEGORY "editing"))
+
+    ;; can be properly seen in both dark and clear themes
+    (org-remark-create "dark-blue-line"
+                       '(:underline "deep sky blue")
+                       '(CATEGORY "editing"))
+
+    (org-remark-create "boring-gray"
+                       '(:background "dim gray"))
+
+    (org-remark-create "salmon"
+                       '(:background "salmon"))
+
+    (org-remark-create "royal-blue"
+                       '(:background "royal blue"))
+    )
+#+end_src
+
+
 * Programming
 ** General
 
@@ -3812,61 +3868,6 @@ https://github.com/alphapapa/hammy.el
                              (notify "Starting break time."))
                  :advance (do (announce "Break time is over!")
                               (notify "Break time is over!")))))
-    )
-#+end_src
-
-** TODO org-remark
-Text annotations in org mode
-https://github.com/nobiot/org-remark
-Manual: https://nobiot.github.io/org-remark/
-
-#+begin_src emacs-lisp :tangle "modules/my-testing.el" :mkdirp yes
-  (use-package org-remark
-    :straight t
-    :after org
-    :config
-    (require 'org-remark-global-tracking)
-    (org-remark-global-tracking-mode +1)
-
-    ;; Create a file of notes for each file, with the buffer name appended by "-notes"
-    (defun my/org-remark-file-name ()
-      (concat (file-name-base (org-remark-notes-file-name-function))
-              ".org"))
-    (setq org-remark-notes-file-name
-          #'my/org-remark-file-name)
-
-    ;; Key-bind `org-remark-mark' to global-map so that you can call it
-    ;; globally before the library is loaded.
-    (define-key global-map (kbd "C-c n m") #'org-remark-mark)
-    ;; The rest of keybidings are done only on loading `org-remark'
-    (with-eval-after-load 'org-remark
-      (define-key org-remark-mode-map (kbd "C-c n o") #'org-remark-open)
-      (define-key org-remark-mode-map (kbd "C-c n n") #'org-remark-view-next)
-      (define-key org-remark-mode-map (kbd "C-c n p") #'org-remark-view-prev)
-      (define-key org-remark-mode-map (kbd "C-c n r") #'org-remark-remove)
-      (define-key org-remark-mode-map (kbd "C-c n j") #'org-remark-change)
-      )
-    )
-  ;; Create highlighter pens for different parts
-  (with-eval-after-load 'org-remark
-    ;; Since I use alternate dark and clear themes, these must be useful for both
-    (org-remark-create "blue"
-                       '(:underline "sky blue" :background "deep sky blue")
-                       '(CATEGORY "editing"))
-
-    ;; can be properly seen in both dark and clear themes
-    (org-remark-create "dark-blue-line"
-                       '(:underline "deep sky blue")
-                       '(CATEGORY "editing"))
-
-    (org-remark-create "boring-gray"
-                       '(:background "dim gray"))
-
-    (org-remark-create "salmon"
-                       '(:background "salmon"))
-
-    (org-remark-create "royal-blue"
-                       '(:background "royal blue"))
     )
 #+end_src
 
