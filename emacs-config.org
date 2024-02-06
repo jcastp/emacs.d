@@ -3780,23 +3780,6 @@ https://github.com/chenyanming/calibredb.el
           )))
 #+end_src
 
-** TODO focus
-Dims surrounding text, so you can focus on the important.
-https://github.com/larstvei/Focus
-
-#+begin_src emacs-lisp :tangle "modules/my-testing.el" :mkdirp yes
-    (use-package focus
-     :straight t
-     :after org
-     ;; :hook
-     ;; (org-mode . focus-mode)
-     :config
-      ;; text mode focus will be on paragraph
-      (add-to-list 'focus-mode-to-thing '(text-mode . paragraph))
-      ;;(focus-mode 1)
-      )
-#+end_src
-
 ** TODO hammy - time intervals
 https://github.com/alphapapa/hammy.el
 
@@ -4697,6 +4680,24 @@ https://joaotavora.github.io/yasnippet/
      (add-to-list 'yas-snippet-dirs (locate-user-emacs-file "snippets"))
      )
 #+end_src
+
+** focus
+Dims surrounding text, so you can focus on the important.
+https://github.com/larstvei/Focus
+
+#+begin_src emacs-lisp :tangle no :mkdirp yes
+    (use-package focus
+     :straight t
+     :after org
+     ;; :hook
+     ;; (org-mode . focus-mode)
+     :config
+      ;; text mode focus will be on paragraph
+      (add-to-list 'focus-mode-to-thing '(text-mode . paragraph))
+      ;;(focus-mode 1)
+      )
+#+end_src
+
 
 * Export config :noexport:ignore:
 # ############################
