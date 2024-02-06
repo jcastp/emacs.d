@@ -3527,6 +3527,44 @@ Manual: https://nobiot.github.io/org-remark/
     )
 #+end_src
 
+** TODO tempel - template expansion
+:PROPERTIES:
+:ID:       836dad1c-d03d-45d1-b9c7-0bce134fc86e
+:END:
+https://github.com/minad/tempel
+
+#+begin_src emacs-lisp :tangle "modules/my-writing.el" :mkdirp yes
+  (use-package tempel
+    :straight t
+    :after org
+    ;; Require trigger prefix before template name when completing.
+    :custom
+    (tempel-trigger-prefix "<")
+
+    :init
+    ;; Setup completion at point
+    (defun tempel-setup-capf ()
+      ;; Add the Tempel Capf to `completion-at-point-functions'.
+      ;; `tempel-expand' only triggers on exact matches. Alternatively use
+      ;; `tempel-complete' if you want to see all matches, but then you
+      ;; should also configure `tempel-trigger-prefix', such that Tempel
+      ;; does not trigger too often when you don't expect it. NOTE: We add
+      ;; `tempel-expand' *before* the main programming mode Capf, such
+      ;; that it will be tried first.
+      (setq-local completion-at-point-functions
+  		(cons #'tempel-expand
+                        completion-at-point-functions)))
+
+    (add-hook 'conf-mode-hook 'tempel-setup-capf)
+    (add-hook 'prog-mode-hook 'tempel-setup-capf)
+    (add-hook 'text-mode-hook 'tempel-setup-capf)
+    :bind
+    ("C-c d i" . tempel-insert)
+    :config
+    (setq tempel-path "~/.emacs.d/templates")
+    )
+#+end_src
+
 
 * Programming
 ** General
@@ -4033,43 +4071,6 @@ https://www.nongnu.org/org-edna-el/
     :straight t
     :config
     (org-edna-mode 1))
-#+end_src
-
-** TODO tempel - template expansion
-:PROPERTIES:
-:ID:       836dad1c-d03d-45d1-b9c7-0bce134fc86e
-:END:
-https://github.com/minad/tempel
-
-#+begin_src emacs-lisp :tangle "modules/my-testing.el" :mkdirp yes
-  (use-package tempel
-    :straight t
-    ;; Require trigger prefix before template name when completing.
-    :custom
-    (tempel-trigger-prefix "<")
-
-    :init
-    ;; Setup completion at point
-    (defun tempel-setup-capf ()
-      ;; Add the Tempel Capf to `completion-at-point-functions'.
-      ;; `tempel-expand' only triggers on exact matches. Alternatively use
-      ;; `tempel-complete' if you want to see all matches, but then you
-      ;; should also configure `tempel-trigger-prefix', such that Tempel
-      ;; does not trigger too often when you don't expect it. NOTE: We add
-      ;; `tempel-expand' *before* the main programming mode Capf, such
-      ;; that it will be tried first.
-      (setq-local completion-at-point-functions
-  		(cons #'tempel-expand
-                        completion-at-point-functions)))
-
-    (add-hook 'conf-mode-hook 'tempel-setup-capf)
-    (add-hook 'prog-mode-hook 'tempel-setup-capf)
-    (add-hook 'text-mode-hook 'tempel-setup-capf)
-    :bind
-    ("C-c d i" . tempel-insert)
-    :config
-    (setq tempel-path "~/.emacs.d/templates")
-    )
 #+end_src
 
 ** TODO denote - note taking
