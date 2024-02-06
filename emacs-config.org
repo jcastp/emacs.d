@@ -3127,6 +3127,15 @@ https://github.com/lepisma/org-books
 *** graphs via dot
 https://www.graphviz.org/pdf/dotguide.pdf
 
+** Pandoc exporter
+#+begin_src emacs-lisp :tangle "modules/my-org.el" :mkdirp yes
+  (use-package ox-pandoc
+    :ensure t
+    :config
+    )
+#+end_src
+
+
 * Writing
 Here, I document all the config related to my writing.
 
