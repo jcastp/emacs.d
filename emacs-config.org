@@ -4047,15 +4047,6 @@ https://www.nongnu.org/org-edna-el/
     (org-edna-mode 1))
 #+end_src
 
-** TODO denote - note taking
-#+begin_src emacs-lisp :tangle "modules/my-testing.el" :mkdirp yes
-  (use-package denote
-    :straight t
-    :config
-    (setq denote-directory "~/Nextcloud/personal/denote/")
-    )
-#+end_src
-
 ** TODO bookmarks in an org file
 As seen here: https://xenodium.com/building-your-own-bookmark-launcher/
 
@@ -4709,6 +4700,15 @@ https://github.com/alphapapa/hammy.el
     )
 #+end_src
 
+** denote - note taking
+I will keep org-roam, for now.
+#+begin_src emacs-lisp :tangle "no" :mkdirp yes
+  (use-package denote
+    :straight t
+    :config
+    (setq denote-directory "~/Nextcloud/personal/denote/")
+    )
+#+end_src
 
 * Export config :noexport:ignore:
 # ############################
