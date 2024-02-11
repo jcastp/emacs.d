@@ -580,12 +580,13 @@ I want to know how much battery if using a laptop.
 Defines a set of abbreviations that permits complete words with just some characters.
 
 #+begin_src emacs-lisp :tangle "modules/my-general.el" :mkdirp yes
-;;where do we read the abbrevs from
-;;(setq abbrev-file-name "~/Nextcloud/config/.emacs.d/abbrev_defs")
-(setq abbrev-file-name (expand-file-name "abbrev_defs" my-data-dir))
-(setq-default abbrev-mode t)
-;; save abbrevs when files are saved
-(setq save-abbrevs 'silent)
+  ;;where do we read the abbrevs from
+  ;;(setq abbrev-file-name "~/Nextcloud/config/.emacs.d/abbrev_defs")
+  (setq abbrev-file-name (expand-file-name "abbrev_defs" my-data-dir))
+  (add-hook 'text-mode-hook 'abbrev-mode)
+  (add-hook 'prog-mode-hook 'abbrev-mode)
+  ;; save abbrevs when files are saved
+  (setq save-abbrevs 'silent)
 #+end_src
 
 ** TODO hunspell
