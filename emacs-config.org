@@ -3135,7 +3135,6 @@ https://www.graphviz.org/pdf/dotguide.pdf
     )
 #+end_src
 
-
 * Writing
 Here, I document all the config related to my writing.
 
@@ -3573,7 +3572,6 @@ https://github.com/minad/tempel
     (setq tempel-path "~/.emacs.d/templates")
     )
 #+end_src
-
 
 * Programming
 ** General
