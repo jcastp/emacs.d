@@ -220,7 +220,7 @@ I have some cloud directories synced that are encrypted. Some emacs config infor
     )
 #+end_src
 ** Establish the different modules
-Here we define the modules we want to load
+Here we define the modules we want to load.
 
 #+begin_src emacs-lisp :tangle "init.el" :mkdirp yes
   ;; create a custom list for the files I want to load
@@ -273,7 +273,7 @@ We need to load the work configuration depending on the variables set in the lin
         )
     )
  #+end_src
-
+ 
 ** Load all the packages
 #+begin_src emacs-lisp :tangle "init.el" :mkdirp yes
     ;; the directory where I store my modules
@@ -316,6 +316,7 @@ I need to configure the key bindings to jump from one change to another.
 Here, I put my personal information and all the packages related to accounts.
 
 ** Personal information
+This uses a special file, not commited, with my personal information, located in the path below.
 #+begin_src emacs-lisp :tangle "modules/my-personal.el" :mkdirp yes
   ;; to protect my personal information, this file is not commited
   (load (expand-file-name "Nextcloud/config/.emacs.d/personal_info.el" (getenv "HOME")))
@@ -1485,7 +1486,7 @@ Fonts we will be using for both modes:
      )
 
    '(default
-     ((t (:family "Iosevka" :height 120 :weight Light)))
+     ((t (:family "Iosevka Comfy" :height 120 :weight Light)))
      )
    )
 #+end_src
