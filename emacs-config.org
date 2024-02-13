@@ -258,6 +258,8 @@ Here we define the modules we want to load.
   			"my-testing.el"
   			;; home related code
   			"my-home.el"
+  			;; email config
+  			"my-email.el"
   			))
 #+end_src
 
@@ -3848,6 +3850,66 @@ https://github.com/emacs-dashboard/emacs-dashboard
     )
 #+end_src
 
+* Email config
+
+** TODO notmuch config
+Not used for now. Using mu4e.
+#+begin_src emacs-lisp :tangle no :mkdirp yes
+  (use-package notmuch
+    :ensure t
+    :commands notmuch-hello
+    :bind (("C-c m" . notmuch-hello))
+    )
+#+end_src
+
+** TODO mu4e
+
+#+begin_src emacs-lisp :tangle "modules/my-email.el" :mkdirp yes
+  ;; this will only load on my main system
+  (if my-desktopsystem-p
+      (progn
+        (use-package mu4e
+  	:ensure t
+  	;; installed from source
+  	:load-path "/usr/local/share/emacs/site-lisp/mu4e"
+  	:defer 20 ; Wait until 20 seconds after startup
+  	:bind (("C-c m" . mu4e))
+  	:config
+  	(setq mu4e-change-filenames-when-moving t ; avoid sync conflicts
+   	      mu4e-update-interval (* 10 60) ; check mail 10 minutes
+   	      mu4e-compose-format-flowed t ; re-flow mail so it's not hard wrapped
+   	      mu4e-get-mail-command "mbsync -a"
+   	      mu4e-maildir "~/mail/")
+
+  	;; folder configuration
+  	(setq mu4e-drafts-folder "/proton/Drafts"
+   	      mu4e-sent-folder   "/proton/Sent"
+   	      mu4e-refile-folder "/proton/All Mail"
+   	      mu4e-trash-folder  "/proton/Trash")
+
+  	(setq mu4e-maildir-shortcuts
+   	      '(("/proton/inbox"     . ?i)
+    		("/proton/Sent"      . ?s)
+    		("/proton/Trash"     . ?t)
+    		("/proton/Drafts"    . ?d)
+    		("/proton/All Mail"  . ?a)))
+
+  	(setq message-send-mail-function 'smtpmail-send-it
+   	      auth-sources '("~/.authinfo.gpg") ;need to use gpg version but only local smtp stored for now
+   	      smtpmail-smtp-server "127.0.0.1"
+   	      smtpmail-smtp-service 1025
+   	      smtpmail-stream-type  'starttls)
+  	)))
+#+end_src
+
+** TODO smtp config
+#+begin_src emacs-lisp :tangle "modules/my-email.el" :mkdirp yes
+  ;; (setq message-send-mail-function 'smtpmail-send-it)
+  ;; (setq auth-sources '("~/.authinfo.gpg")) ;need to use gpg version but only local smtp stored for now
+  ;; (setq smtpmail-smtp-server "127.0.0.1")
+  ;; (setq smtpmail-smtp-service 1025)
+  ;; (setq smtpmail-stream-type 'starttls)
+#+end_src
 * Testing
 Here there will be all the configs I'm testing, before committing them to the main config.
 
