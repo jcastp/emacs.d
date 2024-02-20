@@ -4245,6 +4245,38 @@ I want to open my own view to edit my writing.
     (global-set-key (kbd "C-c d e") 'my/editing-windows)
     )
 #+end_src
+
+** TODO ellama - emacs with LLMs and ollama
+#+begin_src emacs-lisp  :tangle "modules/my-testing.el" :mkdirp yes
+  (use-package ellama
+    :ensure t
+    :init
+    :config
+    ;; setup key bindings
+    (setopt ellama-keymap-prefix "C-c e")
+    (require 'llm-ollama)
+    ;; initial model
+    (setopt ellama-provider
+  	  (make-llm-ollama
+  	   :chat-model "zephyr" :embedding-model "zephyr"))
+    (setopt ellama-providers
+  	  '(("zephyr" . (make-llm-ollama
+  			 :chat-model "zephyr"
+  			 :embedding-model "zephyr"))
+  	    ("mistral" . (make-llm-ollama
+  			  :chat-model "mistral"
+  			  :embedding-model "mistral"))
+  	    ("codellama" . (make-llm-ollama
+  			    :chat-model "codellama"
+  			    :embedding-model "codellama"))
+  	    ("dolphin_mixtral" . (make-llm-ollama
+    				  :chat-model "dolphin_mixtral"
+    				  :embedding-model "dolphin_mixtral"))
+
+  	    )
+  	  )
+    )
+#+end_src
 * home related load and startup
 This will be loaded automatically when at home.
 
