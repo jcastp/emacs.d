@@ -3519,23 +3519,30 @@ Manual: https://nobiot.github.io/org-remark/
   ;; Create highlighter pens for different parts
   (with-eval-after-load 'org-remark
     ;; Since I use alternate dark and clear themes, these must be useful for both
-    (org-remark-create "blue"
+    (org-remark-create "blue-structure"
                        '(:underline "sky blue" :background "deep sky blue")
-                       '(CATEGORY "editing"))
+                       '(CATEGORY "structure"))
 
     ;; can be properly seen in both dark and clear themes
     (org-remark-create "dark-blue-line"
                        '(:underline "deep sky blue")
                        '(CATEGORY "editing"))
 
-    (org-remark-create "boring-gray"
-                       '(:background "dim gray"))
+    (org-remark-create "gray-plot"
+                       '(:background "dim gray")
+  	       '(CATEGORY "plot"))
 
-    (org-remark-create "salmon"
-                       '(:background "salmon"))
+    (org-remark-create "salmon-character"
+                       '(:background "salmon")
+  		 '(CATEGORY "character"))
 
-    (org-remark-create "royal-blue"
-                       '(:background "royal blue"))
+    (org-remark-create "yellow-dialogue"
+                       '(:background "yellow")
+  		 '(CATEGORY "dialogue"))
+
+    (org-remark-create "royal-blue-other"
+                       '(:background "royal blue")
+  		     '(CATEGORY "other"))
     )
 #+end_src
 
