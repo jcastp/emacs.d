@@ -8,9 +8,6 @@ How to install it:
   git clone https://codeberg.org/jcastp/emacs.d ~/.emacs.d
 #+end_src
 - launch =emacs=
-- Open the file ~~/.emacs.d/emacs-config.org~
-- Launch =org-babel-tangle= (tied to =C-c C-v C-t= in a vanilla =emacs=)
-- exit =emacs= and launch it again
 
 It will download all the required packages to work.
 
