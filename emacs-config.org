@@ -1723,7 +1723,7 @@ I need to have the orgmode indented to see clearly where I am, so I enable it on
             t)
 #+end_src
 
-** TODO Leave an empty line before headings
+** Leave an empty line before headings
 
 #+begin_src emacs-lisp :tangle "modules/my-org.el" :mkdirp yes
   (setq org-blank-before-new-entry '(
