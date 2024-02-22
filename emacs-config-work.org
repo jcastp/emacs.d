@@ -1,0 +1,239 @@
+* Emacs config specific to the work environment
+This configuration is just a patch to work with the work environment.
+It is supposed to run over the generic emacs config, and overwrites that config with the custom config for work environment.
+
+** clear theme
+
+#+begin_src emacs-lisp
+  (consult-theme 'tango)
+  ;;(consult-theme 'ef-light)
+#+end_src
+
+** Fixed width font for work environment
+I work better with fixed fonts in this kind of environments
+
+#+begin_src emacs-lisp
+  (fontaine-set-preset 'work)
+#+end_src
+** Adjust the window width for work
+Since at work I don't open so many windows, we can use this width to better use what I get.
+
+#+begin_src emacs-lisp
+  (setq-default visual-fill-column-width 110)
+#+end_src
+
+** Put the correct agenda files for work
+My work require a different set of agendas:
+
+#+begin_src emacs-lisp
+  ;; empty the org-agenda-files 
+  (setq org-agenda-files '(""))
+  ;; And now, populate with the work environment
+  ;; This needs to be changed when you change company!!!
+  (setq org-agenda-files '("~/Nextcloud/agenda/trabajo/trabajo.org"
+                           )
+  )
+#+end_src
+
+** Refile environment
+Since this is a different environment, I also have to change this to refile things in a different way.
+
+#+begin_src emacs-lisp
+    (setq org-refile-targets '(
+                              (nil :maxlevel . 9)
+                              (org-agenda-files :maxlevel . 9)
+  			    ("~/Nextcloud/agenda/trabajo/trabajo_backlog.org" :maxlevel . 9)
+                              )
+    )
+
+    (setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
+    (setq org-refile-use-outline-path t)                  ; Show full paths for refiling
+#+end_src
+
+** TOREVIEW Better searches with custom agenda commands
+I need a different custom agenda commands to see the tasks better.
+
+ #+begin_src emacs-lisp
+     (setq org-agenda-custom-commands
+        '(
+          ("c" . "My Custom Agendas")
+           ("cu" "Unscheduled TODO"
+             ((tags-todo "-backlog-calendar"
+                   ((org-agenda-overriding-header "\nUnscheduled TODO")
+                    (org-agenda-skip-function '(org-agenda-skip-entry-if 'timestamp)))))
+               nil
+            nil)
+
+            ("ch" "high priority tasks"
+            ((tags "PRIORITY=\"A\""
+                   ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                    (org-agenda-overriding-header "High-priority unfinished tasks:")))
+              ))
+
+
+            ("ct" "all tasks, sorted"
+
+            ;; High priority tasks
+              ((tags "PRIORITY=\"A\""
+                   ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                    (org-agenda-overriding-header "High-priority unfinished tasks:")
+                    (org-agenda-prefix-format " %10c %5e ")
+                    )
+               )
+
+            ;; Incident related tasks
+               (tags "incident|CATEGORY=\"Incident\""
+                 ((org-agenda-overriding-header "Incident related:")
+                 (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                 (org-agenda-sorting-strategy '(priority-down effort-up))
+                   (org-agenda-prefix-format " %10c %5e ")
+
+                 )
+               )
+ 
+           ;; Ongoing tasks that needs effort from my side
+               (tags-todo "-backlog-calendar/ONGOING"
+                 ((org-agenda-overriding-header "Ongoing tasks:")
+                   (org-agenda-prefix-format " %10c %5e ")
+
+                 )
+               )
+
+
+            ;; Tasks that are depending on others
+               (tags-todo "-backlog-calendar/WAITING"
+                 ((org-agenda-overriding-header "Waiting tasks:")
+                   (org-agenda-prefix-format " %10c %5e ")
+                 )
+               )
+
+            ;; Tasks still not started
+               (tags-todo "-backlog-calendar +PRIORITY={B\\|C}/TODO"
+                 ((org-agenda-overriding-header "TODO tasks:")
+                   (org-agenda-prefix-format " %10c %5e ")
+                 )
+               )
+
+
+            ;; Calendar tasks
+               (tags-todo "calendar-backlog"
+                 ((org-agenda-overriding-header "Calendar tasks:")
+                   (org-agenda-prefix-format " %10c %5e ")
+                 )
+               )
+
+              )
+             )
+      
+
+             ; Backlog
+            ("b" "Backlog entries" tags "backlog"
+              (
+                (org-agenda-overriding-header "Backlog entries")
+              )
+            )
+
+
+
+            ; 'In a day' tasks
+            ("d" "Today"
+              ((agenda "" ((org-agenda-span 1)
+              (org-agenda-sorting-strategy
+              (quote ((agenda time-up priority-down tag-up) )))
+              ; this will show tasks with a deadline of 2 days more
+              (org-deadline-warning-days 2)
+
+            ))))
+
+         
+            ; 'In a week' tasks
+            ("w" "Week ahead"
+              ((agenda "" ((org-agenda-span 7)
+              (org-agenda-sorting-strategy
+              (quote ((agenda time-up priority-down tag-up) )))
+              (org-deadline-warning-days 0)
+                  )
+                )
+              )
+            )
+
+
+        ; only shows home tagged entries
+            ("h" "At home" tags-todo "@home"
+              (
+                (org-agenda-overriding-header "Home")
+              )
+            )
+
+       ; only shows outside tagged entries
+            ("o" "Outside tasks" tags-todo "@outside"
+              (
+                (org-agenda-overriding-header "Outside")
+              )
+            )
+        )
+   )
+#+end_src
+
+** Work tags definition
+
+#+begin_src emacs-lisp
+(setq org-tag-alist '(
+                      ;; environment, project or effort
+                      ("detection" . ?d) ("automation" . ?a)
+                      ;; other tags
+                      ("documentation" . ?D) ("procedures" . ?P)
+                      ("knowledge" . ?K) ("training" . ?T)
+                      ("incident" . ?I) ("task" . ?t)
+                      )
+      )
+#+end_src
+
+** Custom status for work related environment
+
+#+begin_src emacs-lisp
+  (setq org-todo-keywords
+        '(
+          ;; Status for tasks
+          (sequence "TODO(t)" "WAITING(w@/!)" "ONGOING(o@/!)" "|" "DONE(d@/!)" "DELEGATED(D@/!)" "CANCELED(c@/!)")
+          )
+        )
+#+end_src
+
+** Custom work capture templates
+As work is different from home, I need specific templates.
+
+#+begin_src emacs-lisp
+  (setq org-capture-templates'(
+
+                               ("i" "Inbox (work)" entry
+                                (file+headline "~/Nextcloud/agenda/trabajo/trabajo.org" "Inbox")
+                                "** TODO %? %^g \n:LOGBOOK: \n:CREATED: %U \n:END:")
+
+                               ("I" "New incident." entry
+                                (file+headline "~/Nextcloud/agenda/trabajo/trabajo.org" "Incidents")
+                                "** TODO %?")
+
+
+                               ("b" "Backlog entry." entry
+                                (file+headline "~/Nextcloud/agenda/trabajo/trabajo_backlog.org" "Backlog")
+                                "** TODO %?\n")
+
+  			     ;; For meeting note taking
+                               ("m" "Meeting notes" entry
+                                (file+headline "~/Nextcloud/agenda/trabajo/trabajo_meetings.org" "Meetings")
+                                "** %T - %?\n"
+  			      :jump-to-captured t
+  			      )
+
+                               )
+        )
+#+end_src
+
+** Load the task list for work
+This will automatically open the relevant file to start working right away:
+
+#+begin_src emacs-lisp
+  (find-file "~/Nextcloud/agenda/trabajo/trabajo.org")
+#+end_src
+
