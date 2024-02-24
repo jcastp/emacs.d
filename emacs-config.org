@@ -1431,7 +1431,7 @@ This comes from the old config, when I used the org-babel functions to tangled t
    ;; tag alignment
    ;; this value allows for modern themes and column fill to work well together.
     org-auto-align-tags t
-    org-tags-column -80
+    org-tags-column -100
     ;; org fold - edit in an invisible region
     org-fold-catch-invisible-edits 'show-and-error
     ;; C-a and C-e will move the cursor just the heading. No todo keyworks, no tags
