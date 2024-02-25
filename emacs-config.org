@@ -24,8 +24,6 @@ In order to make this work, you need to load this file in =emacs= and use the =o
 
 The =modules= directory will contain all my complementary config files, separated by topic or use case.
 
-
-
 * git related config
 
 ** magit
@@ -1088,18 +1086,18 @@ Get all the fancy icons.
 ** Projectile
 For better project management in emacs.
 
-#+begin_src emacs-lisp
-  (use-package projectile
-    :straight t
-    :config
-    (setq projectile-known-projects-file (expand-file-name "projectile-bookmarks.eld" my-data-dir))
-    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-    (projectile-mode +1)
-    )
+#+begin_src emacs-lisp :tangle no
+  ;; (use-package projectile
+  ;;   :straight t
+  ;;   :config
+  ;;   (setq projectile-known-projects-file (expand-file-name "projectile-bookmarks.eld" my-data-dir))
+  ;;   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+  ;;   (projectile-mode +1)
+  ;;   )
 
-  (use-package projectile-ripgrep
-    :straight t
-    )
+  ;; (use-package projectile-ripgrep
+  ;;   :straight t
+  ;;   )
 #+end_src
 
 ** doom modeline
@@ -1868,15 +1866,15 @@ https://github.com/ballantony/emacs-writing/blob/main/DoomEmacsWriting.org
 Agenda restricted to the current project, to keep track of its TODOs.
 I will use it to keep track of the pending tasks of the writing projects.
 
-#+begin_src emacs-lisp
-(with-eval-after-load 'projectile
-  (defun my/agenda-restrict-this-project ()
-    "Restrict agenda to current project"
-    (interactive)
-    (let ((org-agenda-files (list (projectile-project-root))))
-      (org-agenda)))
-  (global-set-key (kbd "C-c A") 'my/agenda-restrict-this-project)
-  )
+#+begin_src emacs-lisp :tangle no
+  ;; (with-eval-after-load 'projectile
+  ;;   (defun my/agenda-restrict-this-project ()
+  ;;     "Restrict agenda to current project"
+  ;;     (interactive)
+  ;;     (let ((org-agenda-files (list (projectile-project-root))))
+  ;;       (org-agenda)))
+  ;;   (global-set-key (kbd "C-c A") 'my/agenda-restrict-this-project)
+  ;;   )
 #+end_src
 
 ** Refile entries
@@ -3557,6 +3555,8 @@ https://github.com/emacs-dashboard/emacs-dashboard
           ;; Set the banner
           ;;(setq dashboard-startup-banner 'logo)
           (setq dashboard-startup-banner "~/Nextcloud/personal/steamboat_bender.png")
+  	;; set the projects backend to projects.el
+  	(setq dashboard-projects-backend 'project-el)
           ;; Value can be
           ;; - nil to display no banner
           ;; - 'official which displays the official emacs logo
