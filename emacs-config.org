@@ -4325,6 +4325,23 @@ I will keep org-roam, for now.
     )
 #+end_src
 
+** Projectile
+For better project management in emacs.
+
+#+begin_src emacs-lisp :tangle no
+  ;; (use-package projectile
+  ;;   :straight t
+  ;;   :config
+  ;;   (setq projectile-known-projects-file (expand-file-name "projectile-bookmarks.eld" my-data-dir))
+  ;;   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+  ;;   (projectile-mode +1)
+  ;;   )
+
+  ;; (use-package projectile-ripgrep
+  ;;   :straight t
+  ;;   )
+#+end_src
+
 * Export config :noexport:ignore:
 # ############################
 # General options
