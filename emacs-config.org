@@ -1083,23 +1083,6 @@ Get all the fancy icons.
     )
 #+end_src
 
-** Projectile
-For better project management in emacs.
-
-#+begin_src emacs-lisp :tangle no
-  ;; (use-package projectile
-  ;;   :straight t
-  ;;   :config
-  ;;   (setq projectile-known-projects-file (expand-file-name "projectile-bookmarks.eld" my-data-dir))
-  ;;   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-  ;;   (projectile-mode +1)
-  ;;   )
-
-  ;; (use-package projectile-ripgrep
-  ;;   :straight t
-  ;;   )
-#+end_src
-
 ** doom modeline
 doom modeline
 #+begin_src emacs-lisp
@@ -1314,6 +1297,12 @@ Protesilaos very good themes. These themes are already included in the standard 
 *** Protesilaos ef themes
 #+begin_src emacs-lisp
   (use-package ef-themes
+    :straight t)
+#+end_src
+
+*** doom themes
+#+begin_src emacs-lisp
+  (use-package doom-themes
     :straight t)
 #+end_src
 
