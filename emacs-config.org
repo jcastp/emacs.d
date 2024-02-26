@@ -3602,16 +3602,6 @@ https://github.com/emacs-dashboard/emacs-dashboard
 
 * Email config
 
-** TODO notmuch config
-Not used for now. Using mu4e.
-#+begin_src emacs-lisp
-  (use-package notmuch
-    :ensure t
-    :commands notmuch-hello
-    :bind (("C-c m" . notmuch-hello))
-    )
-#+end_src
-
 ** TODO mu4e
 
 #+begin_src emacs-lisp
