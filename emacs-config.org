@@ -3623,18 +3623,20 @@ Table of Contents for orgmode documents.
 https://github.com/ichernyshovvv/org-timeblock
 
 #+begin_src emacs-lisp
-  (use-package org-timeblock
-  :straight (org-timeblock :type git
-              :host github
-              :repo "ichernyshovvv/org-timeblock")
-  :config
-  (setq org-timeblock-inbox-file "~/Nextcloud/agenda/inbox.org")
-  )
+  ;; (use-package org-timeblock
+  ;; :straight (org-timeblock :type git
+  ;;             :host github
+  ;;             :repo "ichernyshovvv/org-timeblock")
+  ;; :config
+  ;; (setq org-timeblock-inbox-file "~/Nextcloud/agenda/inbox.org")
+  ;; )
 #+end_src
 
 ** TODO direct access to my files
 ESC+ESC+c to directly access my config file.
 ESC+ESC+t to directly access my tasks file.
+
+Right now, it depends on perspectives. I need to change this to also open files if perspective is not installed.
 
 #+begin_src emacs-lisp
   (global-set-key (kbd "\e\ec")
