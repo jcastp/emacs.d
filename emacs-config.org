@@ -261,14 +261,12 @@ All the configurations needed for dired.
 *** dired omit mode
 We want to hide some of the non interesting files in the dired views.
 The files are defined in the =dired-omit-files= and the extensions in the =dired-omit-extensions=.
-
 #+begin_src emacs-lisp
-  (add-hook 'dired-mode-hook (lambda () (dired-omit-mode)))
+  ;;(add-hook 'dired-mode-hook (lambda () (dired-omit-mode)))
 #+end_src
 
 ** set firefox as the default browser
 Setting firefox as the default browser for opening http/s links.
-
 #+begin_src emacs-lisp
   (setq browse-url-firefox-program "firefox")
   (setq browse-url-browser-function 'browse-url-firefox)
@@ -286,10 +284,8 @@ I want to know how much battery if using a laptop.
 
 ** Abbreviation mode
 Defines a set of abbreviations that permits complete words with just some characters.
-
 #+begin_src emacs-lisp
   ;;where do we read the abbrevs from
-  ;;(setq abbrev-file-name "~/Nextcloud/config/.emacs.d/abbrev_defs")
   (setq abbrev-file-name (expand-file-name "abbrev_defs" my-data-dir))
   (add-hook 'text-mode-hook 'abbrev-mode)
   (add-hook 'prog-mode-hook 'abbrev-mode)
@@ -299,7 +295,6 @@ Defines a set of abbreviations that permits complete words with just some charac
 
 ** TODO hunspell
 Configure hunspell as the orthographic corrector.
-
 #+begin_src emacs-lisp
   (setq ispell-program-name "hunspell")
 #+end_src
@@ -308,7 +303,6 @@ Configure hunspell as the orthographic corrector.
 Automatic spelling in the buffer
 This conflicts with orgmode archive C-c $
 https://www.gnu.org/software/emacs/manual/html_node/emacs/Spelling.html
-
 #+begin_src emacs-lisp
 (add-hook 'text-mode-hook 'flyspell-mode)
 (global-font-lock-mode t)
@@ -319,8 +313,7 @@ https://www.gnu.org/software/emacs/manual/html_node/emacs/Spelling.html
 #+end_src
 
 ** electric pair mode
-To automatically close parenthesis and and other punctuation signs.
-
+To automatically close parenthesis and other punctuation signs.
 #+begin_src emacs-lisp
   (electric-pair-mode 1)
   ;; make electric-pair-mode work on more sets of punctuation signs.
@@ -338,19 +331,19 @@ To automatically close parenthesis and and other punctuation signs.
 #+end_src
 
 ** undo-tree
+Undo with graphical tree.
 #+begin_src emacs-lisp
   (use-package undo-tree
     :straight t
     :config
     (global-undo-tree-mode 1)
-    (global-unset-key (kbd "C-z"))
+    (global-unset-key (kbd "C-z")) ;; just in case it was still set
     (global-set-key (kbd "C-z") #'undo-tree-visualize)
     )
 #+end_src
 
 ** vlf related config
 Very large files loading.
-
 #+begin_src emacs-lisp
   ;; very large files support
   (use-package vlf
@@ -405,7 +398,6 @@ Open particular files with external applications.
 
 ** free keys
 Shows the free keybinding. Useful to assign new keybindings to some new functions.
-
 #+begin_src emacs-lisp
   (use-package free-keys
     :straight t
@@ -414,7 +406,6 @@ Shows the free keybinding. Useful to assign new keybindings to some new function
 
 ** Which-key
 After pressing a key combo, it shows the key bindings associated.
-
 #+begin_src emacs-lisp
   (use-package which-key
     :straight t
@@ -426,7 +417,6 @@ After pressing a key combo, it shows the key bindings associated.
 *** which-key-posframe
 https://github.com/yanghaoxie/which-key-posframe
 I can modify how the posframe is shown.
-
 #+begin_src emacs-lisp
   ;; (use-package which-key-posframe
   ;; :straight t
@@ -438,7 +428,6 @@ I can modify how the posframe is shown.
 https://github.com/magnars/expand-region.el
 
 Select relevant regions incrementally.
-
 #+begin_src emacs-lisp
   (use-package expand-region
     :straight t
@@ -448,12 +437,10 @@ Select relevant regions incrementally.
 
 ** Reload my configuration
 Reload this configuration file.
-
 #+begin_src emacs-lisp
   (defun my/reload-config()
     "Reloads my orgmode configuration."
     (interactive)
-    ;;(org-babel-load-file (expand-file-name "config.org" my-config-dir))
     (load (concat user-emacs-directory "early-init.el"))
     (load (concat user-emacs-directory "init.el"))
     )
