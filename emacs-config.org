@@ -362,29 +362,13 @@ Very large files loading.
 
 ** try package
 For all the other packages I want to try without installing it in my config.
-
 #+begin_src emacs-lisp
   (use-package try
-    :straight t
-    )
-#+end_src
-
-** TODO bufler
-Better buffer management, and project space
-https://github.com/alphapapa/bufler.el
-
-#+begin_src emacs-lisp
-   (use-package bufler
-     :straight t
-     :config
-     (bufler-mode 1)
-  ;;   (global-set-key (kbd "C-x C-b") 'bufler)
-     )
+    :straight t)
 #+end_src
 
 ** openwith
 Open particular files with external applications.
-
 #+begin_src emacs-lisp
   (use-package openwith
     :straight t
@@ -448,18 +432,6 @@ I can modify how the posframe is shown.
   ;; :straight t
   ;; :config
   ;; (which-key-posframe-mode))
-#+end_src
-
-** Burly for workspace management
-https://github.com/alphapapa/burly.el
-We can bookmark specific window and frame layouts, so we can later restore them.
-
-#+begin_src emacs-lisp
-  (use-package burly
-    :straight t
-    :init
-    (burly-tabs-mode 1)
-    )
 #+end_src
 
 ** expand region
@@ -4286,6 +4258,30 @@ For better project management in emacs.
   ;; (use-package projectile-ripgrep
   ;;   :straight t
   ;;   )
+#+end_src
+
+** TODO bufler
+Better buffer management, and project space
+https://github.com/alphapapa/bufler.el
+
+#+begin_src emacs-lisp :tangle no
+   (use-package bufler
+     :straight t
+     :config
+     (bufler-mode 1)
+  ;;   (global-set-key (kbd "C-x C-b") 'bufler)
+     )
+#+end_src
+
+** Burly for workspace management
+https://github.com/alphapapa/burly.el
+We can bookmark specific window and frame layouts, so we can later restore them.
+#+begin_src emacs-lisp :tangle no
+  (use-package burly
+    :straight t
+    :init
+    (burly-tabs-mode 1)
+    )
 #+end_src
 
 * Export config :noexport:ignore:
