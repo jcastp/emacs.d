@@ -781,7 +781,8 @@ TODO: It seems this does not work properly :-/
 *** TODO automatic load some perspectives
 #+begin_src emacs-lisp
   ;; where I define my own perspective saved files
-  (setq my-persp-save-dir (f-join my-data-dir "perspectives/"))
+  ;;(setq my-persp-save-dir (f-join my-data-dir "perspectives/"))
+  (setq my-persp-save-dir (expand-file-name  "perspectives/" my-data-dir))
 
   ;; a function to load a perspective saved file from a given directory
   (defun my/load-perspective (directory-path)
