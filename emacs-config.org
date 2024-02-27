@@ -451,7 +451,6 @@ Reload this configuration file.
 ** vertico
 Vertical auto completion in the minibuffer
 https://github.com/minad/vertico
-
 #+begin_src emacs-lisp
   (use-package vertico
     :straight t
@@ -469,7 +468,7 @@ https://github.com/minad/vertico
 *** vertico posframe
 #+begin_src emacs-lisp
   ;; (use-package vertico-posframe
-  ;; :straight t
+  ;;   :straight t
   ;;   :after vertico
   ;;   :init
   ;;   (vertico-posframe-mode 1))
@@ -477,7 +476,6 @@ https://github.com/minad/vertico
 
 ** all-the-icons-completion
 For better graphic in the completion buffer.
-
 #+begin_src emacs-lisp
   (use-package all-the-icons-completion
     :straight t
@@ -488,19 +486,15 @@ For better graphic in the completion buffer.
 ** prescient
 For better auto completion suggestions:
 https://github.com/raxod502/prescient.el
-
 #+begin_src emacs-lisp
   (use-package prescient
     :straight t
     :config
     (prescient-persist-mode 1)
-    ;;(setq prescient-save-file "~/Nextcloud/config/.emacs.d/prescient-save")
-    ;;(setq prescient-save-file (concat my-data-dir "prescient-save"))
     (setq prescient-save-file (expand-file-name "prescient-save" my-data-dir))
     )
 
   ;; To use prescient with vertico
-  ;;(straight-use-package 'vertico-prescient
   (use-package vertico-prescient
     :straight t
     )
@@ -519,7 +513,6 @@ Using with company (not used right now).
 ** consult
 Completion from a list of candidates, and has enhanced commands.
 https://github.com/minad/consult
-
 #+begin_src emacs-lisp
   (use-package consult
     :straight t
@@ -553,7 +546,6 @@ https://github.com/minad/consult
 ** marginalia
 Add side anotations to the completion buffer
 https://github.com/minad/marginalia/
-
 #+begin_src emacs-lisp
   (use-package marginalia
     :straight t
@@ -565,11 +557,9 @@ https://github.com/minad/marginalia/
 ** embark
 This package provides a sort of right-click contextual menu for Emacs, accessed through the embark-act command (which you should bind to a convenient key), offering you relevant actions to use on a target determined by the context:
 https://github.com/oantolin/embark/
-
 #+begin_src emacs-lisp
   (use-package embark
     :straight t
-
     :bind
     (("C-<dead-acute>" . embark-act)         ;; pick some comfortable binding
      ("C-;" . embark-dwim)        ;; good alternative: M-.
@@ -602,7 +592,6 @@ https://github.com/oantolin/embark/
 ** orderless
 To have completion based on parts of words, and sepparated by spaces.
 https://github.com/oantolin/orderless
-
 #+begin_src emacs-lisp
   (use-package orderless
     :straight t
@@ -618,9 +607,7 @@ https://github.com/oantolin/orderless
 
 ** TODO corfu completion
 https://github.com/minad/corfu
-
 Vertico completes the minibuffer, while corfu completes in buffer.
-
 #+begin_src emacs-lisp
   (use-package corfu
     :straight t
@@ -656,7 +643,6 @@ When several buffers visit identically-named files, Emacs must give the buffers 
 
 The forward naming method includes part of the file's directory name at the beginning of the buffer name
 https://www.gnu.org/software/emacs/manual/html_node/emacs/Uniquify.html
-
 #+begin_src emacs-lisp
   (require 'uniquify)
   (setq uniquify-buffer-name-style 'forward)
@@ -664,7 +650,6 @@ https://www.gnu.org/software/emacs/manual/html_node/emacs/Uniquify.html
 
 ** Keyboard chords
 Shortcuts to commands using just quick key combinations.
-
 #+begin_src emacs-lisp
   (use-package key-chord
     :straight t
@@ -690,7 +675,6 @@ Shortcuts to commands using just quick key combinations.
 
 ** Imenu-list
 Imenu shows the outline of your file as a browsable sidebar in another window.
-
 #+begin_src emacs-lisp
   (use-package imenu-list
     :straight t
@@ -736,7 +720,6 @@ Used in the hydra snippets.
 ** avy
 A better way to jump through text.
 https://github.com/abo-abo/avy
-
 #+begin_src emacs-lisp
   (use-package avy
     :straight t
@@ -749,7 +732,6 @@ https://github.com/abo-abo/avy
 
 ** perspective.el
 https://github.com/nex3/perspective-el
-
 #+begin_src emacs-lisp
   (use-package perspective
     :straight t
@@ -833,30 +815,14 @@ Put the number of lines and columns in the mini line.
   (setq column-number-mode nil)
 #+end_src
 
-** CANCELED tab-bar-mode
-#+begin_comment
-Canceled due to using =perspective= instead.
-#+end_comment
-
-tab-bar-mode seems to comply with all my requirements to store the configuration of the buffers and frames. This, coupled with desktop saving and restoring, can be the answer to get my workspaces saved to my needs.
-
-#+begin_src emacs-lisp
-  (tab-bar-mode 0)
-  ;; ;; Map the not mapped but useful functions
-  ;; (global-set-key (kbd "C-x t s") 'tab-list)
-  ;; (global-set-key (kbd "C-x t a") 'tab-recent)
-#+end_src
-
 ** Not blinking cursor
 Cursor doesn't blink:
-
 #+begin_src emacs-lisp
   (blink-cursor-mode 0)
 #+end_src
 
 ** Highlight the current line
 I don't need my line to be highlighted.
-
 #+begin_src emacs-lisp
   ;; Don't highlight the current line
   (global-hl-line-mode' 0)
@@ -864,7 +830,6 @@ I don't need my line to be highlighted.
 
 ** Font size increase/decrease
 Increase or decrease the font size
-
 #+begin_src emacs-lisp
   (global-set-key (kbd "M-+") 'text-scale-increase)
   (global-set-key (kbd "M--") 'text-scale-decrease)
@@ -872,14 +837,12 @@ Increase or decrease the font size
 
 ** full path in the title bar
 Put the complete path on the title bar, along the filename.
-
 #+begin_src emacs-lisp
   (setq-default frame-title-format "%b - (%f)")
 #+end_src
 
 ** Time and date
 Put time and date on the status line
-
 #+begin_src emacs-lisp
   (setq display-time-day-and-date t
         display-time-24hr-format t)
@@ -888,7 +851,6 @@ Put time and date on the status line
 
 ** Highlight matching parenthesis
 You can see the matching parenthesis
-
 #+begin_src emacs-lisp
   (show-paren-mode 1)
 #+end_src
@@ -902,7 +864,6 @@ You can see the matching parenthesis
 
 ** Fontify the header
 Fontify the whole line for headings (with a background color). Works well with Leuven theme:
-
 #+begin_src emacs-lisp
   (setq org-fontify-whole-heading-line nil)
 #+end_src
@@ -923,7 +884,6 @@ Different sizes for the different org headings.
 Open a branch into a different frame, but the same buffer:
 
 TODO: Search how to check if there is another right frame open or not.
-
 #+begin_src emacs-lisp
   (defun my/org-tree-open-in-right-frame ()
     (interactive)
@@ -940,7 +900,6 @@ TODO: Search how to check if there is another right frame open or not.
 
 ** No bell
 No audible bell, but visual one:
-
 #+begin_src emacs-lisp
   (setq ring-bell-function 'ignore)
   (setq visible-bell t)
@@ -948,7 +907,6 @@ No audible bell, but visual one:
 
 ** Line numbers
 This determines the style of line numbers in effect. If set to `nil', line numbers are disabled. For relative line numbers, set this to `relative'.
-
 #+begin_src emacs-lisp
   ;; Dinamically calculate the width of the line numbers
   (setq display-line-numbers-width-start t)
@@ -964,7 +922,6 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
 
 ** Long lines get wrapped
 Long lines get wrapped when they reach the edge. We activate it for all the buffers.
-
 #+begin_src emacs-lisp
   (global-visual-line-mode 1) ; 1 for on, 0 for off.
 #+end_src
@@ -972,7 +929,6 @@ Long lines get wrapped when they reach the edge. We activate it for all the buff
 ** Highlight indent guides
 Highlight the indent guides with a pipe character, so it's easier to see where we need to align the code.
 https://github.com/DarthFennec/highlight-indent-guides
-
 #+begin_src emacs-lisp
   (use-package highlight-indent-guides
     :straight t
@@ -987,7 +943,6 @@ https://github.com/DarthFennec/highlight-indent-guides
 We want to use the visual fill column mode to limit the width of the lines, even if they don't reach the right edge.
 
 When reaching the established width defined, the line will wrap, even before getting into the right border of the application.
-
 #+begin_src emacs-lisp
   ;; visual fill column mode
   (use-package visual-fill-column
@@ -1002,7 +957,6 @@ When reaching the established width defined, the line will wrap, even before get
 
 ** All the icons
 Get all the fancy icons.
-
 #+begin_src emacs-lisp
   (use-package all-the-icons
     :straight t
@@ -1011,7 +965,7 @@ Get all the fancy icons.
 #+end_src
 
 ** doom modeline
-doom modeline
+Doom modeline.
 #+begin_src emacs-lisp
   (use-package doom-modeline
     :straight t
@@ -1049,9 +1003,6 @@ doom modeline
 
 ** Dimmer
 It darkens the buffer I'm not using right now.
-
-/Problem/: when narrowing and opening it in an indirect buffer, it dimms both the windows. Check if we can differentiate.
-
 #+begin_src emacs-lisp
   (use-package dimmer
     :straight t
@@ -1068,7 +1019,6 @@ It darkens the buffer I'm not using right now.
 #+end_src
 
 ** Highlighting the line when changing windows
-
 #+begin_src emacs-lisp
   (use-package pulsar
     :straight t
@@ -1115,7 +1065,6 @@ Obtained from: https://zzamboni.org/post/beautifying-org-mode-in-emacs/
 Font attributes to be used, different for prose mode and code mode.
 
 Fonts we will be using for both modes:
-
 #+begin_src emacs-lisp
   (custom-theme-set-faces
    'user
@@ -1144,14 +1093,12 @@ Fonts we will be using for both modes:
 #+end_src
 
 Assign the variable font to prose mode:
-
 #+begin_src emacs-lisp
   (add-hook 'text-mode-hook 'variable-pitch-mode)
   (add-hook 'org-mode-hook 'variable-pitch-mode)
 #+end_src
 
 Use fixed font for code blocks and other non prose blocks, and configure all other aspects on how to show them on screen:
-
 #+begin_src emacs-lisp
   (custom-theme-set-faces
    'user
@@ -1181,7 +1128,6 @@ Use fixed font for code blocks and other non prose blocks, and configure all oth
 
 *** Protesilaos modus themes
 Protesilaos very good themes. These themes are already included in the standard emacs, so we can get rid of the use-package definition, and retain only the config.
-
 #+begin_src emacs-lisp
   ;; Add all your customizations prior to loading the themes
   (setq
@@ -1235,7 +1181,6 @@ Protesilaos very good themes. These themes are already included in the standard 
 
 *** poet theme
 https://github.com/kunalb/poet
-
 #+begin_src emacs-lisp
   (use-package poet-theme
     :straight t)
@@ -1244,7 +1189,6 @@ https://github.com/kunalb/poet
 *** Default theme
 Define some variables with the dark and clear themes, and a variable to control if the current theme is dark or clear.
 Also, rotate the list of themes applied.
-
 #+begin_src emacs-lisp
   ;; define the lists of clear and dark themes
   (setq my/themes-dark '(ef-deuteranopia-dark modus-vivendi))
@@ -1288,8 +1232,7 @@ Also, rotate the list of themes applied.
 #+end_src
 
 *** Toggle light and dark themes
-Function to change between dark and clear themes, based on past variables
-
+Function to change between dark and clear themes, based on past variables.
 #+begin_src emacs-lisp
   (with-eval-after-load 'consult
     (defun my/theme-changer ()
@@ -1331,7 +1274,6 @@ Function to change between dark and clear themes, based on past variables
 All orgmode configs
 ** Load the =org= package
 This comes from the old config, when I used the org-babel functions to tangled the config each time I ran emacs. This seems not to be used anymore.
-
 #+begin_src emacs-lisp
   ;; load the org package soon in the config
   ;; (use-package org
@@ -1357,14 +1299,12 @@ This comes from the old config, when I used the org-babel functions to tangled t
 
 ** org-id
 To create and use internal valid and unique links in org-mode, we will use the =org-id= features.
-
 #+begin_src emacs-lisp
   ;; org-id are globally unique UUIDs
   (setq org-id-method 'uuid)
   ;; It will use the CUSTOM_ID, if it exists
-  ;;of will create a new one in the form or UUID, as seen above
+  ;;or will create a new one in the form or UUID, as seen above
   (setq org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
-
   ;; file to store the local =org-id= locations
   ;; This way is synced to all my computers
   (setq org-id-locations-file (expand-file-name "org-id-locations" my-data-dir))
@@ -1372,7 +1312,6 @@ To create and use internal valid and unique links in org-mode, we will use the =
 
 ** org-indent-mode on all the buffers
 I need to have the orgmode indented to see clearly where I am, so I enable it on every orgmode buffer.
-
 #+begin_src emacs-lisp
   (add-hook 'org-mode-hook
             (lambda ()
@@ -1381,7 +1320,6 @@ I need to have the orgmode indented to see clearly where I am, so I enable it on
 #+end_src
 
 ** Leave an empty line before headings
-
 #+begin_src emacs-lisp
   (setq org-blank-before-new-entry '(
                                      (heading . t)
@@ -1390,8 +1328,7 @@ I need to have the orgmode indented to see clearly where I am, so I enable it on
 #+end_src
 
 ** Custom keybindings for org mode
-Custom keys to do things on the org mode
-
+Custom keys to do things on the org mode.
 #+begin_src emacs-lisp
   (global-set-key "\C-cl" 'org-store-link)
   (global-set-key "\C-cc" 'org-capture)
@@ -1401,14 +1338,12 @@ Custom keys to do things on the org mode
 
 ** Org is a variable pitch mode
 Require the org mode.
-
 #+begin_src emacs-lisp
   (add-hook 'org-mode-hook 'variable-pitch-mode)
 #+end_src
 
 ** Completion notes in to the Logbook
 Change notes are stored in the node's drawer, so we can fold it conveniently.
-
 #+begin_src emacs-lisp
   (setq org-log-into-drawer t)
 #+end_src
@@ -1417,7 +1352,6 @@ Change notes are stored in the node's drawer, so we can fold it conveniently.
 Put a note or a timestamp when something changes. For example:
 - When the tasks is marked as DONE
 - When the schedule or deadline date is changed
-
 #+begin_src emacs-lisp
   ;; Adds a timestamp to the state
   ;;(setq org-log-done 'time)
@@ -1434,7 +1368,6 @@ Put a note or a timestamp when something changes. For example:
 
 ** Custom states for the tasks
 These are the custom states for the tasks, and the character associated to it.
-
 #+begin_src emacs-lisp
   (setq org-todo-keywords
         '(
@@ -1447,8 +1380,7 @@ These are the custom states for the tasks, and the character associated to it.
 #+end_src
 
 ** TODO custom tags
-Create custom tags for different categories and contexts
-
+Create custom tags for different categories and contexts.
 #+begin_src emacs-lisp
   (setq org-tag-alist '(
                         ;; Contexts based on locations
@@ -1462,8 +1394,7 @@ Create custom tags for different categories and contexts
 #+end_src
 
 ** org-clock
-Remap the org-clock-in to a better key binding
-
+Remap the org-clock-in to a better key binding.
 #+begin_src emacs-lisp
   (defun my/org-set-clock ()
     "One-off function for `org-mode' task clocking.
@@ -1543,7 +1474,6 @@ Have some fancy icons for the categories.
 
 **** Agenda files
 We define the agenda files in this variable. This comes from my gtd workflow, explained here: TBD.
-
 #+begin_src emacs-lisp
   (setq org-agenda-files '(
   			 "~/Nextcloud/agenda/inbox.org"
@@ -1557,7 +1487,6 @@ We define the agenda files in this variable. This comes from my gtd workflow, ex
 
 **** Get rid of the DONE tasks in the agenda view
 We dont want the cluttering in our views. If a task is done, don't show it on the agenda view.
-
 #+begin_src emacs-lisp
   (setq org-agenda-skip-scheduled-if-done t)
   (setq org-agenda-skip-deadline-if-done t)
@@ -1566,7 +1495,6 @@ We dont want the cluttering in our views. If a task is done, don't show it on th
 
 **** Show next 7 days in the agenda view
 I need a more clear view for things to come. We can see 15 days from now.
-
 #+begin_src emacs-lisp
   (setq org-agenda-span 'week)
   (setq org-agenda-start-on-weekday nil)
@@ -1574,7 +1502,6 @@ I need a more clear view for things to come. We can see 15 days from now.
 
 **** TODO Custom agenda commands
 We define some agenda custom commands, to refine views, and get a clearer undestanding of the tasks.
-
 #+begin_src emacs-lisp
   (setq org-agenda-custom-commands
         '(
@@ -1776,7 +1703,7 @@ This is the config for the org-superagenda mode
     )
     #+end_src
 
-*** Restrict agenda to project
+*** TODO Restrict agenda to project
 https://github.com/ballantony/emacs-writing/blob/main/DoomEmacsWriting.org
 
 Agenda restricted to the current project, to keep track of its TODOs.
@@ -1935,7 +1862,7 @@ Used to capture notes in this file. Useful to maintain notes and snippets separa
            (t
             (let* ((this-file buffer-file-name)
                    (org-capture-templates
-                    `(("t" "Todo" entry (file+headline ,this-file "Notas")
+                    `(("t" "Todo" entry (file+headline ,this-file "Notes")
                        "** TODO %?"))))
               (org-capture)))))
   (global-set-key (kbd "C-c C") 'my/capture-to-this-buffer)
@@ -4270,6 +4197,20 @@ We can bookmark specific window and frame layouts, so we can later restore them.
     :init
     (burly-tabs-mode 1)
     )
+#+end_src
+
+** CANCELED tab-bar-mode
+#+begin_comment
+Canceled due to using =perspective= instead.
+#+end_comment
+
+tab-bar-mode seems to comply with all my requirements to store the configuration of the buffers and frames. This, coupled with desktop saving and restoring, can be the answer to get my workspaces saved to my needs.
+
+#+begin_src emacs-lisp :tangle no
+  (tab-bar-mode 0)
+  ;; ;; Map the not mapped but useful functions
+  ;; (global-set-key (kbd "C-x t s") 'tab-list)
+  ;; (global-set-key (kbd "C-x t a") 'tab-recent)
 #+end_src
 
 * Export config :noexport:ignore:
