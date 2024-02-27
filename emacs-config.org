@@ -7,27 +7,11 @@
 * Summary
 This is the literate config for my emacs use cases.
 
-I will try to document and compartmentalize the files, so it's easier to follow up.
-
-In order to make this work, you need to load this file in =emacs= and use the =org-babel-tangle= command (bound to =C-c C-v C-t= in a vanilla =emacs=). This will generate the different config files needed, shown in the structure below:
-
-#+begin_example
-.emacs.d/
-├── early-init.el
-├── init.el
-├── emacs-config.org        <-- this file
-├── modules
-│   └── my-org.el
-│   └── my-org-visuals.el
-...
-#+end_example
-
-The =modules= directory will contain all my complementary config files, separated by topic or use case.
+I will try to document and compartmentalize the sections, so it's easier to follow up, but it won't always be possible.
 
 * git related config
-
 ** magit
-git control version
+Git control version.
 https://cestlaz-nikola.github.io/posts/using-emacs-47-magit/
 
 #+begin_src emacs-lisp
@@ -58,6 +42,7 @@ Here, I put my personal information and all the packages related to accounts.
 
 ** Personal information
 This uses a special file, not commited, with my personal information, located in the path below.
+It contains the variables =user-full-name= and =user-mail-address=
 #+begin_src emacs-lisp
   ;; to protect my personal information, this file is not commited
   (load (expand-file-name "Nextcloud/config/.emacs.d/personal_info.el" (getenv "HOME")))
@@ -65,7 +50,7 @@ This uses a special file, not commited, with my personal information, located in
 
 ** TODO mastodon from emacs
 I can now check mastodon from emacs.
-Only evaluated if in my home env, and my encrypted directory is mounted, as the auth information is stored there.
+Only evaluated if in my home environment, my encrypted directory is mounted, as the auth information is stored there.
 
 #+begin_src emacs-lisp
   (if (and my-clear-directory-is-mounted-p my-homeenvironment-p)
@@ -84,17 +69,14 @@ Only evaluated if in my home env, and my encrypted directory is mounted, as the 
 #+end_src
 
 * General config
-
 ** Unmap the C-z key
 Unmap the C-z key, so no way to minimize or suspend emacs accidentally.
-
 #+begin_src emacs-lisp
   (global-unset-key (kbd "C-z"))
 #+end_src
 
 ** Garbage collection
 Fine tune the garbage collection.
-
 #+begin_src emacs-lisp
   ;; Adopt a sneaky garbage collection strategy of waiting until idle
   ;; time to collect; staving off the collector while the user is
@@ -129,30 +111,25 @@ https://git.sr.ht/~ashton314/emacs-bedrock/tree/main/item/init.el
 
 ** fringe bars
 We put some fringe space in the frames.
-
 #+begin_src emacs-lisp
   (fringe-mode 8)
 #+end_src
 
 ** Changes all yes/no questions to y/n type
 The questions are answered with a y or n, instead of yes or no.
-
 #+begin_src emacs-lisp
   (fset 'yes-or-no-p 'y-or-n-p)
 #+end_src
 
 ** Ask before closing emacs
 To avoid closing everything because I slip my finger ...
-
 #+begin_src emacs-lisp
   (setq confirm-kill-emacs 'y-or-n-p)
 #+end_src
 
 ** Network security set to high
 Enforcing the network security.
-
 https://www.gnu.org/software/emacs/manual/html_node/emacs/Network-Security.html
-
 #+begin_src emacs-lisp
   (setq network-security-level 'high)
 #+end_src
@@ -181,8 +158,7 @@ But backups are good to have:
 #+end_src
 
 ** utf-8 everywhere
-UTF-8 everywhere
-
+UTF-8 everywhere.
 #+begin_src emacs-lisp
   ;; make sure that UTF-8 is used everywhere.
   (set-terminal-coding-system  'utf-8)
@@ -196,7 +172,6 @@ UTF-8 everywhere
 
 ** Movement
 Some keys redefined to better adjust to the whole emacs key environment.
-
 #+begin_src emacs-lisp
   (global-set-key (kbd "M-p") 'backward-paragraph)
   (global-set-key (kbd "M-n") 'forward-paragraph)
@@ -204,7 +179,6 @@ Some keys redefined to better adjust to the whole emacs key environment.
 
 ** OS interaction
 These settings relate to how emacs interacts with your operating system.
-
 #+begin_src emacs-lisp
   (setq
    ;; makes killing/yanking interact with the system clipboard
@@ -230,7 +204,6 @@ These settings relate to how emacs interacts with your operating system.
 
 ** Save command history
 It is nice to have commands and their history saved so that every time you get back to work, you can just re-run stuff as you need it. It isn't a radical feature, it is just part of a good user experience.
-
 #+begin_src emacs-lisp
   (setq savehist-file (expand-file-name "savehist" my-data-dir))
   (savehist-mode 1)
@@ -246,13 +219,11 @@ It is nice to have commands and their history saved so that every time you get b
 
 ** auto revert mode
 When a file is changed in disk, the buffer reloads to reflect that change.
-
 #+begin_src emacs-lisp
   (global-auto-revert-mode 1)
 #+end_src
 
 Change dired buffers when the directory is changed:
-
 #+begin_src emacs-lisp
   ;; auto refresh dired when file changes
   (add-hook 'dired-mode-hook 'auto-revert-mode)
@@ -260,16 +231,14 @@ Change dired buffers when the directory is changed:
 
 ** Bookmarks
 All the config related to the bookmarks.
-
 #+begin_src emacs-lisp
-  ;;(setq bookmark-default-file "~/Nextcloud/config/.emacs.d/bookmarks")  ;;define file to use.
+  ;;define file to use.
   (setq bookmark-default-file (expand-file-name "bookmarks" my-data-dir))
   (setq bookmark-save-flag 1)  ;save bookmarks to .emacs.bmk after each entry
 #+end_src
 
 ** eww configuration
 Set the userAgent for eww.
-
 #+begin_src emacs-lisp
   (setq url-user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.51 Safari/537.36 Edg/99.0.1150.39")
 #+end_src
@@ -277,15 +246,13 @@ Set the userAgent for eww.
 ** recentf
 #+begin_src emacs-lisp
   ;; where to store the recent list file
-  ;;(setq recentf-save-file "~/Nextcloud/config/.emacs.d/recentf")
   (setq recentf-save-file (expand-file-name "recentf" my-data-dir))
   (recentf-mode 1)
   (global-set-key (kbd "C-c d r") #'recentf)
 #+end_src
 
 ** dired config
-all the configurations needed for dired
-
+All the configurations needed for dired.
 *** Directories first
 #+begin_src emacs-lisp
   (setq dired-listing-switches "-aBhl  --group-directories-first")

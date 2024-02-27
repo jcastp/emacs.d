@@ -93,7 +93,6 @@
     )
   )
 
-
 (use-package org
   :straight t
   )
