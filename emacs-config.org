@@ -1869,8 +1869,8 @@ Used to capture notes in this file. Useful to maintain notes and snippets separa
 #+end_src
 
 ** org-babel
+Don't ask for confirmation during org babel execution.
 #+begin_src emacs-lisp
-  ;; Don't ask for confirmation during org babel execution
   (setq org-confirm-babel-evaluate nil)
 #+end_src
 
@@ -2176,7 +2176,7 @@ Just show the TODOs from org-roam
 #+end_src
 
 *** org-roam random node
-Opens a random org-roam node with the roamtag tag.
+Opens a random org-roam node with the roamtag tag (that maps to a TODO entry).
 
 #+begin_src emacs-lisp
   (if my-homeenvironment-p
@@ -2603,7 +2603,7 @@ https://lucidmanager.org/productivity/ricing-org-mode/
   (setq-default line-spacing 0)
 
   ;; Change the ellipsis
-  (setq org-ellipsis "⤵")
+  (setq org-ellipsis "…")
 
   ;; Add frame borders and window dividers
    (modify-all-frames-parameters
@@ -2726,13 +2726,14 @@ https://www.graphviz.org/pdf/dotguide.pdf
 * Writing
 Here, I document all the config related to my writing.
 
-** Sentence end with just one space
+** Sentences end with just one space
 #+begin_src emacs-lisp
   (setq sentence-end-double-space nil)
 #+end_src
 
 ** Writeroom
-Distraction free writing mode
+Distraction free writing mode.
+https://github.com/joostkremers/writeroom-mode
 
 #+begin_src emacs-lisp
   (use-package writeroom-mode
@@ -2749,7 +2750,7 @@ Distraction free writing mode
 #+end_src
 
 ** Word count
-Word counting with objective
+Word counting with objective.
 
 #+begin_src emacs-lisp
   (use-package wc-mode
@@ -2782,7 +2783,7 @@ https://github.com/tty-tourist/org-tracktable
 #+end_src
 
 ** TODO guess-language
-Since I write in different languages, the dictionary applied is really important. If I write in spanish, I want the spanish dict to be applied, and not the english one.
+Since I write in different languages, the dictionary applied is really important. If I write in Spanish, I want the spanish dict to be applied, and not the english one.
 
 #+begin_src emacs-lisp
   (use-package guess-language
@@ -2803,11 +2804,9 @@ Since I write in different languages, the dictionary applied is really important
 
 ** org-journal
 This is for journaling every day, if possible.
-Documentation can be found here:
 https://github.com/bastibe/org-journal
 
 Only mounted when at home, and clear directory is mounted.
-
 #+begin_src emacs-lisp
      (if (and my-homeenvironment-p
   	    my-clear-directory-is-mounted-p)
@@ -2838,7 +2837,7 @@ Seach a word in the spanish dictionary.
 #+end_src
 
 ** Buscar sinónimos
-Seach a synonim
+Seach for synonyms for Spanish words.
 
 #+begin_src emacs-lisp
   (defun my/sinonimo (palabra)
@@ -2849,7 +2848,7 @@ Seach a synonim
 #+end_src
 
 ** Translate from english
-Translate a work
+Translate a word
 
 #+begin_src emacs-lisp
   (defun my/translate (palabra)
@@ -2886,14 +2885,12 @@ I will need to establish more code to switch between writing mode and normal mod
         (progn
           (fontaine-set-preset 'writing-big)
           (my/own-writeroom 70 t)
-          (focus-mode 1)
           (setq my/writing-env-p t)
           )
       ;; else part
       (progn
         (fontaine-set-preset 'regular)
         (my/own-writeroom 90 nil)
-        (focus-mode 0)
         (setq my/writing-env-p nil)
         )
       )
@@ -3134,6 +3131,7 @@ Manual: https://nobiot.github.io/org-remark/
 :PROPERTIES:
 :ID:       836dad1c-d03d-45d1-b9c7-0bce134fc86e
 :END:
+Template expansion, substituting the yasnippet package for something simpler.
 https://github.com/minad/tempel
 
 #+begin_src emacs-lisp
@@ -3230,20 +3228,20 @@ Now, we remap the major modes to the treesitter enabled modes:
 ** eglot configuration
 Configuring eglot to work with vanilla python and its tree-sitter enabled mode:
 #+begin_src emacs-lisp
-    (use-package eglot
-      :straight t
-      :config
-      ;;(add-to-list 'eglot-server-programs '(python-mode . ("pylsp")))
-      (add-to-list 'eglot-server-programs '(python-ts-mode . ("pylsp")))
+  (use-package eglot
+    :straight t
+    :config
+    ;;(add-to-list 'eglot-server-programs '(python-mode . ("pylsp")))
+    (add-to-list 'eglot-server-programs '(python-ts-mode . ("pylsp")))
 
-      (setq-default eglot-workspace-configuration
-    		'((:pylsp . (:configurationSources ["flake8"] :plugins (:pycodestyle (:enabled nil) :mccabe (:enabled nil) :flake8 (:enabled t))))))
+    (setq-default eglot-workspace-configuration
+  		'((:pylsp . (:configurationSources ["flake8"] :plugins (:pycodestyle (:enabled nil) :mccabe (:enabled nil) :flake8 (:enabled t))))))
 
-      :hook
-      ;;((python-mode . eglot-ensure))
-      ((python-ts-mode . eglot-ensure))
-      )
-    ;;(add-hook 'python-mode-hook 'eglot-ensure)
+    :hook
+    ;;((python-mode . eglot-ensure))
+    ((python-ts-mode . eglot-ensure))
+    )
+  ;;(add-hook 'python-mode-hook 'eglot-ensure)
 #+end_src
 
 ** Shell scripts
@@ -3327,10 +3325,10 @@ This serves to resize the windows
 #+end_src
 
 ** Nov.el
-Read e-pub in emacs
+Read e-pub in emacs.
 
 #+begin_src emacs-lisp
-  ( use-package nov
+  (use-package nov
     :straight t
     :config
     (setq nov-text-width 100)
@@ -3338,8 +3336,8 @@ Read e-pub in emacs
      (setq visual-fill-column-center-text t)
      (add-hook 'nov-mode-hook 'visual-line-mode)
      (add-hook 'nov-mode-hook 'visual-fill-column-mode)
+     ;; We save the place we left the e-pub in this file:
      (setq nov-save-place-file (expand-file-name "nov-places" my-data-dir))
-
 
      (defun my/nov-font-setup ()
        (face-remap-add-relative 'variable-pitch :family "Gentium"
@@ -3350,10 +3348,12 @@ Read e-pub in emacs
 #+end_src
 
 ** elfeed suite
-
+RSS read in emacs.
 #+begin_src emacs-lisp
+  ;; to store our rss feeds sources
   (use-package elfeed-org
     :straight t)
+  
   (use-package elfeed
     :straight t
     :init
@@ -3375,74 +3375,6 @@ Read e-pub in emacs
     )
 #+end_src
 
-* emacs dashboard
-Load it at the end of the config.
-https://github.com/emacs-dashboard/emacs-dashboard
-
-#+begin_src emacs-lisp
-  (if my-homeenvironment-p
-      (progn
-        (use-package dashboard
-  	:straight t
-  	:after org-agenda
-  	;; :bind
-  	;; ("C-c d d" . dashboard-open)
-          :config
-  	;;(dashboard-setup-startup-hook)
-          (setq dashboard-show-shortcuts t)
-          (setq dashboard-set-navigator nil)
-          (setq dashboard-set-heading-icons t)
-          (setq dashboard-set-file-icons t)
-          ;; Set the title
-          (setq dashboard-banner-logo-title "Welcome to Javi's emacs")
-          ;; Set the banner
-          ;;(setq dashboard-startup-banner 'logo)
-          (setq dashboard-startup-banner "~/Nextcloud/personal/steamboat_bender.png")
-  	;; set the projects backend to projects.el
-  	(setq dashboard-projects-backend 'project-el)
-          ;; Value can be
-          ;; - nil to display no banner
-          ;; - 'official which displays the official emacs logo
-          ;; - 'logo which displays an alternative emacs logo
-          ;; - 1, 2 or 3 which displays one of the text banners
-          ;; - "path/to/your/image.gif", "path/to/your/image.png" or "path/to/your/text.txt" which displays whatever gif/image/text you would prefer
-          ;; - a cons of '("path/to/your/image.png" . "path/to/your/text.txt")
-
-          ;; Content is not centered by default. To center, set
-          (setq dashboard-center-content t)
-          ;; The items that will be shown in the dashboard.
-          (setq dashboard-items '((recents  . 5)
-                                  (bookmarks . 5)
-                                  (projects . 5)
-                                  (agenda . 5)
-                                  ;;(registers . 5)
-                                  ))
-  	
-  	;; get the word of the day
-  	(setq wotd-def
-  	      (shell-command-to-string "python ~/Nextcloud/config/.emacs.d/rae_wotd.py"))
-  	;; Define the function to include the wotd in the dashboard
-  	(defun dashboard-insert-wotd (list-size)
-  	  (insert (propertize "Palabra del día:\n"
-  			      'face '(:foreground "green" :weight bold)))
-  	  (insert wotd-def))
-  	;; add the section to the dashboard
-  	(add-to-list 'dashboard-item-generators  '(wotd . dashboard-insert-wotd))
-  	(add-to-list 'dashboard-items '(wotd) nil)
-
-  	(dashboard-setup-startup-hook)
-  	)
-        
-        (with-eval-after-load 'dashboard
-  	(global-set-key (kbd "C-c d d") 'dashboard-open)
-          (dashboard-open))
-
-        ;; set the initial buffer to the dashboard
-        (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
-        )
-    )
-#+end_src
-
 * Email config
 
 ** TODO mu4e
@@ -3455,7 +3387,7 @@ https://github.com/emacs-dashboard/emacs-dashboard
   	:ensure t
   	;; installed from source
   	:load-path "/usr/local/share/emacs/site-lisp/mu4e"
-  	:defer 20 ; Wait until 20 seconds after startup
+  	:defer 10 ; Wait until 20 seconds after startup
   	:bind (("C-c m" . mu4e))
   	:config
   	(setq mu4e-change-filenames-when-moving t ; avoid sync conflicts
@@ -3493,6 +3425,77 @@ https://github.com/emacs-dashboard/emacs-dashboard
   ;; (setq smtpmail-smtp-service 1025)
   ;; (setq smtpmail-stream-type 'starttls)
 #+end_src
+
+* emacs dashboard
+Load it at the end of the config.
+https://github.com/emacs-dashboard/emacs-dashboard
+
+#+begin_src emacs-lisp
+  (if my-homeenvironment-p
+      (progn
+        (use-package dashboard
+  	:straight t
+  	:after org-agenda
+  	;; :bind
+  	;; ("C-c d d" . dashboard-open)
+          :config
+  	;;(dashboard-setup-startup-hook)
+          (setq dashboard-show-shortcuts t)
+          (setq dashboard-set-navigator nil)
+          (setq dashboard-set-heading-icons t)
+          (setq dashboard-set-file-icons t)
+          ;; Set the title
+          (setq dashboard-banner-logo-title "Welcome to Javi's emacs")
+  	
+          ;; Set the banner
+  	;; Value can be
+          ;; - nil to display no banner
+          ;; - 'official which displays the official emacs logo
+          ;; - 'logo which displays an alternative emacs logo
+          ;; - 1, 2 or 3 which displays one of the text banners
+          ;; - "path/to/your/image.gif", "path/to/your/image.png" or "path/to/your/text.txt" which displays whatever gif/image/text you would prefer
+          ;; - a cons of '("path/to/your/image.png" . "path/to/your/text.txt")
+          ;;(setq dashboard-startup-banner 'logo)
+          (setq dashboard-startup-banner "~/Nextcloud/personal/steamboat_bender.png")
+
+  	;; set the projects backend to projects.el
+  	(setq dashboard-projects-backend 'project-el)
+
+          ;; Content is not centered by default. To center, set
+          (setq dashboard-center-content t)
+          ;; The items that will be shown in the dashboard.
+          (setq dashboard-items '((recents  . 5)
+                                  (bookmarks . 5)
+                                  (projects . 5)
+                                  (agenda . 5)
+                                  ;;(registers . 5)
+                                  ))
+  	
+  	;; get the word of the day
+  	(setq wotd-def
+  	      (shell-command-to-string "python ~/Nextcloud/config/.emacs.d/rae_wotd.py"))
+  	;; Define the function to include the wotd in the dashboard
+  	(defun dashboard-insert-wotd (list-size)
+  	  (insert (propertize "Palabra del día:\n"
+  			      'face '(:foreground "green" :weight bold)))
+  	  (insert wotd-def))
+  	;; add the section to the dashboard
+  	(add-to-list 'dashboard-item-generators  '(wotd . dashboard-insert-wotd))
+  	(add-to-list 'dashboard-items '(wotd) nil)
+
+  	(dashboard-setup-startup-hook)
+  	)
+        
+        (with-eval-after-load 'dashboard
+  	(global-set-key (kbd "C-c d d") 'dashboard-open)
+          (dashboard-open))
+
+        ;; set the initial buffer to the dashboard
+        (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
+        )
+    )
+#+end_src
+
 * Testing
 Here there will be all the configs I'm testing, before committing them to the main config.
 
@@ -3509,9 +3512,8 @@ https://github.com/chenyanming/calibredb.el
 #+begin_src emacs-lisp
   ;; load this only on my home env
   (if (and
-       ;; just in my home environment
        my-homeenvironment-p
-       ;; can I create a variable here?
+       ;; the calibre library ddbb exists
        (file-exists-p "/home/calibre_libros/metadata.db"))
       (progn
         ;; here comes the actions I want to be done at a home environment
@@ -3612,6 +3614,8 @@ https://github.com/alexluigit/dirvish
 ** TODO org-toc
 Table of Contents for orgmode documents.
 
+https://github.com/snosov1/toc-org
+
 #+begin_src emacs-lisp
   (use-package toc-org
     :straight t
@@ -3645,33 +3649,27 @@ Right now, it depends on perspectives. I need to change this to also open files 
 
   (global-set-key (kbd "\e\et")
   		(lambda () (interactive) (persp-state-load "~/Nextcloud/config/.emacs.d/perspectives/tareas-persp")))
-  		;;(lambda () (interactive) (consult-bookmark "tareas")))
-  		;;(lambda () (interactive) (find-file "~/Nextcloud/agenda/tasks.org")))
+                ;;(lambda () (interactive) (find-file "~/Nextcloud/agenda/tasks.org")))
 #+end_src
 
 ** TODO org-books
 Reading list.
 
-#+begin_src emacs-lisp
-    (use-package org-books
-        :straight (org-books :type git
-              :host github
-              :repo "lepisma/org-books")
-  :straight t
-  :config
-  (setq org-books-file "~/Nextcloud/personal/libros.org")
-  )
-#+end_src
-
-** TODO fountain-mode: writing movie scripts
-https://fountain-mode.org/
+https://github.com/lepisma/org-books
 
 #+begin_src emacs-lisp
-    (use-package fountain-mode
-      :straight t)
+  (use-package org-books
+    :straight (org-books :type git
+  		       :host github
+  		       :repo "lepisma/org-books")
+    :straight t
+    :config
+    (setq org-books-file "~/Nextcloud/personal/libros.org")
+    )
 #+end_src
 
 ** TODO eat - terminal
+https://codeberg.org/akib/emacs-eat
 #+begin_src emacs-lisp
 (straight-use-package
  '(eat :type git
