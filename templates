@@ -117,14 +117,15 @@ org-mode
 	":PoV: "p n
 	":Personajes: " n
 	":Trama: " n
-	":Linea_temporal: " n
+	":Linea-temporal: " n
 	":Localizacion: " n
 	":Descripcion: " n
 	":Resumen: " n
-	":Motivacion_escena: " n
-	":Fuente_conflicto: " n
-	":Que_esta_juego: " n
+	":Motivacion-escena: " n
+	":Fuente-conflicto: " n
+	":Que-esta-en-juego: " n
 	":Emocion: " n
+	":Comentario: " n
 	":END:")
 
 (5how
