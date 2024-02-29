@@ -1710,14 +1710,21 @@ Agenda restricted to the current project, to keep track of its TODOs.
 I will use it to keep track of the pending tasks of the writing projects.
 
 #+begin_src emacs-lisp :tangle no
-  ;; (with-eval-after-load 'projectile
-  ;;   (defun my/agenda-restrict-this-project ()
-  ;;     "Restrict agenda to current project"
-  ;;     (interactive)
-  ;;     (let ((org-agenda-files (list (projectile-project-root))))
-  ;;       (org-agenda)))
-  ;;   (global-set-key (kbd "C-c A") 'my/agenda-restrict-this-project)
-  ;;   )
+  (defun my/agenda-restrict-this-project ()
+    "Restrict agenda to current project"
+    (interactive)
+    (let ((org-agenda-files (list (project-files (project-current))))
+          ;; Filter the files to only org files
+  	(org-agenda-files (cl-remove-if #'null (mapcar #'(lambda (file)
+  							   (if (string= (file-name-extension file) "org")
+  							       file
+  							     ))
+  						       org-agenda-files)))
+          )
+      (org-agenda)
+      ))
+
+  (global-set-key (kbd "C-c A") 'my/agenda-restrict-this-project)
 #+end_src
 
 ** Refile entries
