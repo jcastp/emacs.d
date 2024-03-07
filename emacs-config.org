@@ -68,6 +68,22 @@ Only evaluated if in my home environment, my encrypted directory is mounted, as 
     )
 #+end_src
 
+** direct access to my files
+ESC+ESC+c to directly access my config file.
+ESC+ESC+t to directly access my tasks file.
+
+Right now, it depends on perspectives. I need to change this to also open files if perspective is not installed.
+
+#+begin_src emacs-lisp
+  (global-set-key (kbd "\e\ec")
+  		(lambda () (interactive) (persp-state-load "~/Nextcloud/config/.emacs.d/perspectives/config-persp")))
+  		;;(lambda () (interactive) (find-file "~/.emacs.d/emacs-config.org")))
+
+  (global-set-key (kbd "\e\et")
+  		(lambda () (interactive) (persp-state-load "~/Nextcloud/config/.emacs.d/perspectives/tareas-persp")))
+                ;;(lambda () (interactive) (find-file "~/Nextcloud/agenda/tasks.org")))
+#+end_src
+
 * General config
 ** Unmap the C-z key
 Unmap the C-z key, so no way to minimize or suspend emacs accidentally.
@@ -3605,21 +3621,6 @@ https://github.com/snosov1/toc-org
     (add-hook 'org-mode-hook 'toc-org-mode))
 #+end_src
 
-** TODO direct access to my files
-ESC+ESC+c to directly access my config file.
-ESC+ESC+t to directly access my tasks file.
-
-Right now, it depends on perspectives. I need to change this to also open files if perspective is not installed.
-
-#+begin_src emacs-lisp
-  (global-set-key (kbd "\e\ec")
-  		(lambda () (interactive) (persp-state-load "~/Nextcloud/config/.emacs.d/perspectives/config-persp")))
-  		;;(lambda () (interactive) (find-file "~/.emacs.d/emacs-config.org")))
-
-  (global-set-key (kbd "\e\et")
-  		(lambda () (interactive) (persp-state-load "~/Nextcloud/config/.emacs.d/perspectives/tareas-persp")))
-                ;;(lambda () (interactive) (find-file "~/Nextcloud/agenda/tasks.org")))
-#+end_src
 
 ** TODO org-books
 Reading list.
