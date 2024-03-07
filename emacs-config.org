@@ -296,7 +296,7 @@ Defines a set of abbreviations that permits complete words with just some charac
 ** TODO hunspell
 Configure hunspell as the orthographic corrector.
 #+begin_src emacs-lisp
-  (setq ispell-program-name "hunspell")
+  ;;(setq ispell-program-name "hunspell")
 #+end_src
 
 ** Flyspell mode
@@ -353,13 +353,6 @@ Very large files loading.
     )
 #+end_src
 
-** try package
-For all the other packages I want to try without installing it in my config.
-#+begin_src emacs-lisp
-  (use-package try
-    :straight t)
-#+end_src
-
 ** openwith
 Open particular files with external applications.
 #+begin_src emacs-lisp
@@ -412,16 +405,6 @@ After pressing a key combo, it shows the key bindings associated.
     :config
     (which-key-mode)
     )
-#+end_src
-
-*** which-key-posframe
-https://github.com/yanghaoxie/which-key-posframe
-I can modify how the posframe is shown.
-#+begin_src emacs-lisp
-  ;; (use-package which-key-posframe
-  ;; :straight t
-  ;; :config
-  ;; (which-key-posframe-mode))
 #+end_src
 
 ** expand region
@@ -605,7 +588,7 @@ https://github.com/oantolin/orderless
     )
 #+end_src
 
-** TODO corfu completion
+** corfu completion
 https://github.com/minad/corfu
 Vertico completes the minibuffer, while corfu completes in buffer.
 #+begin_src emacs-lisp
@@ -808,14 +791,14 @@ But I want to automatically load some perspectives when I'm at home:
 
 * UI improvements
 ** Number of columns and rows
-Put the number of lines and columns in the mini line.
+Don't put the number of lines and columns in the mini line.
 
 #+begin_src emacs-lisp
   (setq line-number-mode nil)
   (setq column-number-mode nil)
 #+end_src
 
-** Not blinking cursor
+** No blinking cursor
 Cursor doesn't blink:
 #+begin_src emacs-lisp
   (blink-cursor-mode 0)
@@ -982,7 +965,7 @@ Doom modeline.
     ;; Do we need to show the minor modes?
     (setq doom-modeline-minor-modes nil)
     ;; word count of the buffer disabled, as it slows operations when word count grows
-    (setq doom-modeline-enable-word-count nil)
+    (setq doom-modeline-enable-word-count t)
     ;; Major modes in which to display word count continuously.
     ;; Also applies to any derived modes. Respects `doom-modeline-enable-word-count'.
     ;; If it brings the sluggish issue, disable `doom-modeline-enable-word-count' or
@@ -1010,7 +993,7 @@ It darkens the buffer I'm not using right now.
     (dimmer-configure-which-key)
     (dimmer-mode t)
     (dimmer-configure-magit)
-    (dimmer-configure-org)
+    ;;(dimmer-configure-org)
 
     ;; configure the dimmer
     (setq dimmer-adjustment-mode :background)
@@ -1747,7 +1730,7 @@ This lets you choose refiling targets in heading depth of 9, and lets you get al
   (setq org-refile-use-outline-path 'file)                  ; Show full paths for refiling
 #+end_src
 
-** TODO org-habits
+** org-habits
 Enable org-habits.
 
 #+begin_src emacs-lisp
@@ -1856,7 +1839,7 @@ Here I will add template captures for doing several things:
     ;; )
   #+end_src
 
-** TODO Capture to this buffer
+** Capture to this buffer
 https://github.com/ballantony/emacs-writing/blob/main/DoomEmacsWriting.org
 
 Used to capture notes in this file. Useful to maintain notes and snippets separated by projects. I will use this for my writing projects.
@@ -3383,7 +3366,6 @@ RSS read in emacs.
 #+end_src
 
 * Email config
-
 ** TODO mu4e
 
 #+begin_src emacs-lisp
@@ -3506,13 +3488,6 @@ https://github.com/emacs-dashboard/emacs-dashboard
 * Testing
 Here there will be all the configs I'm testing, before committing them to the main config.
 
-** TODO hippie-expand
-https://masteringemacs.org/article/text-expansion-hippie-expand
-
-#+begin_src emacs-lisp
-  (global-set-key (kbd "M-i") 'hippie-expand)
-#+end_src
-
 ** TODO calibre
 https://github.com/chenyanming/calibredb.el
 
@@ -3630,19 +3605,6 @@ https://github.com/snosov1/toc-org
     (add-hook 'org-mode-hook 'toc-org-mode))
 #+end_src
 
-** TODO org-timeblocker
-https://github.com/ichernyshovvv/org-timeblock
-
-#+begin_src emacs-lisp
-  ;; (use-package org-timeblock
-  ;; :straight (org-timeblock :type git
-  ;;             :host github
-  ;;             :repo "ichernyshovvv/org-timeblock")
-  ;; :config
-  ;; (setq org-timeblock-inbox-file "~/Nextcloud/agenda/inbox.org")
-  ;; )
-#+end_src
-
 ** TODO direct access to my files
 ESC+ESC+c to directly access my config file.
 ESC+ESC+t to directly access my tasks file.
@@ -3687,16 +3649,6 @@ https://codeberg.org/akib/emacs-eat
                ("terminfo/65" "terminfo/65/*")
                ("integration" "integration/*")
                (:exclude ".dir-locals.el" "*-tests.el"))))
-#+end_src
-
-** TODO org-edna
-https://www.nongnu.org/org-edna-el/
-
-#+begin_src emacs-lisp
-  (use-package org-edna
-    :straight t
-    :config
-    (org-edna-mode 1))
 #+end_src
 
 ** TODO bookmarks in an org file
@@ -3868,28 +3820,6 @@ I want to open my own view to edit my writing.
     )
 #+end_src
 
-** TODO emacs activities
-#+begin_src emacs-lisp
-  (use-package activities
-    :init
-    (activities-mode)
-    ;;(activities-tabs-mode)
-    ;; Prevent `edebug' default bindings from interfering.
-    (setq edebug-inhibit-emacs-lisp-mode-bindings t)
-    :bind
-    (("C-x C-a C-n" . activities-new)
-     ;; As resuming is expected to be one of the most commonly used
-     ;; commands, this binding is one of the easiest to press.
-     ("C-x C-a C-a" . activities-resume)
-     ("C-x C-a C-s" . activities-suspend)
-     ("C-x C-a C-k" . activities-kill)
-     ;; This binding mirrors, e.g. "C-x t RET".
-     ("C-x C-a RET" . activities-switch)
-     ("C-x C-a b" . activities-switch-buffer)
-     ("C-x C-a g" . activities-revert)
-     ("C-x C-a l" . activities-list))
-    )
-#+end_src
 * home related load and startup
 This will be loaded automatically when at home.
 
