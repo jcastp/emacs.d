@@ -3714,6 +3714,14 @@ I want to open my own view to edit my writing.
     )
 #+end_src
 
+
+** TODO god mode
+#+begin_src emacs-lisp
+  (use-package god-mode
+    :straight t
+    :config
+    (global-set-key (kbd "<escape>") #'god-local-mode))
+#+end_src
 * home related load and startup
 This will be loaded automatically when at home.
 
