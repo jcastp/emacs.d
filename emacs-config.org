@@ -3391,10 +3391,14 @@ RSS read in emacs.
     )
 #+end_src
 
-* Email config
 ** TODO mu4e
+* CANCELED Email config
+:LOGBOOK:
+- State "CANCELED"   from              [2024-04-07 dom 18:45]
+:END:
 
-#+begin_src emacs-lisp
+Not tangled, due to problems with building mu in the OS.
+#+begin_src emacs-lisp :tangle no
   ;; this will only load on my main system
   (if my-desktopsystem-p
       (progn
