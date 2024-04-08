@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t; -*-
 ;; lisp evaluation of recursion
 (setq max-lisp-eval-depth 5000)
 
