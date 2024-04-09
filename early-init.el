@@ -5,9 +5,11 @@
 ;;; Code:
 (setq package-enable-at-startup nil)
 
+;; garbage collector config
 (setq gc-cons-threshold (* 1024 1024 20))
 (setq gc-cons-percentage 0.5)
 
+;; the custom.el file location
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (when (file-exists-p custom-file)
   (load custom-file))
@@ -17,3 +19,6 @@
 
 ;; Inhibit resizing the frame when changing the font
 (setq frame-inhibit-implied-resize t)
+
+(provide 'early-init)
+;;; early-init.el ends here

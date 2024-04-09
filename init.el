@@ -1,4 +1,7 @@
-;; -*- lexical-binding: t; -*-
+;;; init.el --- My init.el file -*- lexical-binding: t; -*-
+;;; Commentary:
+
+;;; Code:
 ;; lisp evaluation of recursion
 (setq max-lisp-eval-depth 5000)
 
@@ -98,3 +101,6 @@
   :straight t
   )
 (org-babel-load-file "~/.emacs.d/emacs-config.org")
+
+(provide 'init)
+;;; init.el ends here
