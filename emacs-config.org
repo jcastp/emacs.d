@@ -3775,6 +3775,17 @@ Time intervals, such as pomodoro.
                               (notify "Break time is over!")))))
     )
 #+end_src
+** TODO freeze-it - kill your inner editor
+https://github.com/rnkn/freeze-it
+
+An Emacs minor mode to kill your inner editor! Every writer struggles to balance their creative and critical sides, with progress frequently hindered by the temptation to go back and revise to get things just right. Freeze It aims to combat this temptation.
+
+#+begin_src emacs-lisp
+  (use-package freeze-it
+    :straight t
+    :config
+    )
+#+end_src
 * home related load and startup
 This will be loaded automatically when at home.
 
