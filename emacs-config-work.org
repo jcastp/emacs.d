@@ -19,7 +19,7 @@ I work better with fixed fonts in this kind of environments
 Since at work I don't open so many windows, we can use this width to better use what I get.
 
 #+begin_src emacs-lisp
-  (setq-default visual-fill-column-width 110)
+  (setq-default visual-fill-column-width 100)
 #+end_src
 
 ** Put the correct agenda files for work
