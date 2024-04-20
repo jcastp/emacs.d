@@ -1205,7 +1205,7 @@ Also, rotate the list of themes applied.
 
   ;; establish if we start with a dark or clear theme
   ;; boolean variable: t is dark, nil is clear
-  (defvar my-theme-dark-p nil)
+  (defvar my-theme-dark-p t)
 
   ;; define a function to rotate a list. Custom, yes, I know it could be done better.
   (defun my/rotate-list (list)
