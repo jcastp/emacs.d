@@ -3343,7 +3343,8 @@ This serves to resize the windows
 ** Nov.el
 Read e-pub in emacs.
 
-#+begin_src emacs-lisp
+Removing this one, and using the one from the source code below:
+#+begin_src emacs-lisp :tangle no
   (use-package nov
     :straight t
     :config
@@ -3361,6 +3362,31 @@ Read e-pub in emacs.
      (add-hook 'nov-mode-hook 'my/nov-font-setup)
      (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
   )
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package esxml
+    :straight (esxml :type git :host github :repo "tali713/esxml")
+    :straight t)
+
+  (use-package nov
+    :after esxml
+    :straight (nov :type git :host nil :repo "https://depp.brause.cc/nov.el.git")
+    :config
+    (setq nov-text-width 100)
+    ;;(setq nov-text-width t)
+    (setq visual-fill-column-center-text t)
+    (add-hook 'nov-mode-hook 'visual-line-mode)
+    (add-hook 'nov-mode-hook 'visual-fill-column-mode)
+    ;; We save the place we left the e-pub in this file:
+    (setq nov-save-place-file (expand-file-name "nov-places" my-data-dir))
+
+    (defun my/nov-font-setup ()
+      (face-remap-add-relative 'variable-pitch :family "Gentium"
+                               :height 1.2))
+    (add-hook 'nov-mode-hook 'my/nov-font-setup)
+    (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
+    )
 #+end_src
 
 ** elfeed suite
