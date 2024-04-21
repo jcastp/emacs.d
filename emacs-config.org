@@ -3343,6 +3343,7 @@ This serves to resize the windows
 ** Nov.el
 Read e-pub in emacs.
 
+https://tech.toryanderson.com/2022/11/23/viewing-epub-in-emacs/
 Removing this one, and using the one from the source code below:
 #+begin_src emacs-lisp :tangle no
   (use-package nov
