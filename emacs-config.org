@@ -1485,9 +1485,9 @@ Have some fancy icons for the categories.
 We define the agenda files in this variable. This comes from my gtd workflow, explained here: TBD.
 #+begin_src emacs-lisp
   (setq org-agenda-files '(
-  			 "~/Nextcloud/agenda/inbox.org"
+  			 ;;"~/Nextcloud/agenda/inbox.org"
                            "~/Nextcloud/agenda/tasks.org"
-                           "~/Nextcloud/agenda/projects.org"
+                           ;;"~/Nextcloud/agenda/projects.org"
   			 "~/Nextcloud/agenda/calendar.org"
   			 ;; added this one to be able to search in it, and add from here to the main task files.
   			 "~/Nextcloud/agenda/someday.org"
@@ -1772,17 +1772,17 @@ Here I will add template captures for doing several things:
     (setq org-capture-templates'(
                                  ;; tasks
                                  ("i" "Inbox" entry
-                                  (file "~/Nextcloud/agenda/inbox.org")
+                                  (file+headline "~/Nextcloud/agenda/tasks.org" "Inbox")
                                   "* TODO %i%? \n:LOGBOOK: \n:CREATED: %U \n:END:"
                                   :empty-lines-after 1)
 
     			     ("t" "My TODO task format." entry
-                                 (file "~/Nextcloud/agenda/tasks.org")
+                                 (file+healines "~/Nextcloud/agenda/tasks.org" "Tasks")
                                  "** TODO %i%? \n:LOGBOOK: \n:CREATED: %U \n:END:"
                                    :empty-lines-after 1)
 
     			     ("p" "New project." entry
-                                   (file "~/Nextcloud/agenda/projects.org")
+                                   (file+headline "~/Nextcloud/agenda/projects.org" "Projects")
                                    "** TODO %? \n:LOGBOOK: \n:CREATED: %U \n:END:\n  :PROPERTIES:\n:COOKIE_DATA: todo recursive\n:END:\n   - Objetivo:"
                                   :empty-lines-after 1)
 
