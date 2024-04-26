@@ -1031,7 +1031,11 @@ It darkens the buffer I'm not using right now.
 ** Highlighting the line when changing windows
 #+begin_src emacs-lisp
   (use-package pulsar
+    :after consult
     :straight t
+    :hook
+    (consult-after-jump . pulsar-recenter-top)
+    (consult-after-jump . pulsar-reveal-entry)
     :config
     (setq pulsar-pulse t)
     (setq pulsar-delay 0.055)
@@ -1039,8 +1043,8 @@ It darkens the buffer I'm not using right now.
     (setq pulsar-face 'pulsar-magenta)
     (setq pulsar-highlight-face 'pulsar-yellow)
     ;; integration with the `consult' package:
-    (add-hook 'consult-after-jump-hook #'pulsar-recenter-top)
-    (add-hook 'consult-after-jump-hook #'pulsar-reveal-entry)
+    ;;(add-hook 'consult-after-jump-hook #'pulsar-recenter-top)
+    ;;(add-hook 'consult-after-jump-hook #'pulsar-reveal-entry)
     ;; enable everywhere
     (pulsar-global-mode 1)
     :bind
