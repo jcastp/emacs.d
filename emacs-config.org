@@ -3124,6 +3124,7 @@ Sometimes I want to create a story prompt on the fly. These functions allow for 
            (filename (concat date "-" (replace-regexp-in-string " " "_" text) ".org"))
            (full-path (concat my/stories-directory "/" filename)))
       (find-file full-path)))
+  (global-set-key (kbd "C-c d e") 'my/create-empty-writing-file)
 
   (defun my/create-writing-exercise (text)
     "Create a new file with the current date and the specified TEXT.
@@ -3140,6 +3141,7 @@ Sometimes I want to create a story prompt on the fly. These functions allow for 
         (insert "#+TITLE: " text "\n\n" python-output))
       (find-file file-path)
       ))
+  (global-set-key (kbd "C-c d w") 'my/create-writing-exercise)
 #+end_src
 
 ** TODO writing mode function
