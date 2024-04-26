@@ -53,8 +53,8 @@ Only evaluated if in my home environment, my encrypted directory is mounted, as 
   (if (and my-clear-directory-is-mounted-p my-homeenvironment-p)
       (use-package mastodon
         :straight t
-        :bind
-        ("C-c d m" . mastodon)
+        ;; :bind
+        ;; ("C-c d m" . mastodon)
         :config
         ;; account configuration
         (setq mastodon-instance-url "https://mastodon.online"
@@ -261,7 +261,7 @@ Set the userAgent for eww.
   ;; where to store the recent list file
   ;;(setq recentf-save-file (expand-file-name "recentf" my-data-dir))
   (recentf-mode 1)
-  (global-set-key (kbd "C-c d r") #'recentf)
+  ;;(global-set-key (kbd "C-c d r") #'recentf)
 #+end_src
 
 ** dired config
@@ -531,10 +531,10 @@ https://github.com/minad/consult
            ;;("C-x b" . consult-buffer) ;; defined in perspective section
            ("C-x r b" . consult-bookmark)
            ("M-y" . consult-yank-from-kill-ring)
-  	 ("C-c d t" . consult-theme)
+  	 ;;("C-c d t" . consult-theme)
            ;; Go commands
            ("M-g M-g" . consult-goto-line)
-  	 ("C-c d o" . consult-outline)
+  	 ;;("C-c d o" . consult-outline)
            ("M-g i" . consult-imenu-multi)
            ;;("M-g o" . consult-outline)
            ("M-g h" . consult-org-heading)
@@ -3104,7 +3104,7 @@ https://github.com/minad/tempel
     (add-hook 'prog-mode-hook 'tempel-setup-capf)
     (add-hook 'text-mode-hook 'tempel-setup-capf)
     :bind
-    ("C-c d i" . tempel-insert)
+    ;;("C-c d i" . tempel-insert)
     :config
     (setq tempel-path "~/.emacs.d/templates")
     )
@@ -3124,7 +3124,7 @@ Sometimes I want to create a story prompt on the fly. These functions allow for 
            (filename (concat date "-" (replace-regexp-in-string " " "_" text) ".org"))
            (full-path (concat my/stories-directory "/" filename)))
       (find-file full-path)))
-  (global-set-key (kbd "C-c d e") 'my/create-empty-writing-file)
+  ;;(global-set-key (kbd "C-c d e") 'my/create-empty-writing-file)
 
   (defun my/create-writing-exercise (text)
     "Create a new file with the current date and the specified TEXT.
@@ -3141,7 +3141,7 @@ Sometimes I want to create a story prompt on the fly. These functions allow for 
         (insert "#+TITLE: " text "\n\n" python-output))
       (find-file file-path)
       ))
-  (global-set-key (kbd "C-c d w") 'my/create-writing-exercise)
+  ;;(global-set-key (kbd "C-c d w") 'my/create-writing-exercise)
 #+end_src
 
 ** TODO writing mode function
@@ -3417,7 +3417,7 @@ RSS read in emacs.
       (elfeed)
       (elfeed-update)
       )
-    (global-set-key (kbd "C-c d f") 'my/elfeed)
+    ;;(global-set-key (kbd "C-c d f") 'my/elfeed)
     )
 #+end_src
 
@@ -3527,7 +3527,7 @@ https://github.com/emacs-dashboard/emacs-dashboard
   	)
         
         (with-eval-after-load 'dashboard
-  	(global-set-key (kbd "C-c d d") 'dashboard-open)
+  	;;(global-set-key (kbd "C-c d d") 'dashboard-open)
           (dashboard-open))
 
         ;; set the initial buffer to the dashboard
@@ -3631,7 +3631,7 @@ https://github.com/lepisma/org-books
 I want to see the difference between the buffer and its file.
 
 #+begin_src emacs-lisp
-  (global-set-key (kbd "C-c d c") 'diff-buffer-with-file)
+  ;;(global-set-key (kbd "C-c d c") 'diff-buffer-with-file)
 #+end_src
 
 ** TODO My editing function
@@ -3725,7 +3725,7 @@ I want to open my own view to edit my writing.
         )
       )
 
-    (global-set-key (kbd "C-c d e") 'my/editing-windows)
+    ;;(global-set-key (kbd "C-c d e") 'my/editing-windows)
     )
 #+end_src
 
@@ -3816,6 +3816,33 @@ An Emacs minor mode to kill your inner editor! Every writer struggles to balance
     :config
     )
 #+end_src
+
+** TODO my own keymap
+I want to have my own dedicated keymap for the functions I use the most
+#+begin_src emacs-lisp
+  (defvar-keymap my/key-prefix-writing-map
+    :doc "Functions related to writing"
+    "e" #'my/editing-windows
+    "w" #'my/create-writing-exercise
+    "q" #'my/create-empty-writing-file
+    )
+
+  (defvar-keymap my/key-prefix-map
+    :doc "My personal keymap."
+    "c" #'diff-buffer-with-file
+    "d" #'dashboard-open
+    "f" #'elfeed
+    "i" #'tempel-insert
+    "m" #'mastodon
+    "o" #'consult-outline
+    "r" #'recentf
+    "t" #'consult-theme
+    "w" (cons "writing" my/key-prefix-writing-map)
+    )
+
+  (keymap-set global-map "C-c d" my/key-prefix-map)
+#+end_src
+
 * home related load and startup
 This will be loaded automatically when at home.
 
