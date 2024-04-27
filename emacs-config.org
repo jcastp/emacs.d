@@ -343,25 +343,12 @@ To automatically close parenthesis and other punctuation signs.
         )
 #+end_src
 
-** undo-tree
-Undo with graphical tree.
-#+begin_src emacs-lisp
-  ;; (use-package undo-tree
-  ;;   :straight t
-  ;;   :config
-  ;;   (global-undo-tree-mode 1)
-  ;;   (global-unset-key (kbd "C-z")) ;; just in case it was still set
-  ;;   (global-set-key (kbd "C-z") #'undo-tree-visualize)
-  ;;   )
-#+end_src
-
 ** TODO vundo - undo with visual cues
 #+begin_src emacs-lisp
   (use-package vundo
     :straight t
     :config
-    (global-unset-key (kbd "C-z")) ;; just in case it was still set
-    (global-set-key (kbd "C-z") #'vundo)
+    (global-set-key (kbd "C-x u") #'vundo)
   )
 #+end_src
 ** vlf related config
