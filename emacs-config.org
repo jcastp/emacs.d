@@ -3850,6 +3850,8 @@ An Emacs minor mode to kill your inner editor! Every writer struggles to balance
 
 * TODO my own keymap
 I want to have my own dedicated keymap for the functions I use the most.
+
+From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
 #+begin_src emacs-lisp
   (defvar-keymap my/key-prefix-writing-map
     :doc "Functions related to writing"
