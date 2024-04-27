@@ -3863,7 +3863,7 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
     "w" (cons "writing" my/key-prefix-writing-map)
     )
 
-  (keymap-set global-map "C-c d" my/key-prefix-map)
+  (keymap-set global-map "C-z" my/key-prefix-map)
 #+end_src
 
 * home related load and startup
