@@ -3751,14 +3751,18 @@ I want to open my own view to edit my writing.
   			 :chat-model "zephyr"
   			 :embedding-model "zephyr"))
   	    ("notux - mixture experts" . (make-llm-ollama
-  			  :chat-model "notux"
-  			  :embedding-model "notux"))
+  					  :chat-model "notux"
+  					  :embedding-model "notux"))
   	    ("nous-hermes2 - code" . (make-llm-ollama
-  			    :chat-model "nous-hermes2"
-  			    :embedding-model "noes-hermes2"))
+  				      :chat-model "nous-hermes2"
+  				      :embedding-model "noes-hermes2"))
   	    ("dolphin_mixtral" . (make-llm-ollama
     				  :chat-model "dolphin_mixtral"
     				  :embedding-model "dolphin_mixtral"))
+  	    ("llama3" . (make-llm-ollama
+    			 :chat-model "llama3"
+    			 :embedding-model "llama3"))
+
 
   	    )
   	  )
