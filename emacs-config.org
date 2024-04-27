@@ -1761,100 +1761,100 @@ Enable org-habits.
 Here I will add template captures for doing several things:
 
 #+begin_src emacs-lisp
-    (setq org-capture-templates'(
-                                 ;; tasks
-                                 ("i" "Inbox" entry
-                                  (file+headline "~/Nextcloud/agenda/tasks.org" "Inbox")
-                                  "* TODO %i%? \n:LOGBOOK: \n:CREATED: %U \n:END:"
-                                  :empty-lines-after 1)
+  (setq org-capture-templates'(
+                               ;; tasks
+                               ("i" "Inbox" entry
+                                (file+headline "~/Nextcloud/agenda/tasks.org" "Inbox")
+                                "* TODO %i%? \n:LOGBOOK: \n:CREATED: %U \n:END:"
+                                :empty-lines-after 1)
 
-    			     ("t" "My TODO task format." entry
-                                 (file+headline "~/Nextcloud/agenda/tasks.org" "Tasks")
-                                 "** TODO %i%? \n:LOGBOOK: \n:CREATED: %U \n:END:"
-                                   :empty-lines-after 1)
+  			     ("t" "My TODO task format." entry
+                               (file+headline "~/Nextcloud/agenda/tasks.org" "Tasks")
+                               "** TODO %i%? \n:LOGBOOK: \n:CREATED: %U \n:END:"
+                                 :empty-lines-after 1)
 
-    			     ("p" "New project." entry
-                                   (file+headline "~/Nextcloud/agenda/projects.org" "Projects")
-                                   "** TODO %? \n:LOGBOOK: \n:CREATED: %U \n:END:\n  :PROPERTIES:\n:COOKIE_DATA: todo recursive\n:END:\n   - Objetivo:"
-                                  :empty-lines-after 1)
+  			     ("p" "New project." entry
+                                (file+headline "~/Nextcloud/agenda/tasks.org" "Projects")
+                                 "** TODO %? \n:LOGBOOK: \n:CREATED: %U \n:END:\n  :PROPERTIES:\n:COOKIE_DATA: todo recursive\n:END:\n   - Objetivo:"
+                                :empty-lines-after 1)
 
-                                 ;; Writing related things
-                                 ("w" "Writing idea." entry
-                                  (file+headline "~/Nextcloud/escritura/retazos/ideas.org" "Ideas")
-                                  "** TODO %?\n*** Personajes\n- \n*** Ambientación\n*** Eventos\n"
-                                  :empty-lines-after 1)
+                               ;; Writing related things
+                               ("w" "Writing idea." entry
+                                (file+headline "~/Nextcloud/escritura/retazos/ideas.org" "Ideas")
+                                "** TODO %?\n*** Personajes\n- \n*** Ambientación\n*** Eventos\n"
+                                :empty-lines-after 1)
 
-                                 ;; Writing character
-                                 ("P" "Personaje" entry
-                                  (file "~/Nextcloud/escritura/ideas/personajes.org")
-                                  "* %i%?"
-                                  :empty-lines-after 1)
+                               ;; Writing character
+                               ("P" "Personaje" entry
+                                (file "~/Nextcloud/escritura/ideas/personajes.org")
+                                "* %i%?"
+                                :empty-lines-after 1)
 
-    			     ;; books to read
-    			     ("b" "Manual book entry" entry (file "~/Nextcloud/agenda/books.org")
-    			      "* %^{TITLE}\n:PROPERTIES:\n:ADDED: %<[%Y-%02m-%02d]>\n:END:%^{AUTHOR}p\n%?" :empty-lines 1)
-    			     
-    			     ;; this one adds a book from an URL, *but you have to have the URL already in the kill ring* or it won't work
-    			     ("B" "Book with URL" entry (file "~/Nextcloud/agenda/books.org")
-    			      "%(let* ((url (substring-no-properties (current-kill 0)))
-    			      (details (org-books-get-details url)))
-    			      (when details (apply #'org-books-format 1 details)))")
-                                 )
-          )
+  			     ;; books to read
+  			     ("b" "Manual book entry" entry (file "~/Nextcloud/agenda/books.org")
+  			      "* %^{TITLE}\n:PROPERTIES:\n:ADDED: %<[%Y-%02m-%02d]>\n:END:%^{AUTHOR}p\n%?" :empty-lines 1)
+  			     
+  			     ;; this one adds a book from an URL, *but you have to have the URL already in the kill ring* or it won't work
+  			     ("B" "Book with URL" entry (file "~/Nextcloud/agenda/books.org")
+  			      "%(let* ((url (substring-no-properties (current-kill 0)))
+  			      (details (org-books-get-details url)))
+  			      (when details (apply #'org-books-format 1 details)))")
+                               )
+        )
 
-    ;; (setq org-capture-templates'(
+  ;; (setq org-capture-templates'(
 
-    ;;                              ("c" "New calendar entry." entry
-    ;;                               (file+headline "~/Nextcloud/agenda/tasks.org" "Calendar")
-    ;;                               "** TODO %i%?\nSCHEDULED: %^t\n"
-    ;;                               :empty-lines-after 1)
+  ;;                              ("c" "New calendar entry." entry
+  ;;                               (file+headline "~/Nextcloud/agenda/tasks.org" "Calendar")
+  ;;                               "** TODO %i%?\nSCHEDULED: %^t\n"
+  ;;                               :empty-lines-after 1)
 
-    ;;                              ;; Writing related things
-    ;;                              ("i" "Writing idea." entry
-    ;;                               (file+headline "~/Nextcloud/escritura/ideas/ideas.org" "otras")
-    ;;                               "** TODO %?\n*** Personajes\n- \n*** Ambientación\n*** Eventos\n"
-    ;;                               :empty-lines-after 1)
+  ;;                              ;; Writing related things
+  ;;                              ("i" "Writing idea." entry
+  ;;                               (file+headline "~/Nextcloud/escritura/ideas/ideas.org" "otras")
+  ;;                               "** TODO %?\n*** Personajes\n- \n*** Ambientación\n*** Eventos\n"
+  ;;                               :empty-lines-after 1)
 
-    ;;                              ("P" "Personaje" entry
-    ;;                               (file "~/Nextcloud/escritura/ideas/personajes.org")
-    ;;                               "* "
-    ;;                               :empty-lines-after 1)
+  ;;                              ("P" "Personaje" entry
+  ;;                               (file "~/Nextcloud/escritura/ideas/personajes.org")
+  ;;                               "* "
+  ;;                               :empty-lines-after 1)
 
-    ;;                              ("h" "Compost heap" item
-    ;;                               (file+headline "~/Nextcloud/escritura/ideas/compost_heap.org" "Compost heap")
-    ;;                               "%i"
-    ;;                               :empty-lines-after 1)
+  ;;                              ("h" "Compost heap" item
+  ;;                               (file+headline "~/Nextcloud/escritura/ideas/compost_heap.org" "Compost heap")
+  ;;                               "%i"
+  ;;                               :empty-lines-after 1)
 
-    ;;                              ("r" "Note and misc content." entry
-    ;;                               (file+headline "~/Nextcloud/agenda/inbox.org" "Notes")
-    ;;                               "** %i%?\n"
-    ;;                               :empty-lines-after 1)
+  ;;                              ("r" "Note and misc content." entry
+  ;;                               (file+headline "~/Nextcloud/agenda/inbox.org" "Notes")
+  ;;                               "** %i%?\n"
+  ;;                               :empty-lines-after 1)
 
-    ;;                              ;; books to read
-    ;;                              ("b" "Manual book entry" entry (file "~/Nextcloud/agenda/books.org")
-    ;;                               "* %^{TITLE}\n:PROPERTIES:\n:ADDED: %<[%Y-%02m-%02d]>\n:END:%^{AUTHOR}p\n%?" :empty-lines 1)
+  ;;                              ;; books to read
+  ;;                              ("b" "Manual book entry" entry (file "~/Nextcloud/agenda/books.org")
+  ;;                               "* %^{TITLE}\n:PROPERTIES:\n:ADDED: %<[%Y-%02m-%02d]>\n:END:%^{AUTHOR}p\n%?" :empty-lines 1)
 
-    ;;                              ;; this one adds a book from an URL, *but you have to have the URL already in the kill ring* or it won't work
-    ;;                              ("B" "Book with URL" entry (file "~/Nextcloud/agenda/books.org")
-    ;;                               "%(let* ((url (substring-no-properties (current-kill 0)))
-    ;;                 (details (org-books-get-details url)))
-    ;;            (when details (apply #'org-books-format 1 details)))")
+  ;;                              ;; this one adds a book from an URL, *but you have to have the URL already in the kill ring* or it won't work
+  ;;                              ("B" "Book with URL" entry (file "~/Nextcloud/agenda/books.org")
+  ;;                               "%(let* ((url (substring-no-properties (current-kill 0)))
+  ;;                 (details (org-books-get-details url)))
+  ;;            (when details (apply #'org-books-format 1 details)))")
 
-    ;; ;;     ("b" "books to read." entry
-    ;; ;;       (file+headline "~/Nextcloud
-    ;;                             /agenda/books.org" "Books")
-    ;;       "* %^{Title}  %^g
-    ;;       %i
-    ;;       *Author(s):* %^{Author}
-    ;;       ")
+  ;; ;;     ("b" "books to read." entry
+  ;; ;;       (file+headline "~/Nextcloud
+  ;;                             /agenda/books.org" "Books")
+  ;;       "* %^{Title}  %^g
+  ;;       %i
+  ;;       *Author(s):* %^{Author}
+  ;;       ")
 
-    ;; linea en tabla
-    ;;  ("w" "peso" table-line
-    ;;     (file+headline "~/Nextcloud/personal/peso.org" "peso")
-    ;;     "|%<%Y/%m/%d>|%i|")
+  ;; linea en tabla
+  ;;  ("w" "peso" table-line
+  ;;     (file+headline "~/Nextcloud/personal/peso.org" "peso")
+  ;;     "|%<%Y/%m/%d>|%i|")
 
-    ;;    )
-    ;; )
+  ;;    )
+  ;; )
   #+end_src
 
 ** Capture to this buffer
