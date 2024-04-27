@@ -3151,42 +3151,160 @@ Sometimes I want to create a story prompt on the fly. These functions allow for 
 ** TODO writing mode function
 My own writing setup function.
 
-I will need to establish more code to switch between writing mode and normal mode.
+When I write, I find that I need to have full focus on the writing, and have a different visual aspect from my normal work. This function changes:
+- the theme
+- the fonts used
+- activates writeroom mode, with some custom setting (width, mainly)
 
 #+begin_src emacs-lisp
-  ;; create a variable to see the status of the writing mode
-  (defvar my/writing-env-p nil)
+    (require 'consult) ;; to change the theme
+    (require 'fontaine) ;; to change the fonts
 
-  ;; helper function to turn on and off writeroom with some options
-  (defun my/own-writeroom (width flag)
-    "Define my own writeroom options"
-    (setq writeroom-width width)
-    (if flag
-        (writeroom--enable)
-      (writeroom--disable)
-      )
-    )
+    (defvar my/writing-env-p nil
+      "Status of my writing mode. Nil when not enabled, true when it is.")
 
-  ;; main function to change to the writing mode.
-  (defun my/writing()
-    "Establish my own writing setting with just one function"
-    (interactive)
-    (if (not my/writing-env-p)
-        (progn
-          (fontaine-set-preset 'writing-big)
-          (my/own-writeroom 70 t)
-          (setq my/writing-env-p t)
-          )
-      ;; else part
-      (progn
-        (fontaine-set-preset 'regular)
-        (my/own-writeroom 90 nil)
-        (setq my/writing-env-p nil)
+    (defvar my/writing-env-normal-theme 'ef-deuteranopia-dark
+      "The theme I use for my normal environment.")
+
+    (defvar my/writing-env-work-theme 'poet
+      "The theme I use for my writing environment.")
+
+    ;; This needs to be a fontaine preset
+    (defvar my/writing-env-normal-font 'regular
+      "The font I use for my writing environment.")
+
+    (defvar my/writing-env-work-font 'writing-big
+      "The font I use for my writing environment.")
+
+    ;; helper function to turn on and off writeroom with some options
+    (defun my/own-writeroom (width flag)
+      "Define my own writeroom options.
+      WIDTH is the writeroom width reserved for text.
+    FLAG is the boolean to enable or disable writeroom."
+      (setq writeroom-width width)
+      (if flag
+          (writeroom--enable)
+        (writeroom--disable)
         )
       )
-    )
 
-  (global-set-key (kbd "C-c 2") 'my/writing)
+    ;; main function to change to the writing mode.
+    (defun my/writing-env()
+      "Establish my own writing setting with just one function.
+  It changes theme, font, and writeroom mode."
+      (interactive)
+      (if (not my/writing-env-p)
+          (progn
+          	(consult-theme my/writing-env-work-theme)
+          	(fontaine-set-preset my/writing-env-work-font)
+            (my/own-writeroom 70 t)
+            (setq my/writing-env-p t)
+            )
+        ;; else part
+        (progn
+          (consult-theme my/writing-env-normal-theme)
+          (fontaine-set-preset my/writing-env-normal-font)
+          (my/own-writeroom 90 nil)
+          (setq my/writing-env-p nil)
+          )
+        )
+      )
+
+    ;;(global-set-key (kbd "C-c 2") 'my/writing)
+#+end_src
+** TODO My editing function
+I want to open my own view to edit my writing.
+- I want to have a left window with the index of the file, usually an org mode file, so =imenu-list= is a good candidate.
+- I want the central window to have the text, so it will host the main file I want to edit, for readability.
+- I want the right window to host the file with notes. In my case, I use org-remark, so I have to find the associated filename.
+
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-remark
+    ;; different widths for windows, based on the frame width.
+    ;; The number is the percentage of the screen.
+    (defvar my-75-window (floor (* (frame-width) 0.75)))
+    (defvar my-50-window (floor (* (frame-width) 0.50)))
+    (defvar my-60-window (floor (* (frame-width) 0.60)))
+    (defvar my-25-window (floor (* (frame-width) 0.25)))
+    (defvar my-30-window (floor (* (frame-width) 0.30)))
+    (defvar my-20-window (floor (* (frame-width) 0.20)))
+
+    (defun my/file-notes-filename (my-file)
+      ;;(interactive)
+      "Get a filename, and returns the associated org-remark notes filename.
+    If the filename is ~/tmp/test.org, the associated notes filename will be test-notes.org"
+      ;; we decompose the filename into name and extension, and concat the notes bit.
+      (setq my-notes-file (concat (file-name-sans-extension (file-name-nondirectory my-file))
+            			"-notes."
+            			(file-name-extension (file-name-nondirectory my-file))
+            			)))
+
+    (defun my/editing-profile ()
+      "The visual style of window I want to have for editing."
+      (consult-theme 'leuven)
+      (setq visual-fill-column-width 90)
+      (fontaine-set-preset 'editing)      
+      )
+
+    ;; from https://stackoverflow.com/questions/24955253/centre-emacs-buffer-within-window
+    (defun my/resize-margins (cur-window)
+      (let ((margin-size (/ (- (window-width) visual-fill-column-width) 2)))
+        (set-window-margins cur-window margin-size margin-size)))
+
+    (defun my/editing-windows ()
+      "Divides the frame into useful windows to edit my work.
+      Disposition:
+      - Left window: imenu-list.
+      - Central window: the main file we want to review.
+      - Right window: the org-remark file associated to the main file.
+      "
+      (interactive)
+      (let
+          (
+           ;; ask for the file to open
+           (my-file (read-file-name "Enter file name: "))
+           ;; store the current window for later reference
+           (my-current-window (selected-window))
+           ;; calculate dynamically the windows' sizes when calling the function
+           (my-75-window (floor (* (frame-width) 0.75)))
+           (my-50-window (floor (* (frame-width) 0.50)))
+           (my-60-window (floor (* (frame-width) 0.60)))
+           (my-25-window (floor (* (frame-width) 0.25)))
+           (my-30-window (floor (* (frame-width) 0.30)))
+           (my-20-window (floor (* (frame-width) 0.20)))
+           )
+        ;; ;;;;;;;;;;;;;;;;;;;;
+        ;; body of the function
+        ;; delete other windows before starting
+        (delete-other-windows)
+        ;; Set the imenu-list-smart-toggle width
+        (setq imenu-list-size my-25-window)
+        ;; dont jump to imenu-list after activation
+        (setq imenu-list-focus-after-activation nil)
+        (imenu-list-smart-toggle)
+        ;; open the main file in the central window
+        (select-window my-current-window)
+        (find-file my-file)
+        ;; Create the right window
+        (setq q-window-1 (split-window-right (- my-25-window)))
+        ;; move to the right window
+        (select-window q-window-1)
+        ;; open the notes file.
+        (setq my-notes-file (my/file-notes-filename my-file))
+        (find-file my-notes-file)
+        ;; go back to the original window
+        (select-window my-current-window)
+        ;; remove the line numbering
+        (display-line-numbers-mode -1)
+        (my/resize-margins my-current-window) ;; this doesn't work, probably some margin property.
+        ;; Here we apply the stylistic changes
+        ;; This part here should be done as a hook, if this was a package.
+        (my/editing-profile)
+        )
+      )
+
+    ;;(global-set-key (kbd "C-c d e") 'my/editing-windows)
+    )
 #+end_src
 
 * Programming
@@ -3638,101 +3756,6 @@ I want to see the difference between the buffer and its file.
   ;;(global-set-key (kbd "C-c d c") 'diff-buffer-with-file)
 #+end_src
 
-** TODO My editing function
-I want to open my own view to edit my writing.
-- I want to have a left window with the index of the file, usually an org mode file, so =imenu-list= is a good candidate.
-- I want the central window to have the text, so it will host the main file I want to edit, for readability.
-- I want the right window to host the file with notes. In my case, I use org-remark, so I have to find the associated filename.
-
-#+begin_src emacs-lisp
-  (with-eval-after-load 'org-remark
-    ;; different widths for windows, based on the frame width.
-    ;; The number is the percentage of the screen.
-    (defvar my-75-window (floor (* (frame-width) 0.75)))
-    (defvar my-50-window (floor (* (frame-width) 0.50)))
-    (defvar my-60-window (floor (* (frame-width) 0.60)))
-    (defvar my-25-window (floor (* (frame-width) 0.25)))
-    (defvar my-30-window (floor (* (frame-width) 0.30)))
-    (defvar my-20-window (floor (* (frame-width) 0.20)))
-
-    (defun my/file-notes-filename (my-file)
-      ;;(interactive)
-      "Get a filename, and returns the associated org-remark notes filename.
-    If the filename is ~/tmp/test.org, the associated notes filename will be test-notes.org"
-      ;; we decompose the filename into name and extension, and concat the notes bit.
-      (setq my-notes-file (concat (file-name-sans-extension (file-name-nondirectory my-file))
-            			"-notes."
-            			(file-name-extension (file-name-nondirectory my-file))
-            			)))
-
-    (defun my/editing-profile ()
-      "The visual style of window I want to have for editing."
-      (consult-theme 'leuven)
-      (setq visual-fill-column-width 90)
-      (fontaine-set-preset 'editing)      
-      )
-
-    ;; from https://stackoverflow.com/questions/24955253/centre-emacs-buffer-within-window
-    (defun my/resize-margins (cur-window)
-      (let ((margin-size (/ (- (window-width) visual-fill-column-width) 2)))
-        (set-window-margins cur-window margin-size margin-size)))
-
-    (defun my/editing-windows ()
-      "Divides the frame into useful windows to edit my work.
-      Disposition:
-      - Left window: imenu-list.
-      - Central window: the main file we want to review.
-      - Right window: the org-remark file associated to the main file.
-      "
-      (interactive)
-      (let
-          (
-           ;; ask for the file to open
-           (my-file (read-file-name "Enter file name: "))
-           ;; store the current window for later reference
-           (my-current-window (selected-window))
-           ;; calculate dynamically the windows' sizes when calling the function
-           (my-75-window (floor (* (frame-width) 0.75)))
-           (my-50-window (floor (* (frame-width) 0.50)))
-           (my-60-window (floor (* (frame-width) 0.60)))
-           (my-25-window (floor (* (frame-width) 0.25)))
-           (my-30-window (floor (* (frame-width) 0.30)))
-           (my-20-window (floor (* (frame-width) 0.20)))
-           )
-        ;; ;;;;;;;;;;;;;;;;;;;;
-        ;; body of the function
-        ;; delete other windows before starting
-        (delete-other-windows)
-        ;; Set the imenu-list-smart-toggle width
-        (setq imenu-list-size my-25-window)
-        ;; dont jump to imenu-list after activation
-        (setq imenu-list-focus-after-activation nil)
-        (imenu-list-smart-toggle)
-        ;; open the main file in the central window
-        (select-window my-current-window)
-        (find-file my-file)
-        ;; Create the right window
-        (setq q-window-1 (split-window-right (- my-25-window)))
-        ;; move to the right window
-        (select-window q-window-1)
-        ;; open the notes file.
-        (setq my-notes-file (my/file-notes-filename my-file))
-        (find-file my-notes-file)
-        ;; go back to the original window
-        (select-window my-current-window)
-        ;; remove the line numbering
-        (display-line-numbers-mode -1)
-        (my/resize-margins my-current-window) ;; this doesn't work, probably some margin property.
-        ;; Here we apply the stylistic changes
-        ;; This part here should be done as a hook, if this was a package.
-        (my/editing-profile)
-        )
-      )
-
-    ;;(global-set-key (kbd "C-c d e") 'my/editing-windows)
-    )
-#+end_src
-
 ** TODO ellama - emacs with LLMs and ollama
 #+begin_src emacs-lisp
   (use-package ellama
@@ -3825,12 +3848,15 @@ An Emacs minor mode to kill your inner editor! Every writer struggles to balance
     )
 #+end_src
 
-** TODO my own keymap
-I want to have my own dedicated keymap for the functions I use the most
+* TODO my own keymap
+I want to have my own dedicated keymap for the functions I use the most.
 #+begin_src emacs-lisp
   (defvar-keymap my/key-prefix-writing-map
     :doc "Functions related to writing"
+    ;; writing mode
+    "a" #'my/writing-env
     "e" #'my/editing-windows
+    ;; writing exercises
     "w" #'my/create-writing-exercise
     "q" #'my/create-empty-writing-file
     )
