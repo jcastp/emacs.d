@@ -3182,6 +3182,7 @@ When I write, I find that I need to have full focus on the writing, and have a d
       (interactive)
       (if (not my/writing-env-p)
           (progn
+  	  (display-line-numbers-mode 0)
           	(consult-theme my/writing-env-work-theme)
           	(fontaine-set-preset my/writing-env-work-font)
             (my/own-writeroom 70 t)
@@ -3189,6 +3190,7 @@ When I write, I find that I need to have full focus on the writing, and have a d
             )
         ;; else part
         (progn
+  	(display-line-numbers-mode 1)
           (consult-theme my/writing-env-normal-theme)
           (fontaine-set-preset my/writing-env-normal-font)
           (my/own-writeroom 90 nil)
