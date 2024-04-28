@@ -22,7 +22,7 @@ https://cestlaz-nikola.github.io/posts/using-emacs-47-magit/
     )
   #+end_src
   
-** TODO diff-hl
+** diff-hl
 To show where the file has been modified
 https://github.com/dgutov/diff-hl
 #+begin_src emacs-lisp
@@ -45,7 +45,9 @@ It contains the variables =user-full-name= and =user-mail-address=
   (load (expand-file-name "Nextcloud/config/.emacs.d/personal_info.el" (getenv "HOME")))
 #+end_src
 
-** TODO mastodon from emacs
+** mastodon from emacs
+https://github.com/emacsmirror/mastodon
+
 I can now check mastodon from emacs.
 Only evaluated if in my home environment, my encrypted directory is mounted, as the auth information is stored there.
 
@@ -2245,7 +2247,7 @@ This allows headlines to be ignored in the exports. To do so, the ignore tag (=C
   (setq org-html-validation-link nil)
 #+end_src
 
-**** TODO install htmlize
+**** install htmlize
 This package is required to create the vanilla html export.
 
 #+begin_src emacs-lisp
@@ -3532,7 +3534,6 @@ RSS read in emacs.
     )
 #+end_src
 
-** TODO mu4e
 * CANCELED Email config
 :LOGBOOK:
 - State "CANCELED"   from              [2024-04-07 dom 18:45]
