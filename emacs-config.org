@@ -1482,7 +1482,7 @@ We define the agenda files in this variable. This comes from my gtd workflow, ex
   			 ;;"~/Nextcloud/agenda/inbox.org"
                            "~/Nextcloud/agenda/tasks.org"
                            ;;"~/Nextcloud/agenda/projects.org"
-  			 "~/Nextcloud/agenda/calendar.org"
+  			 ;;"~/Nextcloud/agenda/calendar.org"
   			 ;; added this one to be able to search in it, and add from here to the main task files.
   			 "~/Nextcloud/agenda/someday.org"
                            ))
