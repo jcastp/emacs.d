@@ -2573,6 +2573,7 @@ https://orgmode.org/worg/exporters/beamer/tutorial.html
                                                            (ditaa . t)
                                                            (gnuplot . t)
   							 (plantuml . t)
+  							 (dot . t)
                                                            )
                                )
   (setq org-latex-pdf-process
