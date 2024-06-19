@@ -3854,6 +3854,42 @@ https://github.com/alphapapa/activities.el
      )
  #+end_src
  
+
+** TODO bibliography - config
+
+*** bibtex
+#+begin_src emacs-lisp
+  (use-package bibtex
+  :custom
+  (bibtex-dialect 'biblatex)
+  (bibtex-user-optional-fields
+   '(("keywords" "Keywords to describe the entry" "")
+     ("file" "Link to a document file." "" )))
+  (bibtex-align-at-equal-sign t)
+  (bibtex-file-path "~/Nextcloud/config/.emacs.d/bibliography/")
+  )
+#+end_src
+*** biblio
+Biblio to automatically import books or articles:
+#+begin_src emacs-lisp
+  (use-package biblio)
+#+end_src
+*** citar
+Citar
+#+begin_src emacs-lisp
+  (use-package citar
+    :config
+    (setq citar-bibliography '("~/Nextcloud/config/.emacs.d/bibliography/biblio.bib"))
+    :custom
+    (citar-bibliography org-cite-global-bibliography)
+    (org-cite-insert-processor 'citar)
+    (org-cite-follow-processor 'citar)
+    (org-cite-activate-processor 'citar)
+    )
+#+end_src
+
+
+
 * TODO my own keymap
 I want to have my own dedicated keymap for the functions I use the most.
 
