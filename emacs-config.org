@@ -3854,28 +3854,32 @@ https://github.com/alphapapa/activities.el
      )
  #+end_src
  
-
 ** TODO bibliography - config
+All the config needed to manage bibliographies and references.
 
 *** bibtex
+The main files are the .bib files, where all the information about the reading material is stored.
+
 #+begin_src emacs-lisp
   (use-package bibtex
-  :custom
-  (bibtex-dialect 'biblatex)
-  (bibtex-user-optional-fields
-   '(("keywords" "Keywords to describe the entry" "")
-     ("file" "Link to a document file." "" )))
-  (bibtex-align-at-equal-sign t)
-  (bibtex-file-path "~/Nextcloud/config/.emacs.d/bibliography/")
-  )
+    :custom
+    (bibtex-dialect 'biblatex)
+    (bibtex-user-optional-fields
+     '(("keywords" "Keywords to describe the entry" "")
+       ("file" "Link to a document file." "" )))
+    (bibtex-align-at-equal-sign t)
+    (bibtex-file-path "~/Nextcloud/config/.emacs.d/bibliography/")
+    )
 #+end_src
+
 *** biblio
-Biblio to automatically import books or articles:
+Biblio to automatically import books or articles from different repositories.
 #+begin_src emacs-lisp
   (use-package biblio)
 #+end_src
+
 *** citar
-Citar
+Citar allows to insert bibliographic references in our texts.
 #+begin_src emacs-lisp
   (use-package citar
     :config
@@ -3888,7 +3892,12 @@ Citar
     )
 #+end_src
 
-
+*** TODO citar-org-roam integration
+#+begin_src emacs-lisp
+  (use-package citar-org-roam
+  :after (citar org-roam)
+  :config (citar-org-roam-mode))
+#+end_src
 
 * TODO my own keymap
 I want to have my own dedicated keymap for the functions I use the most.
