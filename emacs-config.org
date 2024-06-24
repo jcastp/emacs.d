@@ -3624,17 +3624,17 @@ https://github.com/emacs-dashboard/emacs-dashboard
                                   ;;(registers . 5)
                                   ))
   	
-  	;; get the word of the day
-  	(setq wotd-def
-  	      (shell-command-to-string "python ~/Nextcloud/config/.emacs.d/rae_wotd.py"))
-  	;; Define the function to include the wotd in the dashboard
-  	(defun dashboard-insert-wotd (list-size)
-  	  (insert (propertize "Palabra del día:\n"
-  			      'face '(:foreground "green" :weight bold)))
-  	  (insert wotd-def))
-  	;; add the section to the dashboard
-  	(add-to-list 'dashboard-item-generators  '(wotd . dashboard-insert-wotd))
-  	(add-to-list 'dashboard-items '(wotd) nil)
+  	;; ;; get the word of the day
+  	;; (setq wotd-def
+  	;;       (shell-command-to-string "python ~/Nextcloud/config/.emacs.d/rae_wotd.py"))
+  	;; ;; Define the function to include the wotd in the dashboard
+  	;; (defun dashboard-insert-wotd (list-size)
+  	;;   (insert (propertize "Palabra del día:\n"
+  	;; 		      'face '(:foreground "green" :weight bold)))
+  	;;   (insert wotd-def))
+  	;; ;; add the section to the dashboard
+  	;; (add-to-list 'dashboard-item-generators  '(wotd . dashboard-insert-wotd))
+  	;; (add-to-list 'dashboard-items '(wotd) nil)
 
   	(dashboard-setup-startup-hook)
   	)
