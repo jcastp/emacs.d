@@ -524,6 +524,7 @@ https://github.com/minad/consult
            ;; Go commands
            ("M-g M-g" . consult-goto-line)
   	 ;;("C-c d o" . consult-outline)
+  	 ("M-i" . consult-imenu)
            ("M-g i" . consult-imenu-multi)
            ;;("M-g o" . consult-outline)
            ("M-g h" . consult-org-heading)
