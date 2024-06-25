@@ -3899,6 +3899,16 @@ Citar allows to insert bibliographic references in our texts.
   :config (citar-org-roam-mode))
 #+end_src
 
+
+** TODO Casual dired - porcelain
+Adding a small menu with all the keybindings as a reference. Very useful.
+
+#+begin_src emacs-lisp
+  (use-package casual-dired
+  :ensure t
+  :bind (:map dired-mode-map ("C-o" . #'casual-dired-tmenu)))
+#+end_src
+
 * TODO my own keymap
 I want to have my own dedicated keymap for the functions I use the most.
 
