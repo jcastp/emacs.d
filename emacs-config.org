@@ -3909,6 +3909,13 @@ Adding a small menu with all the keybindings as a reference. Very useful.
   :bind (:map dired-mode-map ("C-o" . #'casual-dired-tmenu)))
 #+end_src
 
+** TODO Casual info - porcelain
+#+begin_src emacs-lisp
+  (use-package casual-info
+  :ensure t
+  :bind (:map Info-mode-map ("C-o" . 'casual-info-tmenu)))
+#+end_src
+
 * TODO my own keymap
 I want to have my own dedicated keymap for the functions I use the most.
 
