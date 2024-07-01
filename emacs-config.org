@@ -3471,7 +3471,7 @@ Removing this one, and using the one from the source code below:
   (use-package nov
     :straight t
     :config
-    (setq nov-text-width 100)
+    (setq nov-text-width 90)
      ;;(setq nov-text-width t)
      (setq visual-fill-column-center-text t)
      (add-hook 'nov-mode-hook 'visual-line-mode)
@@ -3481,7 +3481,7 @@ Removing this one, and using the one from the source code below:
 
      (defun my/nov-font-setup ()
        (face-remap-add-relative 'variable-pitch :family "Gentium"
-                                :height 1.2))
+                                :height 1.4))
      (add-hook 'nov-mode-hook 'my/nov-font-setup)
      (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
   )
