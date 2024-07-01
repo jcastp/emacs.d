@@ -308,25 +308,6 @@ Defines a set of abbreviations that permits complete words with just some charac
   (setq save-abbrevs 'silent)
 #+end_src
 
-** TODO hunspell
-Configure hunspell as the orthographic corrector.
-#+begin_src emacs-lisp
-  (setq ispell-program-name "hunspell")
-#+end_src
-
-** Flyspell mode
-Automatic spelling in the buffer
-This conflicts with orgmode archive C-c $
-https://www.gnu.org/software/emacs/manual/html_node/emacs/Spelling.html
-#+begin_src emacs-lisp
-(add-hook 'text-mode-hook 'flyspell-mode)
-(global-font-lock-mode t)
-;; custom location of the dictionary
-(setq ispell-personal-dictionary (expand-file-name "dict" my-data-dir))
-;; save the dictionary without asking
-(setq ispell-silently-savep t)
-#+end_src
-
 ** electric pair mode
 To automatically close parenthesis and other punctuation signs.
 #+begin_src emacs-lisp
@@ -443,6 +424,29 @@ Reload this configuration file.
     (load (concat user-emacs-directory "init.el"))
     )
   (global-set-key (kbd "C-c r r" ) 'my/reload-config)
+#+end_src
+
+** Spelling
+https://www.gnu.org/software/emacs/manual/html_node/emacs/Spelling.html
+
+*** TODO hunspell
+Configure =hunspell= as the orthographic corrector, as it is the more modern option. =aspell= is good enough, but it has stopped being developed.
+
+#+begin_src emacs-lisp
+  (setq ispell-program-name "hunspell")
+#+end_src
+
+*** Flyspell mode
+Automatic spelling in the buffer.
+This conflicts with orgmode archive =C-c $=.
+
+#+begin_src emacs-lisp
+(add-hook 'text-mode-hook 'flyspell-mode)
+(global-font-lock-mode t)
+;; custom location of the dictionary
+(setq ispell-personal-dictionary (expand-file-name "dict" my-data-dir))
+;; save the dictionary without asking
+(setq ispell-silently-savep t)
 #+end_src
 
 * vertico, prescient, consult, marginalia, embark
