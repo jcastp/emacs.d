@@ -94,8 +94,7 @@ Unmap the C-z key, so no way to minimize or suspend emacs accidentally.
 Fine tune the garbage collection.
 #+begin_src emacs-lisp
   ;; Adopt a sneaky garbage collection strategy of waiting until idle
-  ;; time to collect; staving off the collector while the user is
-  ;; working.  Thanks Doom -
+  ;; time to collect; staving off the collector while the user is working.  Thanks Doom -
   ;; https://github.com/hlissner/doom-emacs/blob/develop/docs/faq.org#how-does-doom-start-up-so-quickly
 
   (use-package gcmh
@@ -127,7 +126,7 @@ https://git.sr.ht/~ashton314/emacs-bedrock/tree/main/item/init.el
 ** fringe bars
 We put some fringe space in the frames.
 #+begin_src emacs-lisp
-  (fringe-mode 8)
+  (fringe-mode 0)
 #+end_src
 
 ** Changes all yes/no questions to y/n type
@@ -150,8 +149,7 @@ https://www.gnu.org/software/emacs/manual/html_node/emacs/Network-Security.html
 #+end_src
 
 ** No lock files, but backups
-No lock files created.
-
+No lock files created:
 #+begin_src emacs-lisp
   (setq create-lockfiles nil)
 #+end_src
@@ -305,7 +303,7 @@ Defines a set of abbreviations that permits complete words with just some charac
   (add-hook 'text-mode-hook 'abbrev-mode)
   (add-hook 'prog-mode-hook 'abbrev-mode)
   ;; save abbrevs when files are saved
-  (setq save-abbrevs 'silent)
+  (setq save-abbrevs 'silently)
 #+end_src
 
 ** electric pair mode
@@ -334,6 +332,7 @@ To automatically close parenthesis and other punctuation signs.
     (global-set-key (kbd "C-x u") #'vundo)
   )
 #+end_src
+
 ** vlf related config
 Very large files loading.
 #+begin_src emacs-lisp
@@ -415,6 +414,7 @@ Select relevant regions incrementally.
 #+begin_src emacs-lisp
   (setq project-list-file (expand-file-name "projects" my-data-dir))
 #+end_src
+
 ** Reload my configuration
 Reload this configuration file.
 #+begin_src emacs-lisp
