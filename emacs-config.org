@@ -397,6 +397,10 @@ After pressing a key combo, it shows the key bindings associated.
   ;;   :config
   (which-key-mode)
   ;;   )
+
+  (use-package which-key-posframe
+    :config
+    (which-key-posframe-mode))
 #+end_src
 
 ** expand region
@@ -470,11 +474,11 @@ https://github.com/minad/vertico
 
 *** vertico posframe
 #+begin_src emacs-lisp
-  ;; (use-package vertico-posframe
-  ;;   :straight t
-  ;;   :after vertico
-  ;;   :init
-  ;;   (vertico-posframe-mode 1))
+   (use-package vertico-posframe
+     :straight t
+     :after vertico
+     :init
+     (vertico-posframe-mode 1)) 
 #+end_src
 
 ** all-the-icons-completion
