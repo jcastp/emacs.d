@@ -261,7 +261,7 @@ Set the userAgent for eww.
 ** recentf
 #+begin_src emacs-lisp
   ;; where to store the recent list file
-  ;;(setq recentf-save-file (expand-file-name "recentf" my-data-dir))
+  (setq recentf-save-file (expand-file-name "recentf" my-data-dir))
   (recentf-mode 1)
   ;;(global-set-key (kbd "C-c d r") #'recentf)
 #+end_src

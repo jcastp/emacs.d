@@ -9,6 +9,11 @@ It is supposed to run over the generic emacs config, and overwrites that config 
   ;;(consult-theme 'ef-light)
 #+end_src
 
+** recent files for work
+#+begin_src emacs-lisp
+  (setq recentf-save-file (expand-file-name "recentf-work" my-data-dir))
+#+end_src
+
 ** Fixed width font for work environment
 I work better with fixed fonts in this kind of environments
 
