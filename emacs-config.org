@@ -392,11 +392,12 @@ Shows the free keybinding. Useful to assign new keybindings to some new function
 ** Which-key
 After pressing a key combo, it shows the key bindings associated.
 #+begin_src emacs-lisp
-  (use-package which-key
-    :straight t
-    :config
-    (which-key-mode)
-    )
+  ;; Commented, since which-key is now in emacs 30 nativelly
+  ;; (use-package which-key
+  ;;   :straight t
+  ;;   :config
+  (which-key-mode)
+  ;;   )
 #+end_src
 
 ** expand region
