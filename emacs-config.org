@@ -507,16 +507,6 @@ https://github.com/raxod502/prescient.el
     )
 #+end_src
 
-Using with company (not used right now).
-#+begin_src emacs-lisp
-  ;; To use with company
-  ;; (use-package company-prescient
-  ;;   :straight t
-  ;;   :config
-  ;;   (company-prescient-mode 1)
-  ;;   )
-#+end_src
-
 ** consult
 Completion from a list of candidates, and has enhanced commands.
 https://github.com/minad/consult
