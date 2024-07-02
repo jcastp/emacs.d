@@ -7,7 +7,7 @@
 * Summary
 This is the literate config for my emacs use cases.
 
-I will try to document and compartmentalize the sections, so it's easier to follow up, but it won't always be possible.
+I will try to document and compartmentalize the sections, so it's easier to follow up, but it won't always be possible, as some functions overlap, and I'm usually a messy person when speaking of testing.
 
 * git related config
 ** magit
@@ -23,7 +23,7 @@ https://cestlaz-nikola.github.io/posts/using-emacs-47-magit/
   #+end_src
   
 ** diff-hl
-To show where the file has been modified
+To show where the file has been modified.
 https://github.com/dgutov/diff-hl
 #+begin_src emacs-lisp
   (use-package diff-hl
@@ -35,7 +35,7 @@ https://github.com/dgutov/diff-hl
     )
 #+end_src
 * Personal
-Here, I put my personal information and all the packages related to accounts.
+Here I put my personal information and all the packages related to accounts.
 
 ** Personal information
 This uses a special file, not commited, with my personal information, located in the path below.
@@ -68,19 +68,19 @@ Only evaluated if in my home environment, my encrypted directory is mounted, as 
 #+end_src
 
 ** direct access to my files
-ESC+ESC+c to directly access my config file.
-ESC+ESC+t to directly access my tasks file.
+=ESC ESC c= to directly access my config file.
+=ESC ESC t= to directly access my tasks file.
 
 Right now, it depends on perspectives. I need to change this to also open files if perspective is not installed.
 
 #+begin_src emacs-lisp
   (global-set-key (kbd "\e\ec")
   		(lambda () (interactive) (persp-state-load "~/Nextcloud/config/.emacs.d/perspectives/config-persp")))
-  		;;(lambda () (interactive) (find-file "~/.emacs.d/emacs-config.org")))
+  ;;(lambda () (interactive) (find-file "~/.emacs.d/emacs-config.org")))
 
   (global-set-key (kbd "\e\et")
   		(lambda () (interactive) (persp-state-load "~/Nextcloud/config/.emacs.d/perspectives/tareas-persp")))
-                ;;(lambda () (interactive) (find-file "~/Nextcloud/agenda/tasks.org")))
+  ;;(lambda () (interactive) (find-file "~/Nextcloud/agenda/tasks.org")))
 #+end_src
 
 * General config

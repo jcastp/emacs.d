@@ -11,8 +11,7 @@
 
 ;; disable splash and startup screens
 (setq inhibit-splash-screen t
-    inhibit-startup-screen t
-    )
+    inhibit-startup-screen t)
 
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; straight.el bootstrap
@@ -40,6 +39,17 @@
 (use-package straight
   :custom (straight-use-package-by-default t
 					   straight-default-vc 'git))
+;; end straight configuration
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Native compilation
+(when (and (fboundp 'native-comp-available-p)
+           (native-comp-available-p))
+  (setq native-comp-async-report-warnings-errors nil
+        native-comp-deferred-compilation t))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; personal configuration
 
 (defvar my-config-dir "~/.emacs.d/")
 (defvar my-data-dir "~/Nextcloud/config/.emacs.d/")
@@ -61,11 +71,6 @@
 			      (not (string= (getenv "WORKING") "WORK")))
   )
 (defvar my-workenvironment-p (string= (getenv "WORKING") "WORK"))
-
-(when (and (fboundp 'native-comp-available-p)
-           (native-comp-available-p))
-  (setq native-comp-async-report-warnings-errors nil
-        native-comp-deferred-compilation t))
 
 ;; define my clear directory
 (setq my-clear-directory (expand-file-name "Nextcloud_claro/gocryptfs_claro" (getenv "HOME")))
