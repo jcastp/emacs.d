@@ -680,7 +680,7 @@ Imenu shows the outline of your file as a browsable sidebar in another window.
   (use-package imenu-list
     :straight t
     :config
-    ;; set the width to 30% of the screen
+    ;; set the width to % of the screen
     (setq imenu-list-size 0.25)
     ;; rescan all the buffers
     (setq imenu-auto-rescan t)
@@ -923,12 +923,6 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
   (add-hook 'text-mode-hook 'display-line-numbers-mode)
 #+end_src
 
-** Long lines get wrapped
-Long lines get wrapped when they reach the edge. We activate it for all the buffers.
-#+begin_src emacs-lisp
-  (global-visual-line-mode 1) ; 1 for on, 0 for off.
-#+end_src
-
 ** Highlight indent guides
 Highlight the indent guides with a pipe character, so it's easier to see where we need to align the code.
 https://github.com/DarthFennec/highlight-indent-guides
@@ -940,6 +934,12 @@ https://github.com/DarthFennec/highlight-indent-guides
     (setq highlight-indent-guides-character ?\|)
     (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
     )
+#+end_src
+
+** Long lines get wrapped
+Long lines get wrapped when they reach the edge. We activate it for all the buffers.
+#+begin_src emacs-lisp
+  (global-visual-line-mode 1) ; 1 for on, 0 for off.
 #+end_src
 
 ** Fill column mode
@@ -1005,7 +1005,7 @@ Doom modeline.
 #+end_src
 
 ** Dimmer
-It darkens the buffer I'm not using right now.
+It darkens the buffers I'm not using.
 #+begin_src emacs-lisp
   (use-package dimmer
     :straight t
@@ -1193,7 +1193,7 @@ https://github.com/kunalb/poet
     :straight t)
 #+end_src
 
-*** Default theme
+*** Establish the default theme
 Define some variables with the dark and clear themes, and a variable to control if the current theme is dark or clear.
 Also, rotate the list of themes applied.
 #+begin_src emacs-lisp
