@@ -3220,6 +3220,7 @@ When I write, I find that I need to have full focus on the writing, and have a d
 
     ;;(global-set-key (kbd "C-c 2") 'my/writing)
 #+end_src
+
 ** TODO My editing function
 I want to open my own view to edit my writing.
 - I want to have a left window with the index of the file, usually an org mode file, so =imenu-list= is a good candidate.
@@ -3843,7 +3844,6 @@ An Emacs minor mode to kill your inner editor! Every writer struggles to balance
     )
 #+end_src
 
-
 ** TODO emacs activities.el
 https://github.com/alphapapa/activities.el
 
@@ -3903,7 +3903,6 @@ Citar allows to insert bibliographic references in our texts.
   :config (citar-org-roam-mode))
 #+end_src
 
-
 ** TODO Casual dired - porcelain
 Adding a small menu with all the keybindings as a reference. Very useful.
 
@@ -3926,7 +3925,6 @@ Adding a small menu with all the keybindings as a reference. Very useful.
   :ensure t
   :bind ("M-g g" . casual-avy-tmenu))
 #+end_src
-
 
 ** TODO spacious padding
 #+begin_src emacs-lisp
