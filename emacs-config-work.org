@@ -14,6 +14,12 @@ It is supposed to run over the generic emacs config, and overwrites that config 
   (setq recentf-save-file (expand-file-name "recentf-work" my-data-dir))
 #+end_src
 
+** Perspective saving for work
+#+begin_src emacs-lisp
+  (setq persp-state-default-file (expand-file-name "persp-save-work" user-emacs-directory))
+  (add-hook 'kill-emacs-hook #'persp-state-save)
+#+end_src
+
 ** Fixed width font for work environment
 I work better with fixed fonts in this kind of environments
 
