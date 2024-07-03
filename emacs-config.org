@@ -3745,13 +3745,6 @@ https://github.com/lepisma/org-books
     )
 #+end_src
 
-** TODO Show diffs: buffer with file
-I want to see the difference between the buffer and its file.
-
-#+begin_src emacs-lisp
-  ;;(global-set-key (kbd "C-c d c") 'diff-buffer-with-file)
-#+end_src
-
 ** TODO ellama - emacs with LLMs and ollama
 #+begin_src emacs-lisp
   (use-package ellama
