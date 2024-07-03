@@ -1031,9 +1031,9 @@ It darkens the buffers I'm not using.
     (consult-after-jump . pulsar-reveal-entry)
     :config
     (setq pulsar-pulse t)
-    (setq pulsar-delay 0.055)
+    (setq pulsar-delay 0.1)
     (setq pulsar-iterations 10)
-    (setq pulsar-face 'pulsar-magenta)
+    (setq pulsar-face 'pulsar-red)
     (setq pulsar-highlight-face 'pulsar-yellow)
     ;; integration with the `consult' package:
     ;;(add-hook 'consult-after-jump-hook #'pulsar-recenter-top)
