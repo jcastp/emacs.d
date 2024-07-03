@@ -1317,6 +1317,18 @@ To create and use internal valid and unique links in org-mode, we will use the =
   (setq org-id-locations-file (expand-file-name "org-id-locations" my-data-dir))
 #+end_src
 
+** org-toc
+Table of Contents for orgmode documents.
+
+https://github.com/snosov1/toc-org
+
+#+begin_src emacs-lisp
+  (use-package toc-org
+    :straight t
+    :config
+    (add-hook 'org-mode-hook 'toc-org-mode))
+#+end_src
+
 ** org-indent-mode on all the buffers
 I need to have the orgmode indented to see clearly where I am, so I enable it on every orgmode buffer.
 #+begin_src emacs-lisp
@@ -3714,18 +3726,6 @@ Depending on the size of the frame, I need to resize the visual-fill-column-widt
 
   ;; hook for resizing a frame or window
   ;;  (add-hook 'window-size-change-functions #'my/adjust-frame-size)
-#+end_src
-
-** TODO org-toc
-Table of Contents for orgmode documents.
-
-https://github.com/snosov1/toc-org
-
-#+begin_src emacs-lisp
-  (use-package toc-org
-    :straight t
-    :config
-    (add-hook 'org-mode-hook 'toc-org-mode))
 #+end_src
 
 ** TODO org-books
