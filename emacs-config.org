@@ -3847,20 +3847,6 @@ An Emacs minor mode to kill your inner editor! Every writer struggles to balance
     )
 #+end_src
 
-** TODO emacs activities.el
-https://github.com/alphapapa/activities.el
-
- #+begin_src emacs-lisp
-   (use-package activities
-     :straight (activities :type git :host github :repo "alphapapa/activities.el")
-     :straight t
-     :init
-     (activities-mode)
-     ;; Prevent `edebug' default bindings from interfering.
-     (setq edebug-inhibit-emacs-lisp-mode-bindings t)
-     )
- #+end_src
- 
 ** TODO bibliography - config
 All the config needed to manage bibliographies and references.
 
@@ -3959,22 +3945,8 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
     "q" #'my/create-empty-writing-file
     )
 
-  (defvar-keymap my/key-prefix-activities-map
-    :doc "Functions related to activities"
-    "n" #'activities-new
-    "d" #'activities-define
-    "r" #'activities-resume
-    "z" #'activities-suspend
-    "k" #'activities-kill
-    "s" #'activities-switch
-    "b" #'activities-switch-buffer
-    "l" #'activities-list
-    "g" #'activities-revert
-    )
-
   (defvar-keymap my/key-prefix-map
     :doc "My personal keymap."
-    "a" (cons "activities" my/key-prefix-activities-map)
     "c" #'diff-buffer-with-file
     "d" #'dashboard-open
     "f" #'my/elfeed
