@@ -3997,7 +3997,7 @@ This will be loaded automatically when at home.
     )
 #+end_src
 
-* Work related config
+* Work related config load
 Load the work related config when needed:
 #+begin_src emacs-lisp
   (if my-workenvironment-p
