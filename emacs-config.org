@@ -748,7 +748,7 @@ https://github.com/nex3/perspective-el
     ("C-x C-b" . persp-switch-to-buffer)
     :init
     (persp-mode)
-        :config
+    :config
     ;; sort the persps by the creation time
     (setq persp-sort 'created)
     )
