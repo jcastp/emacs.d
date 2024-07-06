@@ -1780,11 +1780,13 @@ Here I will add template captures for doing several things:
 
 #+begin_src emacs-lisp
   (setq org-capture-templates'(
-                               ;; tasks
-                               ("i" "Inbox" entry
-                                (file+headline "~/Nextcloud/agenda/tasks.org" "Inbox")
-                                "* TODO %i%? \n:LOGBOOK: \n:CREATED: %U \n:END:"
-                                :empty-lines-after 1)
+  			     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                               ;; task related captures
+  			     
+                               ;; ("i" "Inbox" entry
+                               ;;  (file+headline "~/Nextcloud/agenda/tasks.org" "Inbox")
+                               ;;  "* TODO %i%? \n:LOGBOOK: \n:CREATED: %U \n:END:"
+                               ;;  :empty-lines-after 1)
 
   			     ("t" "My TODO task format." entry
                                (file+headline "~/Nextcloud/agenda/tasks.org" "Tasks")
@@ -1796,13 +1798,22 @@ Here I will add template captures for doing several things:
                                  "** TODO %? \n:LOGBOOK: \n:CREATED: %U \n:END:\n  :PROPERTIES:\n:COOKIE_DATA: todo recursive\n:END:\n   - Objetivo:"
                                 :empty-lines-after 1)
 
+  			     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                                ;; Writing related things
+
+  			     ;; Everything that I find interesting to create, no matter what it is
+  			     ("h" "Compost heap" item
+                                (file+headline "~/Nextcloud/escritura/ideas/compost_heap.org" "Compost heap")
+                                 "%i"
+                                 :empty-lines-after 1)
+
+  			     ;; A possible writing idea
                                ("w" "Writing idea." entry
                                 (file+headline "~/Nextcloud/escritura/retazos/ideas.org" "Ideas")
                                 "** TODO %?\n*** Personajes\n- \n*** Ambientación\n*** Eventos\n"
                                 :empty-lines-after 1)
 
-                               ;; Writing character
+                               ;; An interesenting character
                                ("P" "Personaje" entry
                                 (file "~/Nextcloud/escritura/ideas/personajes.org")
                                 "* %i%?"
@@ -1838,10 +1849,6 @@ Here I will add template captures for doing several things:
   ;;                               "* "
   ;;                               :empty-lines-after 1)
 
-  ;;                              ("h" "Compost heap" item
-  ;;                               (file+headline "~/Nextcloud/escritura/ideas/compost_heap.org" "Compost heap")
-  ;;                               "%i"
-  ;;                               :empty-lines-after 1)
 
   ;;                              ("r" "Note and misc content." entry
   ;;                               (file+headline "~/Nextcloud/agenda/inbox.org" "Notes")
