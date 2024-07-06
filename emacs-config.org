@@ -81,6 +81,9 @@ Right now, it depends on perspectives. I need to change this to also open files 
   (global-set-key (kbd "\e\et")
   		(lambda () (interactive) (persp-state-load "~/Nextcloud/config/.emacs.d/perspectives/tareas-persp")))
   ;;(lambda () (interactive) (find-file "~/Nextcloud/agenda/tasks.org")))
+
+  (global-set-key (kbd "\e\ei")
+  		(lambda () (interactive) (find-file "~/Nextcloud/tech/org-keys.org")))
 #+end_src
 
 * General config
