@@ -3534,6 +3534,30 @@ Removing this one, and using the one from the source code below:
     )
 #+end_src
 
+** calibre
+https://github.com/chenyanming/calibredb.el
+
+#+begin_src emacs-lisp
+  ;; load this only on my home env
+  (if (and
+       my-homeenvironment-p
+       ;; the calibre library ddbb exists
+       (file-exists-p "/home/calibre_libros/metadata.db"))
+      (progn
+        ;; here comes the actions I want to be done at a home environment
+        (use-package calibredb
+          :straight t
+          :defer t
+          :config
+          (setq calibredb-root-dir "/home/calibre_libros/")
+          (setq calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir))
+          (setq calibredb-library-alist '(("/home/calibre_libros/")
+                                          ))
+          (setq calibredb-size-show t)
+          (setq calibredb-id-width 10)
+          )))
+#+end_src
+
 ** elfeed suite
 RSS read in emacs.
 #+begin_src emacs-lisp
@@ -3678,30 +3702,6 @@ https://github.com/emacs-dashboard/emacs-dashboard
 
 * Testing
 Here there will be all the configs I'm testing, before committing them to the main config.
-** TODO calibre
-https://github.com/chenyanming/calibredb.el
-
-#+begin_src emacs-lisp
-  ;; load this only on my home env
-  (if (and
-       my-homeenvironment-p
-       ;; the calibre library ddbb exists
-       (file-exists-p "/home/calibre_libros/metadata.db"))
-      (progn
-        ;; here comes the actions I want to be done at a home environment
-        (use-package calibredb
-          :straight t
-          :defer t
-          :config
-          (setq calibredb-root-dir "/home/calibre_libros/")
-          (setq calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir))
-          (setq calibredb-library-alist '(("/home/calibre_libros/")
-                                          ))
-          (setq calibredb-size-show t)
-          (setq calibredb-id-width 10)
-          )))
-#+end_src
-
 ** TODO resize the column fill and orgmode tags align
 Depending on the size of the frame, I need to resize the visual-fill-column-width and the org tags, so everything looks good.
 
