@@ -333,6 +333,7 @@ To automatically close parenthesis and other punctuation signs.
     :straight t
     :config
     (global-set-key (kbd "C-x u") #'vundo)
+    (global-set-key (kbd "C-<dead-grave>") #'vundo)
   )
 #+end_src
 
