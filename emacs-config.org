@@ -3736,25 +3736,24 @@ Depending on the size of the frame, I need to resize the visual-fill-column-widt
     ;; initial model
     (setopt ellama-provider
   	  (make-llm-ollama
-  	   :chat-model "zephyr" :embedding-model "zephyr"))
+  	   :chat-model "phi3:medium" :embedding-model "phi3:medium"))
     (setopt ellama-providers
-  	  '(("zephyr" . (make-llm-ollama
-  			 :chat-model "zephyr"
-  			 :embedding-model "zephyr"))
-  	    ("notux - mixture experts" . (make-llm-ollama
-  					  :chat-model "notux"
-  					  :embedding-model "notux"))
-  	    ("nous-hermes2 - code" . (make-llm-ollama
-  				      :chat-model "nous-hermes2"
-  				      :embedding-model "noes-hermes2"))
-  	    ("dolphin_mixtral" . (make-llm-ollama
-    				  :chat-model "dolphin_mixtral"
-    				  :embedding-model "dolphin_mixtral"))
+  	  '(
+  	    ("phi3:medium" . (make-llm-ollama
+    			     :chat-model "phi3:medium"
+    			     :embedding-model "phi3:medium"))
+  	    ("deepseek-coder-v2:16b" . (make-llm-ollama
+    			     :chat-model "deepseek-coder-v2:16b"
+    			     :embedding-model "deepseek-coder-v2:16b"))
+  	    ("gemma2:27b" . (make-llm-ollama
+    			     :chat-model "gemma2:27b"
+    			     :embedding-model "gemma2:27b"))
+  	    ("dolphin-mixtral" . (make-llm-ollama
+    				  :chat-model "dolphin-mixtral"
+    				  :embedding-model "dolphin-mixtral"))
   	    ("llama3" . (make-llm-ollama
     			 :chat-model "llama3"
     			 :embedding-model "llama3"))
-
-
   	    )
   	  )
     )
