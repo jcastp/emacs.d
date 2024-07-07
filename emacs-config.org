@@ -3524,15 +3524,18 @@ I used org-books, but the package seems to not be maintained, and the URL fetchi
 #+begin_src emacs-lisp
   ;; where my book list will be stored
   (defvar my-booklist-file (expand-file-name "Nextcloud/agenda/books.org" (getenv "HOME")))
+#+end_src
 
+
+#+begin_src emacs-lisp
   (add-to-list 'org-capture-templates
   	     '(
   	       ;; books to read
   	       "b"
   	       "Manual book entry"
   	       entry
-  	       (file "~/Nextcloud/agenda/books.org")
-  	       "* %^{TITLE}\n:PROPERTIES:\n:ADDED: %<[%Y-%02m-%02d]>\n:END:%^{AUTHOR}p\n%?"
+  	       (file+headline "~/Nextcloud/agenda/books.org" "inbox")
+  	       "** %^{TITLE}\n:PROPERTIES:\n:ADDED: %<[%Y-%02m-%02d]>\n:END:%^{AUTHOR}p\n%?"
   	       :empty-lines 1
   	       )
   	     ;; append at the end of the capture list
