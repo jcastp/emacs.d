@@ -1822,16 +1822,6 @@ Here I will add template captures for doing several things:
                                 (file "~/Nextcloud/escritura/ideas/personajes.org")
                                 "* %i%?"
                                 :empty-lines-after 1)
-
-  			     ;; books to read
-  			     ("b" "Manual book entry" entry (file "~/Nextcloud/agenda/books.org")
-  			      "* %^{TITLE}\n:PROPERTIES:\n:ADDED: %<[%Y-%02m-%02d]>\n:END:%^{AUTHOR}p\n%?" :empty-lines 1)
-  			     
-  			     ;; this one adds a book from an URL, *but you have to have the URL already in the kill ring* or it won't work
-  			     ("B" "Book with URL" entry (file "~/Nextcloud/agenda/books.org")
-  			      "%(let* ((url (substring-no-properties (current-kill 0)))
-  			      (details (org-books-get-details url)))
-  			      (when details (apply #'org-books-format 1 details)))")
                                )
         )
 
@@ -1858,24 +1848,6 @@ Here I will add template captures for doing several things:
   ;;                               (file+headline "~/Nextcloud/agenda/inbox.org" "Notes")
   ;;                               "** %i%?\n"
   ;;                               :empty-lines-after 1)
-
-  ;;                              ;; books to read
-  ;;                              ("b" "Manual book entry" entry (file "~/Nextcloud/agenda/books.org")
-  ;;                               "* %^{TITLE}\n:PROPERTIES:\n:ADDED: %<[%Y-%02m-%02d]>\n:END:%^{AUTHOR}p\n%?" :empty-lines 1)
-
-  ;;                              ;; this one adds a book from an URL, *but you have to have the URL already in the kill ring* or it won't work
-  ;;                              ("B" "Book with URL" entry (file "~/Nextcloud/agenda/books.org")
-  ;;                               "%(let* ((url (substring-no-properties (current-kill 0)))
-  ;;                 (details (org-books-get-details url)))
-  ;;            (when details (apply #'org-books-format 1 details)))")
-
-  ;; ;;     ("b" "books to read." entry
-  ;; ;;       (file+headline "~/Nextcloud
-  ;;                             /agenda/books.org" "Books")
-  ;;       "* %^{Title}  %^g
-  ;;       %i
-  ;;       *Author(s):* %^{Author}
-  ;;       ")
 
   ;; linea en tabla
   ;;  ("w" "peso" table-line
@@ -2736,20 +2708,6 @@ https://github.com/alphapapa/org-ql
     )
 #+end_src
 
-*** TODO org-books
-To get a reading list:
-https://github.com/lepisma/org-books
-
-#+begin_src emacs-lisp
-  ;; org-books
-   (use-package org-books
-       :straight t
-       :if (not my-workenvironment-p)
-       :config
-       (setq org-books-file "~/Nextcloud/agenda/books.org")
-       )
-#+end_src
-
 *** graphs via dot
 https://www.graphviz.org/pdf/dotguide.pdf
 
@@ -3559,6 +3517,29 @@ https://github.com/chenyanming/calibredb.el
           )))
 #+end_src
 
+** reading list
+Here I will configure my personal method for a reading list.
+I used org-books, but the package seems to not be maintained, and the URL fetching seems to be broken, so I will rely on my own personal list.
+
+#+begin_src emacs-lisp
+  ;; where my book list will be stored
+  (defvar my-booklist-file (expand-file-name "Nextcloud/agenda/books.org" (getenv "HOME")))
+
+  (add-to-list 'org-capture-templates
+  	     '(
+  	       ;; books to read
+  	       "b"
+  	       "Manual book entry"
+  	       entry
+  	       (file "~/Nextcloud/agenda/books.org")
+  	       "* %^{TITLE}\n:PROPERTIES:\n:ADDED: %<[%Y-%02m-%02d]>\n:END:%^{AUTHOR}p\n%?"
+  	       :empty-lines 1
+  	       )
+  	     ;; append at the end of the capture list
+  	     t
+  	     )
+
+#+end_src
 ** elfeed suite
 RSS read in emacs.
 #+begin_src emacs-lisp
@@ -3738,22 +3719,6 @@ Depending on the size of the frame, I need to resize the visual-fill-column-widt
 
   ;; hook for resizing a frame or window
   ;;  (add-hook 'window-size-change-functions #'my/adjust-frame-size)
-#+end_src
-
-** TODO org-books
-Reading list.
-
-https://github.com/lepisma/org-books
-
-#+begin_src emacs-lisp
-  (use-package org-books
-    :straight (org-books :type git
-  		       :host github
-  		       :repo "lepisma/org-books")
-    :straight t
-    :config
-    (setq org-books-file "~/Nextcloud/personal/libros.org")
-    )
 #+end_src
 
 ** TODO ellama - emacs with LLMs and ollama
