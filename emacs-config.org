@@ -200,7 +200,9 @@ These settings relate to how emacs interacts with your operating system.
    ;; makes killing/yanking interact with the system clipboard
    select-enable-clipboard t
 
-   ;; I'm actually not sure what this does but it's recommended?
+   ;; This is explained here:
+   ;; https://superuser.com/questions/90257/what-is-the-difference-between-the-x-clipboards
+   ;; https://unix.stackexchange.com/questions/139191/whats-the-difference-between-primary-selection-and-clipboard-buffer
    select-enable-primary t
 
    ;; Save clipboard strings into kill ring before replacing them.
