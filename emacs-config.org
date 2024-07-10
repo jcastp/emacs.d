@@ -2656,6 +2656,8 @@ https://github.com/minad/org-modern
     :config
     (with-eval-after-load 'org (global-org-modern-mode))
     (setq org-modern-hide-stars 'leading)
+    ;; The progress bar for task pending/completed is too wide for me
+    (setq org-modern-progress 8)
   )
 #+end_src
 
