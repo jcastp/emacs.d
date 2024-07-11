@@ -17,6 +17,7 @@ https://cestlaz-nikola.github.io/posts/using-emacs-47-magit/
 #+begin_src emacs-lisp
   (use-package magit
     :straight t
+    :defer t
     :config
     (global-set-key (kbd "C-x g") 'magit-status)
     )
@@ -57,6 +58,7 @@ Only evaluated if in my home environment, my encrypted directory is mounted, as 
         :straight t
         ;; :bind
         ;; ("C-c d m" . mastodon)
+        :defer t
         :config
         ;; account configuration
         (setq mastodon-instance-url "https://mastodon.online"
@@ -345,6 +347,7 @@ Very large files loading.
   ;; very large files support
   (use-package vlf
     :straight t
+    :defer t
     :config
     (require 'vlf-setup)
     )
@@ -355,6 +358,7 @@ Open particular files with external applications.
 #+begin_src emacs-lisp
   (use-package openwith
     :straight t
+    :defer t
     :config
     (when (require 'openwith nil 'noerror)
       (setq openwith-associations
@@ -416,6 +420,7 @@ Select relevant regions incrementally.
 #+begin_src emacs-lisp
   (use-package expand-region
     :straight t
+    :defer t
     :config
     (global-set-key (kbd "C-ñ") 'er/expand-region))
 #+end_src
@@ -685,6 +690,7 @@ Imenu shows the outline of your file as a browsable sidebar in another window.
 #+begin_src emacs-lisp
   (use-package imenu-list
     :straight t
+    :defer t
     :config
     ;; set the width to % of the screen
     (setq imenu-list-size 0.25)
@@ -713,6 +719,7 @@ Used in the hydra snippets.
 #+begin_src emacs-lisp
   (use-package ace-window
     :straight t
+    :defer t
     :config
     (setq aw-scope 'frame)
     (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
@@ -730,6 +737,7 @@ https://github.com/abo-abo/avy
 #+begin_src emacs-lisp
   (use-package avy
     :straight t
+    :defer t
     :config
       (global-set-key (kbd "C-x c c") 'avy-goto-char-2)
       (global-set-key (kbd "C-x c w") 'avy-goto-word-1)
@@ -935,6 +943,7 @@ https://github.com/DarthFennec/highlight-indent-guides
 #+begin_src emacs-lisp
   (use-package highlight-indent-guides
     :straight t
+    :defer t
     :config
     (setq highlight-indent-guides-method 'character)
     (setq highlight-indent-guides-character ?\|)
@@ -956,6 +965,7 @@ When reaching the established width defined, the line will wrap, even before get
   ;; visual fill column mode
   (use-package visual-fill-column
     :straight t
+    :defer t
     :config
     ;; This sets the value to all the buffers, as initially it is a per-buffer variable
     (setq-default visual-fill-column-width 110)
@@ -969,6 +979,7 @@ Get all the fancy icons.
 #+begin_src emacs-lisp
   (use-package all-the-icons
     :straight t
+    :defer t
     :config
     )
 #+end_src
@@ -1015,6 +1026,7 @@ It darkens the buffers I'm not using.
 #+begin_src emacs-lisp
   (use-package dimmer
     :straight t
+    :defer t
     :config
     (dimmer-configure-which-key)
     (dimmer-mode t)
@@ -1032,6 +1044,7 @@ It darkens the buffers I'm not using.
   (use-package pulsar
     :after consult
     :straight t
+    :defer t
     :hook
     (consult-after-jump . pulsar-recenter-top)
     (consult-after-jump . pulsar-reveal-entry)
