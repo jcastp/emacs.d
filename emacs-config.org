@@ -3417,16 +3417,21 @@ This serves to resize the windows
        "
   ^Resize^
   ^^^^^^-------------------------------------------------------
-  _<left>_: shrink horizontally
-  _<right>_: enlarge horizontally
-  _<down>_: shrink vertical
-  _<up>_: enlarge vertical
+  _C-f_: shrink horizontally
+  _C-b_: enlarge horizontally
+  _C-p_: shrink vertical
+  _C-n_: enlarge vertical
   "
 
-       ("<left>" shrink-window-horizontally)
-       ("<right>" enlarge-window-horizontally)
-       ("<up>" enlarge-window)
-       ("<down>" shrink-window)
+       ;; ("<left>" shrink-window-horizontally)
+       ;; ("<right>" enlarge-window-horizontally)
+       ;; ("<up>" enlarge-window)
+       ;; ("<down>" shrink-window)
+       ("C-f" shrink-window-horizontally)
+       ("C-b" enlarge-window-horizontally)
+       ("C-p" enlarge-window)
+       ("C-n" shrink-window)
+
        ("q" nil "quit")
        )
      )
