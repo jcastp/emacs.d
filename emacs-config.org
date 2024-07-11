@@ -3145,7 +3145,7 @@ When I write, I find that I need to have full focus on the writing, and have a d
     (defvar my/writing-env-normal-theme 'ef-deuteranopia-dark
       "The theme I use for my normal environment.")
 
-    (defvar my/writing-env-work-theme 'poet
+    (defvar my/writing-env-work-theme 'leuven
       "The theme I use for my writing environment.")
 
     ;; This needs to be a fontaine preset
