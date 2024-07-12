@@ -1196,12 +1196,14 @@ Protesilaos very good themes. These themes are already included in the standard 
 *** Protesilaos ef themes
 #+begin_src emacs-lisp
   (use-package ef-themes
+    :defer t
     :straight t)
 #+end_src
 
 *** doom themes
 #+begin_src emacs-lisp
   (use-package doom-themes
+    :defer t
     :straight t)
 #+end_src
 
@@ -1209,6 +1211,7 @@ Protesilaos very good themes. These themes are already included in the standard 
 https://github.com/kunalb/poet
 #+begin_src emacs-lisp
   (use-package poet-theme
+    :defer t
     :straight t)
 #+end_src
 
@@ -1344,6 +1347,7 @@ https://github.com/snosov1/toc-org
 #+begin_src emacs-lisp
   (use-package toc-org
     :straight t
+    :defer t
     :config
     (add-hook 'org-mode-hook 'toc-org-mode))
 #+end_src
@@ -1717,6 +1721,7 @@ This is the config for the org-superagenda mode
 #+begin_src emacs-lisp
   (use-package org-super-agenda
     :straight t
+    :defer t
     :config
     ;; not loading this one
     (org-super-agenda-mode -1)
@@ -1912,6 +1917,7 @@ Org-roam related config.
         ;; main org-roam config
         (use-package org-roam
           :straight t
+  	:defer t
           :init
           (setq org-roam-v2-ack t)
           ;; Create the new directory to store roam notes
@@ -1997,11 +2003,14 @@ Org-roam related config.
         ;; org-roam-ui and its dependencies
         ;; simple httpd
         (use-package websocket
-          :straight t)
+          :straight t
+  	  :defer t)
         (use-package simple-httpd
-          :straight t)
+          :straight t
+  	    :defer t)
         (use-package org-roam-ui
           :straight t
+  	:defer t
           :hook (org-roam . org-roam-ui-mode)
           )
 
@@ -2266,7 +2275,8 @@ This package is required to create the vanilla html export.
 
 #+begin_src emacs-lisp
   (use-package htmlize
-    :straight t)
+    :straight t
+    :defer t)
 #+end_src
 
 *** Markdown export
@@ -2697,6 +2707,7 @@ To plot mindmaps based on the orgmode headers
   ;; org-mind-map
   (use-package org-mind-map
     :straight t
+    :defer t
     :init
     (require 'ox-org)
     :config
@@ -2718,6 +2729,7 @@ https://github.com/alphapapa/org-ql
 #+begin_src emacs-lisp
   (use-package org-ql
     :straight t
+    :defer t
     :bind
     ("C-c q f" . org-ql-find-in-agenda)
     ("C-c q s" . org-ql-search)
@@ -2732,6 +2744,7 @@ https://www.graphviz.org/pdf/dotguide.pdf
 #+begin_src emacs-lisp
   (use-package ox-pandoc
     :ensure t
+    :defer t
     :config
     )
 #+end_src
@@ -2751,6 +2764,7 @@ https://github.com/joostkremers/writeroom-mode
 #+begin_src emacs-lisp
   (use-package writeroom-mode
     :straight t
+    :defer t
     :config
     (global-set-key (kbd "C-c 5") 'writeroom-mode)
     ;; width of the writing area
@@ -2768,6 +2782,7 @@ Word counting with objective.
 #+begin_src emacs-lisp
   (use-package wc-mode
     :straight t
+    :defer t
     :config
     (global-set-key (kbd "C-c 9") 'wc-mode)
     )
@@ -2778,7 +2793,8 @@ https://lists.gnu.org/archive/html/emacs-orgmode/2011-04/msg00713.html
 
 #+begin_src emacs-lisp
   (use-package org-wc
-    :straight t)
+    :straight t
+    :defer t)
 #+end_src
 
 ** word count track table
@@ -2788,6 +2804,7 @@ https://github.com/tty-tourist/org-tracktable
 #+begin_src emacs-lisp
   (use-package org-tracktable
     :straight t
+    :defer t
     :if (not my-workenvironment-p)
     :config
     (global-set-key (kbd "C-c 3") 'org-tracktable-status)
@@ -2801,6 +2818,7 @@ Since I write in different languages, the dictionary applied is really important
 #+begin_src emacs-lisp
   (use-package guess-language
     :straight t
+    :defer t
     :config
     (setq guess-language-languages '(en es))
     (setq guess-language-min-paragraph-length 40)
@@ -2821,21 +2839,22 @@ https://github.com/bastibe/org-journal
 
 Only mounted when at home, and clear directory is mounted.
 #+begin_src emacs-lisp
-     (if (and my-homeenvironment-p
+  (if (and my-homeenvironment-p
   	    my-clear-directory-is-mounted-p)
-         (use-package org-journal
-           :straight t
-           :bind
-           ("C-c r ñ" . org-journal-new-entry)
-           :config
-           (setq org-journal-date-prefix "#+TITLE: ")
-           (setq org-journal-file-format "%Y-%m-%d.org")
-           ;;(setq org-journal-dir "~/Nextcloud/personal/diario/")
-           (setq org-journal-dir (expand-file-name "personal/diario" my-clear-directory))
-           (setq org-journal-date-format "%A, %d %B %Y")
-           (setq org-journal-encrypt-journal nil)
-           )
-       )
+      (use-package org-journal
+        :straight t
+        :defer t
+        :bind
+        ("C-c r ñ" . org-journal-new-entry)
+        :config
+        (setq org-journal-date-prefix "#+TITLE: ")
+        (setq org-journal-file-format "%Y-%m-%d.org")
+        ;;(setq org-journal-dir "~/Nextcloud/personal/diario/")
+        (setq org-journal-dir (expand-file-name "personal/diario" my-clear-directory))
+        (setq org-journal-date-format "%A, %d %B %Y")
+        (setq org-journal-encrypt-journal nil)
+        )
+    )
 #+end_src
 
 ** TODO Buscar en la RAE
@@ -2991,8 +3010,9 @@ https://protesilaos.com/emacs/fontaine
 https://github.com/SavchenkoValeriy/emacs-powerthesaurus
 
 #+begin_src emacs-lisp
-  (use-package powerthesaurus
-    :straight t)
+    (use-package powerthesaurus
+      :straight t
+      :defer t)
 #+end_src
 
 ** TODO ox-hugo
@@ -3002,6 +3022,7 @@ https://ox-hugo.scripter.co/
 #+begin_src emacs-lisp
   (use-package ox-hugo
     :straight t   ;Auto-install the package from Melpa
+    :defer t
     :after ox)
 #+end_src
 
@@ -3013,6 +3034,7 @@ Manual: https://nobiot.github.io/org-remark/
 #+begin_src emacs-lisp
   (use-package org-remark
     :straight t
+    :defer t
     :after org
     :config
     (require 'org-remark-global-tracking)
@@ -3311,11 +3333,12 @@ Check language syntax on the fly.
 #+begin_src emacs-lisp
   (use-package flycheck
     :straight t
+    :defer t
     :demand t
     :init
     (global-flycheck-mode t)
     )
-  
+
   (with-eval-after-load 'flycheck
     ;; change the key bindings, as ther conflict with org mode
     (define-key flycheck-mode-map flycheck-keymap-prefix nil)
@@ -3366,6 +3389,7 @@ Configuring eglot to work with vanilla python and its tree-sitter enabled mode:
 #+begin_src emacs-lisp
   (use-package eglot
     :straight t
+    :defer t
     :config
     ;;(add-to-list 'eglot-server-programs '(python-mode . ("pylsp")))
     (add-to-list 'eglot-server-programs '(python-ts-mode . ("pylsp")))
@@ -3409,7 +3433,7 @@ GNUplot for emacs, to use in plotting graphics from tables.
 #+begin_src emacs-lisp
   (use-package gnuplot
     :straight t
-    )
+    :defer t)
 #+end_src
 
 ** hydra
@@ -3421,6 +3445,7 @@ This serves to resize the windows
 #+begin_src emacs-lisp
   (use-package hydra
     :straight t
+    :defer t
     :config
     (global-unset-key (kbd "C-c k"))
     (global-set-key
@@ -3455,6 +3480,7 @@ This serves to resize the windows
 #+begin_src emacs-lisp
   (use-package pdf-tools
     :straight t
+    :defer t
     :config
     ;; don't ask when installing pdf-tools
     (pdf-tools-install t))
@@ -3473,6 +3499,7 @@ Removing this one, and using the one from the source code below:
 #+begin_src emacs-lisp :tangle no
   (use-package nov
     :straight t
+    :defer t
     :config
     (setq nov-text-width 90)
      ;;(setq nov-text-width t)
@@ -3493,11 +3520,13 @@ Removing this one, and using the one from the source code below:
 #+begin_src emacs-lisp
   (use-package esxml
     :straight (esxml :type git :host github :repo "tali713/esxml")
-    :straight t)
+    :straight t
+    :defer t)
 
   (use-package nov
     :after esxml
     :straight (nov :type git :host nil :repo "https://depp.brause.cc/nov.el.git")
+    :defer t
     :config
     (setq nov-text-width 100)
     ;;(setq nov-text-width t)
@@ -3750,6 +3779,7 @@ Depending on the size of the frame, I need to resize the visual-fill-column-widt
 #+begin_src emacs-lisp
   (use-package ellama
     :ensure t
+    :defer t
     :init
     :config
     ;; setup key bindings
@@ -3787,7 +3817,8 @@ Code: https://github.com/rnkn/fountain-mode
 
 #+begin_src emacs-lisp
   (use-package fountain-mode
-    :straight t)
+    :straight t
+    :defer t)
 #+end_src
 
 ** TODO hammy - time intervals
@@ -3797,6 +3828,7 @@ Time intervals, such as pomodoro.
 #+begin_src emacs-lisp
   (use-package hammy
     :straight t
+    :defer t
     :config
     (hammy-mode)
     ;; We name the timer with the Unicode TOMATO character, and propertize
@@ -3833,6 +3865,7 @@ An Emacs minor mode to kill your inner editor! Every writer struggles to balance
 #+begin_src emacs-lisp
   (use-package freeze-it
     :straight t
+    :defer t
     :config
     )
 #+end_src
@@ -3845,6 +3878,8 @@ The main files are the .bib files, where all the information about the reading m
 
 #+begin_src emacs-lisp
   (use-package bibtex
+    :straight t
+    :defer t
     :custom
     (bibtex-dialect 'biblatex)
     (bibtex-user-optional-fields
@@ -3858,13 +3893,17 @@ The main files are the .bib files, where all the information about the reading m
 *** biblio
 Biblio to automatically import books or articles from different repositories.
 #+begin_src emacs-lisp
-  (use-package biblio)
+  (use-package biblio
+    :straight t
+    :defer t)
 #+end_src
 
 *** citar
 Citar allows to insert bibliographic references in our texts.
 #+begin_src emacs-lisp
   (use-package citar
+    :straight t
+    :defer t
     :config
     (setq citar-bibliography '("~/Nextcloud/config/.emacs.d/bibliography/biblio.bib"))
     :custom
@@ -3878,8 +3917,10 @@ Citar allows to insert bibliographic references in our texts.
 *** TODO citar-org-roam integration
 #+begin_src emacs-lisp
   (use-package citar-org-roam
-  :after (citar org-roam)
-  :config (citar-org-roam-mode))
+    :straight t
+    :defer t
+    :after (citar org-roam)
+    :config (citar-org-roam-mode))
 #+end_src
 
 ** TODO Casual dired - porcelain
@@ -3888,6 +3929,7 @@ Adding a small menu with all the keybindings as a reference. Very useful.
 #+begin_src emacs-lisp
   (use-package casual-dired
   :ensure t
+  :defer t
   :bind (:map dired-mode-map ("C-o" . #'casual-dired-tmenu)))
 #+end_src
 
@@ -3895,6 +3937,7 @@ Adding a small menu with all the keybindings as a reference. Very useful.
 #+begin_src emacs-lisp
   (use-package casual-info
   :ensure t
+  :defer t
   :bind (:map Info-mode-map ("C-o" . 'casual-info-tmenu)))
 #+end_src
 
@@ -3902,12 +3945,15 @@ Adding a small menu with all the keybindings as a reference. Very useful.
 #+begin_src emacs-lisp
   (use-package casual-avy
   :ensure t
+  :defer t
   :bind ("M-g g" . casual-avy-tmenu))
 #+end_src
 
 ** TODO spacious padding
 #+begin_src emacs-lisp
   (use-package spacious-padding
+    :straight t
+    :defer t
     :config
     (setq spacious-padding-widths
   	'( :internal-border-width 15
