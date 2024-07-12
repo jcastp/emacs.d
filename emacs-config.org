@@ -965,7 +965,6 @@ When reaching the established width defined, the line will wrap, even before get
   ;; visual fill column mode
   (use-package visual-fill-column
     :straight t
-    :defer t
     :config
     ;; This sets the value to all the buffers, as initially it is a per-buffer variable
     (setq-default visual-fill-column-width 110)
