@@ -30,6 +30,11 @@ text-mode
 ;; Templates for org-mode
 org-mode
 
+(lisp
+	"#+begin_src emacs-lisp" n
+	"#+end_src"
+)
+
 (title
 	"#+title: " p n
 	"#+author: Javier Castilla" n
