@@ -3580,11 +3580,8 @@ RSS read in emacs.
 #+end_src
 
 * CANCELED Email config
-:LOGBOOK:
-- State "CANCELED"   from              [2024-04-07 dom 18:45]
-:END:
-
 Not tangled, due to problems with building mu in the OS.
+
 #+begin_src emacs-lisp :tangle no
   ;; this will only load on my main system
   (if my-desktopsystem-p
@@ -3873,7 +3870,7 @@ Citar allows to insert bibliographic references in our texts.
 #+end_src
 
 ** TODO Casual dired - porcelain
-Adding a small menu with all the keybindings as a reference. Very useful.
+Adding a small menu with all the keybindings in dired as a reference. Very useful.
 
 #+begin_src emacs-lisp
   (use-package casual-dired
@@ -3896,6 +3893,9 @@ Adding a small menu with all the keybindings as a reference. Very useful.
 #+end_src
 
 ** TODO spacious padding
+This package provides a global minor mode to increase the spacing/padding of Emacs windows and frames. The idea is to make editing and reading feel more comfortable.
+
+https://github.com/protesilaos/spacious-padding
 #+begin_src emacs-lisp
   (use-package spacious-padding
     :straight t
@@ -3910,7 +3910,6 @@ Adding a small menu with all the keybindings as a reference. Very useful.
     (spacious-padding-mode 1)
     )
 #+end_src
-
 
 ** TODO ready-player mode
 #+begin_src emacs-lisp
