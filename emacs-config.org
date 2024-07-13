@@ -1492,7 +1492,8 @@ Have some fancy icons for the categories.
      ("financial" "~/Nextcloud/config/icons/dollar-sign.svg" nil nil :ascent center :mask heuristic)
      ("birthdays" "~/Nextcloud/config/icons/heart.svg" nil nil :ascent center :mask heuristic)
      ("revision" "~/Nextcloud/config/icons/shuffle.svg" nil nil :ascent center :mask heuristic)
-     ("habits" "~/Nextcloud/config/icons/refresh-ccw.svg" nil nil :ascent center :mask heuristic)          
+     ("habits" "~/Nextcloud/config/icons/refresh-ccw.svg" nil nil :ascent center :mask heuristic)
+     ("care" "~/Nextcloud/config/icons/heart.svg" nil nil :ascent center :mask heuristic)          
      )
    )
 #+end_src
