@@ -3911,6 +3911,16 @@ Adding a small menu with all the keybindings as a reference. Very useful.
     )
 #+end_src
 
+
+** TODO ready-player mode
+#+begin_src emacs-lisp
+  (use-package ready-player
+    :straight (ready-player :type git :host github :repo "xenodium/ready-player")
+    :straight t
+    :config
+    (ready-player-mode))
+#+end_src
+
 * TODO my own keymap
 I want to have my own dedicated keymap for the functions I use the most.
 
