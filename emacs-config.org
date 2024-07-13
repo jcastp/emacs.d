@@ -3917,7 +3917,8 @@ https://github.com/protesilaos/spacious-padding
     :straight (ready-player :type git :host github :repo "xenodium/ready-player")
     :straight t
     :config
-    (ready-player-mode))
+    (ready-player-mode)
+    (setq ready-player-repeat t))
 #+end_src
 
 * TODO my own keymap
