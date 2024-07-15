@@ -52,7 +52,7 @@ I can now check mastodon from emacs.
 Only evaluated if in my home environment, my encrypted directory is mounted, as the auth information is stored there.
 
 #+begin_src emacs-lisp
-  (if (and my-clear-directory-is-mounted-p my-homeenvironment-p)
+(if (and my-clear-directory-is-mounted-p my-homeenvironment-p)
       (use-package mastodon
         :straight t
         ;; :bind
@@ -397,12 +397,11 @@ Shows the free keybinding. Useful to assign new keybindings to some new function
 ** Which-key
 After pressing a key combo, it shows the key bindings associated.
 #+begin_src emacs-lisp
-  ;; Commented, since which-key is now in emacs 30 nativelly
-  ;; (use-package which-key
-  ;;   :straight t
-  ;;   :config
+   (use-package which-key
+     :straight t
+     :config
   (which-key-mode)
-  ;;   )
+     )
 
   ;; (use-package which-key-posframe
   ;;   :config
