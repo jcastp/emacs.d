@@ -744,6 +744,7 @@ https://github.com/nex3/perspective-el
     :custom
     (persp-mode-prefix-key (kbd "C-c w"))  ; pick your own prefix key here
     :bind
+    ("C-c w w" . persp-switch)
     ("C-c w b" . persp-ibuffer)         ; or use a nicer switcher, see below
     ;; Redefining the buffer search to align with persp philosophy.
     ("C-x b" . persp-switch-to-buffer*)
