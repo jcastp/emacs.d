@@ -3330,15 +3330,15 @@ Define the list of languages I want to have in tree-sitter.
 
 If they are not installed, get the repo and build them:
 #+begin_src emacs-lisp
-  (if (not (file-exists-p "~/.emacs.d/tree-sitter/libtree-sitter-python.so"))
-        (treesit-install-language-grammar 'python "~/.emacs.d/tree-sitter")
-      )
-  (if (not (file-exists-p "~/.emacs.d/tree-sitter/libtree-sitter-bash.so"))
-        (treesit-install-language-grammar 'bash "~/.emacs.d/tree-sitter")
-      )
-  (if (not (file-exists-p "~/.emacs.d/tree-sitter/libtree-sitter-elisp.so"))
-        (treesit-install-language-grammar 'elisp "~/.emacs.d/tree-sitter")
-      )
+   (if (not (file-exists-p "~/.emacs.d/tree-sitter/libtree-sitter-python.so"))
+         (treesit-install-language-grammar 'python)
+       )
+   (if (not (file-exists-p "~/.emacs.d/tree-sitter/libtree-sitter-bash.so"))
+         (treesit-install-language-grammar 'bash)
+       )
+   (if (not (file-exists-p "~/.emacs.d/tree-sitter/libtree-sitter-elisp.so"))
+         (treesit-install-language-grammar 'elisp)
+       )
 #+end_src
 
 Now, we remap the major modes to the treesitter enabled modes:
