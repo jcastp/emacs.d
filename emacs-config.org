@@ -3690,6 +3690,37 @@ https://github.com/emacs-dashboard/emacs-dashboard
     )
 #+end_src
 
+* TODO my own keymap
+I want to have my own dedicated keymap for the functions I use the most.
+
+From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
+#+begin_src emacs-lisp
+  (defvar-keymap my/key-prefix-writing-map
+    :doc "Functions related to writing"
+    ;; writing mode
+    "a" #'my/writing-env
+    "e" #'my/editing-windows
+    ;; writing exercises
+    "w" #'my/create-writing-exercise
+    "q" #'my/create-empty-writing-file
+    )
+
+  (defvar-keymap my/key-prefix-map
+    :doc "My personal keymap."
+    "c" #'diff-buffer-with-file
+    "d" #'dashboard-open
+    "f" #'my/elfeed
+    "i" #'tempel-insert
+    "m" #'mastodon
+    "o" #'consult-outline
+    "r" #'recentf
+    "t" #'consult-theme
+    "w" (cons "writing" my/key-prefix-writing-map)
+    )
+
+  (keymap-set global-map "C-z" my/key-prefix-map)
+#+end_src
+
 * Testing
 Here there will be all the configs I'm testing, before committing them to the main config.
 ** TODO resize the column fill and orgmode tags align
@@ -3969,38 +4000,7 @@ A set of examples for how to use it, extracted from the package doc:
 
 *** TODO Mythic GME
 #+begin_src emacs-lisp
-  (load-file "~/Nextcloud/codigo/elisp/mythic/mythic.el")
-#+end_src
-
-* TODO my own keymap
-I want to have my own dedicated keymap for the functions I use the most.
-
-From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
-#+begin_src emacs-lisp
-  (defvar-keymap my/key-prefix-writing-map
-    :doc "Functions related to writing"
-    ;; writing mode
-    "a" #'my/writing-env
-    "e" #'my/editing-windows
-    ;; writing exercises
-    "w" #'my/create-writing-exercise
-    "q" #'my/create-empty-writing-file
-    )
-
-  (defvar-keymap my/key-prefix-map
-    :doc "My personal keymap."
-    "c" #'diff-buffer-with-file
-    "d" #'dashboard-open
-    "f" #'my/elfeed
-    "i" #'tempel-insert
-    "m" #'mastodon
-    "o" #'consult-outline
-    "r" #'recentf
-    "t" #'consult-theme
-    "w" (cons "writing" my/key-prefix-writing-map)
-    )
-
-  (keymap-set global-map "C-z" my/key-prefix-map)
+  ;;(load-file "~/Nextcloud/codigo/elisp/mythic/mythic.el")
 #+end_src
 
 * home related load and startup
