@@ -56,15 +56,16 @@ I can now check mastodon from emacs.
 Only evaluated if in my home environment, my encrypted directory is mounted, as the auth information is stored there.
 
 #+begin_src emacs-lisp
-(if (and my-clear-directory-is-mounted-p my-homeenvironment-p)
+  (if (and my-clear-directory-is-mounted-p my-homeenvironment-p)
       (use-package mastodon
         :straight t
+        :defer t
         ;; :bind
         ;; ("C-c d m" . mastodon)
         :config
         ;; account configuration
         (setq mastodon-instance-url "https://mastodon.online"
-  	    mastodon-active-user "jcastp")
+    	    mastodon-active-user "jcastp")
         ;; my auth information is now in my encrypted directory
         (setq mastodon-client--token-file (expand-file-name "personal/emacs/mastodon.plstore" my-clear-directory))
         )
