@@ -17,8 +17,12 @@ https://cestlaz-nikola.github.io/posts/using-emacs-47-magit/
 #+begin_src emacs-lisp
   (use-package magit
     :straight t
+    :bind
+    (:map global-map
+  	("C-x g" . magit-status)
+  	)
     :config
-    (global-set-key (kbd "C-x g") 'magit-status)
+    ;;(global-set-key (kbd "C-x g") 'magit-status)
     )
   #+end_src
   
