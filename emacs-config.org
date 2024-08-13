@@ -3140,20 +3140,20 @@ When I write, I find that I need to have full focus on the writing, and have a d
     (require 'consult) ;; to change the theme
     (require 'fontaine) ;; to change the fonts
 
-    (defvar my/writing-env-p nil
+    (defvar my-writing-env-p nil
       "Status of my writing mode. Nil when not enabled, true when it is.")
 
-    (defvar my/writing-env-normal-theme 'ef-deuteranopia-dark
+    (defvar my-writing-env-normal-theme 'ef-deuteranopia-dark
       "The theme I use for my normal environment.")
 
-    (defvar my/writing-env-work-theme 'leuven
+    (defvar my-writing-env-work-theme 'poet
       "The theme I use for my writing environment.")
 
     ;; This needs to be a fontaine preset
-    (defvar my/writing-env-normal-font 'regular
+    (defvar my-writing-env-normal-font 'regular
       "The font I use for my writing environment.")
 
-    (defvar my/writing-env-work-font 'writing-big
+    (defvar my-writing-env-work-font 'writing-big
       "The font I use for my writing environment.")
 
     ;; helper function to turn on and off writeroom with some options
