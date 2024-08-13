@@ -3173,21 +3173,21 @@ When I write, I find that I need to have full focus on the writing, and have a d
       "Establish my own writing setting with just one function.
   It changes theme, font, and writeroom mode."
       (interactive)
-      (if (not my/writing-env-p)
+      (if (not my-writing-env-p)
           (progn
   	  (display-line-numbers-mode 0)
-          	(consult-theme my/writing-env-work-theme)
-          	(fontaine-set-preset my/writing-env-work-font)
+          	(consult-theme my-writing-env-work-theme)
+          	(fontaine-set-preset my-writing-env-work-font)
             (my/own-writeroom 70 t)
-            (setq my/writing-env-p t)
+            (setq my-writing-env-p t)
             )
         ;; else part
         (progn
   	(display-line-numbers-mode 1)
-          (consult-theme my/writing-env-normal-theme)
-          (fontaine-set-preset my/writing-env-normal-font)
+          (consult-theme my-writing-env-normal-theme)
+          (fontaine-set-preset my-writing-env-normal-font)
           (my/own-writeroom 90 nil)
-          (setq my/writing-env-p nil)
+          (setq my-writing-env-p nil)
           )
         )
       )
