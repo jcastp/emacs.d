@@ -1198,14 +1198,16 @@ Protesilaos very good themes. These themes are already included in the standard 
 *** doom themes
 #+begin_src emacs-lisp
   (use-package doom-themes
-    :straight t)
+    :straight t
+    :defer t)
 #+end_src
 
 *** poet theme
 https://github.com/kunalb/poet
 #+begin_src emacs-lisp
   (use-package poet-theme
-    :straight t)
+    :straight t
+    :defer t)
 #+end_src
 
 *** Establish the default theme
@@ -3774,6 +3776,7 @@ Depending on the size of the frame, I need to resize the visual-fill-column-widt
   (use-package ellama
     :ensure t
     :init
+    :defer t
     :config
     ;; setup key bindings
     (setopt ellama-keymap-prefix "C-c e")
@@ -3810,7 +3813,8 @@ Code: https://github.com/rnkn/fountain-mode
 
 #+begin_src emacs-lisp
   (use-package fountain-mode
-    :straight t)
+    :straight t
+    :defer t)
 #+end_src
 
 ** TODO hammy - time intervals
@@ -3856,6 +3860,7 @@ An Emacs minor mode to kill your inner editor! Every writer struggles to balance
 #+begin_src emacs-lisp
   (use-package freeze-it
     :straight t
+    :defer t
     :config
     )
 #+end_src
