@@ -3116,7 +3116,9 @@ Sometimes I want to create a story prompt on the fly. These functions allow for 
     "Create a new empty org file with name format `%Y%m%d-<title>.org', where <title> is the `title' argument with spaces replaced by underscores. The file will be stored in `my-stories-directory'."
     (interactive "sEnter file name: ")
     (let* ((date (format-time-string "%Y%m%d"))
+  	 ;; Create the filename with the timestamp and the title
            (filename (concat date "-" (replace-regexp-in-string " " "_" title) ".org"))
+  	 ;; create the full path of the file
            (full-path (concat my-stories-directory "/" filename))
   	 ;; Create a string with the title and author
   	 (initial_title (format "#+TITLE: %s\n#+AUTHOR: %s\n#+EMAIL: %s" title user-full-name user-mail-address))
@@ -3127,19 +3129,27 @@ Sometimes I want to create a story prompt on the fly. These functions allow for 
       ))
   ;;(global-set-key (kbd "C-c d e") 'my/create-empty-writing-file)
 
-  (defun my/create-writing-exercise (text)
-    "Create a new file with the current date and the specified TEXT.
+  (defun my/create-writing-exercise (title)
+    "Create a new file with the current date and the specified TITLE.
   The file is saved in the directory specified by `my-stories-directory'.
   The file name format is \"%Y%m%d-<text>.org\", with spaces in TEXT replaced by \"_\".
   The function runs a Python script that generates a writing prompt
   and stores the output in the file."
     (interactive "sEnter file name: ")
     (let* ((date (format-time-string "%Y%m%d"))
-           (file-name (concat date "-" (replace-regexp-in-string " " "_" text) ".org"))
+  	 ;; Create the filename with the timestamp and the title
+           (file-name (concat date "-" (replace-regexp-in-string " " "_" title) ".org"))
+  	 ;; create the full path of the file
            (file-path (concat my-stories-directory "/" file-name))
-           (python-output (shell-command-to-string "python  ~/Nextcloud/escritura/software/writing_companion/writing_companion.py -s all prompt")))
+  	 ;; Get the output from the python script
+           (python-output (shell-command-to-string "python  ~/Nextcloud/escritura/software/writing_companion/writing_companion.py -s all prompt"))
+  	 ;; Create the initial org front matter
+  	 (initial_title (format "#+TITLE: %s\n#+AUTHOR: %s\n#+EMAIL: %s" title user-full-name user-mail-address)))
+      ;; insert the data in the file
       (with-temp-file file-path
-        (insert "#+TITLE: " text "\n\n" python-output))
+        (insert initial_title )
+  	(insert "\n\n" python-output))
+      ;; open the file
       (find-file file-path)
       ))
   ;;(global-set-key (kbd "C-c d w") 'my/create-writing-exercise)
