@@ -3118,7 +3118,11 @@ Sometimes I want to create a story prompt on the fly. These functions allow for 
     (let* ((date (format-time-string "%Y%m%d"))
            (filename (concat date "-" (replace-regexp-in-string " " "_" text) ".org"))
            (full-path (concat my/stories-directory "/" filename)))
-      (find-file full-path)))
+      (find-file full-path)
+      ;; very crude way to include some text in the file created
+      (write-region
+       (format "#+TITLE: %s\n#+AUTHOR: Javier Castilla\n#+EMAIL: jcastp@pm.me" text) nil full-path)
+      ))
   ;;(global-set-key (kbd "C-c d e") 'my/create-empty-writing-file)
 
   (defun my/create-writing-exercise (text)
