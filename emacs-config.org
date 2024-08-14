@@ -4017,6 +4017,20 @@ A set of examples for how to use it, extracted from the package doc:
   ;;(load-file "~/Nextcloud/codigo/elisp/mythic/mythic.el")
 #+end_src
 
+
+** TODO eshell improvements
+
+*** TODO eshell-z
+Replicates the z function from zsh.
+#+begin_src emacs-lisp
+  (use-package eshell-z
+    :straight t
+    :config
+    (add-hook 'eshell-mode-hook
+  	    (defun my-eshell-mode-hook ()
+  	      (require 'eshell-z))))
+#+end_src
+
 * home related load and startup
 This will be loaded automatically when at home.
 
