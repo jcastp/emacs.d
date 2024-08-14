@@ -3112,16 +3112,18 @@ Sometimes I want to create a story prompt on the fly. These functions allow for 
   (defvar my/stories-directory "~/Nextcloud/escritura/historias/ejercicios"
     "Directory where org files created by `my/create-org-file' will be stored.")
 
-  (defun my/create-empty-writing-file (text)
-    "Create a new empty org file with name format `%Y%m%d-<text>.org', where <text> is the `text' argument with spaces replaced by underscores. The file will be stored in `my/stories-directory'."
+  (defun my/create-empty-writing-file (title)
+    "Create a new empty org file with name format `%Y%m%d-<title>.org', where <title> is the `title' argument with spaces replaced by underscores. The file will be stored in `my/stories-directory'."
     (interactive "sEnter file name: ")
     (let* ((date (format-time-string "%Y%m%d"))
-           (filename (concat date "-" (replace-regexp-in-string " " "_" text) ".org"))
-           (full-path (concat my/stories-directory "/" filename)))
+           (filename (concat date "-" (replace-regexp-in-string " " "_" title) ".org"))
+           (full-path (concat my/stories-directory "/" filename))
+  	 ;; Create a string with the title and author
+  	 (initial_title (format "#+TITLE: %s\n#+AUTHOR: %s\n#+EMAIL: %s" title user-full-name user-mail-address))
+  	   )
       (find-file full-path)
-      ;; very crude way to include some text in the file created
-      (write-region
-       (format "#+TITLE: %s\n#+AUTHOR: Javier Castilla\n#+EMAIL: jcastp@pm.me" text) nil full-path)
+      ;; very crude way to include some title in the file created
+      (write-region initial_title nil full-path)
       ))
   ;;(global-set-key (kbd "C-c d e") 'my/create-empty-writing-file)
 
