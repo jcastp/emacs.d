@@ -3121,9 +3121,9 @@ Sometimes I want to create a story prompt on the fly. These functions allow for 
   	 ;; Create a string with the title and author
   	 (initial_title (format "#+TITLE: %s\n#+AUTHOR: %s\n#+EMAIL: %s" title user-full-name user-mail-address))
   	   )
-      (find-file full-path)
       ;; very crude way to include some title in the file created
-      (write-region initial_title nil full-path)
+      (append-to-file initial_title nil full-path)
+      (find-file full-path)
       ))
   ;;(global-set-key (kbd "C-c d e") 'my/create-empty-writing-file)
 
