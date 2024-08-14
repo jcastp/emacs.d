@@ -3109,15 +3109,15 @@ https://github.com/minad/tempel
 Sometimes I want to create a story prompt on the fly. These functions allow for creating the prompts and the file, so I can immediately start writing.
 
 #+begin_src emacs-lisp
-  (defvar my/stories-directory "~/Nextcloud/escritura/historias/ejercicios"
+  (defvar my-stories-directory "~/Nextcloud/escritura/historias/ejercicios"
     "Directory where org files created by `my/create-org-file' will be stored.")
 
   (defun my/create-empty-writing-file (title)
-    "Create a new empty org file with name format `%Y%m%d-<title>.org', where <title> is the `title' argument with spaces replaced by underscores. The file will be stored in `my/stories-directory'."
+    "Create a new empty org file with name format `%Y%m%d-<title>.org', where <title> is the `title' argument with spaces replaced by underscores. The file will be stored in `my-stories-directory'."
     (interactive "sEnter file name: ")
     (let* ((date (format-time-string "%Y%m%d"))
            (filename (concat date "-" (replace-regexp-in-string " " "_" title) ".org"))
-           (full-path (concat my/stories-directory "/" filename))
+           (full-path (concat my-stories-directory "/" filename))
   	 ;; Create a string with the title and author
   	 (initial_title (format "#+TITLE: %s\n#+AUTHOR: %s\n#+EMAIL: %s" title user-full-name user-mail-address))
   	   )
@@ -3129,14 +3129,14 @@ Sometimes I want to create a story prompt on the fly. These functions allow for 
 
   (defun my/create-writing-exercise (text)
     "Create a new file with the current date and the specified TEXT.
-  The file is saved in the directory specified by `my/stories-directory'.
+  The file is saved in the directory specified by `my-stories-directory'.
   The file name format is \"%Y%m%d-<text>.org\", with spaces in TEXT replaced by \"_\".
   The function runs a Python script that generates a writing prompt
   and stores the output in the file."
     (interactive "sEnter file name: ")
     (let* ((date (format-time-string "%Y%m%d"))
            (file-name (concat date "-" (replace-regexp-in-string " " "_" text) ".org"))
-           (file-path (concat my/stories-directory "/" file-name))
+           (file-path (concat my-stories-directory "/" file-name))
            (python-output (shell-command-to-string "python  ~/Nextcloud/escritura/software/writing_companion/writing_companion.py -s all prompt")))
       (with-temp-file file-path
         (insert "#+TITLE: " text "\n\n" python-output))
