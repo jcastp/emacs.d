@@ -1821,7 +1821,7 @@ Here I will add template captures for doing several things:
 
   			     ;; Everything that I find interesting to create, no matter what it is
   			     ("h" "Compost heap" item
-                                (file+headline "~/Nextcloud/escritura/ideas/compost_heap.org" "Compost heap")
+                                (file+headline "~/Nextcloud/escritura/retazos/compost_heap.org" "Compost heap")
                                  "%i"
                                  :empty-lines-after 1)
 
