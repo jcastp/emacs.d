@@ -217,14 +217,13 @@ As work is different from home, I need specific templates.
 #+begin_src emacs-lisp
   (setq org-capture-templates'(
 
-                               ("i" "Inbox (work)" entry
-                                (file+headline "~/Nextcloud/agenda/trabajo/trabajo.org" "Inbox")
+                               ("t" "Tasks (work)" entry
+                                (file+headline "~/Nextcloud/agenda/trabajo/trabajo.org" "Tasks")
                                 "** TODO %? %^g \n:LOGBOOK: \n:CREATED: %U \n:END:")
 
-                               ("I" "New incident." entry
+                               ("i" "New incident." entry
                                 (file+headline "~/Nextcloud/agenda/trabajo/trabajo.org" "Incidents")
                                 "** TODO %?")
-
 
                                ("b" "Backlog entry." entry
                                 (file+headline "~/Nextcloud/agenda/trabajo/trabajo_backlog.org" "Backlog")
