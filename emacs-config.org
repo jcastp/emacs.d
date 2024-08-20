@@ -4046,6 +4046,32 @@ Replicates the z function from zsh.
   	      (require 'eshell-z))))
 #+end_src
 
+
+** TODO Create an org scratch buffer
+https://emacs.stackexchange.com/questions/16492/is-it-possible-to-create-an-org-mode-scratch-buffer
+
+When you want to write something fast using org mode, but you don't want to create a new file.
+
+#+begin_src emacs-lisp
+  (defun my-scratch-buffer ()
+  "Create a new scratch buffer -- \*hello-world\*"
+  (interactive)
+    (let ((n 0)
+          bufname buffer)
+      (catch 'done
+        (while t
+          (setq bufname (concat "*hello-world"
+            (if (= n 0) "" (int-to-string n))
+              "*"))
+          (setq n (1+ n))
+          (when (not (get-buffer bufname))
+            (setq buffer (get-buffer-create bufname))
+            (with-current-buffer buffer
+              (org-mode))
+            ;; When called non-interactively, the `t` targets the other window (if it exists).
+            (throw 'done (display-buffer buffer t))) ))))
+#+end_src
+
 * home related load and startup
 This will be loaded automatically when at home.
 
