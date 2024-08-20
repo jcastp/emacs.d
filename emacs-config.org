@@ -1424,7 +1424,7 @@ Create custom tags for different categories and contexts.
                         ;; Contexts based on tools
                         ("computer" . ?c) ("mobile" . ?m)  ("penpaper" . ?p)
                         ;; Contexts based on activities
-  		      ("emacs" . ?e) ("writing" . ?w) ("reading" . ?r) ("personal" . ?p) ("calls" . ?C) ("blog" . ?b)
+  		      ("emacs" . ?e) ("writing" . ?w) ("reading" . ?r) ("personal" . ?P) ("calls" . ?C) ("blog" . ?b)
                         )
         )
 #+end_src
