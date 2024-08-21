@@ -3735,7 +3735,7 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
     :doc "My personal keymap."
     "c" #'diff-buffer-with-file
     "d" #'dashboard-open
-    "f" #'my/elfeed
+    "f" (cons "elfeed" #'my/elfeed)
     "i" #'tempel-insert
     "m" #'mastodon
     "o" #'consult-outline
