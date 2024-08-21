@@ -3787,15 +3787,15 @@ Depending on the size of the frame, I need to resize the visual-fill-column-widt
 #+end_src
 
 ** TODO ellama - emacs with LLMs and ollama
+https://github.com/s-kostyaev/ellama
 #+begin_src emacs-lisp
   (use-package ellama
     :ensure t
     :init
-    :defer t
-    :config
     ;; setup key bindings
     (setopt ellama-keymap-prefix "C-c e")
     (require 'llm-ollama)
+    :config
     ;; initial model
     (setopt ellama-provider
   	  (make-llm-ollama
