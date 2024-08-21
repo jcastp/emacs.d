@@ -3568,8 +3568,8 @@ I used org-books, but the package seems to not be maintained, and the URL fetchi
   	       "b"
   	       "Manual book entry"
   	       entry
-  	       (file+headline "~/Nextcloud/agenda/books.org" "inbox")
-  	       "** %^{TITLE}\n:PROPERTIES:\n:ADDED: %<[%Y-%02m-%02d]>\n:END:%^{AUTHOR}p\n%?"
+  	       (file "~/Nextcloud/agenda/books.org")
+  	       "* %^{TITLE}\n:PROPERTIES:\n:ADDED: %<[%Y-%02m-%02d]>\n:END:%^{AUTHOR}p\n%?"
   	       :empty-lines 1
   	       )
   	     ;; append at the end of the capture list
