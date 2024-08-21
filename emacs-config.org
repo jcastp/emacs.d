@@ -339,8 +339,8 @@ To automatically close parenthesis and other punctuation signs.
   (use-package vundo
     :straight t
     :config
-    (global-set-key (kbd "C-x u") #'vundo)
-    (global-set-key (kbd "C-<dead-grave>") #'vundo)
+    (global-set-key (kbd "C-z") #'vundo)
+    ;;(global-set-key (kbd "C-<dead-grave>") #'vundo)
   )
 #+end_src
 
@@ -3744,7 +3744,7 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
     "w" (cons "writing" my/key-prefix-writing-map)
     )
 
-  (keymap-set global-map "C-z" my/key-prefix-map)
+  (keymap-set global-map "C-c d" my/key-prefix-map)
 #+end_src
 
 * Testing
