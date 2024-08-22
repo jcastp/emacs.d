@@ -191,7 +191,7 @@ I need a different custom agenda commands to see the tasks better.
 #+begin_src emacs-lisp
 (setq org-tag-alist '(
                       ;; environment, project or effort
-                      ("detection" . ?d) ("automation" . ?a)
+                      ("detection" . ?d) ("automation" . ?a) ("emailsec" . ?e) ("operations" . ?o)
                       ;; other tags
                       ("documentation" . ?D) ("procedures" . ?P)
                       ("knowledge" . ?K) ("training" . ?T)
