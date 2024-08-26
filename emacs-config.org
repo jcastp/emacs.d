@@ -16,7 +16,7 @@ https://cestlaz-nikola.github.io/posts/using-emacs-47-magit/
 
 #+begin_src emacs-lisp
   (use-package magit
-    :straight t
+    :ensure t
     :bind
     (:map global-map
   	("C-x g" . magit-status)
@@ -31,7 +31,7 @@ To show where the file has been modified.
 https://github.com/dgutov/diff-hl
 #+begin_src emacs-lisp
   (use-package diff-hl
-    :straight t
+    :ensure t
     :config
     (global-diff-hl-mode)
     (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
@@ -58,7 +58,7 @@ Only evaluated if in my home environment, my encrypted directory is mounted, as 
 #+begin_src emacs-lisp
   (if (and my-clear-directory-is-mounted-p my-homeenvironment-p)
       (use-package mastodon
-        :straight t
+        :ensure t
         :defer t
         ;; :bind
         ;; ("C-c d m" . mastodon)
@@ -106,7 +106,7 @@ Fine tune the garbage collection.
   ;; https://github.com/hlissner/doom-emacs/blob/develop/docs/faq.org#how-does-doom-start-up-so-quickly
 
   (use-package gcmh
-    :straight t
+    :ensure t
     :diminish gcmh-mode
     :custom
     (gcmh-mode 1)
@@ -337,7 +337,7 @@ To automatically close parenthesis and other punctuation signs.
 ** TODO vundo - undo with visual cues
 #+begin_src emacs-lisp
   (use-package vundo
-    :straight t
+    :ensure t
     :config
     (global-set-key (kbd "C-z") #'vundo)
     ;;(global-set-key (kbd "C-<dead-grave>") #'vundo)
@@ -349,7 +349,7 @@ Very large files loading.
 #+begin_src emacs-lisp
   ;; very large files support
   (use-package vlf
-    :straight t
+    :ensure t
     :config
     (require 'vlf-setup)
     )
@@ -359,7 +359,7 @@ Very large files loading.
 Open particular files with external applications.
 #+begin_src emacs-lisp
   (use-package openwith
-    :straight t
+    :ensure t
     :config
     (when (require 'openwith nil 'noerror)
       (setq openwith-associations
@@ -395,7 +395,7 @@ Open particular files with external applications.
 Shows the free keybinding. Useful to assign new keybindings to some new functions.
 #+begin_src emacs-lisp
   (use-package free-keys
-    :straight t
+    :ensure t
     )
 #+end_src
 
@@ -407,7 +407,7 @@ After pressing a key combo, it shows the key bindings associated.
       (which-key-mode)
     (progn (
   	  (use-package which-key
-              :straight t
+              :ensure t
               :config
               (which-key-mode)
               ))))
@@ -423,7 +423,7 @@ https://github.com/magnars/expand-region.el
 Select relevant regions incrementally.
 #+begin_src emacs-lisp
   (use-package expand-region
-    :straight t
+    :ensure t
     :config
     (global-set-key (kbd "C-ñ") 'er/expand-region))
 #+end_src
@@ -474,7 +474,7 @@ Vertical auto completion in the minibuffer
 https://github.com/minad/vertico
 #+begin_src emacs-lisp
   (use-package vertico
-    :straight t
+    :ensure t
     :init
     (vertico-mode)
     )
@@ -489,7 +489,7 @@ https://github.com/minad/vertico
 *** vertico posframe
 #+begin_src emacs-lisp
   ;; (use-package vertico-posframe
-  ;;   :straight t
+  ;;   :ensure t
   ;;   :after vertico
   ;;   :init
   ;;   (vertico-posframe-mode 1)) 
@@ -499,7 +499,7 @@ https://github.com/minad/vertico
 For better graphic in the completion buffer.
 #+begin_src emacs-lisp
   (use-package all-the-icons-completion
-    :straight t
+    :ensure t
     :config
     (all-the-icons-completion-mode))
 #+end_src
@@ -509,7 +509,7 @@ For better auto completion suggestions:
 https://github.com/raxod502/prescient.el
 #+begin_src emacs-lisp
   (use-package prescient
-    :straight t
+    :ensure t
     :config
     (prescient-persist-mode 1)
     (setq prescient-save-file (expand-file-name "prescient-save" my-data-dir))
@@ -517,7 +517,7 @@ https://github.com/raxod502/prescient.el
 
   ;; To use prescient with vertico
   (use-package vertico-prescient
-    :straight t
+    :ensure t
     )
 #+end_src
 
@@ -526,7 +526,7 @@ Completion from a list of candidates, and has enhanced commands.
 https://github.com/minad/consult
 #+begin_src emacs-lisp
   (use-package consult
-    :straight t
+    :ensure t
     :demand t
     :bind (
            ;; misc commands
@@ -560,7 +560,7 @@ Add side anotations to the completion buffer
 https://github.com/minad/marginalia/
 #+begin_src emacs-lisp
   (use-package marginalia
-    :straight t
+    :ensure t
     :init
       (marginalia-mode)
   )
@@ -571,7 +571,7 @@ This package provides a sort of right-click contextual menu for Emacs, accessed 
 https://github.com/oantolin/embark/
 #+begin_src emacs-lisp
   (use-package embark
-    :straight t
+    :ensure t
     :bind
     (("C-." . embark-act)         ;; pick some comfortable binding
      ;;("C-;" . embark-dwim)        ;; good alternative: M-.
@@ -591,7 +591,7 @@ https://github.com/oantolin/embark/
 
   ;; Consult users will also want the embark-consult package.
   (use-package embark-consult
-    :straight t
+    :ensure t
     :after (embark consult)
     :demand t ; only necessary if you have the hook below
     ;; if you want to have consult previews as you move around an
@@ -606,7 +606,7 @@ To have completion based on parts of words, and sepparated by spaces.
 https://github.com/oantolin/orderless
 #+begin_src emacs-lisp
   (use-package orderless
-    :straight t
+    :ensure t
     :init
     ;; Configure a custom style dispatcher (see the Consult wiki)
     ;; (setq orderless-style-dispatchers '(+orderless-dispatch)
@@ -622,7 +622,7 @@ https://github.com/minad/corfu
 Vertico completes the minibuffer, while corfu completes in buffer.
 #+begin_src emacs-lisp
     (use-package corfu
-      :straight t
+      :ensure t
       ;; Optional customizations
       :custom
       (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
@@ -666,7 +666,7 @@ https://www.gnu.org/software/emacs/manual/html_node/emacs/Uniquify.html
 Shortcuts to commands using just quick key combinations.
 #+begin_src emacs-lisp
   (use-package key-chord
-    :straight t
+    :ensure t
     :demand t
     :init
     (key-chord-mode 1)
@@ -692,7 +692,7 @@ Shortcuts to commands using just quick key combinations.
 Imenu shows the outline of your file as a browsable sidebar in another window.
 #+begin_src emacs-lisp
   (use-package imenu-list
-    :straight t
+    :ensure t
     :config
     ;; set the width to % of the screen
     (setq imenu-list-size 0.25)
@@ -720,7 +720,7 @@ To better manage more buffers in screen, as seen here: https://github.com/abo-ab
 Used in the hydra snippets.
 #+begin_src emacs-lisp
   (use-package ace-window
-    :straight t
+    :ensure t
     :config
     (setq aw-scope 'frame)
     (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
@@ -737,7 +737,7 @@ A better way to jump through text.
 https://github.com/abo-abo/avy
 #+begin_src emacs-lisp
   (use-package avy
-    :straight t
+    :ensure t
     :config
       (global-set-key (kbd "C-x c c") 'avy-goto-char-2)
       (global-set-key (kbd "C-x c w") 'avy-goto-word-1)
@@ -749,7 +749,7 @@ https://github.com/abo-abo/avy
 https://github.com/nex3/perspective-el
 #+begin_src emacs-lisp
   (use-package perspective
-    :straight t
+    :ensure t
     :custom
     (persp-mode-prefix-key (kbd "C-c w"))  ; pick your own prefix key here
     :bind
@@ -780,6 +780,8 @@ This way, we can recover the last session and restore all the persps we had then
   
 *** TODO automatic load some perspectives
 #+begin_src emacs-lisp
+
+  (with-eval-after-load 'perspective
   ;; where I define my own perspective saved files
   ;;(setq my-persp-save-dir (f-join my-data-dir "perspectives/"))
   (setq my-persp-save-dir (expand-file-name  "perspectives/" my-data-dir))
@@ -802,6 +804,7 @@ This way, we can recover the last session and restore all the persps we had then
         (message "Invalid choice"))))
 
   (define-key persp-mode-map (kbd "C-c w l") 'my/load-perspective)
+  )
 #+end_src
 
 But I want to automatically load some perspectives when I'm at home:
@@ -943,7 +946,7 @@ Highlight the indent guides with a pipe character, so it's easier to see where w
 https://github.com/DarthFennec/highlight-indent-guides
 #+begin_src emacs-lisp
   (use-package highlight-indent-guides
-    :straight t
+    :ensure t
     :config
     (setq highlight-indent-guides-method 'character)
     (setq highlight-indent-guides-character ?\|)
@@ -964,7 +967,7 @@ When reaching the established width defined, the line will wrap, even before get
 #+begin_src emacs-lisp
   ;; visual fill column mode
   (use-package visual-fill-column
-    :straight t
+    :ensure t
     :config
     ;; This sets the value to all the buffers, as initially it is a per-buffer variable
     (setq-default visual-fill-column-width 110)
@@ -977,7 +980,7 @@ When reaching the established width defined, the line will wrap, even before get
 Get all the fancy icons.
 #+begin_src emacs-lisp
   (use-package all-the-icons
-    :straight t
+    :ensure t
     :config
     )
 #+end_src
@@ -986,7 +989,7 @@ Get all the fancy icons.
 Doom modeline.
 #+begin_src emacs-lisp
   (use-package doom-modeline
-    :straight t
+    :ensure t
     ;;:hook (after-init . doom-modeline-mode)
     :init
     (doom-modeline-mode 1)
@@ -1023,7 +1026,7 @@ Doom modeline.
 It darkens the buffers I'm not using.
 #+begin_src emacs-lisp
   (use-package dimmer
-    :straight t
+    :ensure t
     :config
     (dimmer-configure-which-key)
     (dimmer-mode t)
@@ -1040,7 +1043,7 @@ It darkens the buffers I'm not using.
 #+begin_src emacs-lisp
   (use-package pulsar
     :after consult
-    :straight t
+    :ensure t
     :hook
     (consult-after-jump . pulsar-recenter-top)
     (consult-after-jump . pulsar-reveal-entry)
@@ -1145,7 +1148,7 @@ Use fixed font for code blocks and other non prose blocks, and configure all oth
 *** leuven themes
 #+begin_src emacs-lisp
   (use-package leuven-theme
-    :straight t)
+    :ensure t)
 #+end_src
 
 *** Protesilaos modus themes
@@ -1192,13 +1195,13 @@ Protesilaos very good themes. These themes are already included in the standard 
 *** Protesilaos ef themes
 #+begin_src emacs-lisp
   (use-package ef-themes
-    :straight t)
+    :ensure t)
 #+end_src
 
 *** doom themes
 #+begin_src emacs-lisp
   (use-package doom-themes
-    :straight t
+    :ensure t
     :defer t)
 #+end_src
 
@@ -1206,7 +1209,7 @@ Protesilaos very good themes. These themes are already included in the standard 
 https://github.com/kunalb/poet
 #+begin_src emacs-lisp
   (use-package poet-theme
-    :straight t
+    :ensure t
     :defer t)
 #+end_src
 
@@ -1301,7 +1304,7 @@ This comes from the old config, when I used the org-babel functions to tangled t
 #+begin_src emacs-lisp
   ;; load the org package soon in the config
   ;; (use-package org
-  ;;   :straight t
+  ;;   :ensure t
   ;;   )
 #+end_src
 
@@ -1341,7 +1344,7 @@ https://github.com/snosov1/toc-org
 
 #+begin_src emacs-lisp
   (use-package toc-org
-    :straight t
+    :ensure t
     :config
     (add-hook 'org-mode-hook 'toc-org-mode))
 #+end_src
@@ -1715,7 +1718,7 @@ This is the config for the org-superagenda mode
 
 #+begin_src emacs-lisp
   (use-package org-super-agenda
-    :straight t
+    :ensure t
     :config
     ;; not loading this one
     (org-super-agenda-mode -1)
@@ -1910,7 +1913,7 @@ Org-roam related config.
 
         ;; main org-roam config
         (use-package org-roam
-          :straight t
+          :ensure t
           :init
           (setq org-roam-v2-ack t)
           ;; Create the new directory to store roam notes
@@ -1996,11 +1999,11 @@ Org-roam related config.
         ;; org-roam-ui and its dependencies
         ;; simple httpd
         (use-package websocket
-          :straight t)
+          :ensure t)
         (use-package simple-httpd
-          :straight t)
+          :ensure t)
         (use-package org-roam-ui
-          :straight t
+          :ensure t
           :hook (org-roam . org-roam-ui-mode)
           )
 
@@ -2265,7 +2268,7 @@ This package is required to create the vanilla html export.
 
 #+begin_src emacs-lisp
   (use-package htmlize
-    :straight t)
+    :ensure t)
 #+end_src
 
 *** Markdown export
@@ -2654,7 +2657,7 @@ Show the invisible markers, only when the cursor is on them.
 
 #+begin_src emacs-lisp
    (use-package org-appear
-     :straight t
+     :ensure t
      :hook (org-mode . org-appear-mode)
      )
 #+end_src
@@ -2664,7 +2667,7 @@ https://github.com/minad/org-modern
 
 #+begin_src emacs-lisp
   (use-package org-modern
-    :straight t
+    :ensure t
     :config
     (with-eval-after-load 'org (global-org-modern-mode))
     (setq org-modern-hide-stars 'leading)
@@ -2695,7 +2698,7 @@ To plot mindmaps based on the orgmode headers
 #+begin_src emacs-lisp
   ;; org-mind-map
   (use-package org-mind-map
-    :straight t
+    :ensure t
     :init
     (require 'ox-org)
     :config
@@ -2716,7 +2719,7 @@ https://github.com/alphapapa/org-ql
 
 #+begin_src emacs-lisp
   (use-package org-ql
-    :straight t
+    :ensure t
     :bind
     ("C-c q f" . org-ql-find-in-agenda)
     ("C-c q s" . org-ql-search)
@@ -2749,7 +2752,7 @@ https://github.com/joostkremers/writeroom-mode
 
 #+begin_src emacs-lisp
   (use-package writeroom-mode
-    :straight t
+    :ensure t
     :config
     (global-set-key (kbd "C-c 5") 'writeroom-mode)
     ;; width of the writing area
@@ -2766,7 +2769,7 @@ Word counting with objective.
 
 #+begin_src emacs-lisp
   (use-package wc-mode
-    :straight t
+    :ensure t
     :config
     (global-set-key (kbd "C-c 9") 'wc-mode)
     )
@@ -2777,7 +2780,7 @@ https://lists.gnu.org/archive/html/emacs-orgmode/2011-04/msg00713.html
 
 #+begin_src emacs-lisp
   (use-package org-wc
-    :straight t)
+    :ensure t)
 #+end_src
 
 ** word count track table
@@ -2786,7 +2789,7 @@ https://github.com/tty-tourist/org-tracktable
 
 #+begin_src emacs-lisp
   (use-package org-tracktable
-    :straight t
+    :ensure t
     :if (not my-workenvironment-p)
     :config
     (global-set-key (kbd "C-c 3") 'org-tracktable-status)
@@ -2799,7 +2802,7 @@ Since I write in different languages, the dictionary applied is really important
 
 #+begin_src emacs-lisp
   (use-package guess-language
-    :straight t
+    :ensure t
     :config
     (setq guess-language-languages '(en es))
     (setq guess-language-min-paragraph-length 40)
@@ -2823,7 +2826,7 @@ Only mounted when at home, and clear directory is mounted.
   (if (and my-homeenvironment-p
   	    my-clear-directory-is-mounted-p)
       (use-package org-journal
-        :straight t
+        :ensure t
         :bind
         ("C-c r ñ" . org-journal-new-entry)
         :config
@@ -2876,7 +2879,7 @@ https://protesilaos.com/emacs/fontaine
 
 #+begin_src emacs-lisp
   (use-package fontaine
-    :straight t
+    :ensure t
     :config
     (setq fontaine-presets
           '(
@@ -2991,7 +2994,7 @@ https://github.com/SavchenkoValeriy/emacs-powerthesaurus
 
 #+begin_src emacs-lisp
     (use-package powerthesaurus
-      :straight t)
+      :ensure t)
 #+end_src
 
 ** TODO ox-hugo
@@ -3000,7 +3003,7 @@ https://ox-hugo.scripter.co/
 
 #+begin_src emacs-lisp
   (use-package ox-hugo
-    :straight t   ;Auto-install the package from Melpa
+    :ensure t   ;Auto-install the package from Melpa
     :after ox)
 #+end_src
 
@@ -3011,7 +3014,7 @@ Manual: https://nobiot.github.io/org-remark/
 
 #+begin_src emacs-lisp
   (use-package org-remark
-    :straight t
+    :ensure t
     :after org
     :config
     (require 'org-remark-global-tracking)
@@ -3075,7 +3078,7 @@ https://github.com/minad/tempel
 
 #+begin_src emacs-lisp
   (use-package tempel
-    :straight t
+    :ensure t
     :after org
     ;; Require trigger prefix before template name when completing.
     :custom
@@ -3164,8 +3167,8 @@ When I write, I find that I need to have full focus on the writing, and have a d
 - activates writeroom mode, with some custom setting (width, mainly)
 
 #+begin_src emacs-lisp
-    (require 'consult) ;; to change the theme
-    (require 'fontaine) ;; to change the fonts
+    ;;(require 'consult) ;; to change the theme
+    ;;(require 'fontaine) ;; to change the fonts
 
     (defvar my-writing-env-p nil
       "Status of my writing mode. Nil when not enabled, true when it is.")
@@ -3324,7 +3327,7 @@ Check language syntax on the fly.
 
 #+begin_src emacs-lisp
   (use-package flycheck
-    :straight t
+    :ensure t
     :demand t
     :init
     (global-flycheck-mode t)
@@ -3379,7 +3382,7 @@ Now, we remap the major modes to the treesitter enabled modes:
 Configuring eglot to work with vanilla python and its tree-sitter enabled mode:
 #+begin_src emacs-lisp
   (use-package eglot
-    :straight t
+    :ensure t
     :config
     ;;(add-to-list 'eglot-server-programs '(python-mode . ("pylsp")))
     (add-to-list 'eglot-server-programs '(python-ts-mode . ("pylsp")))
@@ -3422,7 +3425,7 @@ GNUplot for emacs, to use in plotting graphics from tables.
 
 #+begin_src emacs-lisp
   (use-package gnuplot
-    :straight t)
+    :ensure t)
 #+end_src
 
 ** hydra
@@ -3433,7 +3436,7 @@ This serves to resize the windows
 
 #+begin_src emacs-lisp
   (use-package hydra
-    :straight t
+    :ensure t
     :config
     (global-unset-key (kbd "C-c k"))
     (global-set-key
@@ -3467,13 +3470,13 @@ This serves to resize the windows
 ** pdf-tools
 #+begin_src emacs-lisp
   (use-package pdf-tools
-    :straight t
+    :ensure t
     :config
     ;; don't ask when installing pdf-tools
     (pdf-tools-install t))
 
   (use-package saveplace-pdf-view
-    :straight t
+    :ensure t
     :config
     (save-place-mode 1))
 #+end_src
@@ -3485,7 +3488,7 @@ https://tech.toryanderson.com/2022/11/23/viewing-epub-in-emacs/
 Removing this one, and using the one from the source code below:
 #+begin_src emacs-lisp :tangle no
   (use-package nov
-    :straight t
+    :ensure t
     :config
     (setq nov-text-width 90)
      ;;(setq nov-text-width t)
@@ -3505,12 +3508,12 @@ Removing this one, and using the one from the source code below:
 
 #+begin_src emacs-lisp
   (use-package esxml
-    :straight (esxml :type git :host github :repo "tali713/esxml")
-    :straight t)
+    :ensure (esxml :type git :host github :repo "tali713/esxml")
+    )
 
   (use-package nov
     :after esxml
-    :straight (nov :type git :host nil :repo "https://depp.brause.cc/nov.el.git")
+    :ensure (nov :type git :host nil :repo "https://depp.brause.cc/nov.el.git")
     :config
     (setq nov-text-width 100)
     ;;(setq nov-text-width t)
@@ -3540,7 +3543,7 @@ https://github.com/chenyanming/calibredb.el
       (progn
         ;; here comes the actions I want to be done at a home environment
         (use-package calibredb
-          :straight t
+          :ensure t
           :config
           (setq calibredb-root-dir "/home/calibre_libros/")
           (setq calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir))
@@ -3582,10 +3585,10 @@ RSS read in emacs.
 #+begin_src emacs-lisp
   ;; to store our rss feeds sources
   (use-package elfeed-org
-    :straight t)
+    :ensure t)
   
   (use-package elfeed
-    :straight t
+    :ensure t
     :init
     (elfeed-org)
     :config
@@ -3654,7 +3657,7 @@ https://github.com/emacs-dashboard/emacs-dashboard
   (if my-homeenvironment-p
       (progn
         (use-package dashboard
-  	:straight t
+  	:ensure t
   	:after org-agenda
   	;; :bind
   	;; ("C-c d d" . dashboard-open)
@@ -3828,7 +3831,7 @@ Code: https://github.com/rnkn/fountain-mode
 
 #+begin_src emacs-lisp
   (use-package fountain-mode
-    :straight t
+    :ensure t
     :defer t)
 #+end_src
 
@@ -3838,7 +3841,7 @@ Time intervals, such as pomodoro.
 
 #+begin_src emacs-lisp
   (use-package hammy
-    :straight t
+    :ensure t
     :config
     (hammy-mode)
     ;; We name the timer with the Unicode TOMATO character, and propertize
@@ -3874,59 +3877,10 @@ An Emacs minor mode to kill your inner editor! Every writer struggles to balance
 
 #+begin_src emacs-lisp
   (use-package freeze-it
-    :straight t
+    :ensure t
     :defer t
     :config
     )
-#+end_src
-
-** TODO bibliography - config
-All the config needed to manage bibliographies and references.
-
-*** bibtex
-The main files are the .bib files, where all the information about the reading material is stored.
-
-#+begin_src emacs-lisp
-  (use-package bibtex
-    :straight t
-    :custom
-    (bibtex-dialect 'biblatex)
-    (bibtex-user-optional-fields
-     '(("keywords" "Keywords to describe the entry" "")
-       ("file" "Link to a document file." "" )))
-    (bibtex-align-at-equal-sign t)
-    (bibtex-file-path "~/Nextcloud/config/.emacs.d/bibliography/")
-    )
-#+end_src
-
-*** biblio
-Biblio to automatically import books or articles from different repositories.
-#+begin_src emacs-lisp
-  (use-package biblio
-    :straight t)
-#+end_src
-
-*** citar
-Citar allows to insert bibliographic references in our texts.
-#+begin_src emacs-lisp
-  (use-package citar
-    :straight t
-    :config
-    (setq citar-bibliography '("~/Nextcloud/config/.emacs.d/bibliography/biblio.bib"))
-    :custom
-    (citar-bibliography org-cite-global-bibliography)
-    (org-cite-insert-processor 'citar)
-    (org-cite-follow-processor 'citar)
-    (org-cite-activate-processor 'citar)
-    )
-#+end_src
-
-*** TODO citar-org-roam integration
-#+begin_src emacs-lisp
-  (use-package citar-org-roam
-    :straight t
-    :after (citar org-roam)
-    :config (citar-org-roam-mode))
 #+end_src
 
 ** TODO Casual dired - porcelain
@@ -3934,21 +3888,21 @@ Adding a small menu with all the keybindings in dired as a reference. Very usefu
 
 #+begin_src emacs-lisp
   (use-package casual-dired
-  :straight t
+  :ensure t
   :bind (:map dired-mode-map ("C-o" . #'casual-dired-tmenu)))
 #+end_src
 
 ** TODO Casual info - porcelain
 #+begin_src emacs-lisp
   (use-package casual-info
-  :straight t
+  :ensure t
   :bind (:map Info-mode-map ("C-o" . 'casual-info-tmenu)))
 #+end_src
 
 ** TODO Casual avy - porcelain
 #+begin_src emacs-lisp
   (use-package casual-avy
-  :straight t
+  :ensure t
   :bind ("M-g g" . casual-avy-tmenu))
 #+end_src
 
@@ -3958,7 +3912,7 @@ This package provides a global minor mode to increase the spacing/padding of Ema
 https://github.com/protesilaos/spacious-padding
 #+begin_src emacs-lisp
   (use-package spacious-padding
-    :straight t
+    :ensure t
     :config
     (setq spacious-padding-widths
   	'( :internal-border-width 15
@@ -3974,8 +3928,7 @@ https://github.com/protesilaos/spacious-padding
 ** TODO ready-player mode
 #+begin_src emacs-lisp
   (use-package ready-player
-    :straight (ready-player :type git :host github :repo "xenodium/ready-player")
-    :straight t
+    :ensure (ready-player :type git :host github :repo "xenodium/ready-player")
     :config
     (ready-player-mode)
     (setq ready-player-repeat t))
@@ -3987,7 +3940,7 @@ For RPG playing.
 
 #+begin_src emacs-lisp
   ;; (use-package random-table
-  ;;   :straight (random-table :host github :repo "jeremyf/random-table.el"))
+  ;;   :ensure (random-table :host github :repo "jeremyf/random-table.el"))
 #+end_src  
 
 A set of examples for how to use it, extracted from the package doc:
@@ -4039,7 +3992,7 @@ A set of examples for how to use it, extracted from the package doc:
 Replicates the z function from zsh.
 #+begin_src emacs-lisp
   (use-package eshell-z
-    :straight t
+    :ensure t
     :config
     (add-hook 'eshell-mode-hook
   	    (defun my-eshell-mode-hook ()
