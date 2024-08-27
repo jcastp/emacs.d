@@ -3658,9 +3658,6 @@ https://github.com/emacs-dashboard/emacs-dashboard
       (progn
         (use-package dashboard
   	:ensure t
-  	:after org-agenda
-  	;; :bind
-  	;; ("C-c d d" . dashboard-open)
           :config
   	;;(dashboard-setup-startup-hook)
           (setq dashboard-show-shortcuts t)
@@ -3706,15 +3703,17 @@ https://github.com/emacs-dashboard/emacs-dashboard
   	;; (add-to-list 'dashboard-item-generators  '(wotd . dashboard-insert-wotd))
   	;; (add-to-list 'dashboard-items '(wotd) nil)
 
+  	(add-hook 'elpaca-after-init-hook #'dashboard-insert-startupify-lists)
+  	(add-hook 'elpaca-after-init-hook #'dashboard-initialize)
   	(dashboard-setup-startup-hook)
   	)
         
-        (with-eval-after-load 'dashboard
-  	;;(global-set-key (kbd "C-c d d") 'dashboard-open)
-          (dashboard-open))
+        ;; (with-eval-after-load 'dashboard
+        ;; 	;;(global-set-key (kbd "C-c d d") 'dashboard-open)
+        ;;   (dashboard-open))
 
         ;; set the initial buffer to the dashboard
-        (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
+        ;;(setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
         )
     )
 #+end_src
