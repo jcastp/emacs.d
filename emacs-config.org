@@ -4038,6 +4038,8 @@ This will be loaded automatically when at home.
 * Work related config load
 Load the work related config when needed:
 #+begin_src emacs-lisp
+  ;; process all elpaca queues before loading work environment
+  (elpaca-process-queues)
   (if my-workenvironment-p
     (progn
       ;; here comes the actions I want to be done at a home environment

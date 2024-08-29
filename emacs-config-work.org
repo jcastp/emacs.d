@@ -6,8 +6,7 @@ It is supposed to run over the generic emacs config, and overwrites that config 
 I use a clear theme.
 
 #+begin_src emacs-lisp
-  (with-eval-after-load 'consult
-    (consult-theme 'tango))
+  (consult-theme 'tango)
 #+end_src
 
 ** recent files for work
@@ -25,11 +24,7 @@ I use a clear theme.
 I work better with fixed fonts in this kind of environments
 
 #+begin_src emacs-lisp
-  ;; (with-eval-after-load 'fontaine
-  ;;   (fontaine-set-preset 'work))
-  (add-hook 'elpaca-after-init-hook (lambda ()
-  				     (fontaine-set-preset 'work)
-  				     ))
+  (fontaine-set-preset 'work)
 #+end_src
 
 ** Adjust the window width for work
