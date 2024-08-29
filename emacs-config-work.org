@@ -5,7 +5,8 @@ It is supposed to run over the generic emacs config, and overwrites that config 
 ** clear theme
 
 #+begin_src emacs-lisp
-  (consult-theme 'tango)
+  (with-eval-after-load 'consult
+    (consult-theme 'tango))
   ;;(consult-theme 'ef-light)
 #+end_src
 
@@ -24,8 +25,10 @@ It is supposed to run over the generic emacs config, and overwrites that config 
 I work better with fixed fonts in this kind of environments
 
 #+begin_src emacs-lisp
-  (fontaine-set-preset 'work)
+(with-eval-after-load 'fontaine
+  (fontaine-set-preset 'work))
 #+end_src
+
 ** Adjust the window width for work
 Since at work I don't open so many windows, we can use this width to better use what I get.
 
