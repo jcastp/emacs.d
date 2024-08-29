@@ -2,12 +2,12 @@
 This configuration is just a patch to work with the work environment.
 It is supposed to run over the generic emacs config, and overwrites that config with the custom config for work environment.
 
-** clear theme
+** Clear theme
+I use a clear theme.
 
 #+begin_src emacs-lisp
   (with-eval-after-load 'consult
     (consult-theme 'tango))
-  ;;(consult-theme 'ef-light)
 #+end_src
 
 ** recent files for work
@@ -25,8 +25,11 @@ It is supposed to run over the generic emacs config, and overwrites that config 
 I work better with fixed fonts in this kind of environments
 
 #+begin_src emacs-lisp
-(with-eval-after-load 'fontaine
-  (fontaine-set-preset 'work))
+  ;; (with-eval-after-load 'fontaine
+  ;;   (fontaine-set-preset 'work))
+  (add-hook 'elpaca-after-init-hook (lambda ()
+  				     (fontaine-set-preset 'work)
+  				     ))
 #+end_src
 
 ** Adjust the window width for work
