@@ -4043,6 +4043,8 @@ To resize windows automatically on change.
   (use-package zoom
     :ensure t
     :config
+    (custom-set-variables
+     '(zoom-size '(0.618 . 0.618)))
     (zoom-mode t))
 #+end_src
 
