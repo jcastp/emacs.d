@@ -4021,7 +4021,29 @@ When you want to write something fast using org mode, but you don't want to crea
             (with-current-buffer buffer
               (org-mode))
             ;; When called non-interactively, the `t` targets the other window (if it exists).
-            (throw 'done (display-buffer buffer t))) ))))
+            (throw 'done (display-buffer buffer t)))))))
+#+end_src
+
+** TODO helpful package
+#+begin_src emacs-lisp
+  (use-package helpful
+    :ensure t
+    :bind
+    ("C-h f" . helpful-callable)
+    ("C-h v" . helpful-variable)
+    ("C-h k" . helpful-key)
+    ("C-h x" . helpful-command)
+    )
+#+end_src
+
+** TODO zoom package
+https://github.com/cyrus-and/zoom
+To resize windows automatically on change.
+#+begin_src emacs-lisp
+  (use-package zoom
+    :ensure t
+    :config
+    (zoom-mode t))
 #+end_src
 
 * home related load and startup
