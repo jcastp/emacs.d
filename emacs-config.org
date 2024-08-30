@@ -4005,14 +4005,14 @@ https://emacs.stackexchange.com/questions/16492/is-it-possible-to-create-an-org-
 When you want to write something fast using org mode, but you don't want to create a new file.
 
 #+begin_src emacs-lisp
-  (defun my/scratch-buffer ()
+  (defun my/scratch-org-buffer ()
   "Create a new scratch buffer -- \*hello-world\*"
   (interactive)
     (let ((n 0)
           bufname buffer)
       (catch 'done
         (while t
-          (setq bufname (concat "*hello-world"
+          (setq bufname (concat "*org-scratch"
             (if (= n 0) "" (int-to-string n))
               "*"))
           (setq n (1+ n))
