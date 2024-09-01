@@ -4025,18 +4025,6 @@ When you want to write something fast using org mode, but you don't want to crea
     )
 #+end_src
 
-** TODO zoom package
-https://github.com/cyrus-and/zoom
-To resize windows automatically on change.
-#+begin_src emacs-lisp
-  (use-package zoom
-    :ensure t
-    :config
-    (custom-set-variables
-     '(zoom-size '(0.618 . 0.618)))
-    (zoom-mode t))
-#+end_src
-
 * home related load and startup
 This will be loaded automatically when at home.
 
