@@ -3446,20 +3446,21 @@ This serves to resize the windows
        "
   ^Resize^
   ^^^^^^-------------------------------------------------------
-  _C-f_: shrink horizontally
-  _C-b_: enlarge horizontally
-  _C-p_: shrink vertical
-  _C-n_: enlarge vertical
+  _f_: shrink horizontally         _s_: swap windows
+  _b_: enlarge horizontally
+  _p_: shrink vertical
+  _n_: enlarge vertical
   "
 
        ;; ("<left>" shrink-window-horizontally)
        ;; ("<right>" enlarge-window-horizontally)
        ;; ("<up>" enlarge-window)
        ;; ("<down>" shrink-window)
-       ("C-f" shrink-window-horizontally)
-       ("C-b" enlarge-window-horizontally)
-       ("C-p" enlarge-window)
-       ("C-n" shrink-window)
+       ("f" shrink-window-horizontally)
+       ("b" enlarge-window-horizontally)
+       ("p" enlarge-window)
+       ("n" shrink-window)
+       ("s" ace-swap-window)
 
        ("q" nil "quit")
        )
