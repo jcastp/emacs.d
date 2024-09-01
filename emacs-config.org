@@ -3485,27 +3485,6 @@ This serves to resize the windows
 Read e-pub in emacs.
 
 https://tech.toryanderson.com/2022/11/23/viewing-epub-in-emacs/
-Removing this one, and using the one from the source code below:
-#+begin_src emacs-lisp :tangle no
-  (use-package nov
-    :ensure t
-    :config
-    (setq nov-text-width 90)
-     ;;(setq nov-text-width t)
-     (setq visual-fill-column-center-text t)
-     (add-hook 'nov-mode-hook 'visual-line-mode)
-     (add-hook 'nov-mode-hook 'visual-fill-column-mode)
-     ;; We save the place we left the e-pub in this file:
-     (setq nov-save-place-file (expand-file-name "nov-places" my-data-dir))
-
-     (defun my/nov-font-setup ()
-       (face-remap-add-relative 'variable-pitch :family "Gentium"
-                                :height 1.4))
-     (add-hook 'nov-mode-hook 'my/nov-font-setup)
-     (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
-  )
-#+end_src
-
 #+begin_src emacs-lisp
   (use-package esxml
     :ensure (esxml :type git :host github :repo "tali713/esxml")
@@ -3992,12 +3971,22 @@ Replicates the z function from zsh.
 #+begin_src emacs-lisp
   (use-package eshell-z
     :ensure t
+    :after eshell
     :config
     (add-hook 'eshell-mode-hook
   	    (defun my-eshell-mode-hook ()
   	      (require 'eshell-z))))
 #+end_src
 
+
+*** TODO eshell did-you-mean
+#+begin_src emacs-lisp
+  (use-package eshell-did-you-mean
+    :ensure t
+    :after eshell
+    :config
+    (eshell-did-you-mean-setup))
+#+end_src
 
 ** TODO Create an org scratch buffer
 https://emacs.stackexchange.com/questions/16492/is-it-possible-to-create-an-org-mode-scratch-buffer
