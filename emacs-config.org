@@ -676,12 +676,20 @@ Shortcuts to commands using just quick key combinations.
     ;; Max time delay between two presses of the same key to be considered a key chord.
     ;; Should normally be a little longer than `key-chord-two-keys-delay'.
     (setq key-chord-one-key-delay 0.2) ; default 0.2
+    
+    ;; eshell related commands
     (key-chord-define-global "ññ" 'eshell)
-    (key-chord-define-global "kk" 'other-window)
+    (key-chord-define-global "ñl" 'my/eshell-new) ;; create a new eshell buffer
+
+    ;; Window related commands
+    ;; (key-chord-define-global "kk" 'other-window)
     (key-chord-define-global "hh" 'ace-window)
+
+    ;; move related commands
     (key-chord-define-global "jj" 'avy-goto-char-2)
     (key-chord-define-global "jk" 'avy-goto-char-timer)
     (key-chord-define-global "jl" 'avy-goto-line)
+    
     ;;(key-chord-define-global "zz" 'undo-tree-visualize)
     ;;(key-chord-define-global "ww" 'hydra-move/body)
     ;;(key-chord-define-global "yy" 'hydra-buffer-mgmt/body)
@@ -3987,6 +3995,16 @@ Replicates the z function from zsh.
     :after eshell
     :config
     (eshell-did-you-mean-setup))
+#+end_src
+
+
+*** TODO Create new eshell
+https://www.emacswiki.org/emacs/EshellMultipleEshellBuffers
+#+begin_src emacs-lisp
+  (defun my/eshell-new()
+    "Open a new instance of eshell."
+    (interactive)
+    (eshell 'N))
 #+end_src
 
 ** TODO Create an org scratch buffer
