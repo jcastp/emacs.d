@@ -682,7 +682,7 @@ Shortcuts to commands using just quick key combinations.
     (key-chord-define-global "ñl" 'my/eshell-new) ;; create a new eshell buffer
 
     ;; Window related commands
-    ;; (key-chord-define-global "kk" 'other-window)
+    (key-chord-define-global "kk" 'other-window)
     (key-chord-define-global "hh" 'ace-window)
 
     ;; move related commands
@@ -3971,7 +3971,6 @@ A set of examples for how to use it, extracted from the package doc:
 #+begin_src emacs-lisp
   ;;(load-file "~/Nextcloud/codigo/elisp/mythic/mythic.el")
 #+end_src
-
 
 ** TODO eshell improvements
 
