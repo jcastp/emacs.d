@@ -1076,11 +1076,20 @@ It darkens the buffers I'm not using.
 Look at this https://idiocy.org/emacs-fonts-and-fontsets.html
 *** TODO fonts as variables
 Establish the fonts with variables, so we don't need to change them on evey place (like in fontaine modes)
-- TODO : this is not working. When I plug them into the code below, it does not get correctly substituted.
+
 #+begin_src emacs-lisp
-(defvar my-variable-font "Lexend")
-(defvar my-fixed-font "Iosevka")
-(defvar my-default-font "Iosevka Comfy")
+  ;; variable pitch variables
+  (defvar my-variable-font "Lexend")
+  (defvar my-variable-font-height 140)
+  (defvar my-variable-font-weight "Regular")
+
+  ;; fixed pitch variables
+  (defvar my-fixed-font "Iosevka")
+  (defvar my-fixed-font-height 110)
+  
+  ;; My default font variables
+  (defvar my-default-font "Iosevka Comfy")
+  (defvar my-default-font-height 120)
 #+end_src
 
 *** font definition
@@ -1125,13 +1134,19 @@ Fonts we will be using for both modes:
   (custom-theme-set-faces
    'user
    `(variable-pitch
-     ((t (:family ,my-variable-font :height 140 :weight Regular))))
+     ((t (:family ,my-variable-font
+  		:height ,my-variable-font-height
+        		:weight Regular))))
 
    `(fixed-pitch
-     ((t (:family ,my-fixed-font :height 110 :weight Medium))))
+     ((t (:family ,my-fixed-font
+  		  :height ,my-fixed-font-height
+  		  :weight Medium))))
 
    `(default
-     ((t (:family ,my-default-font :height 120 :weight Light)))))
+     ((t (:family ,my-default-font
+  		:height ,my-default-font-height
+  		:weight Light)))))
 
 #+end_src
 
