@@ -1078,14 +1078,9 @@ Look at this https://idiocy.org/emacs-fonts-and-fontsets.html
 Establish the fonts with variables, so we don't need to change them on evey place (like in fontaine modes)
 - TODO : this is not working. When I plug them into the code below, it does not get correctly substituted.
 #+begin_src emacs-lisp
-  ;; good variable pitch fonts: ETBembo, Gentium
-  (defvar my-variable-font "ETBembo")
-
-  ;; good fixed pitch fonts: Iosevka, JetBrainsMono
-  (defvar my-fixed-font "Iosevka Comfy")
-  
-  ;; default font to fallback to
-  (defvar my-default-font "JetBrainsMono")
+(defvar my-variable-font "Lexend")
+(defvar my-fixed-font "Iosevka")
+(defvar my-default-font "Iosevka Comfy")
 #+end_src
 
 *** font definition
@@ -1099,32 +1094,45 @@ Font attributes to be used, different for prose mode and code mode.
 
 Fonts we will be using for both modes:
 #+begin_src emacs-lisp
+    ;; (custom-theme-set-faces
+    ;;  'user
+    ;;  ;; Variable width font
+    ;;  '(variable-pitch
+    ;;    ;; If any of this is activated, the usual text will be
+    ;;    ;; shown as fixed fonts
+    ;;    ;;((t (:family "Iosevka Comfy" :height 120 :weight Regular)))
+    ;;    ;;((t (:family my-fixed-font :height 120 :weight Light)))
+    ;;    ;; If any of this is activated, the usual text will be
+    ;;    ;; shown as variable fonts
+    ;;    ;;((t (:family "Gentium" :height 160 :weight Regular)))
+    ;;    ;;((t (:family "ETBembo" :height 160 :weight Medium)))
+    ;;    ;;((t (:family "Lexend" :height 140 :weight Regular)))
+    ;;    ((t (:family ,my-variable-font :height 140 :weight Regular)))
+
+    ;;    )
+
+    ;;  ;; fixed width font mode.
+    ;;  ;; configuration about the code font
+    ;;  '(fixed-pitch
+    ;;    ((t ( :family "Iosevka" :height 110 :weight Medium)))
+    ;;    )
+
+    ;;  '(default
+    ;;    ((t (:family "Iosevka Comfy" :height 120 :weight Light)))
+    ;;    )
+    ;;  )
+
   (custom-theme-set-faces
    'user
-   ;; Variable width font
-   '(variable-pitch
-     ;; If any of this is activated, the usual text will be
-     ;; shown as fixed fonts
-     ;;((t (:family "Iosevka Comfy" :height 120 :weight Regular)))
-     ;;((t (:family my-fixed-font :height 120 :weight Light)))
-     ;; If any of this is activated, the usual text will be
-     ;; shown as variable fonts
-     ;;((t (:family "Gentium" :height 160 :weight Regular)))
-     ;;((t (:family "ETBembo" :height 160 :weight Medium)))
-     ((t (:family "Lexend" :height 140 :weight Regular)))
+   `(variable-pitch
+     ((t (:family ,my-variable-font :height 140 :weight Regular))))
 
-     )
+   `(fixed-pitch
+     ((t (:family ,my-fixed-font :height 110 :weight Medium))))
 
-   ;; fixed width font mode.
-   ;; configuration about the code font
-   '(fixed-pitch
-     ((t ( :family "Iosevka" :height 110 :weight Medium)))
-     )
+   `(default
+     ((t (:family ,my-default-font :height 120 :weight Light)))))
 
-   '(default
-     ((t (:family "Iosevka Comfy" :height 120 :weight Light)))
-     )
-   )
 #+end_src
 
 Assign the variable font to prose mode:
