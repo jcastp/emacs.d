@@ -938,15 +938,15 @@ No audible bell, but visual one:
 This determines the style of line numbers in effect. If set to `nil', line numbers are disabled. For relative line numbers, set this to `relative'.
 #+begin_src emacs-lisp
   ;; Dinamically calculate the width of the line numbers
-  (setq display-line-numbers-width-start t)
+  (setq display-line-numbers-width-start nil)
   ;;(setq display-line-numbers-width 4)
   (setq display-line-numbers-offset 0)
   (setq display-line-numbers-type t)
   (setq display-line-numbers-grow-only t)
   ;; TODO find a way to have the column numbers with fixed width
   (global-display-line-numbers-mode -1)
-  (add-hook 'prog-mode-hook 'display-line-numbers-mode)
-  (add-hook 'text-mode-hook 'display-line-numbers-mode)
+  ;;(add-hook 'prog-mode-hook 'display-line-numbers-mode)
+  ;;(add-hook 'text-mode-hook 'display-line-numbers-mode)
 #+end_src
 
 ** Highlight indent guides
@@ -1105,12 +1105,14 @@ Fonts we will be using for both modes:
    '(variable-pitch
      ;; If any of this is activated, the usual text will be
      ;; shown as fixed fonts
-     ((t (:family "Iosevka Comfy" :height 120 :weight Regular)))
+     ;;((t (:family "Iosevka Comfy" :height 120 :weight Regular)))
      ;;((t (:family my-fixed-font :height 120 :weight Light)))
      ;; If any of this is activated, the usual text will be
      ;; shown as variable fonts
      ;;((t (:family "Gentium" :height 160 :weight Regular)))
      ;;((t (:family "ETBembo" :height 160 :weight Medium)))
+     ((t (:family "Lexend" :height 140 :weight Regular)))
+
      )
 
    ;; fixed width font mode.
@@ -3213,7 +3215,7 @@ When I write, I find that I need to have full focus on the writing, and have a d
       (interactive)
       (if (not my-writing-env-p)
           (progn
-  	  (display-line-numbers-mode 0)
+  	  ;;(display-line-numbers-mode 0)
           	(consult-theme my-writing-env-work-theme)
           	(fontaine-set-preset my-writing-env-work-font)
             (my/own-writeroom 70 t)
@@ -3221,7 +3223,7 @@ When I write, I find that I need to have full focus on the writing, and have a d
             )
         ;; else part
         (progn
-  	(display-line-numbers-mode 1)
+  	;;(display-line-numbers-mode 1)
           (consult-theme my-writing-env-normal-theme)
           (fontaine-set-preset my-writing-env-normal-font)
           (my/own-writeroom 90 nil)
@@ -3316,7 +3318,7 @@ I want to open my own view to edit my writing.
         ;; go back to the original window
         (select-window my-current-window)
         ;; remove the line numbering
-        (display-line-numbers-mode -1)
+        ;;(display-line-numbers-mode -1)
         (my/resize-margins my-current-window) ;; this doesn't work, probably some margin property.
         ;; Here we apply the stylistic changes
         ;; This part here should be done as a hook, if this was a package.
@@ -3503,7 +3505,7 @@ https://tech.toryanderson.com/2022/11/23/viewing-epub-in-emacs/
     :after esxml
     :ensure (nov :type git :host nil :repo "https://depp.brause.cc/nov.el.git")
     :config
-    (setq nov-text-width 100)
+    (setq nov-text-width 120)
     ;;(setq nov-text-width t)
     (setq visual-fill-column-center-text t)
     (add-hook 'nov-mode-hook 'visual-line-mode)
@@ -3512,7 +3514,7 @@ https://tech.toryanderson.com/2022/11/23/viewing-epub-in-emacs/
     (setq nov-save-place-file (expand-file-name "nov-places" my-data-dir))
 
     (defun my/nov-font-setup ()
-      (face-remap-add-relative 'variable-pitch :family "Gentium"
+      (face-remap-add-relative 'variable-pitch :family "Lexend"
                                :height 1.2))
     (add-hook 'nov-mode-hook 'my/nov-font-setup)
     (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
