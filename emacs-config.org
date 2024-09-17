@@ -1081,7 +1081,6 @@ Establish the fonts with variables, so we don't need to change them on evey plac
   ;; variable pitch variables
   (defvar my-variable-font "Lexend")
   (defvar my-variable-font-height 140)
-  (defvar my-variable-font-weight "Regular")
 
   ;; fixed pitch variables
   (defvar my-fixed-font "Iosevka")
@@ -1094,8 +1093,8 @@ Establish the fonts with variables, so we don't need to change them on evey plac
 
 *** font definition
 #+begin_src emacs-lisp
-  (set-face-attribute 'default nil :font "Iosevka Comfy")
-  ;;(set-face-attribute 'default nil :font my-fixed-font)
+  ;;(set-face-attribute 'default nil :font "Iosevka Comfy")
+  (set-face-attribute 'default nil :font my-default-font)
 #+end_src
 
 Obtained from: https://zzamboni.org/post/beautifying-org-mode-in-emacs/
@@ -1103,46 +1102,21 @@ Font attributes to be used, different for prose mode and code mode.
 
 Fonts we will be using for both modes:
 #+begin_src emacs-lisp
-    ;; (custom-theme-set-faces
-    ;;  'user
-    ;;  ;; Variable width font
-    ;;  '(variable-pitch
-    ;;    ;; If any of this is activated, the usual text will be
-    ;;    ;; shown as fixed fonts
-    ;;    ;;((t (:family "Iosevka Comfy" :height 120 :weight Regular)))
-    ;;    ;;((t (:family my-fixed-font :height 120 :weight Light)))
-    ;;    ;; If any of this is activated, the usual text will be
-    ;;    ;; shown as variable fonts
-    ;;    ;;((t (:family "Gentium" :height 160 :weight Regular)))
-    ;;    ;;((t (:family "ETBembo" :height 160 :weight Medium)))
-    ;;    ;;((t (:family "Lexend" :height 140 :weight Regular)))
-    ;;    ((t (:family ,my-variable-font :height 140 :weight Regular)))
-
-    ;;    )
-
-    ;;  ;; fixed width font mode.
-    ;;  ;; configuration about the code font
-    ;;  '(fixed-pitch
-    ;;    ((t ( :family "Iosevka" :height 110 :weight Medium)))
-    ;;    )
-
-    ;;  '(default
-    ;;    ((t (:family "Iosevka Comfy" :height 120 :weight Light)))
-    ;;    )
-    ;;  )
-
   (custom-theme-set-faces
    'user
    `(variable-pitch
+     ;; variable font config
      ((t (:family ,my-variable-font
   		:height ,my-variable-font-height
-        		:weight Regular))))
+           	:weight Regular))))
 
+   ;; fixed font config
    `(fixed-pitch
      ((t (:family ,my-fixed-font
   		  :height ,my-fixed-font-height
   		  :weight Medium))))
 
+   ;; default font config
    `(default
      ((t (:family ,my-default-font
   		:height ,my-default-font-height
