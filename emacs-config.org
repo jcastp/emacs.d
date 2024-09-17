@@ -3508,8 +3508,8 @@ https://tech.toryanderson.com/2022/11/23/viewing-epub-in-emacs/
     (setq nov-text-width 120)
     ;;(setq nov-text-width t)
     (setq visual-fill-column-center-text t)
-    (add-hook 'nov-mode-hook 'visual-line-mode)
-    (add-hook 'nov-mode-hook 'visual-fill-column-mode)
+    ;;(add-hook 'nov-mode-hook 'visual-line-mode)
+    ;;(add-hook 'nov-mode-hook 'visual-fill-column-mode)
     ;; We save the place we left the e-pub in this file:
     (setq nov-save-place-file (expand-file-name "nov-places" my-data-dir))
 
