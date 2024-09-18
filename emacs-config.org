@@ -4011,23 +4011,24 @@ https://emacs.stackexchange.com/questions/16492/is-it-possible-to-create-an-org-
 When you want to write something fast using org mode, but you don't want to create a new file.
 
 #+begin_src emacs-lisp
-  (defun my/scratch-org-buffer ()
-  "Create a new scratch buffer -- \*hello-world\*"
-  (interactive)
-    (let ((n 0)
-          bufname buffer)
-      (catch 'done
-        (while t
-          (setq bufname (concat "*org-scratch"
-            (if (= n 0) "" (int-to-string n))
-              "*"))
-          (setq n (1+ n))
-          (when (not (get-buffer bufname))
-            (setq buffer (get-buffer-create bufname))
-            (with-current-buffer buffer
-              (org-mode))
-            ;; When called non-interactively, the `t` targets the other window (if it exists).
-            (throw 'done (display-buffer buffer t)))))))
+    (defun my/scratch-org-buffer ()
+    "Create a new scratch buffer -- \*hello-world\*"
+    (interactive)
+      (let ((n 0)
+            bufname buffer)
+        (catch 'done
+          (while t
+            (setq bufname (concat "*org-scratch"
+              (if (= n 0) "" (int-to-string n))
+                "*"))
+            (setq n (1+ n))
+            (when (not (get-buffer bufname))
+              (setq buffer (get-buffer-create bufname))
+              (with-current-buffer buffer
+                (org-mode)
+  	      (insert "# org-scratch buffer"))
+              ;; When called non-interactively, the `t` targets the other window (if it exists).
+              (throw 'done (display-buffer buffer t)))))))
 #+end_src
 
 ** TODO helpful package
