@@ -3502,7 +3502,7 @@ https://tech.toryanderson.com/2022/11/23/viewing-epub-in-emacs/
     :after esxml
     :ensure (nov :type git :host nil :repo "https://depp.brause.cc/nov.el.git")
     :config
-    (setq nov-text-width 120)
+    (setq nov-text-width 100)
     ;;(setq nov-text-width t)
     (setq visual-fill-column-center-text t)
     ;;(add-hook 'nov-mode-hook 'visual-line-mode)
@@ -3512,7 +3512,7 @@ https://tech.toryanderson.com/2022/11/23/viewing-epub-in-emacs/
 
     (defun my/nov-font-setup ()
       (face-remap-add-relative 'variable-pitch :family "Lexend"
-                               :height 1.2))
+                               :height 1.0))
     (add-hook 'nov-mode-hook 'my/nov-font-setup)
     (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
     )
@@ -3722,7 +3722,7 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
 
   (defvar-keymap my/key-prefix-map
     :doc "My personal keymap."
-    "c" #'diff-buffer-with-file
+    "c" #'bzg-big-fringe-mode
     "d" #'dashboard-open
     "f" (cons "elfeed" #'my/elfeed)
     "i" #'tempel-insert
@@ -4041,6 +4041,30 @@ When you want to write something fast using org mode, but you don't want to crea
     ("C-h k" . helpful-key)
     ("C-h x" . helpful-command)
     )
+#+end_src
+
+
+** TODO Center a buffer in screen
+Sometimes I have just a single window and this is a problem for me in a big screen. This code just centers the text in the middle.
+Useful for reading books.
+
+Extracted from here: https://bzg.fr/en/emacs-strip-tease/#sec-6
+
+#+begin_src emacs-lisp
+  ;; A small minor mode to use a big fringe
+  (defvar bzg-big-fringe-mode nil)
+  (define-minor-mode bzg-big-fringe-mode
+    "Minor mode to use big fringe in the current buffer."
+    :init-value nil
+    :global t
+    :variable bzg-big-fringe-mode
+    :group 'editing-basics
+    (if (not bzg-big-fringe-mode)
+        (set-fringe-style nil)
+      (set-fringe-mode
+       (/ (- (frame-pixel-width)
+             (* 100 (frame-char-width)))
+          2))))
 #+end_src
 
 * home related load and startup
