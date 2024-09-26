@@ -220,7 +220,7 @@ As work is different from home, I need specific templates.
 
                                ("t" "Tasks (work)" entry
                                 (file+headline "~/Nextcloud/agenda/work/work.org" "Tasks")
-                                "** TODO %? %^g \n:LOGBOOK: \n:CREATED: %U \n:END:")
+                                "** TODO %? %^g \n")
 
                                ("i" "New incident." entry
                                 (file+headline "~/Nextcloud/agenda/work/work.org" "Incidents")
