@@ -1331,7 +1331,7 @@ This comes from the old config, when I used the org-babel functions to tangled t
   )
 #+end_src
 
-** org-id
+** org-id configuration
 To create and use internal valid and unique links in org-mode, we will use the =org-id= features.
 #+begin_src emacs-lisp
   ;; org-id are globally unique UUIDs
