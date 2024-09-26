@@ -1401,15 +1401,16 @@ Put a note or a timestamp when something changes. For example:
 #+begin_src emacs-lisp
   ;; Adds a timestamp to the state
   ;;(setq org-log-done 'time)
-    (setq org-log-done nil)
-
   ;; Adds a custom note to the state
   ;;(setq org-log-done 'note)
+  (setq org-log-done nil)
 
   ;; When the deadline or the schedule date is moved.
   ;; to keep track of how many times I have moved a task to the future.
-  (setq org-log-redeadline (quote time))
-  (setq org-log-reschedule (quote time))
+  ;;(setq org-log-redeadline (quote time))
+  (setq org-log-redeadline nil)
+  ;;(setq org-log-reschedule (quote time))
+  (setq org-log-reschedule nil)
 #+end_src
 
 ** Custom states for the tasks
