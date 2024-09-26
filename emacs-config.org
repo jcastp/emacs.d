@@ -1818,12 +1818,12 @@ Here I will add template captures for doing several things:
 
   			     ("t" "My TODO task format." entry
                                (file+headline "~/Nextcloud/agenda/tasks.org" "Tasks")
-                               "** TODO %i%? \n:LOGBOOK: \n:CREATED: %U \n:END:"
+                               "** TODO %i%? \n"
                                  :empty-lines-after 1)
 
   			     ("p" "New project." entry
                                 (file+headline "~/Nextcloud/agenda/tasks.org" "Projects")
-                                 "** TODO %? \n:LOGBOOK: \n:CREATED: %U \n:END:\n  :PROPERTIES:\n:COOKIE_DATA: todo recursive\n:END:\n   - Objetivo:"
+                                 "** TODO %? \n :PROPERTIES:\n:COOKIE_DATA: todo recursive\n:END:\n   - Objetivo:"
                                 :empty-lines-after 1)
 
   			     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
