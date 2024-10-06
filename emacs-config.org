@@ -2894,7 +2894,7 @@ https://protesilaos.com/emacs/fontaine
              :variable-pitch-height 140
              :bold-family nil ; use whatever the underlying face has
              :bold-weight bold
-             :italic-family "Iosevka"
+             :italic-family "Iosevka Comfy"
              :italic-slant italic
              :line-spacing 0
              )
@@ -3378,7 +3378,7 @@ Now, we remap the major modes to the treesitter enabled modes:
 
 ** eglot configuration
 Configuring eglot to work with vanilla python and its tree-sitter enabled mode:
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp 
   (use-package eglot
     :ensure t
     :config
