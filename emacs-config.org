@@ -1884,7 +1884,7 @@ Used to capture notes in this file. Useful to maintain notes and snippets separa
     (cond  ((not  (eq major-mode 'org-mode))
             (message "Can't capture to non org-mode buffer"))
            (t
-            (let* ((this-file buffer-file-name)
+            (let* ((this-file (buffer-file-name))
                    (org-capture-templates
                     `(("t" "Todo" entry (file+headline ,this-file "Notes")
                        "** TODO %?"))))
