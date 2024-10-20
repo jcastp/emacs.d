@@ -476,14 +476,16 @@ https://github.com/minad/vertico
   (use-package vertico
     :ensure t
     :init
+    (add-to-list 'load-path "~/.emacs.d/straight/repos/vertico/extensions/")
+    (load "vertico-multiform.el")
     (vertico-mode)
     )
 
   ;; load vertico-multiform manually. there should be a better way to do this :/
-  (with-eval-after-load 'vertico
-    (add-to-list 'load-path "~/.emacs.d/straight/repos/vertico/extensions/")
-    (load "vertico-multiform.el")
-    )
+  ;; (with-eval-after-load 'vertico
+  ;;   (add-to-list 'load-path "~/.emacs.d/straight/repos/vertico/extensions/")
+  ;;   (load "vertico-multiform.el")
+  ;;   )
 #+end_src
 
 *** vertico posframe
