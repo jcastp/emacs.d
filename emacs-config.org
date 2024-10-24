@@ -2977,7 +2977,7 @@ https://protesilaos.com/emacs/fontaine
              :fixed-pitch-height 110
              :variable-pitch-family "Iosevka Comfy"
              :variable-pitch-weight Medium
-             :variable-pitch-height 140
+             :variable-pitch-height 160
              :bold-family nil ; use whatever the underlying face has
              :bold-weight bold
              :italic-family "Iosevka"
