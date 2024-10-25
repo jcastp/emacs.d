@@ -3771,37 +3771,39 @@ Depending on the size of the frame, I need to resize the visual-fill-column-widt
 ** TODO ellama - emacs with LLMs and ollama
 https://github.com/s-kostyaev/ellama
 #+begin_src emacs-lisp
-  (use-package ellama
-    :ensure t
-    :init
-    ;; setup key bindings
-    (setopt ellama-keymap-prefix "C-c e")
-    (require 'llm-ollama)
-    :config
-    ;; initial model
-    (setopt ellama-provider
-  	  (make-llm-ollama
-  	   :chat-model "phi3:medium" :embedding-model "phi3:medium"))
-    (setopt ellama-providers
-  	  '(
-  	    ("phi3:medium" . (make-llm-ollama
-    			     :chat-model "phi3:medium"
-    			     :embedding-model "phi3:medium"))
-  	    ("deepseek-coder-v2:16b" . (make-llm-ollama
-    			     :chat-model "deepseek-coder-v2:16b"
-    			     :embedding-model "deepseek-coder-v2:16b"))
-  	    ("gemma2:27b" . (make-llm-ollama
-    			     :chat-model "gemma2:27b"
-    			     :embedding-model "gemma2:27b"))
-  	    ("dolphin-mixtral" . (make-llm-ollama
-    				  :chat-model "dolphin-mixtral"
-    				  :embedding-model "dolphin-mixtral"))
-  	    ("llama3" . (make-llm-ollama
-    			 :chat-model "llama3"
-    			 :embedding-model "llama3"))
-  	    )
-  	  )
-    )
+  ;; load ellama only if in my home environment
+  (if my-homeenvironment-p
+      (use-package ellama
+        :ensure t
+        :init
+        ;; setup key bindings
+        (setopt ellama-keymap-prefix "C-c e")
+        (require 'llm-ollama)
+        :config
+        ;; initial model
+        (setopt ellama-provider
+  	      (make-llm-ollama
+  	       :chat-model "phi3:medium" :embedding-model "phi3:medium"))
+        (setopt ellama-providers
+  	      '(
+  		("phi3:medium" . (make-llm-ollama
+    				  :chat-model "phi3:medium"
+    				  :embedding-model "phi3:medium"))
+  		("deepseek-coder-v2:16b" . (make-llm-ollama
+    					    :chat-model "deepseek-coder-v2:16b"
+    					    :embedding-model "deepseek-coder-v2:16b"))
+  		("gemma2:27b" . (make-llm-ollama
+    				 :chat-model "gemma2:27b"
+    				 :embedding-model "gemma2:27b"))
+  		("dolphin-mixtral" . (make-llm-ollama
+    				      :chat-model "dolphin-mixtral"
+    				      :embedding-model "dolphin-mixtral"))
+  		("llama3" . (make-llm-ollama
+    			     :chat-model "llama3"
+    			     :embedding-model "llama3"))
+  		)
+  	      )
+        ))
 #+end_src
 
 ** TODO fountain - script writing
