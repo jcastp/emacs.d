@@ -1337,6 +1337,24 @@ This comes from the old config, when I used the org-babel functions to tangled t
   )
 #+end_src
 
+** org templates modification
+I want some modifications on the templates provided by org mode.
+
+#+begin_src emacs-lisp
+  (setq org-structure-template-alist
+        '(("a" . "export ascii")
+  	("C" . "center")
+  	("c" . "comment")
+  	("e" . "example")
+  	("E" . "export")
+  	("h" . "export html")
+  	("l" . "export latex")
+  	("q" . "quote")
+  	("s" . "src")
+  	("S" . "src emacs-lisp")
+  	("v" . "verse")))
+#+end_src
+
 ** org-id configuration
 To create and use internal valid and unique links in org-mode, we will use the =org-id= features.
 
