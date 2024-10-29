@@ -1343,12 +1343,14 @@ I want some modifications on the templates provided by org mode.
 #+begin_src emacs-lisp
   (setq org-structure-template-alist
         '(("a" . "export ascii")
-  	("C" . "center")
   	("c" . "comment")
+  	("C" . "center")
+  	("d" . "comment summary")
   	("e" . "example")
   	("E" . "export")
   	("h" . "export html")
   	("l" . "export latex")
+  	("n" . "comment note")
   	("q" . "quote")
   	("s" . "src")
   	("S" . "src emacs-lisp")
