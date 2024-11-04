@@ -1,3 +1,4 @@
+
 #+TITLE: Emacs literate configuration
 #+AUTHOR: Javier Castilla
 #+EMAIL: jcastp@pm.me
@@ -3888,29 +3889,6 @@ An Emacs minor mode to kill your inner editor! Every writer struggles to balance
     )
 #+end_src
 
-** TODO Casual dired - porcelain
-Adding a small menu with all the keybindings in dired as a reference. Very useful.
-
-#+begin_src emacs-lisp
-  (use-package casual-dired
-  :ensure t
-  :bind (:map dired-mode-map ("C-o" . #'casual-dired-tmenu)))
-#+end_src
-
-** TODO Casual info - porcelain
-#+begin_src emacs-lisp
-  (use-package casual-info
-  :ensure t
-  :bind (:map Info-mode-map ("C-o" . 'casual-info-tmenu)))
-#+end_src
-
-** TODO Casual avy - porcelain
-#+begin_src emacs-lisp
-  (use-package casual-avy
-  :ensure t
-  :bind ("M-g g" . casual-avy-tmenu))
-#+end_src
-
 ** TODO spacious padding
 This package provides a global minor mode to increase the spacing/padding of Emacs windows and frames. The idea is to make editing and reading feel more comfortable.
 
@@ -4062,7 +4040,6 @@ When you want to write something fast using org mode, but you don't want to crea
     )
 #+end_src
 
-
 ** TODO Center a buffer in screen
 Sometimes I have just a single window and this is a problem for me in a big screen. This code just centers the text in the middle.
 Useful for reading books.
@@ -4086,6 +4063,11 @@ Extracted from here: https://bzg.fr/en/emacs-strip-tease/#sec-6
           2))))
 #+end_src
 
+** TODO easysession
+#+begin_src emacs-lisp
+  (use-package easysession
+    :ensure t)
+#+end_src
 * home related load and startup
 This will be loaded automatically when at home.
 
