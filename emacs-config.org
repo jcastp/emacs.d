@@ -3808,12 +3808,15 @@ https://github.com/s-kostyaev/ellama
         ;; initial model
         (setopt ellama-provider
   	      (make-llm-ollama
-  	       :chat-model "phi3:medium" :embedding-model "phi3:medium"))
+  	       :chat-model "qwen2.5:14b" :embedding-model "qwen2.5:14b"))
         (setopt ellama-providers
   	      '(
   		("phi3:medium" . (make-llm-ollama
     				  :chat-model "phi3:medium"
     				  :embedding-model "phi3:medium"))
+  		("qwen2.5:14b" . (make-llm-ollama
+    				  :chat-model "qwen2.5:14b"
+    				  :embedding-model "qwen2.5:14b"))
   		("deepseek-coder-v2:16b" . (make-llm-ollama
     					    :chat-model "deepseek-coder-v2:16b"
     					    :embedding-model "deepseek-coder-v2:16b"))
@@ -3823,9 +3826,9 @@ https://github.com/s-kostyaev/ellama
   		("dolphin-mixtral" . (make-llm-ollama
     				      :chat-model "dolphin-mixtral"
     				      :embedding-model "dolphin-mixtral"))
-  		("llama3" . (make-llm-ollama
-    			     :chat-model "llama3"
-    			     :embedding-model "llama3"))
+  		("llama3.1:latest" . (make-llm-ollama
+    			     :chat-model "llama3.1:latest"
+    			     :embedding-model "llama3.1:latest"))
   		)
   	      )
         ))
