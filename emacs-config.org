@@ -2276,9 +2276,12 @@ All the functions defined for the org mode export
 This allows headlines to be ignored in the exports. To do so, the ignore tag (=C-c C-c ignore=) has to be in the header to be ignored. *We only ignore the headlines, the content is still shown.*
 
 #+begin_src emacs-lisp
-  (load (expand-file-name "vendor/ox-extra/ox-extra.el" my-data-dir))
-  (require 'ox-extra)
-  (ox-extras-activate '(ignore-headlines))
+  ;;(load (expand-file-name "vendor/ox-extra/ox-extra.el" my-data-dir))
+  (use-package org-contrib
+    :ensure t
+    :config
+    (require 'ox-extra)
+    (ox-extras-activate '(ignore-headlines)))
 #+end_src
 
 *** html export
