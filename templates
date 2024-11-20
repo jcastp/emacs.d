@@ -6,7 +6,7 @@ fundamental-mode
 
 (today (format-time-string "%Y-%m-%d"))
 
-;; for test mode
+;; for all text mode
 text-mode
 
 (box
@@ -118,11 +118,12 @@ org-mode
 	"#+end_comment"
 )
 
-(deprecated-edit2
-	"# ######" (make-string (length str) ?#) "#" n
-	"# EDIT: " (s str)                       "#" n
-	"# ######" (make-string (length str) ?#) "#")
-	
+(summary
+	"#+begin_comment" n
+	"*SUMMARY*: " p n
+	"#+end_comment"
+)
+
 (escena
 	":PROPERTIES:" n
 	":PoV: "p n
