@@ -3410,7 +3410,7 @@ Now, we remap the major modes to the treesitter enabled modes:
 Configuring eglot to work with vanilla python and its tree-sitter enabled mode:
 #+begin_src emacs-lisp 
   (use-package eglot
-    :ensure t
+    :ensure nil
     :config
     ;;(add-to-list 'eglot-server-programs '(python-mode . ("pylsp")))
     (add-to-list 'eglot-server-programs '(python-ts-mode . ("pylsp")))
