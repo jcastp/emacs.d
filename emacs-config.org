@@ -1090,7 +1090,7 @@ Establish the fonts with variables, so we don't need to change them on evey plac
   (defvar my-variable-font-height 140)
 
   ;; fixed pitch variables
-  (defvar my-fixed-font "Iosevka")
+  (defvar my-fixed-font "Iosevka Comfy")
   (defvar my-fixed-font-height 110)
   
   ;; My default font variables
@@ -2949,7 +2949,7 @@ https://protesilaos.com/emacs/fontaine
              :default-family "ETBembo"
              :default-weight normal
              :default-height 150
-             :fixed-pitch-family "Iosevka"
+             :fixed-pitch-family "Iosevka Comfy"
              :fixed-pitch-weight Light ; falls back to :default-weight
              :fixed-pitch-height 120
              :variable-pitch-family "ETBembo"
@@ -2966,7 +2966,7 @@ https://protesilaos.com/emacs/fontaine
              :default-family "ETBembo"
              :default-weight normal
              :default-height 180
-             :fixed-pitch-family "Iosevka"
+             :fixed-pitch-family "Iosevka Comfy"
              :fixed-pitch-weight Light ; falls back to :default-weight
              :fixed-pitch-height 140
              :variable-pitch-family "ETBembo"
@@ -2980,10 +2980,10 @@ https://protesilaos.com/emacs/fontaine
              )
             ;; change the variable width face to have a different view when editing
             (editing
-             :default-family "Iosevka"
+             :default-family "Iosevka Comfy"
              :default-weight normal
              :default-height 130
-             :fixed-pitch-family "Iosevka"
+             :fixed-pitch-family "Iosevka Comfy"
              :fixed-pitch-weight nil ; falls back to :default-weight
              :fixed-pitch-height 110
              :variable-pitch-family "Gentium"
@@ -2997,10 +2997,10 @@ https://protesilaos.com/emacs/fontaine
              )
   	  ;; font for work
   	  (work
-             :default-family "Iosevka"
+             :default-family "Iosevka Comfy"
              :default-weight normal
              :default-height 140
-             :fixed-pitch-family "Iosevka"
+             :fixed-pitch-family "Iosevka Comfy"
              :fixed-pitch-weight Light ; falls back to :default-weight
              :fixed-pitch-height 110
              :variable-pitch-family "Iosevka Comfy"
@@ -3008,7 +3008,7 @@ https://protesilaos.com/emacs/fontaine
              :variable-pitch-height 160
              :bold-family nil ; use whatever the underlying face has
              :bold-weight bold
-             :italic-family "Iosevka"
+             :italic-family "Iosevka Comfy"
              :italic-slant italic
              :line-spacing 0
              )
