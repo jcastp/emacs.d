@@ -503,15 +503,6 @@ https://github.com/minad/vertico
   ;;   (vertico-posframe-mode 1)) 
 #+end_src
 
-** all-the-icons-completion
-For better graphic in the completion buffer.
-#+begin_src emacs-lisp
-  (use-package all-the-icons-completion
-    :ensure t
-    :config
-    (all-the-icons-completion-mode))
-#+end_src
-
 ** prescient
 For better auto completion suggestions:
 https://github.com/raxod502/prescient.el
@@ -1021,6 +1012,32 @@ Get all the fancy icons.
     :ensure t
     :config
     )
+  
+  (use-package all-the-icons-completion
+    :ensure t
+    :config
+    (all-the-icons-completion-mode))
+
+  (use-package nerd-icons
+    :ensure t)
+
+  (use-package nerd-icons-completion
+    :ensure t
+    :after marginalia
+    :config
+    (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup))
+
+  (use-package nerd-icons-corfu
+    :ensure t
+    :after corfu
+    :config
+    (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
+
+  (use-package nerd-icons-dired
+    :ensure t
+    :hook
+    (dired-mode . nerd-icons-dired-mode))
+
 #+end_src
 
 ** doom modeline
