@@ -473,6 +473,14 @@ This conflicts with orgmode archive =C-c $=.
 (setq ispell-silently-savep t)
 #+end_src
 
+** TODO delete after selecting a text area
+This allows to delete a selected text area immediately, just as other text editors.
+#+begin_src emacs-lisp
+  (use-package delsel
+  :ensure nil ; no need to install it as it is built-in
+  :hook (after-init . delete-selection-mode))
+#+end_src
+
 * vertico, prescient, consult, marginalia, embark
 ** vertico
 Vertical auto completion in the minibuffer
