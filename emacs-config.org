@@ -4145,6 +4145,14 @@ Extracted from here: https://bzg.fr/en/emacs-strip-tease/#sec-6
   (use-package easysession
     :ensure t)
 #+end_src
+
+** TODO markdown mode
+#+begin_src emacs-lisp
+(use-package markdown-mode
+  :ensure t
+  :mode ("README\\.md\\'" . gfm-mode)
+  :init (setq markdown-command '("pandoc" "--from=markdown" "--to=html5")))
+#+end_src
 * home related load and startup
 This will be loaded automatically when at home.
 
