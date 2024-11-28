@@ -281,6 +281,36 @@ Set the userAgent for eww.
 
 ** dired config
 All the configurations needed for dired.
+#+begin_src emacs-lisp
+  (use-package dired
+  :ensure nil
+  :commands (dired)
+  :hook
+  ((dired-mode . dired-hide-details-mode)
+   (dired-mode . hl-line-mode))
+  :config
+  (setq dired-recursive-copies 'always)
+  (setq dired-recursive-deletes 'always)
+  (setq delete-by-moving-to-trash t)
+  (setq dired-dwim-target t))
+#+end_src
+
+*** dired subtree
+Show subdirectory contents with tab.
+#+begin_src emacs-lisp
+  (use-package dired-subtree
+  :ensure t
+  :after dired
+  :bind
+  ( :map dired-mode-map
+    ("<tab>" . dired-subtree-toggle)
+    ("TAB" . dired-subtree-toggle)
+    ("<backtab>" . dired-subtree-remove)
+    ("S-TAB" . dired-subtree-remove))
+  :config
+  (setq dired-subtree-use-backgrounds nil))
+#+end_src
+
 *** Directories first
 #+begin_src emacs-lisp
   (setq dired-listing-switches "-aBhl  --group-directories-first")
@@ -292,6 +322,7 @@ The files are defined in the =dired-omit-files= and the extensions in the =dired
 #+begin_src emacs-lisp
   ;;(add-hook 'dired-mode-hook (lambda () (dired-omit-mode)))
 #+end_src
+
 
 ** set firefox as the default browser
 Setting firefox as the default browser for opening http/s links.
