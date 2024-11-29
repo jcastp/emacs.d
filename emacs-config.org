@@ -297,6 +297,8 @@ All the configurations needed for dired.
 
 *** dired subtree
 Show subdirectory contents with tab.
+
+From Prot's article - https://protesilaos.com/codelog/2024-11-28-basic-emacs-configuration/
 #+begin_src emacs-lisp
   (use-package dired-subtree
   :ensure t
@@ -506,6 +508,8 @@ This conflicts with orgmode archive =C-c $=.
 
 ** TODO delete after selecting a text area
 This allows to delete a selected text area immediately, just as other text editors.
+
+From Prot's article - https://protesilaos.com/codelog/2024-11-28-basic-emacs-configuration/
 #+begin_src emacs-lisp
   (use-package delsel
   :ensure nil ; no need to install it as it is built-in
@@ -1043,12 +1047,13 @@ Get all the fancy icons.
     :ensure t
     :config
     )
-  
+
   (use-package all-the-icons-completion
     :ensure t
     :config
     (all-the-icons-completion-mode))
 
+  ;; From Prot's article - https://protesilaos.com/codelog/2024-11-28-basic-emacs-configuration/
   (use-package nerd-icons
     :ensure t)
 
