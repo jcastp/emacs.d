@@ -281,7 +281,7 @@ Set the userAgent for eww.
 
 ** dired config
 All the configurations needed for dired.
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package dired
   :ensure nil
   :commands (dired)
@@ -299,7 +299,7 @@ All the configurations needed for dired.
 Show subdirectory contents with tab.
 
 From Prot's article - https://protesilaos.com/codelog/2024-11-28-basic-emacs-configuration/
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package dired-subtree
   :ensure t
   :after dired
@@ -318,7 +318,7 @@ Preview the files in dired.
 
 https://github.com/protesilaos/dired-preview
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package dired-preview
     :ensure t
     :config
@@ -354,7 +354,23 @@ The files are defined in the =dired-omit-files= and the extensions in the =dired
   ;;(add-hook 'dired-mode-hook (lambda () (dired-omit-mode)))
 #+end_src
 
-
+** dirvish
+#+begin_src emacs-lisp
+  (use-package dirvish
+    :ensure t
+    :config
+    ;; what files we don't want to preview
+    (setq dirvish-preview-disabled-exts
+     '("iso" "bin" "exe" "gpg" "elc" "eln"
+       ;; office files
+       "ods" "odt" "ott" "odg" "fodg" "fods" "xlsx" "xls"
+  	 ))
+    ;; See how the icons and display options work
+    (setq dirvish-attributes
+      '(vc-state subtree-state collapse git-msg file-time file-size))
+    (dirvish-override-dired-mode)
+    )
+#+end_src
 ** set firefox as the default browser
 Setting firefox as the default browser for opening http/s links.
 #+begin_src emacs-lisp
