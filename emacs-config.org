@@ -325,6 +325,7 @@ https://github.com/protesilaos/dired-preview
     (setq dired-preview-delay 0.2)
     (setq dired-preview-ignored-extensions-regexp
         (concat "\\."
+  	      ;; compressed files
                 "\\(gz\\|"
                 "zst\\|"
                 "tar\\|"
