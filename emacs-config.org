@@ -313,6 +313,34 @@ From Prot's article - https://protesilaos.com/codelog/2024-11-28-basic-emacs-con
   (setq dired-subtree-use-backgrounds nil))
 #+end_src
 
+*** dired-preview
+Preview the files in dired.
+
+https://github.com/protesilaos/dired-preview
+
+#+begin_src emacs-lisp
+  (use-package dired-preview
+    :ensure t
+    :config
+    (setq dired-preview-delay 0.2)
+    (setq dired-preview-ignored-extensions-regexp
+        (concat "\\."
+                "\\(gz\\|"
+                "zst\\|"
+                "tar\\|"
+                "xz\\|"
+                "rar\\|"
+                "zip\\|"
+                "iso\\|"
+  	      "mp3\\|"
+  	      "mp4\\|"
+  	      "3gp\\|"
+                "epub"
+                "\\)"))
+    (dired-preview-global-mode 1)
+    )
+#+end_src
+
 *** Directories first
 #+begin_src emacs-lisp
   (setq dired-listing-switches "-aBhl  --group-directories-first")
