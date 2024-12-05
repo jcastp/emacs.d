@@ -368,21 +368,6 @@ The files are defined in the =dired-omit-files= and the extensions in the =dired
        ("n" "~/Nextcloud/"                "Nextcloud")
        ("j" "~/Nextcloud_claro/gocryptfs_claro/"                "Nextcloud claro")
        ("t" "~/.local/share/Trash/files/" "TrashCan")))
-    :config
-    (setq dirvish-mode-line-format
-  	'(:left (sort symlink) :right (omit yank index)))
-    ;; what files we don't want to preview
-    (setq dirvish-preview-disabled-exts
-  	'("iso" "bin" "exe" "gpg" "elc" "eln"
-  	  ;; office files
-  	  "ods" "odt" "ott" "odg" "fodg" "fods" "xlsx" "xls"
-  	  ))
-    ;; See how the icons and display options work
-    (setq dirvish-attributes
-  	'(vc-state subtree-state collapse git-msg file-time file-size))
-    (setq delete-by-moving-to-trash t)
-    (setq dired-listing-switches
-  	"-l --almost-all --human-readable --group-directories-first --no-group")
     :bind
     (("C-c f" . dirvish)
      :map dirvish-mode-map ; Dirvish inherits `dired-mode-map'
@@ -403,7 +388,31 @@ The files are defined in the =dired-omit-files= and the extensions in the =dired
      ("M-s" . dirvish-setup-menu)
      ("M-e" . dirvish-emerge-menu)
      ("M-j" . dirvish-fd-jump))
-    )
+    :config
+    (setq dirvish-mode-line-format
+  	'(:left (sort symlink) :right (omit yank index)))
+    ;; what files we don't want to preview
+    (setq dirvish-preview-disabled-exts
+  	'("iso" "bin" "exe" "gpg" "elc" "eln"
+  	  ;; office files
+  	  "ods" "odt" "ott" "odg" "fodg" "fods" "xlsx" "xls"
+  	  ))
+    ;; See how the icons and display options work
+    (setq dirvish-attributes
+  	'(vc-state subtree-state collapse git-msg file-time file-size))
+    (setq delete-by-moving-to-trash t)
+    (setq dired-listing-switches
+  	"-l --almost-all --human-readable --group-directories-first --no-group")
+    
+    ;; file type group arrangement - not working well
+    ;; (setq dirvish-emerge-groups '(("Recent files" (predicate . recent-files-2h))
+    ;; 				("Documents" (extensions "pdf" "tex" "bib" "epub"))
+    ;; 				("Video" (extensions "mp4" "mkv" "webm"))
+    ;; 				("Pictures" (extensions "jpg" "png" "svg" "gif"))
+    ;; 				("Audio" (extensions "mp3" "flac" "wav" "ape" "aac"))
+    ;; 				("Archives" (extensions "gz" "rar" "zip"))))
+
+     )
 #+end_src
 ** set firefox as the default browser
 Setting firefox as the default browser for opening http/s links.
