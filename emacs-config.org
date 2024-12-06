@@ -4209,7 +4209,10 @@ To interact with ollama local llms.
      gptel-backend (gptel-make-ollama "Ollama"
                      :host "localhost:11434"
                      :stream t
-                     :models '(qwen2.5:14b)))
+                     :models '(qwen2.5:14b
+  			     qwen2.5-coder:14b
+  			     dolphin-mixtral:latest
+  			     phi3:medium)))
     )
 #+end_src
 
