@@ -4193,6 +4193,26 @@ Extracted from here: https://bzg.fr/en/emacs-strip-tease/#sec-6
   :mode ("README\\.md\\'" . gfm-mode)
   :init (setq markdown-command '("pandoc" "--from=markdown" "--to=html5")))
 #+end_src
+
+** TODO gptel
+https://github.com/karthink/gptel
+
+To interact with ollama local llms.
+
+#+begin_src emacs-lisp
+  (use-package gptel
+    :ensure t
+    :config
+    ;; Ollama as the default engine
+    (setq
+     gptel-model 'qwen2.5:14b
+     gptel-backend (gptel-make-ollama "Ollama"
+                     :host "localhost:11434"
+                     :stream t
+                     :models '(qwen2.5:14b)))
+    )
+#+end_src
+
 * home related load and startup
 This will be loaded automatically when at home.
 
