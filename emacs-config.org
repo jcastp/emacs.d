@@ -401,8 +401,8 @@ The files are defined in the =dired-omit-files= and the extensions in the =dired
     (setq dirvish-attributes
   	'(vc-state subtree-state collapse git-msg file-time file-size))
     (setq delete-by-moving-to-trash t)
-    (setq dired-listing-switches
-  	"-l --almost-all --human-readable --group-directories-first --no-group")
+    ;;(setq dired-listing-switches
+    ;;  	"-l --almost-all --human-readable --group-directories-first --no-group")
     
     ;; file type group arrangement - not working well
     ;; (setq dirvish-emerge-groups '(("Recent files" (predicate . recent-files-2h))
