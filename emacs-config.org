@@ -4205,6 +4205,7 @@ To interact with ollama local llms.
     :config
     ;; Ollama as the default engine
     (setq
+     ;;gptel-default-mode 'org-mode
      gptel-model 'qwen2.5:14b
      gptel-backend (gptel-make-ollama "Ollama"
                      :host "localhost:11434"
