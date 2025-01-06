@@ -4333,7 +4333,7 @@ To rotate the layout of the windows.
 https://github.com/daichirata/emacs-rotate
 
 #+begin_src emacs-lisp
-  (use-package emacs-rotate
+  (use-package rotate
     :ensure t)
 #+end_src
 * home related load and startup
