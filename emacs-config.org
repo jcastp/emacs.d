@@ -4327,6 +4327,15 @@ https://toobnix.org/w/5vCCqXFtWJ3EK7W3HKPRUD
   (keymap-set Info-mode-map "C-o" #'casual-info-tmenu)
 #+end_src
 
+
+** TODO emacs-rotate
+To rotate the layout of the windows.
+https://github.com/daichirata/emacs-rotate
+
+#+begin_src emacs-lisp
+  (use-package emacs-rotate
+    :ensure t)
+#+end_src
 * home related load and startup
 This will be loaded automatically when at home.
 
