@@ -4284,49 +4284,32 @@ https://toobnix.org/w/5vCCqXFtWJ3EK7W3HKPRUD
 
 #+begin_src emacs-lisp
   (use-package casual
-  :ensure t)
-#+end_src
-
-*** casual-agenda
-#+begin_src emacs-lisp
+  :ensure t
+  :config
+  ;;casual agenda
   (require 'casual-agenda) ; optional if using autoloaded menu
   (keymap-set org-agenda-mode-map "C-o" #'casual-agenda-tmenu)
-#+end_src
-
-*** casual-bookmarks
-#+begin_src emacs-lisp
+  ;; casual bookmarks
   (require 'casual-bookmarks) ; optional if using autoloaded menu
   (keymap-set bookmark-bmenu-mode-map "C-o" #'casual-bookmarks-tmenu)
-#+end_src
-
-*** casual-dired
-#+begin_src emacs-lisp
+  ;; casual dired
   (require 'casual-dired) ; optional if using autoloaded menu
   (keymap-set dired-mode-map "C-o" #'casual-dired-tmenu)
   (keymap-set dired-mode-map "s" #'casual-dired-sort-by-tmenu) ; optional
-  (keymap-set dired-mode-map "/" #'casual-dired-search-replace-tmenu) ; optional  
-#+end_src
+  (keymap-set dired-mode-map "/" #'casual-dired-search-replace-tmenu) ; optional
 
-*** casual-editkit
-#+begin_src emacs-lisp
   (require 'casual-editkit) ; optional if using autoloaded menu
   (keymap-global-set "C-o" #'casual-editkit-main-tmenu)
-#+end_src
 
-*** casual-ibuffer
-#+begin_src emacs-lisp
   (require 'casual-ibuffer) ; optional if using autoloaded menu
   (keymap-set ibuffer-mode-map "C-o" #'casual-ibuffer-tmenu)
   (keymap-set ibuffer-mode-map "F" #'casual-ibuffer-filter-tmenu)
   (keymap-set ibuffer-mode-map "s" #'casual-ibuffer-sortby-tmenu)
-#+end_src
 
-*** casual-info
-#+begin_src emacs-lisp
   (require 'casual-info) ; optional if using autoloaded menu
   (keymap-set Info-mode-map "C-o" #'casual-info-tmenu)
+  )
 #+end_src
-
 
 ** TODO emacs-rotate
 To rotate the layout of the windows.
