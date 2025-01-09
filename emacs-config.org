@@ -4319,6 +4319,40 @@ https://github.com/daichirata/emacs-rotate
   (use-package rotate
     :ensure t)
 #+end_src
+
+** TODO treemacs
+To emulate the scrivener binder feature.
+
+https://github.com/Alexander-Miller/treemacs
+#+begin_src emacs-lisp
+  (use-package treemacs
+    :ensure t
+    :config
+
+    ;; switch to the project for the current buffer.
+    ;;(treemacs-project-follow-mode)
+    
+    ;; display the current project, and *only* the current project.
+    ;; this should be on the config when enabling the writing mode, not global:
+    ;; (treemacs-add-and-display-current-project-exclusively)
+    
+    ;; to set a visual guide for indentation
+    (treemacs-indent-guide-mode)
+
+    (treemacs-filewatch-mode t)
+    (treemacs-fringe-indicator-mode 'always)
+    :bind
+    (:map global-map
+        ("M-0"       . treemacs-select-window)
+        ("C-x t 1"   . treemacs-delete-other-windows)
+        ("C-x t t"   . treemacs)
+        ("C-x t d"   . treemacs-select-directory)
+        ("C-x t B"   . treemacs-bookmark)
+        ("C-x t C-t" . treemacs-find-file)
+        ("C-x t M-t" . treemacs-find-tag))
+    )
+#+end_src
+
 * home related load and startup
 This will be loaded automatically when at home.
 
