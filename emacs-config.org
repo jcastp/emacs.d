@@ -1993,15 +1993,15 @@ Here I will add template captures for doing several things:
   			     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                                ;; task related captures
   			     
-                               ;; ("i" "Inbox" entry
-                               ;;  (file+headline "~/Nextcloud/agenda/tasks.org" "Inbox")
-                               ;;  "* TODO %i%? \n:LOGBOOK: \n:CREATED: %U \n:END:"
-                               ;;  :empty-lines-after 1)
-
-  			     ("t" "My TODO task format." entry
-                               (file+headline "~/Nextcloud/agenda/tasks.org" "Tasks")
-                               "** TODO %i%? \n"
+                               ("i" "Inbox" entry
+                                 (file+headline "~/Nextcloud/agenda/tasks.org" "Inbox")
+                                 "* TODO %i%? "
                                  :empty-lines-after 1)
+
+  			     ;; ("t" "My TODO task format." entry
+                               ;; (file+headline "~/Nextcloud/agenda/tasks.org" "Tasks")
+                               ;; "** TODO %i%? \n"
+                               ;;   :empty-lines-after 1)
 
   			     ("p" "New project." entry
                                 (file+headline "~/Nextcloud/agenda/tasks.org" "Projects")
