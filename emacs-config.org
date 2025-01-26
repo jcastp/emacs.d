@@ -1678,9 +1678,9 @@ All the agenda configs
    org-agenda-breadcrumbs-separator " ❱ "
    ;;org-agenda-prefix-format '((agenda . " %i %-12:c%?-12t%b% s")
    org-agenda-prefix-format '((agenda . " %i %-12:c%?-12t% s")  			    
-  			       (todo . " %i %-12:c")
-  			       (tags . " %i %-12:c")
-  			       (search . " %i %-12:c"))
+  			    (todo . " %i %-12:c")
+  			    (tags . " %i %-12:c")
+  			    (search . " %i %-12:c"))
    org-agenda-time-grid
    '((daily today require-timed)
      (800 1000 1200 1400 1600 1800 2000)
@@ -1688,7 +1688,7 @@ All the agenda configs
    org-agenda-current-time-string
    "⭠ now ─────────────────────────────────────────────────")
 
-  #+end_src
+#+end_src
 
 Have some fancy icons for the categories.
 #+begin_src emacs-lisp
@@ -1728,7 +1728,8 @@ We dont want the cluttering in our views. If a task is done, don't show it on th
 **** Show next 7 days in the agenda view
 I need a more clear view for things to come. We can see 15 days from now.
 #+begin_src emacs-lisp
-  (setq org-agenda-span 'week)
+  ;;(setq org-agenda-span 'week)
+  (setq org-agenda-span 14)
   (setq org-agenda-start-on-weekday 1) ;; the week starts in Monday
 #+end_src
 
@@ -1745,10 +1746,10 @@ We define some agenda custom commands, to refine views, and get a clearer undest
   	;; Ongoing and next (TODO) tasks
           ("cn" "Tasks ongoing and next"
            (
-  	    (tags-todo "-someday/ONGOING"
+  	  (tags-todo "-someday/ONGOING"
                        ((org-agenda-overriding-header "\nTasks ongoing")
                         ))
-  	    (tags-todo "-someday/TODO"
+  	  (tags-todo "-someday/TODO"
                        ((org-agenda-overriding-header "\nTasks next")
                         )))
            nil
@@ -1932,7 +1933,7 @@ This is the config for the org-superagenda mode
             )
           )
     )
-    #+end_src
+#+end_src
 
 *** TODO Restrict agenda to project
 https://github.com/ballantony/emacs-writing/blob/main/DoomEmacsWriting.org
