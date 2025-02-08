@@ -1253,17 +1253,17 @@ Establish the fonts with variables, so we don't need to change them on evey plac
   (defvar my-variable-font-height 140)
 
   ;; fixed pitch variables
-  (defvar my-fixed-font "Iosevka Comfy")
+  (defvar my-fixed-font "Aporetic Sans Mono")
   (defvar my-fixed-font-height 110)
   
   ;; My default font variables
-  (defvar my-default-font "Iosevka Comfy")
+  (defvar my-default-font "Aporetic Sans Mono")
   (defvar my-default-font-height 120)
 #+end_src
 
 *** font definition
 #+begin_src emacs-lisp
-  ;;(set-face-attribute 'default nil :font "Iosevka Comfy")
+  ;;(set-face-attribute 'default nil :font "Aporetic Sans Mono")
   (set-face-attribute 'default nil :font my-default-font)
 #+end_src
 
@@ -3077,10 +3077,10 @@ https://protesilaos.com/emacs/fontaine
           '(
             ;; daily operations, same config as normal config
             (regular
-             :default-family "Iosevka Comfy"
+             :default-family "Aporetic Sans Mono"
              :default-weight normal
              :default-height 120
-             :fixed-pitch-family "Iosevka Comfy"
+             :fixed-pitch-family "Aporetic Sans Mono"
              :fixed-pitch-weight Light ; falls back to :default-weight
              :fixed-pitch-height 110
              :variable-pitch-family "Lexend"
@@ -3088,23 +3088,23 @@ https://protesilaos.com/emacs/fontaine
              :variable-pitch-height 140
              :bold-family nil ; use whatever the underlying face has
              :bold-weight bold
-             :italic-family "Iosevka Comfy"
+             :italic-family "Aporetic Sans Mono"
              :italic-slant italic
              :line-spacing 0
              )
             (regular-comfy
-             :default-family "Iosevka Comfy"
+             :default-family "Aporetic Sans Mono"
              :default-weight normal
              :default-height 120
-             :fixed-pitch-family "Iosevka Comfy"
+             :fixed-pitch-family "Aporetic Sans Mono"
              :fixed-pitch-weight Light ; falls back to :default-weight
              :fixed-pitch-height 110
-             :variable-pitch-family "Iosevka Comfy"
+             :variable-pitch-family "Aporetic Sans Mono"
              :variable-pitch-weight Medium
              :variable-pitch-height 120
              :bold-family nil ; use whatever the underlying face has
              :bold-weight bold
-             :italic-family "Iosevka Comfy"
+             :italic-family "Aporetic Sans Mono"
              :italic-slant italic
              :line-spacing 0
              )
@@ -3113,7 +3113,7 @@ https://protesilaos.com/emacs/fontaine
              :default-family "ETBembo"
              :default-weight normal
              :default-height 150
-             :fixed-pitch-family "Iosevka Comfy"
+             :fixed-pitch-family "Aporetic Sans Mono"
              :fixed-pitch-weight Light ; falls back to :default-weight
              :fixed-pitch-height 120
              :variable-pitch-family "ETBembo"
@@ -3130,7 +3130,7 @@ https://protesilaos.com/emacs/fontaine
              :default-family "ETBembo"
              :default-weight normal
              :default-height 180
-             :fixed-pitch-family "Iosevka Comfy"
+             :fixed-pitch-family "Aporetic Sans Mono"
              :fixed-pitch-weight Light ; falls back to :default-weight
              :fixed-pitch-height 140
              :variable-pitch-family "ETBembo"
@@ -3144,10 +3144,10 @@ https://protesilaos.com/emacs/fontaine
              )
             ;; change the variable width face to have a different view when editing
             (editing
-             :default-family "Iosevka Comfy"
+             :default-family "Aporetic Sans Mono"
              :default-weight normal
              :default-height 130
-             :fixed-pitch-family "Iosevka Comfy"
+             :fixed-pitch-family "Aporetic Sans Mono"
              :fixed-pitch-weight nil ; falls back to :default-weight
              :fixed-pitch-height 110
              :variable-pitch-family "Gentium"
@@ -3161,18 +3161,18 @@ https://protesilaos.com/emacs/fontaine
              )
   	  ;; font for work
   	  (work
-             :default-family "Iosevka Comfy"
+             :default-family "Aporetic Sans Mono"
              :default-weight normal
              :default-height 140
-             :fixed-pitch-family "Iosevka Comfy"
+             :fixed-pitch-family "Aporetic Sans Mono"
              :fixed-pitch-weight Light ; falls back to :default-weight
              :fixed-pitch-height 110
-             :variable-pitch-family "Iosevka Comfy"
+             :variable-pitch-family "Aporetic Sans Mono"
              :variable-pitch-weight Medium
              :variable-pitch-height 160
              :bold-family nil ; use whatever the underlying face has
              :bold-weight bold
-             :italic-family "Iosevka Comfy"
+             :italic-family "Aporetic Sans Mono"
              :italic-slant italic
              :line-spacing 0
              )
