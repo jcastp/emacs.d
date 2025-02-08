@@ -3895,6 +3895,7 @@ I want to have my own dedicated keymap for the functions I use the most.
 
 From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
 #+begin_src emacs-lisp
+  ;; all my writing functions in a convenient keybinding map
   (defvar-keymap my/key-prefix-writing-map
     :doc "Functions related to writing"
     ;; writing mode
@@ -3905,20 +3906,42 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
     "q" #'my/create-empty-writing-file
     )
 
+  ;; all my online functions in a convenient keybinding map
+  (defvar-keymap my/key-prefix-online-map
+    :doc "Functions related to online activity"
+    "f" (cons "elfeed" #'my/elfeed)
+    "m" #'mastodon
+    )
+
+  ;; all my theme related keybindings
+  (defvar-keymap my/key-prefix-themes-map
+    :doc "Functions related to theme activities"
+    "t" #'consult-theme
+    )
+
+  ;; all my buffer related functions
+  (defvar-keymap my/key-prefix-buffers-map
+    :doc "Functions related to manipulate buffers"
+    )
+
+  ;; general keybindings for my personal keymaps
   (defvar-keymap my/key-prefix-map
     :doc "My personal keymap."
+    "b" (cons "buffers" my/key-prefix-buffers-map)
     "c" #'bzg-big-fringe-mode
     "d" #'dashboard-open
-    "f" (cons "elfeed" #'my/elfeed)
+    ;;"f" (cons "elfeed" #'my/elfeed)
     "i" #'tempel-insert
-    "m" #'mastodon
-    "o" #'consult-outline
+    ;;"m" #'mastodon
+    "o" (cons "online" my/key-prefix-online-map)
+    "u" #'consult-outline
     "r" #'recentf
-    "t" #'consult-theme
+    "t" (cons "themes" my/key-prefix-themes-map)
     "w" (cons "writing" my/key-prefix-writing-map)
     )
 
-  (keymap-set global-map "C-c d" my/key-prefix-map)
+  ;;(keymap-set global-map "C-c d" my/key-prefix-map)
+  (keymap-set global-map "C-q" my/key-prefix-map)
 #+end_src
 
 * Testing
