@@ -83,16 +83,14 @@ Only evaluated if in my home environment, my encrypted directory is mounted, as 
 Right now, it depends on perspectives. I need to change this to also open files if perspective is not installed.
 
 #+begin_src emacs-lisp
-  (global-set-key (kbd "\e\ec")
-  		(lambda () (interactive) (persp-state-load "~/Nextcloud/config/.emacs.d/perspectives/config-persp")))
-  ;;(lambda () (interactive) (find-file "~/.emacs.d/emacs-config.org")))
+  ;; (global-set-key (kbd "\e\ec")
+  ;; 		(lambda () (interactive) (persp-state-load "~/Nextcloud/config/.emacs.d/perspectives/config-persp")))
 
-  (global-set-key (kbd "\e\et")
-  		(lambda () (interactive) (persp-state-load "~/Nextcloud/config/.emacs.d/perspectives/tareas-persp")))
-  ;;(lambda () (interactive) (find-file "~/Nextcloud/agenda/tasks.org")))
+  ;; (global-set-key (kbd "\e\et")
+  ;; 		(lambda () (interactive) (persp-state-load "~/Nextcloud/config/.emacs.d/perspectives/tareas-persp")))
 
-  (global-set-key (kbd "\e\ei")
-  		(lambda () (interactive) (find-file "~/Nextcloud/tech/org-keys.org")))
+  ;; (global-set-key (kbd "\e\ei")
+  ;; 		(lambda () (interactive) (find-file "~/Nextcloud/tech/org-keys.org")))
 #+end_src
 
 * General config
@@ -3924,6 +3922,13 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
     :doc "Functions related to manipulate buffers"
     )
 
+  (defvar-keymap my/key-prefix-direct-access-map
+    :doc "Functions related to open my frequently used files."
+    "c" (cons "personal config" (lambda () (interactive) (persp-state-load "~/Nextcloud/config/.emacs.d/perspectives/config-persp")))
+    "k" (cons "emacs keys" (lambda () (interactive) (find-file "~/Nextcloud/tech/org-keys.org")))
+    "t" (cons "tasks file" (lambda () (interactive) (persp-state-load "~/Nextcloud/config/.emacs.d/perspectives/tareas-persp")))
+    )
+
   ;; general keybindings for my personal keymaps
   (defvar-keymap my/key-prefix-map
     :doc "My personal keymap."
@@ -3934,6 +3939,7 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
     "i" #'tempel-insert
     ;;"m" #'mastodon
     "o" (cons "online" my/key-prefix-online-map)
+    "q" (cons "direct access" my/key-prefix-direct-access-map)
     "u" #'consult-outline
     "r" #'recentf
     "t" (cons "themes" my/key-prefix-themes-map)
