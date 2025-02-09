@@ -4262,18 +4262,6 @@ Extracted from here: https://bzg.fr/en/emacs-strip-tease/#sec-6
           2))))
 #+end_src
 
-** CANCELED easysession
-#+begin_src emacs-lisp :tangle no
-  (use-package easysession
-    :ensure t
-    :custom
-    ;; Interval between automatic session saves
-    (easysession-save-interval (* 10 60))
-    :init
-    (add-hook 'emacs-startup-hook #'easysession-load-including-geometry 102)
-    (add-hook 'emacs-startup-hook #'easysession-save-mode 103))
-#+end_src
-
 ** TODO markdown mode
 #+begin_src emacs-lisp
 (use-package markdown-mode
