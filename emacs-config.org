@@ -3888,7 +3888,7 @@ https://github.com/emacs-dashboard/emacs-dashboard
     )
 #+end_src
 
-* TODO my own keymap
+* my own keymap
 I want to have my own dedicated keymap for the functions I use the most.
 
 From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
@@ -3907,6 +3907,7 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
   ;; all my online functions in a convenient keybinding map
   (defvar-keymap my/key-prefix-online-map
     :doc "Functions related to online activity"
+    "e" #'eww
     "f" (cons "elfeed" #'my/elfeed)
     "m" #'mastodon
     )
