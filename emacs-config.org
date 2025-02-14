@@ -1375,9 +1375,9 @@ Protesilaos very good themes. These themes are already included in the standard 
 
 *** doom themes
 #+begin_src emacs-lisp
-  (use-package doom-themes
-    :ensure t
-    :defer t)
+  ;; (use-package doom-themes
+  ;;   :ensure t
+  ;;   :defer t)
 #+end_src
 
 *** poet theme
@@ -1398,7 +1398,7 @@ Also, rotate the list of themes applied.
 
   ;; establish if we start with a dark or clear theme
   ;; boolean variable: t is dark, nil is clear
-  (defvar my-theme-dark-p nil)
+  (defvar my-theme-dark-p t)
 
   ;; define a function to rotate a list. Custom, yes, I know it could be done better.
   (defun my/rotate-list (list)
@@ -3936,11 +3936,9 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
     "b" (cons "buffers" my/key-prefix-buffers-map)
     "c" #'bzg-big-fringe-mode
     "d" #'dashboard-open
-    ;;"f" (cons "elfeed" #'my/elfeed)
     "i" #'tempel-insert
-    ;;"m" #'mastodon
     "o" (cons "online" my/key-prefix-online-map)
-    "q" (cons "direct access" my/key-prefix-direct-access-map)
+    "q" (cons "direct file access" my/key-prefix-direct-access-map)
     "u" #'consult-outline
     "r" #'recentf
     "t" (cons "themes" my/key-prefix-themes-map)
