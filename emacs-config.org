@@ -3909,6 +3909,7 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
   ;; all my theme related keybindings
   (defvar-keymap my/key-prefix-themes-map
     :doc "Functions related to theme activities"
+    "f" #'fontaine-set-preset
     "t" #'consult-theme
     )
 
