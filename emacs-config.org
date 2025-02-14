@@ -3084,7 +3084,7 @@ https://protesilaos.com/emacs/fontaine
              :italic-slant italic
              :line-spacing 0
              )
-            (regular-comfy
+            (regular-aporetic-mono
              :default-family "Aporetic Sans Mono"
              :default-weight normal
              :default-height 120
