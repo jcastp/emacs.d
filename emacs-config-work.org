@@ -6,7 +6,7 @@ It is supposed to run over the generic emacs config, and overwrites that config 
 I use a clear theme.
 
 #+begin_src emacs-lisp
-  (consult-theme 'tango)
+  (consult-theme 'ef-owl)
 #+end_src
 
 ** recent files for work
