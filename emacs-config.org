@@ -1393,8 +1393,10 @@ Define some variables with the dark and clear themes, and a variable to control 
 Also, rotate the list of themes applied.
 #+begin_src emacs-lisp
   ;; define the lists of clear and dark themes
-  (setq my/themes-dark '(ef-deuteranopia-dark modus-vivendi))
-  (setq my/themes-clear '(ef-deuteranopia-light modus-operandi))
+  (setq my/themes-dark '(ef-deuteranopia-dark
+  		       modus-vivendi-tinted))
+  (setq my/themes-clear '(ef-deuteranopia-light
+  			modus-operandi))
 
   ;; establish if we start with a dark or clear theme
   ;; boolean variable: t is dark, nil is clear
@@ -1440,8 +1442,6 @@ Function to change between dark and clear themes, based on past variables.
     (defun my/theme-changer ()
       "Changes themes between clear and dark ones."
       (interactive)
-      ;; here there will be the code for changing the themes
-
       ;; since we want to change from dark to clear and viceversa, we swap the logic
       (if (not my-theme-dark-p)
           ;; this loads the dark theme
@@ -1452,9 +1452,7 @@ Function to change between dark and clear themes, based on past variables.
             ;; rotate the list
             (setq my/themes-dark (my/rotate-list my/themes-dark))
             ;; mark the theme is dark now
-            (setq my-theme-dark-p t)
-
-            )
+            (setq my-theme-dark-p t))
         ;; else block (clear theme)
         (progn
           ;;(load-theme (car my/themes-clear) t)
@@ -1463,11 +1461,7 @@ Function to change between dark and clear themes, based on past variables.
           ;; rotate the list
           (setq my/themes-clear (my/rotate-list my/themes-clear))
           ;; mark the theme is clear now
-          (setq my-theme-dark-p nil)
-          )
-        )
-      )
-    )
+          (setq my-theme-dark-p nil)))))
 
   (global-set-key (kbd "C-c 0") 'my/theme-changer)
   #+end_src
