@@ -4323,6 +4323,35 @@ https://github.com/Alexander-Miller/treemacs
     )
 #+end_src
 
+
+** TODO zoom - resize windows based on frame size
+https://github.com/cyrus-and/zoom
+
+#+begin_src emacs-lisp
+  (use-package zoom
+    :ensure t
+    :config
+    (zoom-mode t)
+    ;; fixed percentage
+    ;;(custom-set-variables
+    ;; '(zoom-size '(0.7 . 0.7)))
+
+    ;; Resize the selected window according to the frame width, for example:
+    ;; - 120 columns and 75% of the frame height if the frame width is larger than 1280 pixels;
+    ;; - frame width less than 120 columns, then 90%
+    ;; - golden ratio instead 0.618
+      (defun size-callback ()
+        (cond ;;((> (frame-pixel-width) 1280) '(120 . 0.75))
+         ;; frame-width is less than 120 columns
+      	  ((< (frame-width) 120) '(0.90 . 0.90))
+  	  ;; else, we use other percentage
+              (t                            '(0.7 . 0.7))))
+
+    (custom-set-variables
+     '(zoom-size 'size-callback))
+    )
+#+end_src
+
 * home related load and startup
 This will be loaded automatically when at home.
 
