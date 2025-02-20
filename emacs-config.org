@@ -3672,12 +3672,14 @@ Read e-pub in emacs.
 https://tech.toryanderson.com/2022/11/23/viewing-epub-in-emacs/
 #+begin_src emacs-lisp
   (use-package esxml
-    :ensure (esxml :type git :host github :repo "tali713/esxml")
+    ;;:ensure (esxml :type git :host github :repo "tali713/esxml")
+    :ensure t
     )
 
   (use-package nov
     :after esxml
-    :ensure (nov :type git :host nil :repo "https://depp.brause.cc/nov.el.git")
+    ;;:ensure (nov :type git :host nil :repo "https://depp.brause.cc/nov.el.git")
+    :ensure t
     :config
     (setq nov-text-width 100)
     ;;(setq nov-text-width t)
