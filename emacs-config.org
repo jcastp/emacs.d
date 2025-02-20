@@ -1255,7 +1255,7 @@ Establish the fonts with variables, so we don't need to change them on evey plac
   (defvar my-fixed-font-height 110)
   
   ;; My default font variables
-  (defvar my-default-font "Aporetic Sans Mono")
+  (defvar my-default-font "Aporetic Sans")
   (defvar my-default-font-height 120)
 #+end_src
 
@@ -3075,7 +3075,7 @@ https://protesilaos.com/emacs/fontaine
              :fixed-pitch-family "Aporetic Sans Mono"
              :fixed-pitch-weight Light ; falls back to :default-weight
              :fixed-pitch-height 110
-             :variable-pitch-family "Lexend"
+             :variable-pitch-family "Aporetic Sans"
              :variable-pitch-weight Medium
              :variable-pitch-height 140
              :bold-family nil ; use whatever the underlying face has
@@ -3153,7 +3153,7 @@ https://protesilaos.com/emacs/fontaine
              )
   	  ;; font for work
   	  (work
-             :default-family "Aporetic Sans Mono"
+             :default-family "Aporetic Sans"
              :default-weight normal
              :default-height 140
              :fixed-pitch-family "Aporetic Sans Mono"
