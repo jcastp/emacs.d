@@ -1240,85 +1240,6 @@ It darkens the buffers I'm not using.
 #+end_src
 
 * Fonts and themes
-** Font setup
-Look at this https://idiocy.org/emacs-fonts-and-fontsets.html
-*** TODO fonts as variables
-Establish the fonts with variables, so we don't need to change them on evey place (like in fontaine modes)
-
-#+begin_src emacs-lisp
-  ;; variable pitch variables
-  (defvar my-variable-font "Lexend")
-  (defvar my-variable-font-height 140)
-
-  ;; fixed pitch variables
-  (defvar my-fixed-font "Aporetic Sans Mono")
-  (defvar my-fixed-font-height 110)
-  
-  ;; My default font variables
-  (defvar my-default-font "Aporetic Sans")
-  (defvar my-default-font-height 120)
-#+end_src
-
-*** font definition
-#+begin_src emacs-lisp
-  ;;(set-face-attribute 'default nil :font "Aporetic Sans Mono")
-  (set-face-attribute 'default nil :font my-default-font)
-#+end_src
-
-Obtained from: https://zzamboni.org/post/beautifying-org-mode-in-emacs/
-Font attributes to be used, different for prose mode and code mode.
-
-Fonts we will be using for both modes:
-#+begin_src emacs-lisp
-  (custom-theme-set-faces
-   'user
-   `(variable-pitch
-     ;; variable font config
-     ((t (:family ,my-variable-font
-  		:height ,my-variable-font-height
-           	:weight Regular))))
-
-   ;; fixed font config
-   `(fixed-pitch
-     ((t (:family ,my-fixed-font
-  		  :height ,my-fixed-font-height
-  		  :weight Medium))))
-
-   ;; default font config
-   `(default
-     ((t (:family ,my-default-font
-  		:height ,my-default-font-height
-  		:weight Light)))))
-
-#+end_src
-
-Assign the variable font to prose mode:
-#+begin_src emacs-lisp
-  (add-hook 'text-mode-hook 'variable-pitch-mode)
-  (add-hook 'org-mode-hook 'variable-pitch-mode)
-#+end_src
-
-Use fixed font for code blocks and other non prose blocks, and configure all other aspects on how to show them on screen:
-#+begin_src emacs-lisp
-  (custom-theme-set-faces
-   'user
-   '(org-block                 ((t (:inherit fixed-pitch))))
-   '(org-block-begin-line      ((t (:foreground "dim grey" :weight bold :height 1.1 :inherit fixed-pitch))))
-   '(org-document-info         ((t (:foreground "dark orange"))))
-   '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
-   '(org-link                  ((t (:foreground "royal blue" :underline t))))
-   '(org-meta-line             ((t (:inherit (font-lock-comment-face fixed-pitch)))))
-   '(org-property-value        ((t (:inherit fixed-pitch))) t)
-   '(org-special-keyword       ((t (:inherit (font-lock-comment-face fixed-pitch)))))
-   '(org-tag                   ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.9))))
-   '(org-verbatim              ((t (:inherit (shadow fixed-pitch)))))
-   '(org-indent                ((t (:inherit (org-hide fixed-pitch)))))
-   '(org-table                 ((t (:inherit (org-hide fixed-pitch)))))
-   ;; check if this works
-   '(org-comment               ((t (:inherit (org-hide fixed-pitch) :height 0.8))))
-   )
-#+end_src
-
 ** Themes
 *** leuven themes
 #+begin_src emacs-lisp
@@ -1466,6 +1387,204 @@ Function to change between dark and clear themes, based on past variables.
   (global-set-key (kbd "C-c 0") 'my/theme-changer)
   #+end_src
   
+** Font setup
+Look at this https://idiocy.org/emacs-fonts-and-fontsets.html
+*** TODO fonts as variables
+Establish the fonts with variables, so we don't need to change them on evey place (like in fontaine modes)
+
+#+begin_src emacs-lisp
+  ;; variable pitch variables
+  (defvar my-variable-font "Aporetic Sans")
+  (defvar my-variable-font-height 140)
+
+  ;; fixed pitch variables
+  (defvar my-fixed-font "Aporetic Sans Mono")
+  (defvar my-fixed-font-height 110)
+  
+  ;; My default font variables
+  (defvar my-default-font "Aporetic Sans")
+  (defvar my-default-font-height 120)
+#+end_src
+
+*** font definition
+#+begin_src emacs-lisp
+  ;;(set-face-attribute 'default nil :font "Aporetic Sans Mono")
+  (set-face-attribute 'default nil :font my-default-font)
+#+end_src
+
+Obtained from: https://zzamboni.org/post/beautifying-org-mode-in-emacs/
+Font attributes to be used, different for prose mode and code mode.
+
+Fonts we will be using for both modes:
+#+begin_src emacs-lisp
+  (custom-theme-set-faces
+   'user
+   `(variable-pitch
+     ;; variable font config
+     ((t (:family ,my-variable-font
+  		:height ,my-variable-font-height
+           	:weight Regular))))
+
+   ;; fixed font config
+   `(fixed-pitch
+     ((t (:family ,my-fixed-font
+  		  :height ,my-fixed-font-height
+  		  :weight Medium))))
+
+   ;; default font config
+   `(default
+     ((t (:family ,my-default-font
+  		:height ,my-default-font-height
+  		:weight Light)))))
+
+#+end_src
+
+Assign the variable font to prose mode:
+#+begin_src emacs-lisp
+  (add-hook 'text-mode-hook 'variable-pitch-mode)
+  (add-hook 'org-mode-hook 'variable-pitch-mode)
+#+end_src
+
+Use fixed font for code blocks and other non prose blocks, and configure all other aspects on how to show them on screen:
+#+begin_src emacs-lisp
+  (custom-theme-set-faces
+   'user
+   '(org-block                 ((t (:inherit fixed-pitch))))
+   '(org-block-begin-line      ((t (:foreground "dim grey" :weight bold :height 1.1 :inherit fixed-pitch))))
+   '(org-document-info         ((t (:foreground "dark orange"))))
+   '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
+   '(org-link                  ((t (:foreground "royal blue" :underline t))))
+   '(org-meta-line             ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+   '(org-property-value        ((t (:inherit fixed-pitch))) t)
+   '(org-special-keyword       ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+   '(org-tag                   ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.9))))
+   '(org-verbatim              ((t (:inherit (shadow fixed-pitch)))))
+   '(org-indent                ((t (:inherit (org-hide fixed-pitch)))))
+   '(org-table                 ((t (:inherit (org-hide fixed-pitch)))))
+   ;; check if this works
+   '(org-comment               ((t (:inherit (org-hide fixed-pitch) :height 0.8))))
+   )
+#+end_src
+
+** fontaine
+Allows to set different fonts dinamically.
+https://protesilaos.com/emacs/fontaine
+
+#+begin_src emacs-lisp
+  (use-package fontaine
+    :ensure t
+    :config
+    (setq fontaine-presets
+          '(
+            ;; daily operations, same config as normal config
+            (regular
+             :default-family "Aporetic Sans Mono"
+             :default-weight normal
+             :default-height 120
+             :fixed-pitch-family "Aporetic Sans Mono"
+             :fixed-pitch-weight Light ; falls back to :default-weight
+             :fixed-pitch-height 110
+             :variable-pitch-family "Aporetic Sans"
+             :variable-pitch-weight Medium
+             :variable-pitch-height 140
+             :bold-family nil ; use whatever the underlying face has
+             :bold-weight bold
+             :italic-family "Aporetic Sans Mono"
+             :italic-slant italic
+             :line-spacing 0
+             )
+            (regular-aporetic-mono
+             :default-family "Aporetic Sans Mono"
+             :default-weight normal
+             :default-height 120
+             :fixed-pitch-family "Aporetic Sans Mono"
+             :fixed-pitch-weight Light ; falls back to :default-weight
+             :fixed-pitch-height 110
+             :variable-pitch-family "Aporetic Sans Mono"
+             :variable-pitch-weight Medium
+             :variable-pitch-height 120
+             :bold-family nil ; use whatever the underlying face has
+             :bold-weight bold
+             :italic-family "Aporetic Sans Mono"
+             :italic-slant italic
+             :line-spacing 0
+             )
+            ;; Bigger face for variable width, so I can focus on it
+            (writing
+             :default-family "ETBembo"
+             :default-weight normal
+             :default-height 150
+             :fixed-pitch-family "Aporetic Sans Mono"
+             :fixed-pitch-weight Light ; falls back to :default-weight
+             :fixed-pitch-height 120
+             :variable-pitch-family "ETBembo"
+             :variable-pitch-weight Medium
+             :variable-pitch-height 150
+             :bold-family nil ; use whatever the underlying face has
+             :bold-weight bold
+             :italic-family "ETBembo"
+             :italic-slant italic
+             :line-spacing 1
+             )
+            ;; Bigger face for variable width, so I can focus on it
+            (writing-big
+             :default-family "ETBembo"
+             :default-weight normal
+             :default-height 180
+             :fixed-pitch-family "Aporetic Sans Mono"
+             :fixed-pitch-weight Light ; falls back to :default-weight
+             :fixed-pitch-height 140
+             :variable-pitch-family "ETBembo"
+             :variable-pitch-weight Medium
+             :variable-pitch-height 180
+             :bold-family nil ; use whatever the underlying face has
+             :bold-weight bold
+             :italic-family "ETBembo"
+             :italic-slant italic
+             :line-spacing 1
+             )
+            ;; change the variable width face to have a different view when editing
+            (editing
+             :default-family "Aporetic Sans Mono"
+             :default-weight normal
+             :default-height 130
+             :fixed-pitch-family "Aporetic Sans Mono"
+             :fixed-pitch-weight nil ; falls back to :default-weight
+             :fixed-pitch-height 110
+             :variable-pitch-family "Gentium"
+             :variable-pitch-weight normal
+             :variable-pitch-height 150
+             :bold-family nil ; use whatever the underlying face has
+             :bold-weight bold
+             :italic-family "Gentium"
+             :italic-slant italic
+             :line-spacing 1
+             )
+    	  ;; font for work
+    	  (work
+             :default-family "Aporetic Sans"
+             :default-weight normal
+             :default-height 140
+             :fixed-pitch-family "Aporetic Sans Mono"
+             :fixed-pitch-weight Light ; falls back to :default-weight
+             :fixed-pitch-height 110
+             :variable-pitch-family "Aporetic Sans Mono"
+             :variable-pitch-weight Medium
+             :variable-pitch-height 160
+             :bold-family nil ; use whatever the underlying face has
+             :bold-weight bold
+             :italic-family "Aporetic Sans Mono"
+             :italic-slant italic
+             :line-spacing 0
+             )
+            )
+          )
+    )
+
+  ;; Establish the regular preset as default
+  (fontaine-set-preset 'regular)
+#+end_src
+
 * Orgmode config
 All orgmode configs
 ** Load the =org= package
@@ -3054,122 +3173,6 @@ Translate a word
     "Traduccion de inglés a español"
     (interactive "s¿Qué palabra quieres buscar? ")
     (eww (concat "https://www.deepl.com/translator#en/es/" palabra))
-    )
-#+end_src
-
-** fontaine
-Allows to set different fonts dinamically.
-https://protesilaos.com/emacs/fontaine
-
-#+begin_src emacs-lisp
-  (use-package fontaine
-    :ensure t
-    :config
-    (setq fontaine-presets
-          '(
-            ;; daily operations, same config as normal config
-            (regular
-             :default-family "Aporetic Sans Mono"
-             :default-weight normal
-             :default-height 120
-             :fixed-pitch-family "Aporetic Sans Mono"
-             :fixed-pitch-weight Light ; falls back to :default-weight
-             :fixed-pitch-height 110
-             :variable-pitch-family "Aporetic Sans"
-             :variable-pitch-weight Medium
-             :variable-pitch-height 140
-             :bold-family nil ; use whatever the underlying face has
-             :bold-weight bold
-             :italic-family "Aporetic Sans Mono"
-             :italic-slant italic
-             :line-spacing 0
-             )
-            (regular-aporetic-mono
-             :default-family "Aporetic Sans Mono"
-             :default-weight normal
-             :default-height 120
-             :fixed-pitch-family "Aporetic Sans Mono"
-             :fixed-pitch-weight Light ; falls back to :default-weight
-             :fixed-pitch-height 110
-             :variable-pitch-family "Aporetic Sans Mono"
-             :variable-pitch-weight Medium
-             :variable-pitch-height 120
-             :bold-family nil ; use whatever the underlying face has
-             :bold-weight bold
-             :italic-family "Aporetic Sans Mono"
-             :italic-slant italic
-             :line-spacing 0
-             )
-            ;; Bigger face for variable width, so I can focus on it
-            (writing
-             :default-family "ETBembo"
-             :default-weight normal
-             :default-height 150
-             :fixed-pitch-family "Aporetic Sans Mono"
-             :fixed-pitch-weight Light ; falls back to :default-weight
-             :fixed-pitch-height 120
-             :variable-pitch-family "ETBembo"
-             :variable-pitch-weight Medium
-             :variable-pitch-height 150
-             :bold-family nil ; use whatever the underlying face has
-             :bold-weight bold
-             :italic-family "ETBembo"
-             :italic-slant italic
-             :line-spacing 1
-             )
-            ;; Bigger face for variable width, so I can focus on it
-            (writing-big
-             :default-family "ETBembo"
-             :default-weight normal
-             :default-height 180
-             :fixed-pitch-family "Aporetic Sans Mono"
-             :fixed-pitch-weight Light ; falls back to :default-weight
-             :fixed-pitch-height 140
-             :variable-pitch-family "ETBembo"
-             :variable-pitch-weight Medium
-             :variable-pitch-height 180
-             :bold-family nil ; use whatever the underlying face has
-             :bold-weight bold
-             :italic-family "ETBembo"
-             :italic-slant italic
-             :line-spacing 1
-             )
-            ;; change the variable width face to have a different view when editing
-            (editing
-             :default-family "Aporetic Sans Mono"
-             :default-weight normal
-             :default-height 130
-             :fixed-pitch-family "Aporetic Sans Mono"
-             :fixed-pitch-weight nil ; falls back to :default-weight
-             :fixed-pitch-height 110
-             :variable-pitch-family "Gentium"
-             :variable-pitch-weight normal
-             :variable-pitch-height 150
-             :bold-family nil ; use whatever the underlying face has
-             :bold-weight bold
-             :italic-family "Gentium"
-             :italic-slant italic
-             :line-spacing 1
-             )
-  	  ;; font for work
-  	  (work
-             :default-family "Aporetic Sans"
-             :default-weight normal
-             :default-height 140
-             :fixed-pitch-family "Aporetic Sans Mono"
-             :fixed-pitch-weight Light ; falls back to :default-weight
-             :fixed-pitch-height 110
-             :variable-pitch-family "Aporetic Sans Mono"
-             :variable-pitch-weight Medium
-             :variable-pitch-height 160
-             :bold-family nil ; use whatever the underlying face has
-             :bold-weight bold
-             :italic-family "Aporetic Sans Mono"
-             :italic-slant italic
-             :line-spacing 0
-             )
-            )
-          )
     )
 #+end_src
 
