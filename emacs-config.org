@@ -4332,7 +4332,7 @@ https://github.com/Alexander-Miller/treemacs
 ** TODO zoom - resize windows based on frame size
 https://github.com/cyrus-and/zoom
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package zoom
     :ensure t
     :config
