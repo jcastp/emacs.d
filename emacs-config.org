@@ -4329,7 +4329,7 @@ https://github.com/Alexander-Miller/treemacs
 #+end_src
 
 
-** TODO zoom - resize windows based on frame size
+** CANCELED zoom - resize windows based on frame size
 https://github.com/cyrus-and/zoom
 
 #+begin_src emacs-lisp :tangle no
