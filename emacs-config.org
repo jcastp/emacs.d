@@ -1252,6 +1252,25 @@ It darkens the buffers I'm not using.
     )
 #+end_src
 
+** spacious padding
+This package provides a global minor mode to increase the spacing/padding of Emacs windows and frames. The idea is to make editing and reading feel more comfortable.
+
+https://github.com/protesilaos/spacious-padding
+#+begin_src emacs-lisp
+  (use-package spacious-padding
+    :ensure t
+    :config
+    (setq spacious-padding-widths
+  	'( :internal-border-width 15
+             :header-line-width 4
+             :mode-line-width 6
+             :tab-width 4
+             :right-divider-width 30
+             :scroll-bar-width 8))
+    (spacious-padding-mode 1)
+    )
+#+end_src
+
 * Fonts and themes
 ** Themes
 *** leuven themes
@@ -3994,25 +4013,6 @@ An Emacs minor mode to kill your inner editor! Every writer struggles to balance
     :ensure t
     :defer t
     :config
-    )
-#+end_src
-
-** TODO spacious padding
-This package provides a global minor mode to increase the spacing/padding of Emacs windows and frames. The idea is to make editing and reading feel more comfortable.
-
-https://github.com/protesilaos/spacious-padding
-#+begin_src emacs-lisp
-  (use-package spacious-padding
-    :ensure t
-    :config
-    (setq spacious-padding-widths
-  	'( :internal-border-width 15
-             :header-line-width 4
-             :mode-line-width 6
-             :tab-width 4
-             :right-divider-width 30
-             :scroll-bar-width 8))
-    (spacious-padding-mode 1)
     )
 #+end_src
 
