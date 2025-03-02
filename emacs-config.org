@@ -601,6 +601,19 @@ From Prot's article - https://protesilaos.com/codelog/2024-11-28-basic-emacs-con
   :hook (after-init . delete-selection-mode))
 #+end_src
 
+** helpful package
+#+begin_src emacs-lisp
+  (use-package helpful
+    :ensure t
+    :bind
+    ("C-h f" . helpful-callable)
+    ("C-h v" . helpful-variable)
+    ("C-h k" . helpful-key)
+    ("C-h x" . helpful-command)
+    )
+#+end_src
+
+
 * vertico, prescient, consult, marginalia, embark
 ** vertico
 Vertical auto completion in the minibuffer
@@ -4121,18 +4134,6 @@ When you want to write something fast using org mode, but you don't want to crea
   	    (insert "# org-scratch buffer"))
             ;; When called non-interactively, the `t` targets the other window (if it exists).
             (throw 'done (select-window (display-buffer buffer t))))))))
-#+end_src
-
-** TODO helpful package
-#+begin_src emacs-lisp
-  (use-package helpful
-    :ensure t
-    :bind
-    ("C-h f" . helpful-callable)
-    ("C-h v" . helpful-variable)
-    ("C-h k" . helpful-key)
-    ("C-h x" . helpful-command)
-    )
 #+end_src
 
 ** TODO Center a buffer in screen
