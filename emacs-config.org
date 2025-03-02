@@ -4028,57 +4028,6 @@ An Emacs minor mode to kill your inner editor! Every writer struggles to balance
     (setq ready-player-repeat t))
 #+end_src
 
-** TODO random tables
-https://github.com/jeremyf/random-table.el/blob/main/README.org
-For RPG playing.
-
-#+begin_src emacs-lisp
-  ;; (use-package random-table
-  ;;   :ensure (random-table :host github :repo "jeremyf/random-table.el"))
-#+end_src  
-
-A set of examples for how to use it, extracted from the package doc:
-  #+begin_src emacs-lisp :tangle no
-    ;; Examples
-    ;; (random-table/register :name "Coin Toss"
-    ;;     		       :data '("Heads" "Tails"))
-
-    ;; (random-table/register :name "Things We Throw"
-    ;;     		       :data '("Rocks"
-    ;;     			       "Tantrum"
-    ;;     			       "Coin and it comes up {Coin Toss}."))
-
-
-    ;; (random-table/register :name "Mythic Chaos Factor 5"
-    ;;   		       :roller "1d100"
-    ;;     		       :data '(((1 . 50) . "minor")
-    ;;     			       ((51 . 100) . "mayor")))
-
-
-
-
-    ;; (random-table/register :name "Death and Dismemberment"
-    ;; 		       :roller #'random-table/roller/prompt-from-table-data
-    ;; 		       :data '(("Physical" . "{Death and Dismemberment > Physical}")
-    ;;   			       ("Acid/Fire" . "{Death and Dismemberment > Acid/Fire}")
-    ;;   			       ("Eldritch" . "{Death and Dismemberment > Eldritch}")
-    ;;   			       ("Lightning" . "{Death and Dismemberment > Lightning}")
-    ;;   			       ("Non-Lethal" . "{Death and Dismemberment > Non-Lethal}")))
-
-    ;; (random-table/register :name "Death and Dismemberment > Physical"
-    ;; 		       :roller (lambda (table) (+ 1 (random 6)))
-    ;; 		       :private t
-    ;; 		       :data '(((1) . "Death and Dismemberment > Physical > Arm")
-    ;;   			       ((2) . "Death and Dismemberment > Physical > Leg")
-    ;;   			       ((3 . 4) . "Death and Dismemberment > Physical > Torso")
-    ;;   			       ((5 . 6) . "Death and Dismemberment > Physical > Head")))
-#+end_src
-
-*** TODO Mythic GME
-#+begin_src emacs-lisp
-  ;;(load-file "~/Nextcloud/codigo/elisp/mythic/mythic.el")
-#+end_src
-
 ** TODO eshell improvements
 
 *** TODO eshell-z
@@ -4093,7 +4042,6 @@ Replicates the z function from zsh.
   	      (require 'eshell-z))))
 #+end_src
 
-
 *** TODO eshell did-you-mean
 #+begin_src emacs-lisp
   (use-package eshell-did-you-mean
@@ -4102,7 +4050,6 @@ Replicates the z function from zsh.
     :config
     (eshell-did-you-mean-setup))
 #+end_src
-
 
 *** TODO Create new eshell
 https://www.emacswiki.org/emacs/EshellMultipleEshellBuffers
