@@ -278,36 +278,36 @@ Set the userAgent for eww.
 
 ** dired config
 All the configurations needed for dired.
-#+begin_src emacs-lisp :tangle no
-  (use-package dired
-  :ensure nil
-  :commands (dired)
-  :hook
-  ((dired-mode . dired-hide-details-mode)
-   (dired-mode . hl-line-mode))
-  :config
-  (setq dired-recursive-copies 'always)
-  (setq dired-recursive-deletes 'always)
-  (setq delete-by-moving-to-trash t)
-  (setq dired-dwim-target t))
-#+end_src
+ #+begin_src emacs-lisp
+   (use-package dired
+     :ensure nil
+     :commands (dired)
+     :hook
+     ((dired-mode . dired-hide-details-mode)
+      (dired-mode . hl-line-mode))
+     :config
+     (setq dired-recursive-copies 'always)
+     (setq dired-recursive-deletes 'always)
+     (setq delete-by-moving-to-trash t)
+     (setq dired-dwim-target t))
+ #+end_src
 
 *** dired subtree
 Show subdirectory contents with tab.
 
 From Prot's article - https://protesilaos.com/codelog/2024-11-28-basic-emacs-configuration/
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (use-package dired-subtree
-  :ensure t
-  :after dired
-  :bind
-  ( :map dired-mode-map
-    ("<tab>" . dired-subtree-toggle)
-    ("TAB" . dired-subtree-toggle)
-    ("<backtab>" . dired-subtree-remove)
-    ("S-TAB" . dired-subtree-remove))
-  :config
-  (setq dired-subtree-use-backgrounds nil))
+    :ensure t
+    :after dired
+    :bind
+    ( :map dired-mode-map
+      ("<tab>" . dired-subtree-toggle)
+      ("TAB" . dired-subtree-toggle)
+      ("<backtab>" . dired-subtree-remove)
+      ("S-TAB" . dired-subtree-remove))
+    :config
+    (setq dired-subtree-use-backgrounds nil))
 #+end_src
 
 *** dired-preview
@@ -315,28 +315,27 @@ Preview the files in dired.
 
 https://github.com/protesilaos/dired-preview
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (use-package dired-preview
     :ensure t
     :config
-    (setq dired-preview-delay 0.2)
+    (setq dired-preview-delay 0.1)
     (setq dired-preview-ignored-extensions-regexp
-        (concat "\\."
-  	      ;; compressed files
-                "\\(gz\\|"
-                "zst\\|"
-                "tar\\|"
-                "xz\\|"
-                "rar\\|"
-                "zip\\|"
-                "iso\\|"
-  	      "mp3\\|"
-  	      "mp4\\|"
-  	      "3gp\\|"
-                "epub"
-                "\\)"))
-    (dired-preview-global-mode 1)
-    )
+  	(concat "\\."
+  		;; compressed files
+  		"\\(gz\\|"
+  		"zst\\|"
+  		"tar\\|"
+  		"xz\\|"
+  		"rar\\|"
+  		"zip\\|"
+  		"iso\\|"
+  		"mp3\\|"
+  		"mp4\\|"
+  		"3gp\\|"
+  		"epub"
+  		"\\)"))
+    (dired-preview-global-mode 1))
 #+end_src
 
 *** Directories first
@@ -351,8 +350,11 @@ The files are defined in the =dired-omit-files= and the extensions in the =dired
   ;;(add-hook 'dired-mode-hook (lambda () (dired-omit-mode)))
 #+end_src
 
-** dirvish
-#+begin_src emacs-lisp
+** CANCELED dirvish
+:LOGBOOK:
+- State "CANCELED"   from              [2025-03-07 vie 18:31]
+:END:
+#+begin_src emacs-lisp :tangle no
   (use-package dirvish
     :ensure t
     :init
@@ -612,7 +614,6 @@ From Prot's article - https://protesilaos.com/codelog/2024-11-28-basic-emacs-con
     ("C-h x" . helpful-command)
     )
 #+end_src
-
 
 * vertico, prescient, consult, marginalia, embark
 ** vertico
@@ -4294,7 +4295,7 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
     :doc "My personal keymap."
     "b" (cons "buffers" my/key-prefix-buffers-map)
     "c" #'bzg-big-fringe-mode
-    "d" #'dirvish
+    ;;"d" #'dirvish
     "i" #'tempel-insert
     "o" (cons "online" my/key-prefix-online-map)
     "q" (cons "direct file access" my/key-prefix-direct-access-map)
