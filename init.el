@@ -16,10 +16,22 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; package initialization
-(require 'package)
-(package-initialize)
+(use-package package
+  :config
+  (add-to-list 'package-archives
+               '("melpa" . "https://melpa.org/packages/"))
+  (package-initialize))
 
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+(use-package use-package
+  :custom
+  (use-package-always-ensure t)
+  (package-native-compile t)
+  (warning-minimum-level :emergency))
+
+;; (require 'package)
+;; (package-initialize)
+
+;; (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
