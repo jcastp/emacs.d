@@ -333,6 +333,8 @@ https://github.com/protesilaos/dired-preview
   		"mp3\\|"
   		"mp4\\|"
   		"3gp\\|"
+  		"odt\\|"
+  		"ods\\|"
   		"epub"
   		"\\)"))
     (dired-preview-global-mode 1))
