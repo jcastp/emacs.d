@@ -2240,345 +2240,333 @@ Org-roam related config.
 *** org-roam general configuration
 
 #+begin_src emacs-lisp
-  (if (not my-workenvironment-p)
-      (progn
-        ;; here comes the actions I want to be done at a home environment
-        ;; putting this here to avoid mixing roam with my work environment
-        ;; -----
+  ;; main org-roam config
+  (use-package org-roam
+    :ensure t
+    :init
+    (setq org-roam-v2-ack t)
+    ;; Create the new directory to store roam notes
+    (setq org-roam-directory (file-truename "~/Nextcloud/personal/roam"))
+    ;; Location of the roam database
+    (setq org-roam-db-location (file-truename "~/Nextcloud/personal/roam/org-roam.db"))
+    :bind (
+           ("C-c n l" . org-roam-buffer-toggle)
+           ("C-c n f" . org-roam-node-find)
+           ("C-c n i" . org-roam-node-insert)
+           ("C-c n c" . org-roam-capture)
+  	 ("C-c n t" . org-roam-tag-add)
+  	 ("C-c n r" . org-roam-ref-add)
+  	 ("C-c n u" . org-roam-ui-open)
 
-        ;; main org-roam config
-        (use-package org-roam
-          :ensure t
-          :init
-          (setq org-roam-v2-ack t)
-          ;; Create the new directory to store roam notes
-          (setq org-roam-directory (file-truename "~/Nextcloud/personal/roam"))
-          :bind (
-                 ("C-c n l" . org-roam-buffer-toggle)
-                 ("C-c n f" . org-roam-node-find)
-                 ("C-c n i" . org-roam-node-insert)
-                 ("C-c n c" . org-roam-capture)
-  	       ("C-c n t" . org-roam-tag-add)
-  	       ("C-c n r" . org-roam-ref-add)
-  	       ("C-c n u" . org-roam-ui-open)
+           :map org-roam-dailies-map
+           ("Y" . org-roam-dailies-capture-yesterday)
+  	 ("U" . org-roam-dailies-capture-today)
+           ("I" . org-roam-dailies-capture-tomorrow)
+           )
+    :bind-keymap
+    ("C-c n d" . org-roam-dailies-map)
+    :config
+    ;; provide org-roam completion links outside org files.
+    (setq org-roam-completion-everywhere t)
+    ;; Ensure the keymap is available
+    (require 'org-roam-dailies)
+    ;; org-roam export: https://www.orgroam.com/manual.html#org_002droam_002dexport
+    (require 'org-roam-export)
+    ;; autosync
+    (org-roam-db-autosync-mode 1)
+    )
 
-                 :map org-roam-dailies-map
-                 ("Y" . org-roam-dailies-capture-yesterday)
-  	       ("U" . org-roam-dailies-capture-today)
-                 ("I" . org-roam-dailies-capture-tomorrow)
-                 )
-          :bind-keymap
-          ("C-c n d" . org-roam-dailies-map)
-          :config
-          ;; provide org-roam completion links outside org files.
-          (setq org-roam-completion-everywhere t)
-          ;; Location of the roam database
-          (setq org-roam-db-location (file-truename "~/Nextcloud/personal/roam/org-roam.db"))
-          ;; Ensure the keymap is available
-          (require 'org-roam-dailies)
-          ;; org-roam export: https://www.orgroam.com/manual.html#org_002droam_002dexport
-          (require 'org-roam-export)
-          ;; autosync
-          (org-roam-db-autosync-mode 1)
+  ;; Open the fleeting notes with just one keystroke
+  (defun my/org-roam-fleeting-notes()
+    "Open my org-roam file with my fleeting notes"
+    (interactive)
+    (find-file "~/Nextcloud/personal/roam/fleeting_notes.org"))
+  (global-set-key (kbd "C-c n F") 'my/org-roam-fleeting-notes)
+    
+  ;; TODO change these paths to variables: we can try concat or expand-file-name
+  ;; org-roam templates
+  (setq org-roam-capture-templates
+        '(
+          ;; default template
+          ("d" "default" plain
+           "* TODO ${title}\n%?"
+           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+           :unnarrowed t)
+          ("b" "book notes" plain (file "~/.emacs.d/roamtemplates/BookNoteTemplate.org")
+           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+filetags: book")
+           :unnarrowed t)
+          ("w" "writing idea" plain (file "~/.emacs.d/roamtemplates/WritingIdea.org")
+           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+filetags: writing")
+           :unnarrowed t)
+          ("c" "writing character" plain (file "~/.emacs.d/roamtemplates/CharacterIdea.org")
+           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+filetags: writing character")
+           :unnarrowed t)
           )
-
-        ;; Open the fleeting notes with just one keystroke
-        (defun my/org-roam-fleeting-notes()
-  	"Open my org-roam file with my fleeting notes"
-  	(interactive)
-  	(find-file "~/Nextcloud/personal/roam/fleeting_notes.org")
-  	)
-        (global-set-key (kbd "C-c n F") 'my/org-roam-fleeting-notes)
-          
-        ;; TODO change these paths to variables: we can try concat or expand-file-name
-        ;; org-roam templates
-        (setq org-roam-capture-templates
-              '(
-                ;; default template
-                ("d" "default" plain
-                 "* TODO ${title}\n%?"
-                 :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
-                 :unnarrowed t)
-                ("b" "book notes" plain (file "~/.emacs.d/roamtemplates/BookNoteTemplate.org")
-                 :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+filetags: book")
-                 :unnarrowed t)
-                ("w" "writing idea" plain (file "~/.emacs.d/roamtemplates/WritingIdea.org")
-                 :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+filetags: writing")
-                 :unnarrowed t)
-                ("c" "writing character" plain (file "~/.emacs.d/roamtemplates/CharacterIdea.org")
-                 :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+filetags: writing character")
-                 :unnarrowed t)
-                )
-              )
-
-
-        ;; How the roam window shows
-        (add-to-list 'display-buffer-alist
-                     '("\\*org-roam\\*"
-                       (display-buffer-in-side-window)
-                       (side . right)
-                       (slot . 0)
-                       (window-width . 0.33)
-                       (window-parameters . ((no-other-window . t)
-                                             (no-delete-other-windows . t))))
-                     )
-
-
-        ;; To search by title and tags, we will use the information contained here:
-        ;; https://github.com/org-roam/org-roam/pull/2054
-        (setq org-roam-node-display-template
-              (concat "${title:*} "
-                      (propertize "${tags:20}" 'face 'org-tag)))
-
-
-        ;; org-roam-ui and its dependencies
-        ;; simple httpd
-        (use-package websocket
-          :ensure t)
-        (use-package simple-httpd
-          :ensure t)
-        (use-package org-roam-ui
-          :ensure t
-          :hook (org-roam . org-roam-ui-mode)
-          )
-
-        ;; Daily notes for org-roam
-        ;; Directory is relative to org-roam-directory
-        (setq org-roam-dailies-directory "daily/")
-
-
-        ;; Capture template for the dailies
-        (setq org-roam-dailies-capture-templates
-              '(("d" "default" entry
-                 "* %?"
-                 :if-new (file+head "%<%Y-%m-%d>.org"
-                                    "#+title: %<%Y-%m-%d>\n#+filetags: daily\n"))))
-
-
-        ;; I want to get all my org-roam TODOs in the agenda view, but I need to do it only with
-        ;; the files that contain the TODO keywords, and not the whole org-roam directory.
-
-        ;; https://d12frosted.io/posts/2021-01-16-task-management-with-roam-vol5.html
-
-        ;; we want to load these functions if org-roam is present
-        (if (not(require 'org-roam nil t))
-            ;; if condition
-            (message "org-roam not found")
-              ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-          ;; else condition
-
-          (setq my/roamtag "roamtag")
-
-          (defun vulpea-buffer-prop-set (name value)
-            "Set a file property called NAME to VALUE in buffer file.
-            If the property is already set, replace its value."
-            (setq name (downcase name))
-            (org-with-point-at 1
-              (let ((case-fold-search t))
-                (if (re-search-forward (concat "^#\\+" name ":\\(.*\\)")
-                                       (point-max) t)
-                    (replace-match (concat "#+" name ": " value) 'fixedcase)
-                  (while (and (not (eobp))
-                              (looking-at "^[#:]"))
-                    (if (save-excursion (end-of-line) (eobp))
-                        (progn
-                          (end-of-line)
-                          (insert "\n"))
-                      (forward-line)
-                      (beginning-of-line)))
-                  (insert "#+" name ": " value "\n")))))
-
-          (defun vulpea-buffer-prop-set-list (name values &optional separators)
-            "Set a file property called NAME to VALUES in current buffer.
-            VALUES are quoted and combined into single string using
-            `combine-and-quote-strings'.
-            If SEPARATORS is non-nil, it should be a regular expression
-            matching text that separates, but is not part of, the substrings.
-            If nil it defaults to `split-string-default-separators', normally
-            \"[ \f\t\n\r\v]+\", and OMIT-NULLS is forced to t.
-            If the property is already set, replace its value."
-            (vulpea-buffer-prop-set
-             name (combine-and-quote-strings values separators)))
-
-          (defun vulpea-buffer-tags-set (&rest tags)
-            "Set TAGS in current buffer.
-              If filetags value is already set, replace it."
-            (vulpea-buffer-prop-set "filetags" (string-join tags " ")))
-
-          (defun vulpea-buffer-prop-get (name)
-            "Get a buffer property called NAME as a string."
-            (org-with-point-at 1
-              (when (re-search-forward (concat "^#\\+" name ": \\(.*\\)")
-                                       (point-max) t)
-                (buffer-substring-no-properties
-                 (match-beginning 1)
-                 (match-end 1)))))
-
-
-          (defun vulpea-buffer-prop-get-list (name &optional separators)
-            "Get a buffer property NAME as a list using SEPARATORS.
-                If SEPARATORS is non-nil, it should be a regular expression
-                matching text that separates, but is not part of, the substrings.
-                If nil it defaults to `split-string-default-separators', normally
-                \"[ \f\t\n\r\v]+\", and OMIT-NULLS is forced to t."
-            (let ((value (vulpea-buffer-prop-get name)))
-              (when (and value (not (string-empty-p value)))
-                (split-string-and-unquote value separators))))
-
-          (defun vulpea-buffer-tags-get ()
-            "Return filetags value in current buffer."
-            (vulpea-buffer-prop-get-list "filetags" " "))
-
-          (defun vulpea-buffer-tags-add (tag)
-            "Add a TAG to filetags in current buffer."
-            (let* ((tags (vulpea-buffer-tags-get))
-                   (tags (append tags (list tag))))
-              (apply #'vulpea-buffer-tags-set tags)))
-
-
-
-          (defun vulpea-project-p ()
-            "Return non-nil if current buffer has any todo entry.
-
-                    TODO entries marked as done are ignored, meaning the this
-                    function returns nil if current buffer contains only completed
-                    tasks."
-            (seq-find                                 ; (3)
-             (lambda (type)
-               (eq type 'todo))
-             (org-element-map                         ; (2)
-                 (org-element-parse-buffer 'headline) ; (1)
-                 'headline
-               (lambda (h)
-                 (org-element-property :todo-type h)))))
-
-          (defun vulpea-project-update-tag ()
-            "Update PROJECT tag in the current buffer."
-            (when (and (not (active-minibuffer-window))
-                       (vulpea-buffer-p))
-              (save-excursion
-                (goto-char (point-min))
-                (let* ((tags (vulpea-buffer-tags-get))
-                       (original-tags tags))
-                  (if (vulpea-project-p)
-                      (setq tags (cons "roamtag" tags))
-                    (setq tags (remove "roamtag" tags)))
-
-                  ;; cleanup duplicates
-                  (setq tags (seq-uniq tags))
-
-                  ;; update tags if changed
-                  (when (or (seq-difference tags original-tags)
-                            (seq-difference original-tags tags))
-                    (apply #'vulpea-buffer-tags-set tags))))))
-
-          (defun vulpea-buffer-p ()
-            "Return non-nil if the currently visited buffer is a note."
-            (and buffer-file-name
-                 (string-prefix-p
-                  (expand-file-name (file-name-as-directory org-roam-directory))
-                  (file-name-directory buffer-file-name))))
-
-          (defun vulpea-project-files ()
-            "Return a list of note files containing 'roamtag' tag." ;
-            (seq-uniq
-             (seq-map
-              #'car
-              (org-roam-db-query
-               [:select [nodes:file]
-                        :from tags
-                        :left-join nodes
-                        :on (= tags:node-id nodes:id)
-                        :where (like tag (quote "%\"roamtag\"%"))]))))
-
-
-
-
-          ;; ---------------------------------
-          ;; this is the agenda part
-
-          ;; This will overwrite the current agenda files, and we don't want that
-          ;; (defun vulpea-agenda-files-update (&rest _)
-          ;;   "Update the value of `org-agenda-files'."
-          ;;   (setq org-agenda-files (vulpea-project-files)))
-
-          ;; (defun inject-vulpea-project-files (org-agenda-files)
-          ;;   (append org-agenda-files (vulpea-project-files)))
-          ;; (advice-add 'org-agenda-files :filter-return #'inject-vulpea-project-files)
-
-          (add-hook 'find-file-hook #'vulpea-project-update-tag)
-          (add-hook 'before-save-hook #'vulpea-project-update-tag)
-
-          ;; ;; original code that overwrites the agenda files (using the one above, this one is just for training)
-          ;;  (advice-add 'org-agenda :before #'vulpea-agenda-files-update)
-          ;;  (advice-add 'org-todo-list :before #'vulpea-agenda-files-update)
-          )
-
-
-        ;; -----
-        ;; end of the conditional for home/work
         )
+
+
+  ;; How the roam window shows
+  (add-to-list 'display-buffer-alist
+               '("\\*org-roam\\*"
+                 (display-buffer-in-side-window)
+                 (side . right)
+                 (slot . 0)
+                 (window-width . 0.33)
+                 (window-parameters . ((no-other-window . t)
+                                       (no-delete-other-windows . t)))))
+
+
+  ;; To search by title and tags, we will use the information contained here:
+  ;; https://github.com/org-roam/org-roam/pull/2054
+  (setq org-roam-node-display-template
+        (concat "${title:*} "
+                (propertize "${tags:20}" 'face 'org-tag)))
+#+end_src
+
+*** org-roam UI
+I want to check a graphical view of my notes:
+#+begin_src
+  ;; org-roam-ui and its dependencies
+  ;; simple httpd
+  (use-package websocket
+    :ensure t)
+  (use-package simple-httpd
+    :ensure t)
+  (use-package org-roam-ui
+    :ensure t
+    :hook (org-roam . org-roam-ui-mode)
+    )
+
+  ;; Daily notes for org-roam
+  ;; Directory is relative to org-roam-directory
+  (setq org-roam-dailies-directory "daily/")
+
+
+  ;; Capture template for the dailies
+  (setq org-roam-dailies-capture-templates
+        '(("d" "default" entry
+           "* %?"
+           :if-new (file+head "%<%Y-%m-%d>.org"
+                              "#+title: %<%Y-%m-%d>\n#+filetags: daily\n"))))
+#+end_src
+
+*** Restrict agenda to org mode
+Functions to isolate the org-roam TODOs from my general agenda.
+Extracted from https://d12frosted.io/posts/2021-01-16-task-management-with-roam-vol5.html
+#+begin_src emacs-lisp
+  ;; I want to get all my org-roam TODOs in the agenda view, but I need to do it only with
+  ;; the files that contain the TODO keywords, and not the whole org-roam directory.
+
+  ;; https://d12frosted.io/posts/2021-01-16-task-management-with-roam-vol5.html
+
+  ;; we want to load these functions if org-roam is present
+  (if (not(require 'org-roam nil t))
+      ;; if condition
+      (message "org-roam not found")
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;; else condition
+
+    (setq my/roamtag "roamtag")
+
+    (defun vulpea-buffer-prop-set (name value)
+      "Set a file property called NAME to VALUE in buffer file.
+      If the property is already set, replace its value."
+      (setq name (downcase name))
+      (org-with-point-at 1
+        (let ((case-fold-search t))
+          (if (re-search-forward (concat "^#\\+" name ":\\(.*\\)")
+                                 (point-max) t)
+              (replace-match (concat "#+" name ": " value) 'fixedcase)
+            (while (and (not (eobp))
+                        (looking-at "^[#:]"))
+              (if (save-excursion (end-of-line) (eobp))
+                  (progn
+                    (end-of-line)
+                    (insert "\n"))
+                (forward-line)
+                (beginning-of-line)))
+            (insert "#+" name ": " value "\n")))))
+
+    (defun vulpea-buffer-prop-set-list (name values &optional separators)
+      "Set a file property called NAME to VALUES in current buffer.
+      VALUES are quoted and combined into single string using
+      `combine-and-quote-strings'.
+      If SEPARATORS is non-nil, it should be a regular expression
+      matching text that separates, but is not part of, the substrings.
+      If nil it defaults to `split-string-default-separators', normally
+      \"[ \f\t\n\r\v]+\", and OMIT-NULLS is forced to t.
+      If the property is already set, replace its value."
+      (vulpea-buffer-prop-set
+       name (combine-and-quote-strings values separators)))
+
+    (defun vulpea-buffer-tags-set (&rest tags)
+      "Set TAGS in current buffer.
+        If filetags value is already set, replace it."
+      (vulpea-buffer-prop-set "filetags" (string-join tags " ")))
+
+    (defun vulpea-buffer-prop-get (name)
+      "Get a buffer property called NAME as a string."
+      (org-with-point-at 1
+        (when (re-search-forward (concat "^#\\+" name ": \\(.*\\)")
+                                 (point-max) t)
+          (buffer-substring-no-properties
+           (match-beginning 1)
+           (match-end 1)))))
+
+
+    (defun vulpea-buffer-prop-get-list (name &optional separators)
+      "Get a buffer property NAME as a list using SEPARATORS.
+          If SEPARATORS is non-nil, it should be a regular expression
+          matching text that separates, but is not part of, the substrings.
+          If nil it defaults to `split-string-default-separators', normally
+          \"[ \f\t\n\r\v]+\", and OMIT-NULLS is forced to t."
+      (let ((value (vulpea-buffer-prop-get name)))
+        (when (and value (not (string-empty-p value)))
+          (split-string-and-unquote value separators))))
+
+    (defun vulpea-buffer-tags-get ()
+      "Return filetags value in current buffer."
+      (vulpea-buffer-prop-get-list "filetags" " "))
+
+    (defun vulpea-buffer-tags-add (tag)
+      "Add a TAG to filetags in current buffer."
+      (let* ((tags (vulpea-buffer-tags-get))
+             (tags (append tags (list tag))))
+        (apply #'vulpea-buffer-tags-set tags)))
+
+
+
+    (defun vulpea-project-p ()
+      "Return non-nil if current buffer has any todo entry.
+
+              TODO entries marked as done are ignored, meaning the this
+              function returns nil if current buffer contains only completed
+              tasks."
+      (seq-find                                 ; (3)
+       (lambda (type)
+         (eq type 'todo))
+       (org-element-map                         ; (2)
+           (org-element-parse-buffer 'headline) ; (1)
+           'headline
+         (lambda (h)
+           (org-element-property :todo-type h)))))
+
+    (defun vulpea-project-update-tag ()
+      "Update PROJECT tag in the current buffer."
+      (when (and (not (active-minibuffer-window))
+                 (vulpea-buffer-p))
+        (save-excursion
+          (goto-char (point-min))
+          (let* ((tags (vulpea-buffer-tags-get))
+                 (original-tags tags))
+            (if (vulpea-project-p)
+                (setq tags (cons "roamtag" tags))
+              (setq tags (remove "roamtag" tags)))
+
+            ;; cleanup duplicates
+            (setq tags (seq-uniq tags))
+
+            ;; update tags if changed
+            (when (or (seq-difference tags original-tags)
+                      (seq-difference original-tags tags))
+              (apply #'vulpea-buffer-tags-set tags))))))
+
+    (defun vulpea-buffer-p ()
+      "Return non-nil if the currently visited buffer is a note."
+      (and buffer-file-name
+           (string-prefix-p
+            (expand-file-name (file-name-as-directory org-roam-directory))
+            (file-name-directory buffer-file-name))))
+
+    (defun vulpea-project-files ()
+      "Return a list of note files containing 'roamtag' tag." ;
+      (seq-uniq
+       (seq-map
+        #'car
+        (org-roam-db-query
+         [:select [nodes:file]
+                  :from tags
+                  :left-join nodes
+                  :on (= tags:node-id nodes:id)
+                  :where (like tag (quote "%\"roamtag\"%"))]))))
+
+
+
+
+    ;; ---------------------------------
+    ;; this is the agenda part
+
+    ;; This will overwrite the current agenda files, and we don't want that
+    ;; (defun vulpea-agenda-files-update (&rest _)
+    ;;   "Update the value of `org-agenda-files'."
+    ;;   (setq org-agenda-files (vulpea-project-files)))
+
+    ;; (defun inject-vulpea-project-files (org-agenda-files)
+    ;;   (append org-agenda-files (vulpea-project-files)))
+    ;; (advice-add 'org-agenda-files :filter-return #'inject-vulpea-project-files)
+
+    (add-hook 'find-file-hook #'vulpea-project-update-tag)
+    (add-hook 'before-save-hook #'vulpea-project-update-tag)
+
+    ;; ;; original code that overwrites the agenda files (using the one above, this one is just for training)
+    ;;  (advice-add 'org-agenda :before #'vulpea-agenda-files-update)
+    ;;  (advice-add 'org-todo-list :before #'vulpea-agenda-files-update)
     )
 #+end_src
 
-*** TODO restrict agenda to org-roam
-Just show the TODOs from org-roam
+Just show the TODOs from org-roam, and not from the general agenda.
 
 #+begin_src emacs-lisp
-  (if my-homeenvironment-p
-      (progn
-        (defun my/agenda-restrict-to-roam ()
-          "Restrict agenda to current project"
-          (interactive)
-          (let ((org-agenda-files (list org-roam-directory)))
-            (org-agenda)))
-        (global-set-key (kbd "C-c n a") 'my/agenda-restrict-to-roam)
-        ))
+  (defun my/agenda-restrict-to-roam ()
+    "Restrict agenda to current project"
+    (interactive)
+    (let ((org-agenda-files (list org-roam-directory)))
+      (org-agenda)))
+  (global-set-key (kbd "C-c n a") 'my/agenda-restrict-to-roam)
 #+end_src
 
-*** org-roam random node
-Opens a random org-roam node with the roamtag tag (that maps to a TODO entry).
+*** org-roam random node opening
+Opens a random org-roam node.
 
 #+begin_src emacs-lisp
-  (if my-homeenvironment-p
-      (progn
-          (defun my/random-roam-node ()
-            "Opens a random org-roam node."
-            (interactive)
-            (setq todo-nodes
-                  (org-roam-db-query
-                   ;; select the nodes that have the roamtag tag
-                   [:select [nodes:file]
-                            :from tags
-                            :left-join nodes
-                            :on (= tags:node-id nodes:id)
-  			      ]
-  		   )
-                  )
-            ;; get a random file from the list and open it
-            (find-file (car (nth (random (length todo-nodes)) todo-nodes)))
-            )
-        
-        (defun my/random-todo-roam-node ()
-          "Opens a random org-roam node with the roamtag tag."
-          (interactive)
-          (setq todo-nodes
-                (org-roam-db-query
-                 ;; select the nodes that have the roamtag tag
-                 [:select [nodes:file]
-                          :from tags
-                          :left-join nodes
-                          :on (= tags:node-id nodes:id)
-                          :where (like tag (quote "%\"roamtag\"%"))])
-                )
-          ;; get a random file from the list and open it
-          (find-file (car (nth (random (length todo-nodes)) todo-nodes)))
+  (defun my/random-roam-node ()
+    "Opens a random org-roam node."
+    (interactive)
+    (setq todo-nodes
+          (org-roam-db-query
+           ;; select the nodes that have the roamtag tag
+           [:select [nodes:file]
+                    :from tags
+                    :left-join nodes
+                    :on (= tags:node-id nodes:id)
+  		  ]
+  	 )
           )
-        (global-set-key (kbd "C-c n R") 'my/random-roam-node)
-        (global-set-key (kbd "C-c n T") 'my/random-todo-roam-node)
-        ))
+    ;; get a random file from the list and open it
+    (find-file (car (nth (random (length todo-nodes)) todo-nodes))))
+
+  (global-set-key (kbd "C-c n R") 'my/random-roam-node)
 #+end_src
 
+Open a random roam node with the roamtag tag (that maps to a TODO entry).
+#+begin_src emacs-lisp
+  (defun my/random-roam-todo-node ()
+  "Opens a random org-roam node with the roamtag tag."
+  (interactive)
+  (setq todo-nodes
+        (org-roam-db-query
+         ;; select the nodes that have the roamtag tag
+         [:select [nodes:file]
+                  :from tags
+                  :left-join nodes
+                  :on (= tags:node-id nodes:id)
+                  :where (like tag (quote "%\"roamtag\"%"))])
+        )
+  ;; get a random file from the list and open it
+  (find-file (car (nth (random (length todo-nodes)) todo-nodes))))
+
+  (global-set-key (kbd "C-c n T") 'my/random-roam-todo-node)
+#+end_src
 ** Orgmode export config
 All the functions defined for the org mode export
 
