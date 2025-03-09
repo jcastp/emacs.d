@@ -2276,13 +2276,19 @@ Org-roam related config.
     (org-roam-db-autosync-mode 1)
     )
 
-  ;; Open the fleeting notes with just one keystroke
+#+end_src
+
+Open the fleeting notes with a keybinding:
+#+begin_src
   (defun my/org-roam-fleeting-notes()
     "Open my org-roam file with my fleeting notes"
     (interactive)
     (find-file "~/Nextcloud/personal/roam/fleeting_notes.org"))
   (global-set-key (kbd "C-c n F") 'my/org-roam-fleeting-notes)
-    
+#+end_src
+
+Org-roam capture templates:
+#+begin_src
   ;; TODO change these paths to variables: we can try concat or expand-file-name
   ;; org-roam templates
   (setq org-roam-capture-templates
@@ -2303,8 +2309,10 @@ Org-roam related config.
            :unnarrowed t)
           )
         )
+#+end_src
 
-
+Org-roam window configuration and showing:
+#+begin_src
   ;; How the roam window shows
   (add-to-list 'display-buffer-alist
                '("\\*org-roam\\*"
@@ -2314,8 +2322,10 @@ Org-roam related config.
                  (window-width . 0.33)
                  (window-parameters . ((no-other-window . t)
                                        (no-delete-other-windows . t)))))
+#+end_src
 
-
+Search by title and tags:
+#+begin_src
   ;; To search by title and tags, we will use the information contained here:
   ;; https://github.com/org-roam/org-roam/pull/2054
   (setq org-roam-node-display-template
