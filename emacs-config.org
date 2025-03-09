@@ -76,23 +76,6 @@ Only evaluated if in my home environment, my encrypted directory is mounted, as 
     )
 #+end_src
 
-** direct access to my files
-=ESC ESC c= to directly access my config file.
-=ESC ESC t= to directly access my tasks file.
-
-Right now, it depends on perspectives. I need to change this to also open files if perspective is not installed.
-
-#+begin_src emacs-lisp
-  ;; (global-set-key (kbd "\e\ec")
-  ;; 		(lambda () (interactive) (persp-state-load "~/Nextcloud/config/.emacs.d/perspectives/config-persp")))
-
-  ;; (global-set-key (kbd "\e\et")
-  ;; 		(lambda () (interactive) (persp-state-load "~/Nextcloud/config/.emacs.d/perspectives/tareas-persp")))
-
-  ;; (global-set-key (kbd "\e\ei")
-  ;; 		(lambda () (interactive) (find-file "~/Nextcloud/tech/org-keys.org")))
-#+end_src
-
 * General config
 ** Unmap the C-z key
 Unmap the C-z key, so no way to minimize or suspend emacs accidentally.
@@ -281,7 +264,7 @@ All the configurations needed for dired.
  #+begin_src emacs-lisp
    (use-package dired
      :ensure nil
-     :commands (dired)
+     :commands (dired dired-jump)
      :hook
      ((dired-mode . dired-hide-details-mode)
       (dired-mode . hl-line-mode))
@@ -289,7 +272,10 @@ All the configurations needed for dired.
      (setq dired-recursive-copies 'always)
      (setq dired-recursive-deletes 'always)
      (setq delete-by-moving-to-trash t)
-     (setq dired-dwim-target t))
+     (setq dired-dwim-target t)
+     ;; directories first in the listings
+     (setq dired-listing-switches "-aBhl  --group-directories-first")
+     )
  #+end_src
 
 *** dired subtree
@@ -340,11 +326,6 @@ https://github.com/protesilaos/dired-preview
     (dired-preview-global-mode 1))
 #+end_src
 
-*** Directories first
-#+begin_src emacs-lisp
-  (setq dired-listing-switches "-aBhl  --group-directories-first")
-#+end_src
-
 *** dired omit mode
 We want to hide some of the non interesting files in the dired views.
 The files are defined in the =dired-omit-files= and the extensions in the =dired-omit-extensions=.
@@ -352,69 +333,6 @@ The files are defined in the =dired-omit-files= and the extensions in the =dired
   ;;(add-hook 'dired-mode-hook (lambda () (dired-omit-mode)))
 #+end_src
 
-** CANCELED dirvish
-:LOGBOOK:
-- State "CANCELED"   from              [2025-03-07 vie 18:31]
-:END:
-#+begin_src emacs-lisp :tangle no
-  (use-package dirvish
-    :ensure t
-    :init
-    (dirvish-override-dired-mode)
-    :custom
-    (dirvish-quick-access-entries ; It's a custom option, `setq' won't work
-     '(("h" "~/"                          "Home")
-       ("d" "~/Downloads/"                "Downloads")
-       ("m" "/mnt/"                       "Drives")
-       ("n" "~/Nextcloud/"                "Nextcloud")
-       ("j" "~/Nextcloud_claro/gocryptfs_claro/"                "Nextcloud claro")
-       ("t" "~/.local/share/Trash/files/" "TrashCan")))
-    :bind
-    (("C-c f" . dirvish)
-     :map dirvish-mode-map ; Dirvish inherits `dired-mode-map'
-     ("a"   . dirvish-quick-access)
-     ("f"   . dirvish-file-info-menu)
-     ("y"   . dirvish-yank-menu)
-     ("N"   . dirvish-narrow)
-     ("^"   . dirvish-history-last)
-     ("h"   . dirvish-history-jump) ; remapped `describe-mode'
-     ("s"   . dirvish-quicksort)    ; remapped `dired-sort-toggle-or-edit'
-     ("v"   . dirvish-vc-menu)      ; remapped `dired-view-file'
-     ("TAB" . dirvish-subtree-toggle)
-     ("M-f" . dirvish-history-go-forward)
-     ("M-b" . dirvish-history-go-backward)
-     ("M-l" . dirvish-ls-switches-menu)
-     ("M-m" . dirvish-mark-menu)
-     ("M-t" . dirvish-layout-toggle)
-     ("M-s" . dirvish-setup-menu)
-     ("M-e" . dirvish-emerge-menu)
-     ("M-j" . dirvish-fd-jump))
-    :config
-    (setq dirvish-mode-line-format
-  	'(:left (sort symlink) :right (omit yank index)))
-    ;; what files we don't want to preview
-    (setq dirvish-preview-disabled-exts
-  	'("iso" "bin" "exe" "gpg" "elc" "eln"
-  	  ;; office files
-  	  "ods" "odt" "ott" "odg" "fodg" "fods" "xlsx" "xls"
-  	  ))
-    ;; See how the icons and display options work
-    (setq dirvish-attributes
-  	'(vc-state subtree-state collapse git-msg file-time file-size))
-    (setq delete-by-moving-to-trash t)
-    ;;(setq dired-listing-switches
-    ;;  	"-l --almost-all --human-readable --group-directories-first --no-group")
-    
-    ;; file type group arrangement - not working well
-    ;; (setq dirvish-emerge-groups '(("Recent files" (predicate . recent-files-2h))
-    ;; 				("Documents" (extensions "pdf" "tex" "bib" "epub"))
-    ;; 				("Video" (extensions "mp4" "mkv" "webm"))
-    ;; 				("Pictures" (extensions "jpg" "png" "svg" "gif"))
-    ;; 				("Audio" (extensions "mp3" "flac" "wav" "ape" "aac"))
-    ;; 				("Archives" (extensions "gz" "rar" "zip"))))
-
-     )
-#+end_src
 ** set firefox as the default browser
 Setting firefox as the default browser for opening http/s links.
 #+begin_src emacs-lisp
