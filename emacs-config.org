@@ -2630,6 +2630,8 @@ Config extracted from the Emacs Writing Studio ebook.
        "bibtex %b"
        "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
        "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+    ;; Add smart quotes for latex
+    (org-export-with-smart-quotes t)
     ;; Clean temporary files after export
     (org-latex-logfiles-extensions
      (quote ("lof" "lot" "tex~" "aux" "idx" "log" "out"
@@ -2637,13 +2639,42 @@ Config extracted from the Emacs Writing Studio ebook.
              "blg" "brf" "fls" "entoc" "ps" "spl" "bbl"
              "tex" "bcf"))))
 #+end_src
-
-**** Smart quotes
-Add smart quotes for latex
+**** ews format
+Extracted from the Emacs Writing Studio config.
 
 #+begin_src emacs-lisp
-  (setq org-export-with-smart-quotes t)
+  (with-eval-after-load 'ox-latex
+  (add-to-list
+   'org-latex-classes
+   '("ews"
+     "\\documentclass[11pt, twoside, hidelinks]{memoir}
+      \\setstocksize{9.25in}{7.5in}
+      \\settrimmedsize{\\stockheight}{\\stockwidth}{*}
+      \\setlrmarginsandblock{2cm}{1cm}{*} 
+      \\setulmarginsandblock{1.5cm}{2.25cm}{*}
+      \\checkandfixthelayout
+      \\setcounter{tocdepth}{0}
+      \\OnehalfSpacing
+      \\usepackage{ebgaramond}
+      \\usepackage[htt]{hyphenat}
+      \\chapterstyle{bianchi}
+      \\setsecheadstyle{\\normalfont \\raggedright \\textbf}
+      \\setsubsecheadstyle{\\normalfont \\raggedright \\textbf}
+      \\setsubsubsecheadstyle{\\normalfont\\centering}
+      \\renewcommand\\texttt[1]{{\\normalfont\\fontfamily{cmvtt}
+        \\selectfont #1}}
+      \\usepackage[font={small, it}]{caption}
+      \\pagestyle{myheadings}
+      \\usepackage{ccicons}
+      \\usepackage[authoryear]{natbib}
+      \\bibliographystyle{apalike}
+      \\usepackage{svg}"
+     ("\\chapter{%s}" . "\\chapter*{%s}")
+     ("\\section{%s}" . "\\section*{%s}")
+     ("\\subsection{%s}" . "\\subsection*{%s}")
+     ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))))
 #+end_src
+
 
 **** TODO =Memoir= class for org2latex (complete these options)
 https://www.ctan.org/pkg/memoir
