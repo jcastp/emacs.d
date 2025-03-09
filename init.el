@@ -52,29 +52,40 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; personal configuration
 
-(defvar my-config-dir "~/.emacs.d/")
-(defvar my-data-dir "~/Nextcloud/config/.emacs.d/")
+(defvar my-config-dir "~/.emacs.d/"
+  "Personal config directory.")
+
+(defvar my-data-dir "~/Nextcloud/config/.emacs.d/"
+  "Personal data directory.")
 
 ;; working laptop vm
-(defvar my-worksystem-p (equal (system-name) "lubuntuwork"))
+(defvar my-worksystem-p (equal (system-name) "lubuntuwork")
+  "Name of my working machine.")
+
 ;; My desktop machine, able to run anything
 (defvar my-desktopsystem-p (or
 			    (equal (system-name) "olimpo")
-			    (equal (system-name) "doomslayer")))
+			    (equal (system-name) "doomslayer"))
+  "Names of my personal machines.")
+
 ;; Writing machines
 ;; probably we can strip some features from them, as they are low end machines
 (defvar my-writinglaptop-p (or
 			    (equal (system-name) "argos")
-			    (equal (system-name) "caliope")))
+			    (equal (system-name) "caliope"))
+  "Names of my writing laptops.")
 
 (defvar my-homeenvironment-p (or
 			      (string= (getenv "WORKING") "HOME")
 			      (not (string= (getenv "WORKING") "WORK")))
-  )
-(defvar my-workenvironment-p (string= (getenv "WORKING") "WORK"))
+  "My home environment predicate.")
+
+(defvar my-workenvironment-p (string= (getenv "WORKING") "WORK")
+  "My work environment predicate.")
 
 ;; define my clear directory
-(setq my-clear-directory (expand-file-name "Nextcloud_claro/gocryptfs_claro" (getenv "HOME")))
+(defvar my-clear-directory (expand-file-name "Nextcloud_claro/gocryptfs_claro" (getenv "HOME"))
+  "My decrupted directory.")
 
 ;; check the directory exists
 ;;(file-directory-p my-clear-directory)
@@ -87,7 +98,7 @@
 
 ;; This variable will control if my encrypted dir is mounted on the clear directory
 (defvar my-clear-directory-is-mounted-p 0
-  "My clear directory is correctly mounted")
+  "My clear directory is correctly mounted - predicate.")
 
 ;; Check if the directory is mounted
 (if (is-mount-point-p my-clear-directory)
