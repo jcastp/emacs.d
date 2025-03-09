@@ -2279,7 +2279,7 @@ Org-roam related config.
 #+end_src
 
 Open the fleeting notes with a keybinding:
-#+begin_src
+#+begin_src emacs-lisp
   (defun my/org-roam-fleeting-notes()
     "Open my org-roam file with my fleeting notes"
     (interactive)
@@ -2288,7 +2288,7 @@ Open the fleeting notes with a keybinding:
 #+end_src
 
 Org-roam capture templates:
-#+begin_src
+#+begin_src emacs-lisp
   ;; TODO change these paths to variables: we can try concat or expand-file-name
   ;; org-roam templates
   (setq org-roam-capture-templates
@@ -2307,12 +2307,11 @@ Org-roam capture templates:
           ("c" "writing character" plain (file "~/.emacs.d/roamtemplates/CharacterIdea.org")
            :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+filetags: writing character")
            :unnarrowed t)
-          )
-        )
+          ))
 #+end_src
 
 Org-roam window configuration and showing:
-#+begin_src
+#+begin_src emacs-lisp
   ;; How the roam window shows
   (add-to-list 'display-buffer-alist
                '("\\*org-roam\\*"
@@ -2325,7 +2324,7 @@ Org-roam window configuration and showing:
 #+end_src
 
 Search by title and tags:
-#+begin_src
+#+begin_src emacs-lisp
   ;; To search by title and tags, we will use the information contained here:
   ;; https://github.com/org-roam/org-roam/pull/2054
   (setq org-roam-node-display-template
@@ -2335,7 +2334,7 @@ Search by title and tags:
 
 *** org-roam UI
 I want to check a graphical view of my notes:
-#+begin_src
+#+begin_src emacs-lisp
   ;; org-roam-ui and its dependencies
   ;; simple httpd
   (use-package websocket
