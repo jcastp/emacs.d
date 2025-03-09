@@ -363,6 +363,7 @@ Defines a set of abbreviations that permits complete words with just some charac
 
 ** electric pair mode
 To automatically close parenthesis and other punctuation signs.
+Specially defined for spanish question and exclamation marks.
 #+begin_src emacs-lisp
   (electric-pair-mode 1)
   ;; make electric-pair-mode work on more sets of punctuation signs.
@@ -521,8 +522,8 @@ This allows to delete a selected text area immediately, just as other text edito
 From Prot's article - https://protesilaos.com/codelog/2024-11-28-basic-emacs-configuration/
 #+begin_src emacs-lisp
   (use-package delsel
-  :ensure nil ; no need to install it as it is built-in
-  :hook (after-init . delete-selection-mode))
+    :ensure nil ; no need to install it as it is built-in
+    :hook (after-init . delete-selection-mode))
 #+end_src
 
 ** helpful package
@@ -780,15 +781,13 @@ Imenu shows the outline of your file as a browsable sidebar in another window.
     :ensure t
     :config
     ;; set the width to % of the screen
-    (setq imenu-list-size 0.25)
+    (setq imenu-list-size 0.20)
     ;; rescan all the buffers
     (setq imenu-auto-rescan t)
     ;; put the imenu in the position we want
     (setq imenu-list-position 'left)
     ;; Establish the depth of the entries shown
     (setq org-imenu-depth 5)
-    ;; Auto resize on activation
-    (setq imenu-list-focus-after-activation t)
     ;; Auto-resize after update to nil
     (setq imenu-list-auto-resize nil)
     ;; map the keys
@@ -824,11 +823,11 @@ https://github.com/abo-abo/avy
   (use-package avy
     :ensure t
     :config
-      (global-set-key (kbd "C-x c c") 'avy-goto-char-2)
-      (global-set-key (kbd "C-x c w") 'avy-goto-word-1)
-      (global-set-key (kbd "C-x c l") 'avy-goto-line)
-      )
-#+end_src
+    ;; (global-set-key (kbd "C-x c c") 'avy-goto-char-2)
+    ;; (global-set-key (kbd "C-x c w") 'avy-goto-word-1)
+    ;; (global-set-key (kbd "C-x c l") 'avy-goto-line)
+    )
+    #+end_src
 
 ** perspective.el
 https://github.com/nex3/perspective-el
@@ -861,54 +860,54 @@ This way, we can recover the last session and restore all the persps we had then
 #+begin_src emacs-lisp
   ;; (setq persp-state-default-file (expand-file-name "persp-save" user-emacs-directory))
   ;; (add-hook 'kill-emacs-hook #'persp-state-save)
-  #+end_src
+#+end_src
   
 *** TODO automatic load some perspectives
 #+begin_src emacs-lisp
 
   (with-eval-after-load 'perspective
-  ;; where I define my own perspective saved files
-  ;;(setq my-persp-save-dir (f-join my-data-dir "perspectives/"))
-  (setq my-persp-save-dir (expand-file-name  "perspectives/" my-data-dir))
+    ;; where I define my own perspective saved files
+    ;;(setq my-persp-save-dir (f-join my-data-dir "perspectives/"))
+    (setq my-persp-save-dir (expand-file-name  "perspectives/" my-data-dir))
 
-  ;; a function to load a perspective saved file from a given directory
-  (defun my/load-perspective (directory-path)
-    "Given a directory with perspective saved files, the user chooses one, and it automatically
+    ;; a function to load a perspective saved file from a given directory
+    (defun my/load-perspective (directory-path)
+      "Given a directory with perspective saved files, the user chooses one, and it automatically
     loads it."
-    (interactive "DDirectory: ")
-    (let* ((file-list (directory-files directory-path t nil nil))
-           (file-menu (mapcar (lambda (file) (cons (file-name-nondirectory file) file)) file-list))
-           (user-choice (completing-read "Choose a file: " file-menu nil t)))
-      (if (assoc user-choice file-menu)
-          (progn
+      (interactive "DDirectory: ")
+      (let* ((file-list (directory-files directory-path t nil nil))
+             (file-menu (mapcar (lambda (file) (cons (file-name-nondirectory file) file)) file-list))
+             (user-choice (completing-read "Choose a file: " file-menu nil t)))
+        (if (assoc user-choice file-menu)
+            (progn
 
-        	  (persp-state-load (cdr (assoc user-choice file-menu)))
-        	  ;; show a message
-        	  (message "You chose: %s" (cdr (assoc user-choice file-menu)))
-            )
-        (message "Invalid choice"))))
+        	    (persp-state-load (cdr (assoc user-choice file-menu)))
+        	    ;; show a message
+        	    (message "You chose: %s" (cdr (assoc user-choice file-menu)))
+              )
+  	(message "Invalid choice"))))
 
-  (define-key persp-mode-map (kbd "C-c w l") 'my/load-perspective)
-  )
+    (define-key persp-mode-map (kbd "C-c w l") 'my/load-perspective)
+    )
 #+end_src
 
 But I want to automatically load some perspectives when I'm at home:
 #+begin_src emacs-lisp
   (defvar my-persp-load nil
     "Define if we want to load the personal persp.")
-  
+
   (if (and my-homeenvironment-p my-persp-load)
       (progn
         (with-eval-after-load 'org
-  	  (defvar my-persp-files '(
-      				   "config-persp"
-      				   "tareas-persp"
-  				   "escritura-persp"
-      				   ))
+  	(defvar my-persp-files '(
+      				 "config-persp"
+      				 "tareas-persp"
+  				 "escritura-persp"
+      				 ))
 
-  	  (dolist (my-file my-persp-files)
-  	    (persp-state-load (f-join my-persp-save-dir my-file))
-  	    ))
+  	(dolist (my-file my-persp-files)
+  	  (persp-state-load (f-join my-persp-save-dir my-file))
+  	  ))
         ))
 #+end_src
 
@@ -1022,7 +1021,7 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
   (setq display-line-numbers-grow-only t)
   ;; TODO find a way to have the column numbers with fixed width
   (global-display-line-numbers-mode -1)
-  ;;(add-hook 'prog-mode-hook 'display-line-numbers-mode)
+  (add-hook 'prog-mode-hook 'display-line-numbers-mode)
   ;;(add-hook 'text-mode-hook 'display-line-numbers-mode)
 #+end_src
 
@@ -1094,7 +1093,6 @@ Get all the fancy icons.
     :ensure t
     :hook
     (dired-mode . nerd-icons-dired-mode))
-
 #+end_src
 
 ** doom modeline
