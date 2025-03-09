@@ -1205,31 +1205,33 @@ https://github.com/protesilaos/spacious-padding
 *** Protesilaos modus themes
 Protesilaos very good themes. These themes are already included in the standard emacs, so we can get rid of the use-package definition, and retain only the config.
 #+begin_src emacs-lisp
-  ;; Add all your customizations prior to loading the themes
-  (setq
-   modus-themes-completions nil
-   modus-themes-bold-constructs t
-   modus-themes-italic-constructs t
-   modus-themes-success-deuteranopia t
-   modus-themes-mixed-fonts t
-   modus-themes-intense-markup t
-   modus-themes-tabs-accented t
-   modus-themes-org-blocks '(tinted-background)
-   modus-themes-variable-pitch-ui nil
-   modus-themes-variable-pitch-headings nil
+  (use-package modus-themes
+    :ensure nil
+    :config
+    ;; Add all your customizations prior to loading the themes
+    (setq
+     modus-themes-completions nil
+     modus-themes-bold-constructs t
+     modus-themes-italic-constructs t
+     modus-themes-success-deuteranopia t
+     modus-themes-mixed-fonts t
+     modus-themes-intense-markup t
+     modus-themes-tabs-accented t
+     modus-themes-org-blocks '(tinted-background)
+     modus-themes-variable-pitch-ui nil
+     modus-themes-variable-pitch-headings nil
 
-   modus-themes-fringes nil ; {nil,'subtle,'intense}
+     modus-themes-fringes nil ; {nil,'subtle,'intense}
 
-   ;; fonts for headings
-   modus-themes-headings
-   '((1 . (background overline rainbow 1.10))
-     (2 . (overline rainbow 1.05))
-     (3 . (rainbow 1.1))
-     (4 . (rainbow no-bold 1.0))
-     (t . (monochrome no-bold 1.0)))
-   ;; scales up the headings
-   modus-themes-scale-headings t
-   )
+     ;; fonts for headings
+     modus-themes-headings
+     '((1 . (background overline rainbow 1.10))
+       (2 . (overline rainbow 1.05))
+       (3 . (rainbow 1.1))
+       (4 . (rainbow no-bold 1.0))
+       (t . (monochrome no-bold 1.0)))
+     ;; scales up the headings
+     modus-themes-scale-headings t))
 
   ;; TODO it seems this does not work for me
   ;; set the headings scale
