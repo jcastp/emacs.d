@@ -3946,19 +3946,6 @@ Depending on the size of the frame, I need to resize the visual-fill-column-widt
   ;;  (add-hook 'window-size-change-functions #'my/adjust-frame-size)
 #+end_src
 
-** CANCELED fountain - script writing
-:LOGBOOK:
-- State "CANCELED"   from "TODO"       [2025-03-02 dom 17:59]
-:END:
-Doc: https://fountain-mode.org/
-Code: https://github.com/rnkn/fountain-mode
-
-#+begin_src emacs-lisp :tangle no
-  (use-package fountain-mode
-    :ensure t
-    :defer t)
-#+end_src
-
 ** TODO hammy - time intervals
 https://github.com/alphapapa/hammy.el
 Time intervals, such as pomodoro.
