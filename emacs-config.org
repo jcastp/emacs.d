@@ -575,13 +575,6 @@ Reload this configuration file.
 ** Spelling
 https://www.gnu.org/software/emacs/manual/html_node/emacs/Spelling.html
 
-*** TODO hunspell
-Configure =hunspell= as the orthographic corrector, as it is the more modern option. =aspell= is good enough, but it has stopped being developed.
-
-#+begin_src emacs-lisp
-  ;; (setq ispell-program-name "hunspell")
-#+end_src
-
 *** Flyspell mode
 Automatic spelling in the buffer.
 This conflicts with orgmode archive =C-c $=.
@@ -602,13 +595,6 @@ This conflicts with orgmode archive =C-c $=.
     :hook
     (text-mode . flyspell-mode)
     )
-    
-    ;; (add-hook 'text-mode-hook 'flyspell-mode)
-    ;; (global-font-lock-mode t)
-    ;; custom location of the dictionary
-    ;; (setq ispell-personal-dictionary (expand-file-name "dict" my-data-dir))
-    ;; save the dictionary without asking
-    ;; (setq ispell-silently-savep t)
 #+end_src
 
 ** Delete after selecting a text area
