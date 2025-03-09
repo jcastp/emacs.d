@@ -2618,6 +2618,26 @@ Export to markdown
 *** TODO Latex export
 All the latex exports in just one place.
 
+Config extracted from the Emacs Writing Studio ebook.
+#+begin_src emacs-lisp
+  (use-package ox-latex
+    :ensure nil
+    :demand t
+    :custom
+    ;; Multiple LaTeX passes for bibliographies
+    (org-latex-pdf-process
+     '("pdflatex -interaction nonstopmode -output-directory %o %f"
+       "bibtex %b"
+       "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+       "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+    ;; Clean temporary files after export
+    (org-latex-logfiles-extensions
+     (quote ("lof" "lot" "tex~" "aux" "idx" "log" "out"
+             "toc" "nav" "snm" "vrb" "dvi" "fdb_latexmk"
+             "blg" "brf" "fls" "entoc" "ps" "spl" "bbl"
+             "tex" "bcf"))))
+#+end_src
+
 **** Smart quotes
 Add smart quotes for latex
 
