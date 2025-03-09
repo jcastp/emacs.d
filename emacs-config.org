@@ -1765,7 +1765,7 @@ These are the custom states for the tasks, and the character associated to it.
         )
 #+end_src
 
-** TODO custom tags
+** custom tags
 Create custom tags for different categories and contexts.
 #+begin_src emacs-lisp
   (setq org-tag-alist '(
@@ -3066,6 +3066,22 @@ https://github.com/alphapapa/org-ql
 
 *** graphs via dot
 https://www.graphviz.org/pdf/dotguide.pdf
+
+** org-fragtog to see latex expressions
+From Emacs Writing Studio config:
+#+begin_src emacs-lisp
+  (use-package org-fragtog
+    :after org
+    :defer t
+    :hook
+    (org-mode . org-fragtog-mode)
+    :custom
+    (org-startup-with-latex-preview nil)
+    (org-format-latex-options
+     (plist-put org-format-latex-options :scale 2)
+     (plist-put org-format-latex-options :foreground 'auto)
+     (plist-put org-format-latex-options :background 'auto)))
+#+end_src
 
 ** Pandoc exporter
 #+begin_src emacs-lisp
