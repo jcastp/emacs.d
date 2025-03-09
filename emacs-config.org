@@ -1249,13 +1249,6 @@ Protesilaos very good themes. These themes are already included in the standard 
     :ensure t)
 #+end_src
 
-*** doom themes
-#+begin_src emacs-lisp
-  ;; (use-package doom-themes
-  ;;   :ensure t
-  ;;   :defer t)
-#+end_src
-
 *** poet theme
 https://github.com/kunalb/poet
 #+begin_src emacs-lisp
