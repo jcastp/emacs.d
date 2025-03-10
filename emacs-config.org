@@ -2152,6 +2152,20 @@ Don't ask for confirmation during org babel execution.
 Org-roam related config.
 *** org-roam general configuration
 
+This is a fix for a Debian installation that doesn't allow to connect directly to the sqlite backen. As seen here: https://github.com/magit/emacsql/blob/main/emacsql-sqlite.el
+#+begin_src emacs-lisp
+  (defun which-linux-distribution ()
+    "from lsb_release"
+    (interactive)
+    (when (eq system-type 'gnu/linux)
+      (shell-command-to-string "lsb_release -sd")))
+
+  (when (string-prefix-p "Debian" (which-linux-distribution))
+    (use-package sqlite3
+      :ensure t)    
+    )
+#+end_src
+
 #+begin_src emacs-lisp
   ;; main org-roam config
   (use-package org-roam
