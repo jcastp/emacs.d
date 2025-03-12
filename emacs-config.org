@@ -3666,7 +3666,7 @@ This serves to resize the windows
   ^Resize^
   ^^^^^^-------------------------------------------------------
   _f_: shrink horizontally         _s_: swap windows
-  _b_: enlarge horizontally
+  _b_: enlarge horizontally        _r_: rotate layout
   _p_: shrink vertical
   _n_: enlarge vertical
   "
@@ -3680,11 +3680,9 @@ This serves to resize the windows
        ("p" enlarge-window)
        ("n" shrink-window)
        ("s" ace-swap-window)
+       ("r" rotate-layout)
 
-       ("q" nil "quit")
-       )
-     )
-    )
+       ("q" nil "quit"))))
 #+end_src
 
 ** pdf-tools
