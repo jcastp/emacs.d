@@ -2986,24 +2986,19 @@ https://github.com/minad/org-modern
     :custom
     (org-modern-hide-stars 'leading)
     (org-modern-table nil)
-    (org-modern-keyword nil)
+    ;; (org-modern-keyword nil)
     (org-modern-timestamp nil)
-    (org-modern-priority nil)
+    ;; (org-modern-priority t)
     (org-modern-checkbox nil)
-    (org-modern-tag nil)
-    (org-modern-block-name nil)
-    (org-modern-keyword nil)
+    (org-modern-tag t)
+    ;; (org-modern-block-name nil)
     (org-modern-footnote nil)
     (org-modern-internal-target nil)
     (org-modern-radio-target nil)
-    (org-modern-statistics nil)
-    (org-modern-progress nil)
-    ;; :config
-    ;; (with-eval-after-load 'org (global-org-modern-mode))
-    ;; (setq org-modern-hide-stars 'leading)
-    ;; 
+    ;; (org-modern-statistics nil)
+    ;; (org-modern-progress nil)
     ;; The progress bar for task pending/completed is too wide for me
-    ;; (setq org-modern-progress 8)
+    (setq org-modern-progress 8)
     )
 #+end_src
 
