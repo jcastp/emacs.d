@@ -1510,7 +1510,7 @@ https://protesilaos.com/emacs/fontaine
              )
     	  ;; font for work
     	  (work
-             :default-family "Aporetic Sans"
+             :default-family "Aporetic Sans Mono"
              :default-weight normal
              :default-height 140
              :fixed-pitch-family "Aporetic Sans Mono"
