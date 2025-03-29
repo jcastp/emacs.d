@@ -4272,7 +4272,7 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
     "m" #'mastodon
     )
 
-  ;; all my theme related keybindings
+  ;; all my theme or font related keybindings
   (defvar-keymap my/key-prefix-themes-map
     :doc "Functions related to theme activities"
     "f" #'fontaine-set-preset
@@ -4282,6 +4282,7 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
   ;; all my buffer related functions
   (defvar-keymap my/key-prefix-buffers-map
     :doc "Functions related to manipulate buffers"
+    ;; empty, for now
     )
 
   (defvar-keymap my/key-prefix-direct-access-map
