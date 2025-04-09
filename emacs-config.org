@@ -2998,7 +2998,7 @@ https://github.com/minad/org-modern
     ;; (org-modern-statistics nil)
     ;; (org-modern-progress nil)
     ;; The progress bar for task pending/completed is too wide for me
-    (setq org-modern-progress 8)
+    (org-modern-progress 8)
     )
 #+end_src
 
