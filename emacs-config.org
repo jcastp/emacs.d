@@ -4083,7 +4083,7 @@ When you want to write something fast using org mode, but you don't want to crea
             (setq buffer (get-buffer-create bufname))
             (with-current-buffer buffer
               (org-mode)
-  	    (insert "# org-scratch buffer"))
+  	    (insert "# org-scratch buffer\n"))
             ;; When called non-interactively, the `t` targets the other window (if it exists).
             (throw 'done (select-window (display-buffer buffer t))))))))
 #+end_src
@@ -4219,7 +4219,6 @@ https://github.com/Alexander-Miller/treemacs
     )
 #+end_src
 
-
 ** CANCELED zoom - resize windows based on frame size
 https://github.com/cyrus-and/zoom
 
@@ -4283,6 +4282,7 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
   (defvar-keymap my/key-prefix-buffers-map
     :doc "Functions related to manipulate buffers"
     ;; empty, for now
+    "o" #'my/scratch-org-buffer
     )
 
   (defvar-keymap my/key-prefix-direct-access-map
