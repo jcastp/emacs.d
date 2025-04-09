@@ -4042,9 +4042,9 @@ An Emacs minor mode to kill your inner editor! Every writer struggles to balance
 #+begin_src emacs-lisp
   (use-package freeze-it
     :ensure t
-    :defer t
     :config
-    )
+    (freeze-it-show-delay 2.0)
+    (freeze-it-go-back "Line"))
 #+end_src
 
 ** TODO ready-player mode
@@ -4087,7 +4087,6 @@ https://www.emacswiki.org/emacs/EshellMultipleEshellBuffers
     (interactive)
     (eshell 'N))
 #+end_src
-
 
 ** TODO Center a buffer in screen
 Sometimes I have just a single window and this is a problem for me in a big screen. This code just centers the text in the middle.
