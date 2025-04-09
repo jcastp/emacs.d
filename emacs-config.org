@@ -4050,7 +4050,8 @@ An Emacs minor mode to kill your inner editor! Every writer struggles to balance
 ** TODO ready-player mode
 #+begin_src emacs-lisp
   (use-package ready-player
-    :ensure (ready-player :type git :host github :repo "xenodium/ready-player")
+    :vc (:url "https://github.com/xenodium/ready-player" :branch "main")
+    ;;:ensure (ready-player :type git :host github :repo "xenodium/ready-player")
     :config
     (ready-player-mode)
     (setq ready-player-repeat t))
