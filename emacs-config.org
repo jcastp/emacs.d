@@ -320,7 +320,11 @@ https://github.com/protesilaos/dired-preview
   		"mp4\\|"
   		"3gp\\|"
   		"odt\\|"
+  		"fodt\\|"
   		"ods\\|"
+  		"fods\\|"
+  		"fodg\\|"
+  		"xlsx\\|"  		  		
   		"epub"
   		"\\)"))
     (dired-preview-global-mode 1))
