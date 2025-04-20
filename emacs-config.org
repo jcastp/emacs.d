@@ -2031,7 +2031,7 @@ This lets you choose refiling targets in heading depth of 9, and lets you get al
                                ("referencias.org" :maxlevel . 9)
                                ("someday.org" :maxlevel . 9) ;; this is called someday.org now
                                ("books.org" :maxlevel . 9)
-                               ("~/Nextcloud/escritura/ideas/ideas.org" :maxlevel . 9)
+                               ("~/Nextcloud/escritura/retazos/ideas.org" :maxlevel . 9)
     			     ))
 
   (setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
@@ -2088,43 +2088,11 @@ Here I will add template captures for doing several things:
 
                                ;; An interesenting character
                                ("P" "Personaje" entry
-                                (file "~/Nextcloud/escritura/ideas/personajes.org")
+                                (file "~/Nextcloud/escritura/retazos/personajes.org")
                                 "* %i%?"
                                 :empty-lines-after 1)
                                )
         )
-
-  ;; (setq org-capture-templates'(
-
-  ;;                              ("c" "New calendar entry." entry
-  ;;                               (file+headline "~/Nextcloud/agenda/tasks.org" "Calendar")
-  ;;                               "** TODO %i%?\nSCHEDULED: %^t\n"
-  ;;                               :empty-lines-after 1)
-
-  ;;                              ;; Writing related things
-  ;;                              ("i" "Writing idea." entry
-  ;;                               (file+headline "~/Nextcloud/escritura/ideas/ideas.org" "otras")
-  ;;                               "** TODO %?\n*** Personajes\n- \n*** Ambientación\n*** Eventos\n"
-  ;;                               :empty-lines-after 1)
-
-  ;;                              ("P" "Personaje" entry
-  ;;                               (file "~/Nextcloud/escritura/ideas/personajes.org")
-  ;;                               "* "
-  ;;                               :empty-lines-after 1)
-
-
-  ;;                              ("r" "Note and misc content." entry
-  ;;                               (file+headline "~/Nextcloud/agenda/inbox.org" "Notes")
-  ;;                               "** %i%?\n"
-  ;;                               :empty-lines-after 1)
-
-  ;; linea en tabla
-  ;;  ("w" "peso" table-line
-  ;;     (file+headline "~/Nextcloud/personal/peso.org" "peso")
-  ;;     "|%<%Y/%m/%d>|%i|")
-
-  ;;    )
-  ;; )
   #+end_src
 
 ** Capture to this buffer
