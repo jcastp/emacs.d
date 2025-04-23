@@ -4098,24 +4098,52 @@ https://github.com/karthink/gptel
 To interact with ollama local llms.
 
 #+begin_src emacs-lisp
-  (if (file-executable-p "~/github/ollama/ollama")
-      (progn
-        (let*
-  	  ;; get all the models we have in this machine
-  	  ((output (shell-command-to-string "~/github/ollama/ollama list | awk '{print $1}' | grep -v NAME"))
-  	   (present_models (split-string output)))
-  	;; body of the let* part
-  	(use-package gptel
-  	  :ensure t
-  	  :config
-  	  ;; Ollama as the default engine
-  	  (setq
-  	   ;;gptel-default-mode 'org-mode
-  	   gptel-model (car present_models)
-  	   gptel-backend (gptel-make-ollama "Ollama"
-  			   :host "localhost:11434"
-  			   :stream t
-  			   :models present_models))))))
+    ;; (if (file-executable-p "~/github/ollama/ollama")
+    ;;     (progn
+    ;;       (let*
+    ;; 	  ;; get all the models we have in this machine
+    ;; 	  ((output (shell-command-to-string "~/github/ollama/ollama list | awk '{print $1}' | grep -v NAME"))
+    ;; 	   (present_models (split-string output)))
+    ;; 	;; body of the let* part
+    ;; 	(use-package gptel
+    ;; 	  :ensure t
+    ;; 	  :config
+    ;; 	  ;; Ollama as the default engine
+    ;; 	  (setq
+    ;; 	   ;;gptel-default-mode 'org-mode
+    ;; 	   gptel-model (car present_models)
+    ;; 	   gptel-backend (gptel-make-ollama "Ollama"
+    ;; 			   :host "localhost:11434"
+    ;; 			   :stream t
+    ;; 			   :models present_models))))))
+
+
+  (defun my/gptel ()
+    "Start and configure my gptel configuration."
+    (interactive)
+    ;; Check if the ollama process is running
+    (let ((output (shell-command-to-string "ps aux | grep 'ollama serve' | grep -v grep")))
+      (if (string-match "github/ollama/ollama serve" output)
+          ;; Ollama is running
+          (progn
+            (message "Ollama is running"))
+        ;; Ollama is not running
+        (progn
+          (shell-command "~/github/ollama/ollama serve&" nil))))
+    ;; Check if the ollama binary is executable and configure gptel accordingly
+    (if (file-executable-p "~/github/ollama/ollama")
+        (let* ((output (shell-command-to-string "~/github/ollama/ollama list | awk '{print $1}' | grep -v NAME"))
+              (present_models (split-string output)))
+          ;; Configure gptel
+          (use-package gptel
+            :ensure t
+            :config
+            ;; Set Ollama as the default engine for gptel
+            (setq gptel-model (car present_models)
+                  gptel-backend (gptel-make-ollama "Ollama"
+                                                    :host "localhost:11434"
+                                                    :stream t
+                                                    :models present_models))))))
 #+end_src
 
 ** TODO casual - opinionated menus for emacs
