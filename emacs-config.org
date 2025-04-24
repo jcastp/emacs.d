@@ -4020,7 +4020,7 @@ An Emacs minor mode to kill your inner editor! Every writer struggles to balance
 #+end_src
 
 ** TODO ready-player mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package ready-player
     :vc (:url "https://github.com/xenodium/ready-player" :branch "main")
     ;;:ensure (ready-player :type git :host github :repo "xenodium/ready-player")
@@ -4143,7 +4143,8 @@ To interact with ollama local llms.
                   gptel-backend (gptel-make-ollama "Ollama"
                                                     :host "localhost:11434"
                                                     :stream t
-                                                    :models present_models))))))
+                                                    :models present_models))
+  	  (global-set-key (kbd "C-q RET") 'gptel-send)))))
 #+end_src
 
 ** TODO casual - opinionated menus for emacs
