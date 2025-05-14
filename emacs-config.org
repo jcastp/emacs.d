@@ -4252,6 +4252,75 @@ https://github.com/cyrus-and/zoom
     )
 #+end_src
 
+** TODO org-transclusion
+To add text from other files, but without copying the information. It's just like a "window" to the other file, so you only maintain one copy of the information.
+#+begin_src emacs-lisp
+     (use-package org-transclusion
+     :ensure t
+     :config
+     (set-face-attribute 'org-transclusion-fringe nil
+  		       :foreground "green"
+  		       :background "green"))
+#+end_src
+
+** TODO Count words in orgmode, excluding comments, drawers, and properties
+=count-words= function is good, but in orgmode still counts all the words, including comments, properties, and drawers.
+
+These functions avoid that.
+
+#+begin_src emacs-lisp
+(defun org-in-commented-line ()
+  "Return non-nil if point is in a commented line."
+  (save-excursion
+    (beginning-of-line)
+    (looking-at-p "^[ \t]*#")))
+
+(defun org-in-drawer-p ()
+  "Return non-nil if point is in an Org mode drawer."
+  (save-excursion
+    (beginning-of-line)
+    (looking-at-p "^[ \t]*:[a-zA-Z]+:")))
+
+(defun org-at-property-p ()
+  "Return non-nil if point is at an Org mode property."
+  (save-excursion
+    (beginning-of-line)
+    (looking-at-p "^[ \t]*:[a-zA-Z]+:")))
+
+(defun my/org-count-words (&optional begin end)
+  "Count words in the region if active, or the whole buffer if not.
+Ignores Org mode comments, drawers, and properties."
+  (interactive)
+  (let ((begin (or begin (if (use-region-p) (region-beginning) (point-min))))
+        (end (or end (if (use-region-p) (region-end) (point-max))))
+        (word-count 0))
+    (save-excursion
+      (goto-char begin)
+      (while (re-search-forward "\\w+" end t)
+        (unless (or (org-in-commented-line)
+                    (org-in-drawer-p)
+                    (org-at-property-p))
+          (setq word-count (1+ word-count)))))
+    (message "Word count: %d" word-count)
+    word-count))
+#+end_src
+
+** TODO Add a property for orgmode headings with an advanced word count function
+Modified the Emacs Writing Studio ([[https://github.com/pprevos/emacs-writing-studio][EWS]]) function to use my orgmode word count function.
+It adds a property, called WORDCOUNT, to the headings so we can leverage in reports or other actions.
+
+#+begin_src emacs-lisp
+  (defun my/ews-org-count-words ()
+  "Add word count to each heading property drawer in an Org mode buffer."
+  (interactive)
+  (org-map-entries
+   (lambda ()
+     (let* ((start (point))
+            (end (save-excursion (org-end-of-subtree)))
+            (word-count (my/org-count-words start end)))
+       (org-set-property "WORDCOUNT" (number-to-string word-count))))))
+#+end_src
+
 * my own keymap
 I want to have my own dedicated keymap for the functions I use the most.
 
