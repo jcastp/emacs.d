@@ -4376,7 +4376,7 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
     "o" (cons "online" my/key-prefix-online-map)
     "q" (cons "direct file access" my/key-prefix-direct-access-map)
     "u" #'consult-outline
-    "r" #'recentf
+    "r" #'consult-recent-file
     "t" (cons "themes" my/key-prefix-themes-map)
     "w" (cons "writing" my/key-prefix-writing-map)
     )
