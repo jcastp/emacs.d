@@ -30,6 +30,8 @@ text-mode
 ;; Templates for org-mode
 org-mode
 
+(begin "#+begin_" (s name) n> r> n "#+end_" name)
+
 (lisp
 	"#+begin_src emacs-lisp" n
 	"#+end_src"
