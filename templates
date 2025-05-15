@@ -175,3 +175,22 @@ org-mode
 	"**** Apertura a la Experiencia" n
 	"# Conservador - Experimentador" n
 )
+
+(escrit
+         "#+TODO: TODO(t) TOWRITE(h) TOREVIEW(j@/!) REDO(k@/!) RESTRUCTURE(n@/!) | FINISHED(l!) PURGE(ñ@/!)"
+         n
+         "#+TAGS: personaje(p) historia(h) trama(t)"
+         n
+         "#+COLUMNS: %40ITEM(Task) %12WORDCOUNT"
+         n
+         "# This shows your pending tasks:"
+         n
+         "#+BEGIN: org-ql :query \"todo:\" :columns (todo (priority \"P\") ((property \"agenda-group\") \"Group\") deadline heading) :sort (deadline priority) :take 7 :ts-format \"%Y-r%m-%d %H:%M\""
+         n
+         "#+END:"
+         n n
+	 "#+BEGIN: org-generate-wordcount-table"
+	 n
+	 "#+END:"
+	 n n
+)
