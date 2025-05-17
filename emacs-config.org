@@ -4340,7 +4340,7 @@ This function relies on a property in the org-heading called WORDCOUNT, that is 
   	 ;; add the data in the table-data for each heading
   	 (push (cons
   		;; add the asterisks (ascii 42), the space (ascii 32) and the heading
-  		(format "%s%s%s" (make-string level 42) (make-string 1 32) heading)
+  		(format "%s%s%s" (make-string level 42) (make-string 1 32) (org-link-make-string heading))
   		;; add the wordcount
   		wordcount)
   	       ;; add all to the table-data
