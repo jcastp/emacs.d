@@ -185,6 +185,8 @@ org-mode
          n
          "#+COLUMNS: %40ITEM(Task) %12WORDCOUNT"
          n n
+	 "* stats :noexport:"
+	 n
          "# This shows your pending tasks:"
          n
          "#+BEGIN: org-ql :query \"todo:\" :columns (todo (priority \"P\") ((property \"agenda-group\") \"Group\") deadline heading) :sort (deadline priority) :take 7 :ts-format \"%Y-r%m-%d %H:%M\""
