@@ -2974,8 +2974,6 @@ https://github.com/minad/org-modern
     )
 #+end_src
 
-*** 
-
 *** org-mode standard looks
 **** Custom faces for the todo keywords
 Implement something like this: https://orgmode.org/manual/Faces-for-TODO-keywords.html
