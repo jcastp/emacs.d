@@ -4326,6 +4326,9 @@ This function relies on a property in the org-heading called WORDCOUNT, that is 
   (defun org-dblock-write:org-generate-wordcount-table (params)
     "Generate a table with heading names and their WORDCOUNT property in Org mode."
     (interactive)
+    ;; We execute the function of counting words, add the WORDCOUNT property,
+    ;; and update the current word count.
+    (my/ews-org-count-words)
     (let (table-data)
       ;; Traverse each Org entry in the current buffer
       (org-map-entries
