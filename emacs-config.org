@@ -4337,11 +4337,19 @@ This function relies on a property in the org-heading called WORDCOUNT, that is 
                 (heading (nth 4 heading-components))  ; Extract heading text
                 (level (car heading-components)) ;Extract level
                 (wordcount (org-entry-get nil "WORDCOUNT")))
-  	 (push (cons (format "%s%s%s" (make-string level 42) (make-string 1 32) heading) wordcount) table-data))))
+  	 ;; add the data in the table-data for each heading
+  	 (push (cons
+  		;; add the asterisks (ascii 42), the space (ascii 32) and the heading
+  		(format "%s%s%s" (make-string level 42) (make-string 1 32) heading)
+  		;; add the wordcount
+  		wordcount)
+  	       ;; add all to the table-data
+  	       table-data))))
       (insert "| Heading         | Wordcount |\n"
               "|-----------------+-----------|\n")
       (dolist (pair (reverse table-data))
-        (insert (format "| %s | %s |\n" (car pair) (cdr pair))))))
+        (insert (format "| %s | %s |\n" (car pair) (cdr pair)))
+        (org-table-align))))
 #+end_src
 
 * my own keymap
