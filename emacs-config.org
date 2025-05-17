@@ -4327,6 +4327,7 @@ This function relies on a property in the org-heading called WORDCOUNT, that is 
 
 # TODOs
 # - Solve the issue for multiple asterisks being formated as bold
+# - Add a keyword to add the tags we want to exclude
 
 #+begin_src emacs-lisp
   (defun org-dblock-write:org-generate-wordcount-table (params)
@@ -4342,11 +4343,9 @@ This function relies on a property in the org-heading called WORDCOUNT, that is 
          (let* ((heading-components (org-heading-components))
                 (heading (nth 4 heading-components))  ; Extract heading text
                 (level (car heading-components)) ;Extract level
-  	      ;; (tags (nth 5 heading-components))
   	      (tags (org-get-tags))
                 (wordcount (org-entry-get nil "WORDCOUNT")))
   	 ;; check if we get tags, and if they don't contain the noexport
-  	 ;; (if (not (and tags (string-match ":noexport:" tags)))
   	 (if (not (and tags (member "noexport" tags)))	       
   	   ;; add the data in the table-data for each heading
   	   (push (cons
@@ -4360,7 +4359,7 @@ This function relies on a property in the org-heading called WORDCOUNT, that is 
               "|-----------------+-----------|\n")
       (dolist (pair (reverse table-data))
         (insert (format "| %s | %s |\n" (car pair) (cdr pair)))
-        (org-table-align)))))
+        (org-table-align))))
 #+end_src
 
 * my own keymap
