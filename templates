@@ -184,13 +184,15 @@ org-mode
          "#+TAGS: personaje(p) historia(h) trama(t)"
          n
          "#+COLUMNS: %40ITEM(Task) %12WORDCOUNT"
-         n
+         n n
          "# This shows your pending tasks:"
          n
          "#+BEGIN: org-ql :query \"todo:\" :columns (todo (priority \"P\") ((property \"agenda-group\") \"Group\") deadline heading) :sort (deadline priority) :take 7 :ts-format \"%Y-r%m-%d %H:%M\""
          n
          "#+END:"
          n n
+	 "# This shows your word count by sections:"
+	 n
 	 "#+BEGIN: org-generate-wordcount-table"
 	 n
 	 "#+END:"
