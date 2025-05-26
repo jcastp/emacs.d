@@ -1261,6 +1261,12 @@ https://github.com/kunalb/poet
     :defer t)
 #+end_src
 
+*** TODO doric themes
+#+begin_src emacs-lisp
+  (use-package doric-themes
+    :ensure t)
+#+end_src
+
 *** Establish the default theme
 Define some variables with the dark and clear themes, and a variable to control if the current theme is dark or clear.
 Also, rotate the list of themes applied.
