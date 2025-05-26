@@ -219,7 +219,7 @@ As work is different from home, I need specific templates.
   (setq org-capture-templates'(
 
                                ("t" "Tasks (work)" entry
-                                (file+headline "~/Nextcloud/agenda/work/work.org" "Tasks")
+                                (file+headline "~/Nextcloud/agenda/work/work.org" "Inbox")
                                 "** TODO %? %^g \n")
 
                                ("i" "New incident." entry
@@ -234,11 +234,7 @@ As work is different from home, I need specific templates.
                                ("m" "Meeting notes" entry
                                 (file+headline "~/Nextcloud/agenda/work/work_meetings.org" "Meetings")
                                 "** %T - %?\n"
-  			      :jump-to-captured t
-  			      )
-
-                               )
-        )
+  			      :jump-to-captured t)))
 #+end_src
 
 ** Load the task list for work
