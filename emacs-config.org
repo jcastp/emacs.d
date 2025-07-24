@@ -3655,7 +3655,7 @@ Use python3 to run code.
   (add-hook 'python-ts-mode-hook 'treesit-inspect-mode)
 #+end_src
 
-* Miscelanea
+* Miscellanea
 ** gnuplot
 GNUplot for emacs, to use in plotting graphics from tables.
 
