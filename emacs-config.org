@@ -2071,8 +2071,8 @@ Here I will add template captures for doing several things:
 
   			      ("t" "My TODO task format." entry
                                 (file+headline "~/Nextcloud/agenda/tasks.org" "Tasks")
-                                "** TODO %i%? \n"
-                                  :empty-lines-after 1)
+  			      "** TODO %i%? %^g \n"
+                                :empty-lines-after 1)
 
   			     ("p" "New project." entry
                                 (file+headline "~/Nextcloud/agenda/tasks.org" "Projects")
