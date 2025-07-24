@@ -4267,6 +4267,27 @@ To add text from other files, but without copying the information. It's just lik
   		       :background "green"))
 #+end_src
 
+** TODO Count words in exported ascii mode
+orgmode has a lot of properties and facilities to make it work, but sometimes we only need the word count of the prose.
+This functions does this (to an extent).
+
+#+begin_src emacs-lisp
+(defun my/count-words-ascii ()
+  "Gets an org file, exports to ascii, and count the words.
+    This is to avoid counting all the comments or superfluous words."
+  (interactive)
+  (save-excursion
+    (let
+        ;; org-ascii-export-as-ascii opens a new window by default, making it visible, and positions it in the frame. How can I avoid this?
+        ((this-buffer (org-ascii-export-as-ascii))
+         )
+      (with-current-buffer this-buffer
+        (let ((word-count (count-words (point-min) (point-max))))
+          (message "Total words: %d" word-count)))
+      (kill-buffer this-buffer)
+      )))
+#+end_src
+
 ** TODO Count words in orgmode, excluding comments, drawers, and properties
 =count-words= function is good, but in orgmode still counts all the words, including comments, properties, and drawers.
 
