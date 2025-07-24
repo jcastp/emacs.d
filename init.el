@@ -5,6 +5,7 @@
 ;; lisp evaluation of recursion
 (setq max-lisp-eval-depth 5000)
 
+;; remove the GUI features
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
@@ -12,7 +13,6 @@
 ;; disable splash and startup screens
 (setq inhibit-splash-screen t
       inhibit-startup-screen t)
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; package initialization
@@ -53,16 +53,17 @@
 ;; personal configuration
 
 (defvar my-config-dir "~/.emacs.d/"
-  "Personal config directory.")
+  "Directory where my personal config files reside.
+This is the code that will be commited.")
 
 (defvar my-data-dir "~/Nextcloud/config/.emacs.d/"
-  "Personal data directory.")
+  "Directory where my personal data files reside.")
 
 ;; working laptop vm
 (defvar my-worksystem-p (equal (system-name) "lubuntuwork")
   "Name of my working machine.")
 
-;; My desktop machine, able to run anything
+;; My desktop machines, able to run anything.
 (defvar my-desktopsystem-p (or
 			    (equal (system-name) "olimpo")
 			    (equal (system-name) "doomslayer"))
@@ -72,7 +73,8 @@
 ;; probably we can strip some features from them, as they are low end machines
 (defvar my-writinglaptop-p (or
 			    (equal (system-name) "argos")
-			    (equal (system-name) "caliope"))
+			    (equal (system-name) "caliope")
+			    (equal (system-name) "cerbero"))
   "Names of my writing laptops.")
 
 (defvar my-homeenvironment-p (or
