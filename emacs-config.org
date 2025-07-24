@@ -869,32 +869,25 @@ This way, we can recover the last session and restore all the persps we had then
 #+end_src
   
 *** TODO automatic load some perspectives
-#+begin_src emacs-lisp
+This function allows to load my defined perspectives and sessions.
 
+#+begin_src emacs-lisp
   (with-eval-after-load 'perspective
     ;; where I define my own perspective saved files
-    ;;(setq my-persp-save-dir (f-join my-data-dir "perspectives/"))
     (setq my-persp-save-dir (expand-file-name  "perspectives/" my-data-dir))
 
     ;; a function to load a perspective saved file from a given directory
-    (defun my/load-perspective (directory-path)
+    (defun my/load-perspective ()
       "Given a directory with perspective saved files, the user chooses one, and it automatically
     loads it."
-      (interactive "DDirectory: ")
-      (let* ((file-list (directory-files directory-path t nil nil))
-             (file-menu (mapcar (lambda (file) (cons (file-name-nondirectory file) file)) file-list))
-             (user-choice (completing-read "Choose a file: " file-menu nil t)))
-        (if (assoc user-choice file-menu)
-            (progn
+      ;; 
+      (interactive)
+      (let ((file (read-file-name "Select a file: " my-persp-save-dir)))
+        (persp-state-load file)
+        ;; show a message
+        (message "You chose: %s" file)))
 
-        	    (persp-state-load (cdr (assoc user-choice file-menu)))
-        	    ;; show a message
-        	    (message "You chose: %s" (cdr (assoc user-choice file-menu)))
-              )
-  	(message "Invalid choice"))))
-
-    (define-key persp-mode-map (kbd "C-c w l") 'my/load-perspective)
-    )
+    (define-key persp-mode-map (kbd "C-c w l") 'my/load-perspective))
 #+end_src
 
 But I want to automatically load some perspectives when I'm at home:
