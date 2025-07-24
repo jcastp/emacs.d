@@ -512,6 +512,8 @@ This conflicts with orgmode archive =C-c $=.
     (ispell-personal-dictionary (expand-file-name "dict" my-data-dir))
     (ispell-silently-savep t)
     :config
+    ;; Also adding the "spanish" path, because somehow it doesn't work. It finds "castellano", but not "spanish".
+    (add-to-list 'ispell-hunspell-dict-paths-alist '("spanish" "/usr/share/hunspell/es_ES.aff"))
     (ispell-set-spellchecker-params)
     (ispell-hunspell-add-multi-dic "en_US,es_ES")
     (global-font-lock-mode t)
