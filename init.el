@@ -117,6 +117,7 @@ This is the code that will be commited.")
 ;; (use-package org
 ;;   :ensure t
 ;;   )
+
 ;; load my config
 (org-babel-load-file "~/.emacs.d/emacs-config.org")
 
