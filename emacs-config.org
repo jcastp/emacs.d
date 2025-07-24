@@ -1062,8 +1062,10 @@ When reaching the established width defined, the line will wrap, even before get
     :config
     ;; This sets the value to all the buffers, as initially it is a per-buffer variable
     (setq-default visual-fill-column-width 110)
+    ;; set the text in the center of the window
+    (setq-default visual-fill-column-center-text t)
     ;; enable it only for text buffers: org, text, ...
-    (add-hook 'text-mode-hook 'visual-fill-column-mode)
+    ;; (add-hook 'text-mode-hook 'visual-fill-column-mode)
     )
 #+end_src
 
@@ -4456,6 +4458,7 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
     :doc "Functions related to theme activities"
     "f" #'fontaine-set-preset
     "t" #'consult-theme
+    "v" #'visual-fill-column-mode
     )
 
   ;; all my buffer related functions
