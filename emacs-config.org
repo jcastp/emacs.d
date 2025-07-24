@@ -3802,16 +3802,18 @@ RSS read in emacs.
   ;; to store our rss feeds sources
   (use-package elfeed-org
     :ensure t)
-  
+
   (use-package elfeed
     :ensure t
     :init
     (elfeed-org)
+    ;; put the filter to 1 month ago by default
+    (setq-default elfeed-search-set-filter "@1-months-ago")
+    (setq-default elfeed-search-filter "@1-months-ago")
+
     :config
     (setq elfeed-db-directory (expand-file-name "elfeed/db/" my-data-dir))
     (setq rmh-elfeed-org-files (list "~/Nextcloud/config/.emacs.d/elfeed/elfeed.org"))
-    ;; put the filter to 1 month ago by default
-    (setq elfeed-search-set-filter "@1-month-ago")
 
     ;; open elfeed and update it
     (defun my/elfeed()
