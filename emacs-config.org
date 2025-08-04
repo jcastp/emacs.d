@@ -4424,6 +4424,37 @@ The DWIM behaviour of this command is as follows:
 #+end_src
 
 *
+
+** TODO alternative word count
+https://chrismaiorana.com/summer-productivity-reset-emacs-functions/
+#+begin_src emacs-lisp
+  (defun csm/org-word-count ()
+    "Count words in region/buffer, estimate pages, and reading time.
+  Excludes lines beginning with * or #. Prints result in echo area."
+    (interactive)
+    (let* ((start (if (use-region-p) (region-beginning) (point-min)))
+           (end (if (use-region-p) (region-end) (point-max)))
+           (word-count
+            (save-excursion
+              (goto-char start)
+              (let ((count 0)
+                    (inhibit-field-text-motion t))
+                (while (< (point) end)
+                  (beginning-of-line)
+                  (unless (looking-at-p "^[*#<]")
+                    (let ((line-end (line-end-position)))
+                      (while (re-search-forward "\\w+\\W*" line-end t)
+                        (setq count (1+ count)))))
+                  (forward-line 1))
+                count)))
+           (words-per-page 400)
+           (reading-speed 215)
+           (page-count (/ (+ word-count words-per-page -1) words-per-page))
+           (reading-time (/ (+ word-count reading-speed -1) reading-speed)))
+      (message "%d words, ~%d pages, ~%d min read"
+               word-count page-count reading-time)))
+#+end_src
+
 * my own keymap
 I want to have my own dedicated keymap for the functions I use the most.
 
