@@ -4142,6 +4142,8 @@ To interact with ollama local llms.
           (use-package gptel
             :ensure t
             :config
+  	  ;; default mode is orgmode, so I can copy and paste to my files
+  	  (setq gptel-default-mode 'org-mode)
             ;; Set Ollama as the default engine for gptel
             (setq gptel-model (car present_models)
                   gptel-backend (gptel-make-ollama "Ollama"
