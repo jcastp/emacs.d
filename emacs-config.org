@@ -1209,7 +1209,7 @@ https://github.com/protesilaos/spacious-padding
 Protesilaos very good themes. These themes are already included in the standard emacs, so we can get rid of the use-package definition, and retain only the config.
 #+begin_src emacs-lisp
   (use-package modus-themes
-    :ensure nil
+    :ensure t
     :config
     ;; Add all your customizations prior to loading the themes
     (setq
