@@ -8,7 +8,10 @@
 This is the literate config for my emacs use cases.
 
 I will try to document and compartmentalize the sections, so it's easier to follow up, but it won't always be possible, as some functions overlap, and I'm usually a messy person when speaking of testing.
-
+* Lexical binding added
+#+begin_src emacs-lisp
+  ;; -*- lexical-binding: t; -*-
+#+end_src
 * git related config
 ** magit
 Git control version.
