@@ -1455,13 +1455,13 @@ https://protesilaos.com/emacs/fontaine
             (regular-aporetic-mono
              :default-family "Aporetic Sans Mono"
              :default-weight normal
-             :default-height 120
+             :default-height 110
              :fixed-pitch-family "Aporetic Sans Mono"
              :fixed-pitch-weight Light ; falls back to :default-weight
              :fixed-pitch-height 110
              :variable-pitch-family "Aporetic Sans Mono"
              :variable-pitch-weight Medium
-             :variable-pitch-height 140
+             :variable-pitch-height 110
              :bold-family nil ; use whatever the underlying face has
              :bold-weight bold
              :italic-family "Aporetic Sans Mono"
@@ -1541,7 +1541,7 @@ https://protesilaos.com/emacs/fontaine
     )
 
   ;; Establish the regular preset as default
-  (fontaine-set-preset 'regular)
+  (fontaine-set-preset 'regular-aporetic-mono)
 #+end_src
 
 * Orgmode config
