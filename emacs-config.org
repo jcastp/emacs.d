@@ -3815,7 +3815,7 @@ RSS read in emacs.
     (elfeed-org)
     ;; elfeed goodies config
     (elfeed-goodies/setup)
-    (setq elfeed-goodies/entry-pane-position 'bottom)
+    ;; (setq elfeed-goodies/entry-pane-position 'bottom)
     ;; put the filter to 1 month ago by default
     (setq-default elfeed-search-set-filter "@1-months-ago")
     (setq-default elfeed-search-filter "@1-months-ago")
