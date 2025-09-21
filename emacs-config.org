@@ -340,11 +340,22 @@ The files are defined in the =dired-omit-files= and the extensions in the =dired
   ;;(add-hook 'dired-mode-hook (lambda () (dired-omit-mode)))
 #+end_src
 
-** set firefox as the default browser
-Setting firefox as the default browser for opening http/s links.
+** set firefox or librewolf as the default browser
+Setting firefox or librewolf as the default browser for opening http/s links.
 #+begin_src emacs-lisp
-  (setq browse-url-firefox-program "firefox")
-  (setq browse-url-browser-function 'browse-url-firefox)
+  (setq librewolf_path "/usr/bin/librewolf")
+  ;; check if librewolf is installed
+  (if (file-exists-p librewolf_path)
+       (progn
+         (setq browse-url-firefox-program "librewolf")
+         (setq browse-url-browser-function 'browse-url-firefox))
+    ;; if no librewolf installed, we fall back to firefox
+     (progn
+       (setq browse-url-firefox-program "firefox")
+       (setq browse-url-browser-function 'browse-url-firefox)))
+   
+   ;; (setq browse-url-firefox-program "firefox")
+   ;; (setq browse-url-browser-function 'browse-url-firefox)
 #+end_src
 
 ** Battery management
