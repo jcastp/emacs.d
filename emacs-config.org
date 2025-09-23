@@ -1532,18 +1532,18 @@ https://protesilaos.com/emacs/fontaine
              )
     	  ;; font for work
     	  (work
-             :default-family "Aporetic Sans Mono"
+             :default-family "Aporetic Sans"
              :default-weight normal
-             :default-height 140
+             :default-height 120
              :fixed-pitch-family "Aporetic Sans Mono"
              :fixed-pitch-weight Light ; falls back to :default-weight
              :fixed-pitch-height 110
-             :variable-pitch-family "Aporetic Sans Mono"
+             :variable-pitch-family "Aporetic Sans"
              :variable-pitch-weight Medium
-             :variable-pitch-height 160
+             :variable-pitch-height 120
              :bold-family nil ; use whatever the underlying face has
              :bold-weight bold
-             :italic-family "Aporetic Sans Mono"
+             :italic-family "Aporetic Sans"
              :italic-slant italic
              :line-spacing 0
              )
@@ -4475,6 +4475,13 @@ https://chrismaiorana.com/summer-productivity-reset-emacs-functions/
            (reading-time (/ (+ word-count reading-speed -1) reading-speed)))
       (message "%d words, ~%d pages, ~%d min read"
                word-count page-count reading-time)))
+#+end_src
+
+** TODO show-font
+
+#+begin_src emacs-lisp
+  (use-package show-font
+    :ensure t)
 #+end_src
 
 * my own keymap
