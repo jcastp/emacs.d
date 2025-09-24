@@ -3591,9 +3591,9 @@ Check language syntax on the fly.
 #+end_src
 
 ** tree-sitter config
-Based on https://www.masteringemacs.org/article/how-to-get-started-tree-sitter
+Tree-Sitter is included in newer versions of emacs.
+We just need to load the languages.
 
-Define the list of languages I want to have in tree-sitter.
 #+begin_src emacs-lisp
   (use-package tree-sitter-langs
     :ensure t)
@@ -3603,7 +3603,11 @@ Define the list of languages I want to have in tree-sitter.
 
   (global-tree-sitter-mode)          ; enable globally
   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode) ; syntax highlighting
+#+end_src
 
+ts-fold to fold code in a convenient way.
+
+#+begin_src emacs-lisp
   ;; to fold code blocks based on tree-sitter
   (use-package ts-fold
     :vc (:url "https://github.com/emacs-tree-sitter/ts-fold"
@@ -3616,9 +3620,8 @@ Define the list of languages I want to have in tree-sitter.
      (ts-fold-mode . ts-fold-indicators-mode))
     :config
     (setq ts-fold-line-count-show t)
-  )
+    )
 #+end_src
-
 ** eglot configuration
 Configuring eglot to work with vanilla python and its tree-sitter enabled mode:
 #+begin_src emacs-lisp 
