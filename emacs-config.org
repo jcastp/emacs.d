@@ -1372,7 +1372,7 @@ Establish the fonts with variables, so we don't need to change them on evey plac
   (defvar my-fixed-font-height 110)
   
   ;; My default font variables
-  (defvar my-default-font "Aporetic Sans")
+  (defvar my-default-font "Aporetic Sans Mono")
   (defvar my-default-font-height 120)
 #+end_src
 
@@ -1440,7 +1440,7 @@ Use fixed font for code blocks and other non prose blocks, and configure all oth
 Allows to set different fonts dinamically.
 https://protesilaos.com/emacs/fontaine
 
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp
   (use-package fontaine
     :ensure t
     :config
@@ -1448,7 +1448,7 @@ https://protesilaos.com/emacs/fontaine
           '(
             ;; daily operations, same config as normal config
             (regular
-             :default-family "Aporetic Sans"
+             :default-family "Aporetic Sans Mono"
              :default-weight normal
              :default-height 120
              :fixed-pitch-family "Aporetic Sans Mono"
