@@ -1440,7 +1440,7 @@ Use fixed font for code blocks and other non prose blocks, and configure all oth
 Allows to set different fonts dinamically.
 https://protesilaos.com/emacs/fontaine
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp 
   (use-package fontaine
     :ensure t
     :config
@@ -1448,7 +1448,7 @@ https://protesilaos.com/emacs/fontaine
           '(
             ;; daily operations, same config as normal config
             (regular
-             :default-family "Aporetic Sans Mono"
+             :default-family "Aporetic Sans"
              :default-weight normal
              :default-height 120
              :fixed-pitch-family "Aporetic Sans Mono"
@@ -1459,7 +1459,7 @@ https://protesilaos.com/emacs/fontaine
              :variable-pitch-height 140
              :bold-family nil ; use whatever the underlying face has
              :bold-weight bold
-             :italic-family "Aporetic Sans Mono"
+             :italic-family "Aporetic Sans"
              :italic-slant italic
              :line-spacing 0
              )
@@ -1552,7 +1552,7 @@ https://protesilaos.com/emacs/fontaine
     )
 
   ;; Establish the regular preset as default
-  (fontaine-set-preset 'regular-aporetic-mono)
+  (fontaine-set-preset 'regular)
 #+end_src
 
 * Orgmode config
