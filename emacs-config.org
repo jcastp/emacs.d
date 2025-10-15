@@ -299,12 +299,12 @@ From Prot's article - https://protesilaos.com/codelog/2024-11-28-basic-emacs-con
     (setq dired-subtree-use-backgrounds nil))
 #+end_src
 
-*** dired-preview
+*** CANCELED dired-preview
 Preview the files in dired.
 
 https://github.com/protesilaos/dired-preview
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package dired-preview
     :ensure t
     :config
