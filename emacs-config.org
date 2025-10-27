@@ -3215,10 +3215,31 @@ Seach for synonyms for Spanish words.
 
 #+begin_src emacs-lisp
   (defun my/sinonimo (palabra)
-    "Busca una palabra en un diccionario de sinónimos"
+    "Busca una palabra en un diccionario de sinónimos en una ventana lateral"
     (interactive "s¿Qué palabra quieres buscar? ")
-    (eww (concat "https://www.wordreference.com/sinonimos/" palabra))
-    )
+    (let ((url (concat "https://www.wordreference.com/sinonimos/" palabra)))
+      
+      ;; Create a temporary buffer for the side window
+      (let ((temp-buffer (generate-new-buffer "*temp-sinonimos*")))
+        
+        ;; Display the temporary buffer in a side window
+        (let ((side-window (display-buffer-in-side-window 
+                           temp-buffer 
+                           '((side . right) 
+                             (window-width . 80)
+                             (window-parameters . ((no-delete-other-windows . t)))))))
+          
+          ;; Select the side window and load eww there
+          (with-selected-window side-window
+            (eww url)
+            
+            ;; Kill the temporary buffer since eww created its own
+            (kill-buffer temp-buffer)
+            
+            ;; Set up the eww buffer
+            (read-only-mode 1)
+            (use-local-map (copy-keymap (current-local-map)))
+            (local-set-key (kbd "q") 'quit-window))))))
 #+end_src
 
 ** Translate from english
@@ -4489,6 +4510,7 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
     ;; writing exercises
     "w" #'my/create-writing-exercise
     "q" #'my/create-empty-writing-file
+    "s" #'my/sinonimo
     )
 
   ;; all my online functions in a convenient keybinding map
