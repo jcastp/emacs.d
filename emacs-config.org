@@ -3337,7 +3337,7 @@ Manual: https://nobiot.github.io/org-remark/
     )
 #+end_src
 
-** TODO tempel - template expansion
+** tempel - template expansion
 :PROPERTIES:
 :ID:       836dad1c-d03d-45d1-b9c7-0bce134fc86e
 :END:
