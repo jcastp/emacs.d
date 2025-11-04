@@ -523,7 +523,7 @@ Select relevant regions incrementally.
     (global-set-key (kbd "C-ñ") 'er/expand-region))
 #+end_src
 
-** TODO project.el configuration
+** project.el configuration
 #+begin_src emacs-lisp
   (setq project-list-file (expand-file-name "projects" my-data-dir))
 #+end_src
