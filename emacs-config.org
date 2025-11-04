@@ -1249,6 +1249,15 @@ Useful for reading books.
     (set-window-margins nil margin margin)))
 #+end_src
 
+** emacs-rotate
+To rotate the layout of the windows.
+https://github.com/daichirata/emacs-rotate
+
+#+begin_src emacs-lisp
+  (use-package rotate
+    :ensure t)
+#+end_src
+
 * Fonts and themes
 ** Themes
 *** leuven themes
@@ -4264,15 +4273,6 @@ https://toobnix.org/w/5vCCqXFtWJ3EK7W3HKPRUD
   (require 'casual-info) ; optional if using autoloaded menu
   (keymap-set Info-mode-map "C-o" #'casual-info-tmenu)
   )
-#+end_src
-
-** TODO emacs-rotate
-To rotate the layout of the windows.
-https://github.com/daichirata/emacs-rotate
-
-#+begin_src emacs-lisp
-  (use-package rotate
-    :ensure t)
 #+end_src
 
 ** TODO treemacs
