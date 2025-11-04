@@ -1405,7 +1405,7 @@ Function to change between dark and clear themes, based on past variables.
           (setq my-theme-dark-p nil)))))
 
   (global-set-key (kbd "C-c 0") 'my/theme-changer)
-  #+end_src
+#+end_src
   
 ** Font setup
 Look at this https://idiocy.org/emacs-fonts-and-fontsets.html
@@ -1420,7 +1420,7 @@ Establish the fonts with variables, so we don't need to change them on evey plac
   ;; fixed pitch variables
   (defvar my-fixed-font "Aporetic Sans Mono")
   (defvar my-fixed-font-height 110)
-  
+
   ;; My default font variables
   (defvar my-default-font "Aporetic Sans Mono")
   (defvar my-default-font-height 120)
@@ -1448,8 +1448,8 @@ Fonts we will be using for both modes:
    ;; fixed font config
    `(fixed-pitch
      ((t (:family ,my-fixed-font
-  		  :height ,my-fixed-font-height
-  		  :weight Medium))))
+  		:height ,my-fixed-font-height
+  		:weight Medium))))
 
    ;; default font config
    `(default
@@ -1621,15 +1621,15 @@ This comes from the old config, when I used the org-babel functions to tangled t
   (setq
    ;; tag alignment
    ;; this value allows for modern themes and column fill to work well together.
-    org-auto-align-tags t
-    org-tags-column -90
-    ;; org fold - edit in an invisible region
-    org-fold-catch-invisible-edits 'show-and-error
-    ;; C-a and C-e will move the cursor just the heading. No todo keyworks, no tags
-    org-special-ctrl-a/e t
-    ;; insert new heading after the current subtree
-    org-insert-heading-respect-content t
-  )
+   org-auto-align-tags t
+   org-tags-column -90
+   ;; org fold - edit in an invisible region
+   org-fold-catch-invisible-edits 'show-and-error
+   ;; C-a and C-e will move the cursor just the heading. No todo keyworks, no tags
+   org-special-ctrl-a/e t
+   ;; insert new heading after the current subtree
+   org-insert-heading-respect-content t
+   )
 #+end_src
 
 ** org templates modification
@@ -1769,9 +1769,9 @@ Remap the org-clock-in to a better key binding.
     "One-off function for `org-mode' task clocking.
 
   Behaviour:
-   * When there is no running clock, start the clock for the item at point.
-   * When there is already a running clock and `point' is at the item which is being clocked stop the corresponding clock.
-   * When there is already a running clock but `point' is not at the item which is being clocked, stop the clock and restart it for item at `point'."
+   ,* When there is no running clock, start the clock for the item at point.
+   ,* When there is already a running clock and `point' is at the item which is being clocked stop the corresponding clock.
+   ,* When there is already a running clock but `point' is not at the item which is being clocked, stop the clock and restart it for item at `point'."
     (interactive)
     (let ((interrupting (and (not org-clock-resolving-clocks-due-to-idleness)
                              (org-clocking-p))))
@@ -2095,12 +2095,12 @@ This lets you choose refiling targets in heading depth of 9, and lets you get al
 #+begin_src emacs-lisp
   ;; all the targets
   (setq org-refile-targets '(
-                               (org-agenda-files :maxlevel . 9)
-                               ("referencias.org" :maxlevel . 9)
-                               ("someday.org" :maxlevel . 9) ;; this is called someday.org now
-                               ("books.org" :maxlevel . 9)
-                               ("~/Nextcloud/escritura/retazos/ideas.org" :maxlevel . 9)
-    			     ))
+                             (org-agenda-files :maxlevel . 9)
+                             ("referencias.org" :maxlevel . 9)
+                             ("someday.org" :maxlevel . 9) ;; this is called someday.org now
+                             ("books.org" :maxlevel . 9)
+                             ("~/Nextcloud/escritura/retazos/ideas.org" :maxlevel . 9)
+    			   ))
 
   (setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
   ;;(setq org-refile-use-outline-path t)                  ; Show full paths for refiling
@@ -2113,7 +2113,7 @@ Enable org-habits.
 #+begin_src emacs-lisp
   (with-eval-after-load 'org
     (add-to-list 'org-modules 'org-habit t)
-  )
+    )
 #+end_src
 
 ** TODO Capture templates
@@ -2124,14 +2124,14 @@ Here I will add template captures for doing several things:
   			     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                                ;; task related captures
 
-  			      ("t" "My TODO task format." entry
+  			     ("t" "My TODO task format." entry
                                 (file+headline "~/Nextcloud/agenda/tasks.org" "Tasks")
   			      "** TODO %i%? %^g\n:PROPERTIES:\n:CATEGORY: task\n:END:\n"
                                 :empty-lines-after 1)
 
   			     ("p" "New project." entry
                                 (file+headline "~/Nextcloud/agenda/tasks.org" "Tasks")
-                                 "** TODO %? %^g\n:PROPERTIES:\n:COOKIE_DATA: todo recursive\n:CATEGORY: project\n:END:\n"
+                                "** TODO %? %^g\n:PROPERTIES:\n:COOKIE_DATA: todo recursive\n:CATEGORY: project\n:END:\n"
                                 :empty-lines-after 1)
 
   			     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2140,8 +2140,8 @@ Here I will add template captures for doing several things:
   			     ;; Everything that I find interesting to create, no matter what it is
   			     ("h" "Compost heap" item
                                 (file+headline "~/Nextcloud/escritura/retazos/compost_heap.org" "Compost heap")
-                                 "%i"
-                                 :empty-lines-after 1)
+                                "%i"
+                                :empty-lines-after 1)
 
   			     ;; A possible writing idea
                                ("w" "Writing idea." entry
@@ -2156,7 +2156,7 @@ Here I will add template captures for doing several things:
                                 :empty-lines-after 1)
                                )
         )
-  #+end_src
+#+end_src
 
 ** Capture to this buffer
 https://github.com/ballantony/emacs-writing/blob/main/DoomEmacsWriting.org
@@ -2522,19 +2522,19 @@ Opens a random org-roam node.
 Open a random roam node with the roamtag tag (that maps to a TODO entry).
 #+begin_src emacs-lisp
   (defun my/random-roam-todo-node ()
-  "Opens a random org-roam node with the roamtag tag."
-  (interactive)
-  (setq todo-nodes
-        (org-roam-db-query
-         ;; select the nodes that have the roamtag tag
-         [:select [nodes:file]
-                  :from tags
-                  :left-join nodes
-                  :on (= tags:node-id nodes:id)
-                  :where (like tag (quote "%\"roamtag\"%"))])
-        )
-  ;; get a random file from the list and open it
-  (find-file (car (nth (random (length todo-nodes)) todo-nodes))))
+    "Opens a random org-roam node with the roamtag tag."
+    (interactive)
+    (setq todo-nodes
+  	(org-roam-db-query
+  	 ;; select the nodes that have the roamtag tag
+  	 [:select [nodes:file]
+                    :from tags
+                    :left-join nodes
+                    :on (= tags:node-id nodes:id)
+                    :where (like tag (quote "%\"roamtag\"%"))])
+  	)
+    ;; get a random file from the list and open it
+    (find-file (car (nth (random (length todo-nodes)) todo-nodes))))
 
   (global-set-key (kbd "C-c n T") 'my/random-roam-todo-node)
 #+end_src
@@ -2604,10 +2604,10 @@ Extracted from the Emacs Writing Studio config.
 
 #+begin_src emacs-lisp
   (with-eval-after-load 'ox-latex
-  (add-to-list
-   'org-latex-classes
-   '("ews"
-     "\\documentclass[11pt, twoside, hidelinks]{memoir}
+    (add-to-list
+     'org-latex-classes
+     '("ews"
+       "\\documentclass[11pt, twoside, hidelinks]{memoir}
       \\setstocksize{9.25in}{7.5in}
       \\settrimmedsize{\\stockheight}{\\stockwidth}{*}
       \\setlrmarginsandblock{2cm}{1cm}{*} 
@@ -2629,10 +2629,10 @@ Extracted from the Emacs Writing Studio config.
       \\usepackage[authoryear]{natbib}
       \\bibliographystyle{apalike}
       \\usepackage{svg}"
-     ("\\chapter{%s}" . "\\chapter*{%s}")
-     ("\\section{%s}" . "\\section*{%s}")
-     ("\\subsection{%s}" . "\\subsection*{%s}")
-     ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))))
+       ("\\chapter{%s}" . "\\chapter*{%s}")
+       ("\\section{%s}" . "\\section*{%s}")
+       ("\\subsection{%s}" . "\\subsection*{%s}")
+       ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))))
 #+end_src
 
 
@@ -2699,7 +2699,7 @@ memoir is a class used to create beautiful documents.
 
 #+begin_src emacs-lisp
   (add-to-list 'org-latex-classes
-       '("memoir_draft"
+  	     '("memoir_draft"
                  "\\documentclass[a4paper,17pt,draft,openright,twoside]{memoir}
   \\usepackage{ucs}
   \\usepackage[utf8]{inputenc}
@@ -2754,7 +2754,7 @@ Same as memoir class above, but it start just with chapters, no "part"
 
 #+begin_src emacs-lisp
   (add-to-list 'org-latex-classes
-       '("memoir_chapter"
+  	     '("memoir_chapter"
                  "\\documentclass[a4paper,17pt,openright,twoside,final]{memoir}
   \\usepackage{ucs}
   \\usepackage[utf8]{inputenc}
@@ -2811,7 +2811,7 @@ Same as memoir class, but it start just with chapters, no "part"
 
 #+begin_src emacs-lisp
   (add-to-list 'org-latex-classes
-       '("memoir_chapter_draft"
+  	     '("memoir_chapter_draft"
                  "\\documentclass[a4paper,17pt,draft,openright,twoside]{memoir}
   \\usepackage{ucs}
   \\usepackage[utf8]{inputenc}
@@ -2819,7 +2819,7 @@ Same as memoir class, but it start just with chapters, no "part"
   \\usepackage{fontenc}
   \\usepackage{graphicx}
     \\usepackage{minted}
-  
+
   \% Para poner notas en los márgenes
   \\usepackage{todonotes}
 
@@ -2869,7 +2869,7 @@ Same as memoir class, but it start just with chapters, no "part"
 
 #+begin_src emacs-lisp
   (add-to-list 'org-latex-classes
-       '("reporting"
+  	     '("reporting"
                  "\\documentclass[a4paper,17pt,openright,twoside]{article}
   \\usepackage{ucs}
   \\usepackage[utf8]{inputenc}
@@ -2981,15 +2981,15 @@ https://lucidmanager.org/productivity/ricing-org-mode/
   (setq org-ellipsis "…")
 
   ;; Add frame borders and window dividers
-   (modify-all-frames-parameters
-    '((right-divider-width . 10)
-      (internal-border-width . 10)))
-   (dolist (face '(window-divider
-                   window-divider-first-pixel
-                   window-divider-last-pixel))
-     (face-spec-reset-face face)
-     (set-face-foreground face (face-attribute 'default :background)))
-   (set-face-background 'fringe (face-attribute 'default :background))
+  (modify-all-frames-parameters
+   '((right-divider-width . 10)
+     (internal-border-width . 10)))
+  (dolist (face '(window-divider
+                  window-divider-first-pixel
+                  window-divider-last-pixel))
+    (face-spec-reset-face face)
+    (set-face-foreground face (face-attribute 'default :background)))
+  (set-face-background 'fringe (face-attribute 'default :background))
 #+end_src
 
 *** Org with spaces instead of the asterisks
@@ -3004,10 +3004,10 @@ Show the invisible markers, only when the cursor is on them.
 /test/ this with *these* examples.
 
 #+begin_src emacs-lisp
-   (use-package org-appear
-     :ensure t
-     :hook (org-mode . org-appear-mode)
-     )
+  (use-package org-appear
+    :ensure t
+    :hook (org-mode . org-appear-mode)
+    )
 #+end_src
 
 *** org-modern
@@ -3128,15 +3128,15 @@ When you want to write something fast using org mode, but you don't want to crea
 
 #+begin_src emacs-lisp
   (defun my/scratch-org-buffer ()
-  "Create a new scratch buffer -- \*hello-world\*"
-  (interactive)
+    "Create a new scratch buffer -- \*hello-world\*"
+    (interactive)
     (let ((n 0)
           bufname buffer)
       (catch 'done
         (while t
           (setq bufname (concat "*org-scratch"
-            (if (= n 0) "" (int-to-string n))
-              "*"))
+  			      (if (= n 0) "" (int-to-string n))
+  			      "*"))
           (setq n (1+ n))
           (when (not (get-buffer bufname))
             (setq buffer (get-buffer-create bufname))
@@ -3233,7 +3233,7 @@ https://github.com/bastibe/org-journal
 Only mounted when at home, and clear directory is mounted.
 #+begin_src emacs-lisp
   (if (and my-homeenvironment-p
-  	    my-clear-directory-is-mounted-p)
+  	 my-clear-directory-is-mounted-p)
       (use-package org-journal
         :ensure t
         :bind
@@ -3256,8 +3256,7 @@ Seach a word in the spanish dictionary.
   (defun my/buscarae (palabra)
     "Busca una palabra en la RAE."
     (interactive "s¿Qué palabra quieres buscar? ")
-    (eww (concat "https://dle.rae.es/" palabra))
-    )
+    (eww (concat "https://dle.rae.es/" palabra)))
 #+end_src
 
 ** Buscar sinónimos
@@ -3274,10 +3273,10 @@ Seach for synonyms for Spanish words.
         
         ;; Display the temporary buffer in a side window
         (let ((side-window (display-buffer-in-side-window 
-                           temp-buffer 
-                           '((side . right) 
-                             (window-width . 80)
-                             (window-parameters . ((no-delete-other-windows . t)))))))
+                            temp-buffer 
+                            '((side . right) 
+                              (window-width . 80)
+                              (window-parameters . ((no-delete-other-windows . t)))))))
           
           ;; Select the side window and load eww there
           (with-selected-window side-window
@@ -3307,8 +3306,8 @@ Translate a word
 https://github.com/SavchenkoValeriy/emacs-powerthesaurus
 
 #+begin_src emacs-lisp
-    (use-package powerthesaurus
-      :ensure t)
+  (use-package powerthesaurus
+    :ensure t)
 #+end_src
 
 ** TODO ox-hugo
@@ -3367,15 +3366,15 @@ Manual: https://nobiot.github.io/org-remark/
 
     (org-remark-create "gray-plot"
                        '(:background "dim gray")
-  	       '(CATEGORY "plot"))
+  		     '(CATEGORY "plot"))
 
     (org-remark-create "salmon-character"
                        '(:background "salmon")
-  		 '(CATEGORY "character"))
+  		     '(CATEGORY "character"))
 
     (org-remark-create "yellow-dialogue"
                        '(:background "yellow")
-  		 '(CATEGORY "dialogue"))
+  		     '(CATEGORY "dialogue"))
 
     (org-remark-create "royal-blue-other"
                        '(:background "royal blue")
@@ -4101,7 +4100,7 @@ Depending on the size of the frame, I need to resize the visual-fill-column-widt
     (interactive)
     (let ((middle (/ (float (frame-width)) 2)))
       (setq my-middle-frame-size (truncate middle))
-      ;;(message "Middle of the frame: %i" my-middle-frame-size)
+      ;; (message "Middle of the frame: %i" my-middle-frame-size)
       ))
 
   (defun my/adjust-frame-size (frame)
