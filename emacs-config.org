@@ -104,6 +104,37 @@ Fine tune the garbage collection.
     )
 #+end_src
 
+** Alternative and better C-g function
+https://emacsredux.com/blog/2025/06/01/let-s-make-keyboard-quit-smarter/
+
+#+begin_src emacs-lisp :tangle yes
+  (defun er-keyboard-quit-dwim ()
+    "Do-What-I-Mean behaviour for a general `keyboard-quit'.
+
+  The generic `keyboard-quit' does not do the expected thing when
+  the minibuffer is open.  Whereas we want it to close the
+  minibuffer, even without explicitly focusing it.
+
+  The DWIM behaviour of this command is as follows:
+
+  - When the region is active, disable it.
+  - When a minibuffer is open, but not focused, close the minibuffer.
+  - When the Completions buffer is selected, close it.
+  - In every other case use the regular `keyboard-quit'."
+    (interactive)
+    (cond
+     ((region-active-p)
+      (keyboard-quit))
+     ((derived-mode-p 'completion-list-mode)
+      (delete-completion-window))
+     ((> (minibuffer-depth) 0)
+      (abort-recursive-edit))
+     (t
+      (keyboard-quit))))
+
+  (global-set-key [remap keyboard-quit] #'er-keyboard-quit-dwim)
+#+end_src
+
 ** Start with a maximized frame
 #+begin_src emacs-lisp
   (add-to-list 'default-frame-alist '(fullscreen . maximized))
@@ -4470,39 +4501,6 @@ This function relies on a property in the org-heading called WORDCOUNT, that is 
         (insert (format "| %s | %s |\n" (car pair) (cdr pair)))
         (org-table-align))))
 #+end_src
-
-** TODO Alternative and better C-g function
-https://emacsredux.com/blog/2025/06/01/let-s-make-keyboard-quit-smarter/
-
-#+begin_src emacs-lisp :tangle yes
-(defun er-keyboard-quit-dwim ()
-  "Do-What-I-Mean behaviour for a general `keyboard-quit'.
-
-The generic `keyboard-quit' does not do the expected thing when
-the minibuffer is open.  Whereas we want it to close the
-minibuffer, even without explicitly focusing it.
-
-The DWIM behaviour of this command is as follows:
-
-- When the region is active, disable it.
-- When a minibuffer is open, but not focused, close the minibuffer.
-- When the Completions buffer is selected, close it.
-- In every other case use the regular `keyboard-quit'."
-  (interactive)
-  (cond
-   ((region-active-p)
-    (keyboard-quit))
-   ((derived-mode-p 'completion-list-mode)
-    (delete-completion-window))
-   ((> (minibuffer-depth) 0)
-    (abort-recursive-edit))
-   (t
-    (keyboard-quit))))
-
-(global-set-key [remap keyboard-quit] #'er-keyboard-quit-dwim)
-#+end_src
-
-*
 
 ** TODO alternative word count
 https://chrismaiorana.com/summer-productivity-reset-emacs-functions/
