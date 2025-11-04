@@ -999,21 +999,25 @@ Different sizes for the different org headings.
     )
 #+end_src
 
-** TODO Open indirect buffer
+** Open indirect buffer
 Open a branch into a different frame, but the same buffer:
 
 TODO: Search how to check if there is another right frame open or not.
 #+begin_src emacs-lisp
-  (defun my/org-tree-open-in-right-frame ()
-    (interactive)
-    ;; make sure there is a right window. If not, open one.
-    (if (eq (window-right (selected-window)) nil)
-        (split-window-right)
-      )
+(defun my/org-tree-open-in-right-frame ()
+  "Open the current Org subtree in an indirect buffer in the right window.
+If there is only one window, create a right-side window first.
+Then, always move focus to that right window."
+  (interactive)
+  (let ((right-win (window-right (selected-window))))
+    ;; If there's no window to the right, create one
+    (unless right-win
+      (setq right-win (split-window-right)))
+    ;; Show the subtree in an indirect buffer
     (org-tree-to-indirect-buffer)
-    (windmove-right)
-    )
-
+    ;; Move to the right window
+    (select-window right-win)))
+ 
   (global-set-key (kbd "C-c 8" ) 'my/org-tree-open-in-right-frame)
 #+end_src
 
