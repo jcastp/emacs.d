@@ -398,7 +398,7 @@ Specially defined for spanish question and exclamation marks.
         )
 #+end_src
 
-** TODO vundo - undo with visual cues
+** vundo - undo with visual cues
 #+begin_src emacs-lisp
   (use-package vundo
     :ensure t
