@@ -4338,43 +4338,15 @@ https://github.com/Alexander-Miller/treemacs
     )
 #+end_src
 
-** CANCELED zoom - resize windows based on frame size
-https://github.com/cyrus-and/zoom
-
-#+begin_src emacs-lisp :tangle no
-  (use-package zoom
-    :ensure t
-    :config
-    (zoom-mode t)
-    ;; fixed percentage
-    ;;(custom-set-variables
-    ;; '(zoom-size '(0.7 . 0.7)))
-
-    ;; Resize the selected window according to the frame width, for example:
-    ;; - 120 columns and 75% of the frame height if the frame width is larger than 1280 pixels;
-    ;; - frame width less than 120 columns, then 90%
-    ;; - golden ratio instead 0.618
-      (defun size-callback ()
-        (cond ;;((> (frame-pixel-width) 1280) '(120 . 0.75))
-         ;; frame-width is less than 120 columns
-      	  ((< (frame-width) 120) '(0.90 . 0.90))
-  	  ;; else, we use other percentage
-              (t                            '(0.7 . 0.7))))
-
-    (custom-set-variables
-     '(zoom-size 'size-callback))
-    )
-#+end_src
-
 ** TODO org-transclusion
 To add text from other files, but without copying the information. It's just like a "window" to the other file, so you only maintain one copy of the information.
 #+begin_src emacs-lisp
-     (use-package org-transclusion
-     :ensure t
-     :config
-     (set-face-attribute 'org-transclusion-fringe nil
-  		       :foreground "green"
-  		       :background "green"))
+  (use-package org-transclusion
+  :ensure t
+  :config
+  (set-face-attribute 'org-transclusion-fringe nil
+  		    :foreground "green"
+  		    :background "green"))
 #+end_src
 
 ** TODO Count words in exported ascii mode
@@ -4537,6 +4509,34 @@ https://chrismaiorana.com/summer-productivity-reset-emacs-functions/
 #+begin_src emacs-lisp
   (use-package show-font
     :ensure t)
+#+end_src
+
+** CANCELED zoom - resize windows based on frame size
+https://github.com/cyrus-and/zoom
+
+#+begin_src emacs-lisp :tangle no
+  (use-package zoom
+    :ensure t
+    :config
+    (zoom-mode t)
+    ;; fixed percentage
+    ;;(custom-set-variables
+    ;; '(zoom-size '(0.7 . 0.7)))
+
+    ;; Resize the selected window according to the frame width, for example:
+    ;; - 120 columns and 75% of the frame height if the frame width is larger than 1280 pixels;
+    ;; - frame width less than 120 columns, then 90%
+    ;; - golden ratio instead 0.618
+      (defun size-callback ()
+        (cond ;;((> (frame-pixel-width) 1280) '(120 . 0.75))
+         ;; frame-width is less than 120 columns
+      	  ((< (frame-width) 120) '(0.90 . 0.90))
+  	  ;; else, we use other percentage
+              (t                            '(0.7 . 0.7))))
+
+    (custom-set-variables
+     '(zoom-size 'size-callback))
+    )
 #+end_src
 
 * my own keymap
