@@ -1363,7 +1363,7 @@ Function to change between dark and clear themes, based on past variables.
   
 ** Font setup
 Look at this https://idiocy.org/emacs-fonts-and-fontsets.html
-*** TODO fonts as variables
+*** fonts as variables
 Establish the fonts with variables, so we don't need to change them on evey place (like in fontaine modes)
 
 #+begin_src emacs-lisp
