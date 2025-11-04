@@ -4129,27 +4129,41 @@ https://www.emacswiki.org/emacs/EshellMultipleEshellBuffers
     (eshell 'N))
 #+end_src
 
-** TODO Center a buffer in screen
+** Center a buffer in screen
 Sometimes I have just a single window and this is a problem for me in a big screen. This code just centers the text in the middle.
 Useful for reading books.
 
-Extracted from here: https://bzg.fr/en/emacs-strip-tease/#sec-6
-
 #+begin_src emacs-lisp
-  ;; A small minor mode to use a big fringe
-  (defvar bzg-big-fringe-mode nil)
-  (define-minor-mode bzg-big-fringe-mode
-    "Minor mode to use big fringe in the current buffer."
-    :init-value nil
-    :global nil
-    :variable bzg-big-fringe-mode
-    :group 'editing-basics
-    (if (not bzg-big-fringe-mode)
-        (set-fringe-style nil)
-      (set-fringe-mode
-       (/ (- (frame-pixel-width)
-             (* 110 (frame-char-width)))
-          2))))
+(defcustom my/centered-content-width 100
+  "Width of the centered content area in characters."
+  :type 'integer
+  :group 'editing-basics)
+
+(defvar my/centered-mode nil)
+
+(define-minor-mode my/centered-mode
+  "Minor mode to center buffer content using margins and visual line mode."
+  :init-value nil
+  :global nil
+  :lighter " [Centered]"
+  :group 'editing-basics
+  (if my/centered-mode
+      (progn
+        (visual-line-mode 1)
+        (add-hook 'window-configuration-change-hook 
+                  #'my/centered--update-margins nil t)
+        (my/centered--update-margins))
+    (progn
+      (visual-line-mode -1)
+      (remove-hook 'window-configuration-change-hook 
+                   #'my/centered--update-margins t)
+      (set-window-margins nil 0 0))))
+
+(defun my/centered--update-margins ()
+  "Calculate and apply margins to center 100-character content."
+  (let* ((width (frame-width))
+         (margin (max 0 (/ (- width my/centered-content-width) 2))))
+    (set-window-margins nil margin margin)))
 #+end_src
 
 ** TODO markdown mode
@@ -4579,7 +4593,7 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
   (defvar-keymap my/key-prefix-map
     :doc "My personal keymap."
     "b" (cons "buffers" my/key-prefix-buffers-map)
-    "c" #'bzg-big-fringe-mode
+    "c" #'my/centered-mode
     ;;"d" #'dirvish
     "i" #'tempel-insert
     "o" (cons "online" my/key-prefix-online-map)
