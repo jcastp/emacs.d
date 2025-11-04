@@ -4097,16 +4097,6 @@ An Emacs minor mode to kill your inner editor! Every writer struggles to balance
     (freeze-it-go-back "Line"))
 #+end_src
 
-** TODO ready-player mode
-#+begin_src emacs-lisp :tangle no
-  (use-package ready-player
-    :vc (:url "https://github.com/xenodium/ready-player" :branch "main")
-    ;;:ensure (ready-player :type git :host github :repo "xenodium/ready-player")
-    :config
-    (ready-player-mode)
-    (setq ready-player-repeat t))
-#+end_src
-
 ** TODO eshell improvements
 
 *** TODO eshell-z
