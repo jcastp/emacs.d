@@ -1277,7 +1277,7 @@ https://github.com/kunalb/poet
     :defer t)
 #+end_src
 
-*** TODO doric themes
+*** doric themes
 #+begin_src emacs-lisp
   (use-package doric-themes
     :ensure t)
