@@ -4082,10 +4082,6 @@ To create the dynamic block in the file, add this in the org file
 #+END:
 #+end_src
 
-# TODOs
-# - Solve the issue for multiple asterisks being formated as bold
-# - Add a keyword to add the tags we want to exclude
-
 #+begin_src emacs-lisp
   (defun org-dblock-write:org-generate-wordcount-table (params)
     "Generate a table with heading names and their WORDCOUNT property in Org mode."
