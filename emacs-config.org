@@ -3536,62 +3536,136 @@ When I write, I find that I need to have full focus on the writing, and have a d
 - activates writeroom mode, with some custom setting (width, mainly)
 
 #+begin_src emacs-lisp
-    ;;(require 'consult) ;; to change the theme
-    ;;(require 'fontaine) ;; to change the fonts
+  ;;(require 'consult) ;; to change the theme
+  ;;(require 'fontaine) ;; to change the fonts
 
-    (defvar my-writing-env-p nil
-      "Status of my writing mode. Nil when not enabled, true when it is.")
+  ;;   (defvar my-writing-env-p nil
+  ;;     "Status of my writing mode. Nil when not enabled, true when it is.")
 
-    (defvar my-writing-env-normal-theme 'ef-deuteranopia-dark
-      "The theme I use for my normal environment.")
+  ;;   (defvar my-writing-env-normal-theme 'ef-deuteranopia-dark
+  ;;     "The theme I use for my normal environment.")
 
-    (defvar my-writing-env-work-theme 'poet
-      "The theme I use for my writing environment.")
+  ;;   (defvar my-writing-env-work-theme 'poet
+  ;;     "The theme I use for my writing environment.")
 
-    ;; This needs to be a fontaine preset
-    (defvar my-writing-env-normal-font 'regular
-      "The font I use for my normal environment.")
+  ;;   ;; This needs to be a fontaine preset
+  ;;   (defvar my-writing-env-normal-font 'regular
+  ;;     "The font I use for my normal environment.")
 
-    (defvar my-writing-env-work-font 'writing-big
-      "The font I use for my writing environment.")
+  ;;   (defvar my-writing-env-work-font 'writing-big
+  ;;     "The font I use for my writing environment.")
 
-    ;; helper function to turn on and off writeroom with some options
-    (defun my/own-writeroom (width flag)
-      "Define my own writeroom options.
-      WIDTH is the writeroom width reserved for text.
-    FLAG is the boolean to enable or disable writeroom."
-      (setq writeroom-width width)
-      (if flag
-          (writeroom--enable)
-        (writeroom--disable)
-        )
-      )
+  ;;   ;; helper function to turn on and off writeroom with some options
+  ;;   (defun my/own-writeroom (width flag)
+  ;;     "Define my own writeroom options.
+  ;;     WIDTH is the writeroom width reserved for text.
+  ;;   FLAG is the boolean to enable or disable writeroom."
+  ;;     (setq writeroom-width width)
+  ;;     (if flag
+  ;;         (writeroom--enable)
+  ;;       (writeroom--disable)
+  ;;       )
+  ;;     )
 
-    ;; main function to change to the writing mode.
-    (defun my/writing-env()
-      "Establish my own writing setting with just one function.
-  It changes theme, font, and writeroom mode."
-      (interactive)
-      (if (not my-writing-env-p)
-          (progn
-  	  ;;(display-line-numbers-mode 0)
-          	(consult-theme my-writing-env-work-theme)
-          	(fontaine-set-preset my-writing-env-work-font)
-            (my/own-writeroom 70 t)
-            (setq my-writing-env-p t)
-            )
-        ;; else part
-        (progn
-  	;;(display-line-numbers-mode 1)
-          (consult-theme my-writing-env-normal-theme)
-          (fontaine-set-preset my-writing-env-normal-font)
-          (my/own-writeroom 90 nil)
-          (setq my-writing-env-p nil)
-          )
-        )
-      )
+  ;;   ;; main function to change to the writing mode.
+  ;;   (defun my/writing-env()
+  ;;     "Establish my own writing setting with just one function.
+  ;; It changes theme, font, and writeroom mode."
+  ;;     (interactive)
+  ;;     (if (not my-writing-env-p)
+  ;;         (progn
+  ;; 	  ;;(display-line-numbers-mode 0)
+  ;;         	(consult-theme my-writing-env-work-theme)
+  ;;         	(fontaine-set-preset my-writing-env-work-font)
+  ;;           (my/own-writeroom 70 t)
+  ;;           (setq my-writing-env-p t)
+  ;;           )
+  ;;       ;; else part
+  ;;       (progn
+  ;; 	;;(display-line-numbers-mode 1)
+  ;;         (consult-theme my-writing-env-normal-theme)
+  ;;         (fontaine-set-preset my-writing-env-normal-font)
+  ;;         (my/own-writeroom 90 nil)
+  ;;         (setq my-writing-env-p nil)
+  ;;         )
+  ;;       )
+  ;;     )
 
-    ;;(global-set-key (kbd "C-c 2") 'my/writing)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  (require 'writeroom-mode)
+  (require 'fontaine)
+
+  (defgroup my-writing-env nil
+    "Customization group for writing environment."
+    :group 'convenience)
+
+  (defcustom my-writing-env-normal-theme 'ef-deuteranopia-dark
+    "Theme for normal environment."
+    :type 'symbol
+    :group 'my-writing-env)
+
+  (defcustom my-writing-env-work-theme 'poet
+    "Theme for writing environment."
+    :type 'symbol
+    :group 'my-writing-env)
+
+  (defcustom my-writing-env-normal-font 'regular
+    "Fontaine preset for normal environment."
+    :type 'symbol
+    :group 'my-writing-env)
+
+  (defcustom my-writing-env-work-font 'writing-big
+    "Fontaine preset for writing environment."
+    :type 'symbol
+    :group 'my-writing-env)
+
+  (defcustom my-writing-env-work-width 80
+    "Writeroom width for writing mode."
+    :type 'integer
+    :group 'my-writing-env)
+
+  (defcustom my-writing-env-normal-width 90
+    "Writeroom width for normal mode."
+    :type 'integer
+    :group 'my-writing-env)
+
+  (defvar-local my-writing-env--writeroom-active nil
+    "Track if writeroom was activated by writing-env mode.")
+
+  (defun my-writing-env--activate ()
+    "Activate writing environment."
+    (display-line-numbers-mode 1)
+    (consult-theme my-writing-env-work-theme)
+    (fontaine-set-preset my-writing-env-work-font)
+    (setq writeroom-width my-writing-env-work-width)
+    (writeroom-mode 1)
+    (setq my-writing-env--writeroom-active t))
+
+  (defun my-writing-env--deactivate ()
+    "Deactivate writing environment."
+    (display-line-numbers-mode -1)
+    (consult-theme my-writing-env-normal-theme)
+    (fontaine-set-preset my-writing-env-normal-font)
+    (when my-writing-env--writeroom-active
+      (writeroom-mode -1)
+      (setq my-writing-env--writeroom-active nil)))
+
+  ;;;###autoload
+  (define-minor-mode my-writing-env-mode
+    "Toggle a distraction-free writing environment.
+
+  This mode changes the theme, font, and enables writeroom-mode
+  with customized settings optimized for focused writing."
+    :lighter " ✍"
+    :global nil
+    (if my-writing-env-mode
+        (my-writing-env--activate)
+      (my-writing-env--deactivate)))
+
+  (provide 'my-writing-env-mode)
+
+
+  ;;(global-set-key (kbd "C-c 2") 'my/writing)
 #+end_src
 
 ** TODO My editing function
@@ -4572,7 +4646,7 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
   (defvar-keymap my/key-prefix-writing-map
     :doc "Functions related to writing"
     ;; writing mode
-    "a" #'my/writing-env
+    "a" #'my-writing-env-mode
     "e" #'my/editing-windows
     ;; writing exercises
     "w" #'my/create-writing-exercise
