@@ -3175,6 +3175,8 @@ https://github.com/alphapapa/org-ql
     ("C-c q s" . org-ql-search)
     ("C-c q v" . org-ql-view)
     )
+  ;; adding this to load some org-ql libraries on startup
+  (require 'org-ql-search)
 #+end_src
 
 *** graphs via dot
