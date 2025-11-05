@@ -2730,7 +2730,6 @@ Extracted from the Emacs Writing Studio config.
        ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))))
 #+end_src
 
-
 **** TODO =Memoir= class for org2latex (complete these options)
 https://www.ctan.org/pkg/memoir
 https://mirror.ibcp.fr/pub/CTAN/macros/latex/contrib/memoir/memman.pdf
