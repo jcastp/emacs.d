@@ -4758,8 +4758,12 @@ To create the dynamic block in the file, add this in the org file
   	 (if (not (and tags (member "noexport" tags)))	       
   	   ;; add the data in the table-data for each heading
   	   (push (cons
-  		  ;; add the asterisks (ascii 42), the space (ascii 32) and the heading
-  		  (format "%s%s%s" (make-string level 42) (make-string 1 32) (org-link-make-string heading))
+  		  ;; add the asterisks (ascii 42), the space (ascii 32) and the heading, but when more than 2 asterisks are present, it interprets as a bold marking character
+  		  ;;(format "%s%s%s" (make-string level 42) (make-string 1 32) (org-link-make-string heading))
+  		  ;; this format provides the literal strings, but org-appear makes it unaligned
+  		  (format "=%s= %s" (make-string level 42) (org-link-make-string heading))
+  		  ;; This format escapes the asterisks, making the appearance confusing
+  		  ;;(format "%s %s" (replace-regexp-in-string "\\*" "\\\\*" (make-string level 42)) (org-link-make-string heading))
   		  ;; add the wordcount
   		  wordcount)
   		 ;; add all to the table-data
