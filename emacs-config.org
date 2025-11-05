@@ -2129,36 +2129,37 @@ This is the config for the org-superagenda mode
     )
 #+end_src
 
-*** TODO Restrict agenda to project
+*** Restrict agenda to project
 https://github.com/ballantony/emacs-writing/blob/main/DoomEmacsWriting.org
 
 Agenda restricted to the current project, to keep track of its TODOs.
 I will use it to keep track of the pending tasks of the writing projects.
 
 #+begin_src emacs-lisp
-(defun my/agenda-restrict-to-current-project ()
-  "Show the Org agenda limited to the `.org` files of the current project.
+  (defun my/agenda-restrict-to-current-project ()
+    "Show the Org agenda limited to the `.org` files of the current project.
 
-If `project-current' cannot determine a project, fall back to the
-current buffer’s directory."
-  (interactive)
-  ;; 1️⃣ Determine the project root.
-  (let* ((proj   (or (project-current)
-                     ;; No project detected – use the directory of the
-                     ;; current buffer as a sensible fallback.
-                     (let ((default-directory (or (buffer-file-name)
-                                                  default-directory)))
-                       (list default-directory))))
-         (root   (car (project-roots proj)))   ; e.g. \"/home/user/foo/\"
-         ;; 2️⃣ Gather all *.org* files under that root.
-         (org-files
-          (directory-files-recursively
-           root "\\.org\\'" nil
-           ;; Optional: ignore hidden directories like .git, .svn, etc.
-           (lambda (dir) (not (string-match-p "/\\.[^/]+\\'" dir))))))
-    ;; 3️⃣ Temporarily bind `org-agenda-files' to that list and run the agenda.
-    (let ((org-agenda-files org-files))
-      (org-agenda))))   ;; “a” = the default agenda view 
+  If `project-current' cannot determine a project, fall back to the
+  current buffer’s directory."
+    (interactive)
+    ;; Determine the project root.
+    (let* ((proj   (or (project-current)
+                       ;; No project detected – use the directory of the
+                       ;; current buffer as a sensible fallback.
+                       (let ((default-directory (or (buffer-file-name)
+                                                    default-directory)))
+                         (list default-directory))))
+           (root   (car (project-roots proj)))   ; e.g. \"/home/user/foo/\"
+           ;; Gather all *.org* files under that root.
+           (org-files
+            (directory-files-recursively
+             root "\\.org\\'" nil
+             ;; Optional: ignore hidden directories like .git, .svn, etc.
+             (lambda (dir) (not (string-match-p "/\\.[^/]+\\'" dir))))))
+      ;; Temporarily bind `org-agenda-files' to that list and run the agenda.
+      (let ((org-agenda-files org-files))
+        (org-agenda))))   ;; generic agenda view
+        ;; (org-agenda nil "a"))))   ;; “a” = the default agenda view 
 
   (global-set-key (kbd "C-c A") 'my/agenda-restrict-to-current-project)
 #+end_src
