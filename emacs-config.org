@@ -4834,7 +4834,7 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
     "w" #'my/ews-org-count-words
     "c" #'my/org-count-words
     ;; writing exercises
-    "w" #'my/create-writing-exercise
+    "r" #'my/create-writing-exercise
     "q" #'my/create-empty-writing-file
     "s" #'my/sinonimo
     )
