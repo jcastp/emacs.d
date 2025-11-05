@@ -4402,7 +4402,7 @@ https://github.com/emacs-dashboard/emacs-dashboard
 
 * Testing
 Here there will be all the configs I'm testing, before committing them to the main config.
-** TODO resize the column fill and orgmode tags align
+** CANCELED resize the column fill and orgmode tags align
 Depending on the size of the frame, I need to resize the visual-fill-column-width and the org tags, so everything looks good.
 
 #+begin_src emacs-lisp :tangle no
