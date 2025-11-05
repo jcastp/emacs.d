@@ -4657,40 +4657,48 @@ These functions avoid that.
 # - Do not count words inside #+begin_comment delimiters
 
 #+begin_src emacs-lisp
-(defun org-in-commented-line ()
-  "Return non-nil if point is in a commented line."
-  (save-excursion
-    (beginning-of-line)
-    (looking-at-p "^[ \t]*#")))
-
-(defun org-in-drawer-p ()
-  "Return non-nil if point is in an Org mode drawer."
-  (save-excursion
-    (beginning-of-line)
-    (looking-at-p "^[ \t]*:[a-zA-Z]+:")))
-
-(defun org-at-property-p ()
-  "Return non-nil if point is at an Org mode property."
-  (save-excursion
-    (beginning-of-line)
-    (looking-at-p "^[ \t]*:[a-zA-Z]+:")))
-
-(defun my/org-count-words (&optional begin end)
-  "Count words in the region if active, or the whole buffer if not.
-Ignores Org mode comments, drawers, and properties."
-  (interactive)
-  (let ((begin (or begin (if (use-region-p) (region-beginning) (point-min))))
-        (end (or end (if (use-region-p) (region-end) (point-max))))
-        (word-count 0))
+  (defun org-in-commented-line ()
+    "Return non-nil if point is in a commented line."
     (save-excursion
-      (goto-char begin)
-      (while (re-search-forward "\\w+" end t)
-        (unless (or (org-in-commented-line)
-                    (org-in-drawer-p)
-                    (org-at-property-p))
-          (setq word-count (1+ word-count)))))
-    (message "Word count: %d" word-count)
-    word-count))
+      (beginning-of-line)
+      (looking-at-p "^[ \t]*#")))
+
+  (defun org-in-drawer-p ()
+    "Return non-nil if point is in an Org mode drawer."
+    (save-excursion
+      (beginning-of-line)
+      (looking-at-p "^[ \t]*:[a-zA-Z]+:")))
+
+  (defun org-in-heading-p ()
+    "Return non-nil if point is in an Org mode heading."
+    (save-excursion
+      (beginning-of-line)
+      (looking-at-p "^*")))
+
+  (defun org-at-property-p ()
+    "Return non-nil if point is at an Org mode property."
+    (save-excursion
+      (beginning-of-line)
+      (looking-at-p "^[ \t]*:[a-zA-Z0-9_-]+:")))
+  ;;(looking-at-p "^[ \t]*:[a-zA-Z]+:")
+
+  (defun my/org-count-words (&optional begin end)
+    "Count words in the region if active, or the whole buffer if not.
+  Ignores Org mode comments, drawers, and properties."
+    (interactive)
+    (let ((begin (or begin (if (use-region-p) (region-beginning) (point-min))))
+          (end (or end (if (use-region-p) (region-end) (point-max))))
+          (word-count 0))
+      (save-excursion
+        (goto-char begin)
+        (while (re-search-forward "\\w+" end t)
+          (unless (or (org-in-commented-line)
+                      (org-in-drawer-p)
+  		    (org-in-heading-p)
+                      (org-at-property-p))
+            (setq word-count (1+ word-count)))))
+      (message "Word count: %d" word-count)
+      word-count))
 #+end_src
 
 ** TODO Add a property for orgmode headings with an advanced word count function
