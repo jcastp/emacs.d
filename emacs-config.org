@@ -3016,12 +3016,6 @@ emacs can't find ditaa, so we have to specify the right location ourselves.
   (setq org-ditaa-jar-path "/usr/bin/ditaa")
 #+end_src
 
-*** TODO plantuml config
-#+begin_src emacs-lisp
-  (setq org-plantuml-exec-mode 'plantuml)
-  (setq org-plantuml-executable-path "/usr/bin/plantuml")
-#+end_src
-
 ** Orgmode visuals config
 This section manages the visual look of org mode.
 
