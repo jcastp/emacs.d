@@ -2202,19 +2202,40 @@ Here I will add template captures for doing several things:
 ** Capture to this buffer
 https://github.com/ballantony/emacs-writing/blob/main/DoomEmacsWriting.org
 
-Used to capture notes in this file. Useful to maintain notes and snippets separated by projects. I will use this for my writing projects.
+Used to capture notes in this file. Useful to maintain notes and snippets separated by projects. I will use this for my writing projects:
+- For general purpose files or directories, it uses the "Notas" header on that file.
+- For writing projects, where the =notas/notas.org= file exists, it will use that file.
 #+begin_src emacs-lisp
   (defun my/capture-to-this-buffer ()
-    "Capture note to this buffer"
+    "Capture a note to a dedicated `notas/notas.org` file if it exists.
+
+  If a file named `notas/notas.org` is found in a sub‑directory of the
+  current buffer’s directory, the capture is stored there under the
+  headline \"Notes\".  When the file cannot be located, the capture is
+  saved to the current buffer’s file (also under the headline
+  \"Notes\")."
     (interactive)
-    (cond  ((not  (eq major-mode 'org-mode))
-            (message "Can't capture to non org-mode buffer"))
-           (t
-            (let* ((this-file (buffer-file-name))
-                   (org-capture-templates
-                    `(("t" "Todo" entry (file+headline ,this-file "Notes")
-                       "** TODO %?"))))
-              (org-capture)))))
+    ;; 1️⃣ Make sure we are in an Org buffer.
+    (unless (derived-mode-p 'org-mode)
+      (user-error "Can’t capture to a non‑Org buffer"))
+
+    ;; 2️⃣ Resolve the two possible target files.
+    (let* ((cur-dir   (or (file-name-directory (buffer-file-name))
+                          default-directory))   ; safety net
+           (fallback  (buffer-file-name))                ; current file
+           (alt-path  (expand-file-name "notas/notas.org" cur-dir)))
+
+      ;; 3️⃣ Choose the destination that actually exists.
+      (let ((target (if (file-exists-p alt-path) alt-path fallback)))
+        ;; 4️⃣ Build a temporary capture template that points at TARGET.
+        (let ((org-capture-templates
+               `(("t" "Todo"
+                  entry
+                  (file+headline ,target "Notas")
+                  "** TODO %?"))))
+          ;; 5️⃣ Run the capture UI.
+          (org-capture)))))
+
   (global-set-key (kbd "C-c C") 'my/capture-to-this-buffer)
 #+end_src
 
