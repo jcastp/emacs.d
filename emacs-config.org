@@ -4652,9 +4652,6 @@ https://chrismaiorana.com/summer-productivity-reset-emacs-functions/
 
 These functions avoid that.
 
-# TODO
-# - Do not count words inside #+begin_comment delimiters
-
 #+begin_src emacs-lisp
   (defun org-in-commented-line ()
     "Return non-nil if point is in a commented line."
@@ -4681,9 +4678,24 @@ These functions avoid that.
       (looking-at-p "^[ \t]*:[a-zA-Z0-9_-]+:")))
   ;;(looking-at-p "^[ \t]*:[a-zA-Z]+:")
 
+  (defun org-in-block-p ()
+    "Return non-nil if point is inside an Org mode #+BEGIN...#+END block.
+  Checks for any block type (SRC, EXAMPLE, QUOTE, EXPORT, etc.)."
+    (save-excursion
+      (let ((current-line (line-number-at-pos)))
+        ;; Search backward for opening #+BEGIN_
+        (when (re-search-backward "^[ \t]*#\\+BEGIN_" nil t)
+          (let ((begin-line (line-number-at-pos)))
+            ;; Search forward for closing #+END_
+            (when (re-search-forward "^[ \t]*#\\+END_" nil t)
+              (let ((end-line (line-number-at-pos)))
+                ;; Return t if current line is between the markers
+                (and (>= current-line begin-line)
+                     (<= current-line end-line)))))))))
+
   (defun my/org-count-words (&optional begin end)
     "Count words in the region if active, or the whole buffer if not.
-  Ignores Org mode comments, drawers, and properties."
+    Ignores Org mode comments, drawers, and properties."
     (interactive)
     (let ((begin (or begin (if (use-region-p) (region-beginning) (point-min))))
           (end (or end (if (use-region-p) (region-end) (point-max))))
@@ -4693,8 +4705,10 @@ These functions avoid that.
         (while (re-search-forward "\\w+" end t)
           (unless (or (org-in-commented-line)
                       (org-in-drawer-p)
-  		    (org-in-heading-p)
-                      (org-at-property-p))
+    		  (org-in-heading-p)
+                      (org-at-property-p)
+  		    ;; this could be not very good if we use the quote in a book
+  		    (org-in-block-p))
             (setq word-count (1+ word-count)))))
       (message "Word count: %d" word-count)
       word-count))
