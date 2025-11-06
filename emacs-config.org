@@ -4018,7 +4018,7 @@ These functions avoid that.
 
   (defun org-in-block-p ()
     "Return non-nil if point is inside an Org mode #+BEGIN...#+END block.
-  Checks for any block type (SRC, EXAMPLE, QUOTE, EXPORT, etc.)."
+      Checks for any block type (SRC, EXAMPLE, QUOTE, EXPORT, etc.)."
     (save-excursion
       (let ((current-line (line-number-at-pos)))
         ;; Search backward for opening #+BEGIN_
@@ -4031,9 +4031,33 @@ These functions avoid that.
                 (and (>= current-line begin-line)
                      (<= current-line end-line)))))))))
 
+  (defcustom org-tracktable-ignore-tags '("noexport")
+    "A list of tags to ignore when counting words.
+  Content under headings with any of these tags will be excluded from word count.
+  Common values might include \"noexport\", \"ignore\", or \"nowc\"."
+    :type '(repeat string) :group 'convenience)
+
+  (defun org-under-heading-with-tag-p (tags-to-ignore)
+    "Return non-nil if point is under a heading that has any tag from TAGS-TO-IGNORE.
+    TAGS-TO-IGNORE should be a list of strings like (\"noexport\" \"ignore\" \"nowc\").
+    Returns nil if point is before the first heading or not under a tagged heading."
+    (when tags-to-ignore
+      (save-excursion
+        ;; Try to find the current heading, return nil if before first heading
+        (condition-case nil
+            (when (org-back-to-heading t)
+              (let ((heading-tags (org-get-tags)))
+                ;; Check if any of the heading tags match our ignore list
+                (when heading-tags
+                  (cl-some (lambda (tag)
+                             (member tag tags-to-ignore))
+                           heading-tags))))
+          ;; Catch the error when before first headline and return nil
+          (error nil)))))
+
   (defun my/org-count-words (&optional begin end)
     "Count words in the region if active, or the whole buffer if not.
-    Ignores Org mode comments, drawers, and properties."
+        Ignores Org mode comments, drawers, and properties."
     (interactive)
     (let ((begin (or begin (if (use-region-p) (region-beginning) (point-min))))
           (end (or end (if (use-region-p) (region-end) (point-max))))
@@ -4043,10 +4067,11 @@ These functions avoid that.
         (while (re-search-forward "\\w+" end t)
           (unless (or (org-in-commented-line)
                       (org-in-drawer-p)
-    		  (org-in-heading-p)
+        		    (org-in-heading-p)
                       (org-at-property-p)
-  		    ;; this could be not very good if we use the quote in a book
-  		    (org-in-block-p))
+      		    ;; this could be not very good if we use the quote in a book
+      		    (org-in-block-p)
+  		    (org-under-heading-with-tag-p org-tracktable-ignore-tags))
             (setq word-count (1+ word-count)))))
       (message "Word count: %d" word-count)
       word-count))
