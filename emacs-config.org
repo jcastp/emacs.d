@@ -3287,7 +3287,7 @@ https://lists.gnu.org/archive/html/emacs-orgmode/2011-04/msg00713.html
 A table to track the advance of your writing
 https://github.com/tty-tourist/org-tracktable
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package org-tracktable
     :ensure t
     :if (not my-workenvironment-p)
@@ -3295,6 +3295,11 @@ https://github.com/tty-tourist/org-tracktable
     (global-set-key (kbd "C-c 3") 'org-tracktable-status)
     (global-set-key (kbd "C-c 4") 'org-tracktable-write)
     )
+#+end_src
+
+Loading my new implementation.
+#+begin_src emacs-lisp
+  (load-file "~/Nextcloud/escritura/software/org-tracktable/org-tracktable.el")
 #+end_src
 
 ** TODO guess-language
