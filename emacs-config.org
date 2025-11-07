@@ -3293,7 +3293,7 @@ The main function is =org-context-count-words=, that has an extensive documentat
   (load-file "./elisp/org-context-extended.el")
 #+end_src
 
-** TODO Add a property for orgmode headings with an advanced word count function
+** Add a property for orgmode headings with an advanced word count function
 Modified the Emacs Writing Studio ([[https://github.com/pprevos/emacs-writing-studio][EWS]]) function to use my orgmode word count function.
 It adds a property, called WORDCOUNT, to the headings so we can leverage in reports or other actions.
 It also adds a custom id under every org heading, so we can link back to it.
