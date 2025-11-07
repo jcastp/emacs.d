@@ -3290,10 +3290,11 @@ These functions avoid that.
 The main function is =org-context-count-words=, that has an extensive documentation.
 
 #+begin_src emacs-lisp
-  ;; (load-file "./elisp/org-context-extended.el")
   (use-package org-context-extended
+    :ensure t
     :vc (:url "https://codeberg.org/jcastp/org-context-extended"
-  	    :branch "main"))
+  	    :branch "main"
+  	    :rev :newest))
 #+end_src
 
 ** Add a property for orgmode headings with an advanced word count function
@@ -3367,26 +3368,16 @@ To create the dynamic block in the file, add this in the org file
 #+end_src
 
 ** word count track table
-A table to track the advance of your writing
-https://github.com/tty-tourist/org-tracktable
-
-#+begin_src emacs-lisp :tangle no
-  (use-package org-tracktable
-    :ensure t
-    :if (not my-workenvironment-p)
-    :config
-    (global-set-key (kbd "C-c 3") 'org-tracktable-status)
-    (global-set-key (kbd "C-c 4") 'org-tracktable-write)
-    )
-#+end_src
+A table to track the advance of your writing: https://codeberg.org/jcastp/org-tracktable
 
 Loading my new implementation from my personal repository. This depends on the =org-context-extended.el=  file.
 
 #+begin_src emacs-lisp
-  ;; (load-file "./elisp/org-tracktable.el")
   (use-package org-tracktable
+    :ensure t
     :vc (:url "https://codeberg.org/jcastp/org-tracktable"
-  	    :branch "main"))
+  	    :branch "main"
+  	    :rev :newest))
 #+end_src
 
 ** TODO guess-language
