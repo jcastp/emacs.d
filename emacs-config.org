@@ -3283,7 +3283,7 @@ https://lists.gnu.org/archive/html/emacs-orgmode/2011-04/msg00713.html
     :ensure t)
 #+end_src
 
-** Count words in orgmode, excluding comments, drawers, and properties
+** Count words in orgmode, excluding comments, drawers, properties, etc
 =count-words= function is good, but in orgmode still counts all the words, including comments, properties,drawers, etc.
 
 These functions avoid that.
@@ -3380,7 +3380,7 @@ https://github.com/tty-tourist/org-tracktable
     )
 #+end_src
 
-Loading my new implementation. This depends on the =org-context-extended.el=  file. Pending to convert this into a singular unit.
+Loading my new implementation from my personal repository. This depends on the =org-context-extended.el=  file.
 
 #+begin_src emacs-lisp
   ;; (load-file "./elisp/org-tracktable.el")
