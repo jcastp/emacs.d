@@ -3290,7 +3290,10 @@ These functions avoid that.
 The main function is =org-context-count-words=, that has an extensive documentation.
 
 #+begin_src emacs-lisp
-  (load-file "./elisp/org-context-extended.el")
+  ;; (load-file "./elisp/org-context-extended.el")
+  (use-package org-context-extended
+    :vc (:url "https://codeberg.org/jcastp/org-context-extended"
+  	    :branch "main"))
 #+end_src
 
 ** Add a property for orgmode headings with an advanced word count function
@@ -3380,7 +3383,10 @@ https://github.com/tty-tourist/org-tracktable
 Loading my new implementation. This depends on the =org-context-extended.el=  file. Pending to convert this into a singular unit.
 
 #+begin_src emacs-lisp
-  (load-file "./elisp/org-tracktable.el")
+  ;; (load-file "./elisp/org-tracktable.el")
+  (use-package org-tracktable
+    :vc (:url "https://codeberg.org/jcastp/org-tracktable"
+  	    :branch "main"))
 #+end_src
 
 ** TODO guess-language
