@@ -1,4 +1,4 @@
-;;; org-context.el --- Helper functions for detecting Org mode context
+;;; org-context-extended.el --- Helper functions for detecting Org mode context
 
 ;; Author: jcastp
 ;; Created: 2025-11-06
@@ -202,4 +202,4 @@ tables, blocks, and content under tags specified in `org-context-ignore-tags')."
     word-count))
 
 (provide 'org-context)
-;;; org-context.el ends here
+;;; org-context-extended.el ends here

@@ -3284,12 +3284,13 @@ https://lists.gnu.org/archive/html/emacs-orgmode/2011-04/msg00713.html
 #+end_src
 
 ** Count words in orgmode, excluding comments, drawers, and properties
-=count-words= function is good, but in orgmode still counts all the words, including comments, properties, and drawers.
+=count-words= function is good, but in orgmode still counts all the words, including comments, properties,drawers, etc.
 
 These functions avoid that.
+The main function is =org-context-count-words=, that has an extensive documentation.
 
 #+begin_src emacs-lisp
-  (load-file "./elisp/org-context.el")
+  (load-file "./elisp/org-context-extended.el")
 #+end_src
 
 ** TODO Add a property for orgmode headings with an advanced word count function
