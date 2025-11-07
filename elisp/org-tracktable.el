@@ -44,6 +44,12 @@
 ;; - org-tracktable-table-name: The name given to the table inserted by
 ;;   org-tracktable-insert-table.
 
+;; Word counting behavior:
+;; This package uses `org-context-count-words' from org-context.el for word
+;; counting. Words are counted while ignoring comments, drawers, headings,
+;; properties, tables, blocks, and content under headings with tags specified
+;; in `org-context-ignore-tags' (customizable in org-context.el).
+
 ;; For additional info on use and customization, see the README in the
 ;; github repo.
 
@@ -79,17 +85,6 @@ inserting the table, to ensure consistency.  The default name is
 'tracktable'."
   :type 'string :group 'convenience)
 
-(defcustom org-tracktable-ignore-blocks '("src" "drawer" "comment")
-  "A list of strings containing names of blocks to ignore.
-See `org-in-block-p' for more detail."
-  :type '(repeat string) :group 'convenience)
-
-(defcustom org-tracktable-ignore-tags '("noexport")
-  "A list of tags to ignore when counting words.
-Content under headings with any of these tags will be excluded from word count.
-Common values might include \"noexport\", \"ignore\", or \"nowc\"."
-  :type '(repeat string) :group 'convenience)
-
 (defun org-tracktable-tracktable-exists-p ()
   "Check if the 'tracktable' exists in buffer."
   (save-excursion
@@ -114,7 +109,7 @@ Common values might include \"noexport\", \"ignore\", or \"nowc\"."
   "Calculate words written today.
 It does this by substracting last entry that isn't from today from
 current word count."
-  (let ((current-wc (org-tracktable-word-count (point-min) (point-max)))
+  (let ((current-wc (org-context-count-words (point-min) (point-max) t t t t t t org-context-ignore-tags))
         (last-entry (org-table-get-remote-range org-tracktable-table-name "@>$4" ))
         (second-last-entry (org-table-get-remote-range org-tracktable-table-name "@>>$4" )))
     (if (org-tracktable-last-entry-today-p)
@@ -124,7 +119,7 @@ current word count."
 (defun org-tracktable-current-count ()
   "Reports total number of words in the buffer.
 This function is used in the table formula."
-   (let ((wc (org-tracktable-word-count (point-min) (point-max))))
+   (let ((wc (org-context-count-words (point-min) (point-max) t t t t t t org-context-ignore-tags)))
      (format "%d" wc)))
 
 (defun org-tracktable-stamp ()
@@ -164,7 +159,7 @@ If `org-tracktable-daily-goal' is set to more than 0, show % of daily goal."
        (list (region-beginning) (region-end))
      (list (point-min) (point-max))))
   (message "%s" (concat (format "%d words in %s. "
-                   (org-tracktable-word-count beg end)
+                   (org-context-count-words beg end t t t t t t org-context-ignore-tags)
                    (if (use-region-p) "region" "buffer"))
                    (when (org-tracktable-tracktable-exists-p)
                        (format "%d words written today. " (org-tracktable-written-today)))
@@ -201,24 +196,6 @@ when you're done writing for the day."
            (org-table-recalculate)
            (message "New entry added. Comments go here. Go back with C-c &."))))
     (message "Tabel '%s' doesn't exist." org-tracktable-table-name)))
-
-(defun org-tracktable-word-count (beg end)
-  "Count words between positions BEG and END.
-Ignores: heading lines, comments, drawers, properties, blocks,
-and content under headings with tags specified in `org-tracktable-ignore-tags'."
-  (let ((word-count 0))
-    (save-excursion
-      (goto-char beg)
-      (while (re-search-forward "\\w+" end t)
-        (unless (or (org-context-in-commented-line)
-                    (org-context-in-drawer-p)
-                    (org-context-in-heading-p)
-                    (org-context-at-property-p)
-                    ;; this could be not very good if we use the quote block in a book
-                    (org-context-in-block-p)
-                    (org-context-under-heading-with-tag-p org-tracktable-ignore-tags))
-          (setq word-count (1+ word-count)))))
-    word-count))
 
 (provide 'org-tracktable)
 ;;; org-tracktable.el ends here
