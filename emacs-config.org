@@ -3377,7 +3377,8 @@ https://github.com/tty-tourist/org-tracktable
     )
 #+end_src
 
-Loading my new implementation.
+Loading my new implementation. This depends on the =org-context-extended.el=  file. Pending to convert this into a singular unit.
+
 #+begin_src emacs-lisp
   (load-file "./elisp/org-tracktable.el")
 #+end_src
