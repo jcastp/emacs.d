@@ -146,7 +146,7 @@ org-mode
 	":Que-esta-en-juego: " n
 	":Emocion: " n
 	":Comentario: " n
-	":WORDCOUNT: "
+	":WORDCOUNT: " n
 	":END:")
 
 (5how
