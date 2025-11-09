@@ -3812,8 +3812,8 @@ I want to open my own view to edit my writing.
   	  my-editing--saved-fill-column-width visual-fill-column-width
   	  ;; NEW: store the *actual* active preset
   	  my-editing--saved-fontaine-preset
-  	  (when (fboundp 'fontaine-current-preset)
-              (fontaine-current-preset)))
+  	  (when (boundp 'fontaine-current-preset)
+              fontaine-current-preset))
 
       ;; ----- Layout -----
       (delete-other-windows)
@@ -3857,7 +3857,7 @@ I want to open my own view to edit my writing.
       (setq visual-fill-column-width my-editing--saved-fill-column-width))
 
     ;; Fontaine preset
-    (when (and (boundp 'fontaine-set-preset)
+    (when (and (boundp 'fontaine-current-preset)
                my-editing--saved-fontaine-preset)
       (fontaine-set-preset my-editing--saved-fontaine-preset))
 
