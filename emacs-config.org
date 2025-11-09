@@ -3367,7 +3367,7 @@ To create the dynamic block in the file, add this in the org file
         (org-table-align))))
 #+end_src
 
-** word count track table
+** org-tracktable - daily word count track table
 A table to track the advance of your writing: https://codeberg.org/jcastp/org-tracktable
 
 Loading my new implementation from my personal repository. This depends on the =org-context-extended.el=  file.
