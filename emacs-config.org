@@ -4068,6 +4068,17 @@ The macro expands to the literal text SCENE-BREAK.
 
 After Org finishes generating the export, the filter org-export-replace-scene-breaks replaces all SCENE-BREAK markers with the correct text (three newlines, <br>, etc.).
 
+** TODO emacs-writing-template for novel writing
+My personal package for creating novel files templates for rapid deployment.
+
+#+begin_src emacs-lisp
+  (use-package emacs-writing-template
+    :ensure t
+    :vc (:url "https://codeberg.org/jcastp/emacs-writing-template"
+  	    :branch "main"
+  	    :rev :newest))
+#+end_src
+
 * Programming
 ** General
 
