@@ -184,7 +184,7 @@ Only mounted when at home, and clear directory is mounted.
 Seach a word in the spanish dictionary.
 
 #+begin_src emacs-lisp
-  (defun my/buscarae (palabra)
+  (defun writing/buscarae (palabra)
     "Busca una palabra en la RAE."
     (interactive "s¿Qué palabra quieres buscar? ")
     (eww (concat "https://dle.rae.es/" palabra)))
@@ -194,7 +194,7 @@ Seach a word in the spanish dictionary.
 Seach for synonyms for Spanish words.
 
 #+begin_src emacs-lisp
-  (defun my/sinonimo (palabra)
+  (defun writing/sinonimo (palabra)
     "Busca una palabra en un diccionario de sinónimos en una ventana lateral"
     (interactive "s¿Qué palabra quieres buscar? ")
     (let ((url (concat "https://www.wordreference.com/sinonimos/" palabra)))
@@ -226,7 +226,7 @@ Seach for synonyms for Spanish words.
 Translate a word
 
 #+begin_src emacs-lisp
-  (defun my/translate (palabra)
+  (defun writing/translate (palabra)
     "Traduccion de inglés a español"
     (interactive "s¿Qué palabra quieres buscar? ")
     (eww (concat "https://www.deepl.com/translator#en/es/" palabra))
@@ -356,17 +356,17 @@ https://github.com/minad/tempel
 Sometimes I want to create a story prompt on the fly. These functions allow for creating the prompts and the file, so I can immediately start writing.
 
 #+begin_src emacs-lisp
-  (defvar my-stories-directory "~/Nextcloud/escritura/historias/ejercicios"
-    "Directory where org files created by `my/create-org-file' will be stored.")
+  (defvar writing-stories-directory "~/Nextcloud/escritura/historias/ejercicios"
+    "Directory where org files created by `writing/create-org-file' will be stored.")
 
-  (defun my/create-empty-writing-file (title)
-    "Create a new empty org file with name format `%Y%m%d-<title>.org', where <title> is the `title' argument with spaces replaced by underscores. The file will be stored in `my-stories-directory'."
+  (defun writing/create-empty-writing-file (title)
+    "Create a new empty org file with name format `%Y%m%d-<title>.org', where <title> is the `title' argument with spaces replaced by underscores. The file will be stored in `writing-stories-directory'."
     (interactive "sEnter file name: ")
     (let* ((date (format-time-string "%Y%m%d"))
   	 ;; Create the filename with the timestamp and the title
            (filename (concat date "-" (replace-regexp-in-string " " "_" title) ".org"))
   	 ;; create the full path of the file
-           (full-path (concat my-stories-directory "/" filename))
+           (full-path (concat writing-stories-directory "/" filename))
   	 ;; Create a string with the title and author
   	 (initial_title (format "#+TITLE: %s\n#+AUTHOR: %s\n#+EMAIL: %s" title user-full-name user-mail-address))
   	   )
@@ -374,11 +374,10 @@ Sometimes I want to create a story prompt on the fly. These functions allow for 
       (append-to-file initial_title nil full-path)
       (find-file full-path)
       ))
-  ;;(global-set-key (kbd "C-c d e") 'my/create-empty-writing-file)
 
-  (defun my/create-writing-exercise (title)
+  (defun writing/create-writing-exercise (title)
     "Create a new file with the current date and the specified TITLE.
-  The file is saved in the directory specified by `my-stories-directory'.
+  The file is saved in the directory specified by `writing-stories-directory'.
   The file name format is \"%Y%m%d-<text>.org\", with spaces in TEXT replaced by \"_\".
   The function runs a Python script that generates a writing prompt
   and stores the output in the file."
@@ -387,7 +386,7 @@ Sometimes I want to create a story prompt on the fly. These functions allow for 
   	 ;; Create the filename with the timestamp and the title
            (file-name (concat date "-" (replace-regexp-in-string " " "_" title) ".org"))
   	 ;; create the full path of the file
-           (file-path (concat my-stories-directory "/" file-name))
+           (file-path (concat writing-stories-directory "/" file-name))
   	 ;; Get the output from the python script
            (python-output (shell-command-to-string "python  ~/Nextcloud/escritura/software/writing_companion/writing_companion.py -s all prompt"))
   	 ;; Create the initial org front matter
@@ -399,7 +398,6 @@ Sometimes I want to create a story prompt on the fly. These functions allow for 
       ;; open the file
       (find-file file-path)
       ))
-  ;;(global-set-key (kbd "C-c d w") 'my/create-writing-exercise)
 #+end_src
 
 ** TODO writing mode function
@@ -482,9 +480,6 @@ When I write, I find that I need to have full focus on the writing, and have a d
       (my-writing-env--deactivate)))
 
   (provide 'my-writing-env-mode)
-
-
-  ;;(global-set-key (kbd "C-c 2") 'my/writing)
 #+end_src
 
 ** TODO My editing function
@@ -497,18 +492,18 @@ I want to open my own view to edit my writing.
   ;; ------------------------------------------------------------
   ;; Helper utilities (lexical binding recommended)
   ;; ------------------------------------------------------------
-  (defun my/window-perc (pct)
+  (defun writing/window-perc (pct)
     "Return floor of `frame-width' multiplied by PCT (float between 0 and 1)."
     (floor (* (frame-width) pct)))
 
-  (defun my/file-notes-filename (file)
+  (defun writing/file-notes-filename (file)
     "Return the org‑remark notes filename for FILE.
               E.g. \"~/tmp/foo.org\" → \"foo-notes.org\"."
     (let* ((base (file-name-sans-extension (file-name-nondirectory file)))
            (ext  (file-name-extension (file-name-nondirectory file))))
       (concat base "-notes." ext)))
 
-  (defun my/resize-margins ()
+  (defun writing/resize-margins ()
     "Center the current buffer according to `visual-fill-column-width'.
               If the desired column width exceeds the window width we do nothing
               instead of passing a negative margin to `set-window-margins'."
@@ -518,7 +513,7 @@ I want to open my own view to edit my writing.
       (let ((margin (/ (- (window-width) visual-fill-column-width) 2)))
         (set-window-margins (selected-window) margin margin))))
 
-  (defun my/editing-profile ()
+  (defun writing/editing-profile ()
     "Apply the visual style you want for editing sessions.
 
             You can customise this function to suit your own colour/theme,
@@ -538,37 +533,37 @@ I want to open my own view to edit my writing.
   ;; ------------------------------------------------------------
   ;; State‑saving variables (new)
   ;; ------------------------------------------------------------
-  (defvar-local my-editing--saved-config nil
-    "Window configuration saved before `my-editing-mode' was enabled.")
-  (defvar-local my-editing--saved-theme nil
-    "List of themes that were enabled before `my-editing-mode' was turned on.")
-  (defvar-local my-editing--saved-fill-column-width nil
+  (defvar-local writing-editing--saved-config nil
+    "Window configuration saved before `writing-editing-mode' was enabled.")
+  (defvar-local writing-editing--saved-theme nil
+    "List of themes that were enabled before `writing-editing-mode' was turned on.")
+  (defvar-local writing-editing--saved-fill-column-width nil
     "Value of `visual-fill-column-width' before the mode was enabled.")
-  (defvar-local my-editing--saved-fontaine-preset nil
+  (defvar-local writing-editing--saved-fontaine-preset nil
     "Current Fontaine preset before the mode was enabled.")
 
   ;; ------------------------------------------------------------
   ;; Setup (modified to capture state)
   ;; ------------------------------------------------------------
-  (defun my-editing--setup ()
+  (defun writing-editing--setup ()
     "Create the three‑pane layout and apply the editing visual profile."
     (let* ((left-perc   0.25)
            (right-perc  0.25)
            (src-file
             (or (buffer-file-name)
-                (error "Current buffer is not visiting a file; cannot enable `my-editing-mode'")))
-           (notes-file (my/file-notes-filename src-file))
+                (error "Current buffer is not visiting a file; cannot enable `writing-editing-mode'")))
+           (notes-file (writing/file-notes-filename src-file))
            (frame-w    (frame-width))
-           (right-w    (my/window-perc right-perc))
-           (left-w     (my/window-perc left-perc)))
+           (right-w    (writing/window-perc right-perc))
+           (left-w     (writing/window-perc left-perc)))
 
       ;; ----- Save visual state -----
-      (setq my-editing--saved-config (current-window-configuration)
-  	  my-editing--saved-theme
+      (setq writing-editing--saved-config (current-window-configuration)
+  	  writing-editing--saved-theme
   	  (when (boundp 'custom-enabled-themes) custom-enabled-themes)
-  	  my-editing--saved-fill-column-width visual-fill-column-width
+  	  writing-editing--saved-fill-column-width visual-fill-column-width
   	  ;; NEW: store the *actual* active preset
-  	  my-editing--saved-fontaine-preset
+  	  writing-editing--saved-fontaine-preset
   	  (when (boundp 'fontaine-current-preset)
               fontaine-current-preset))
 
@@ -586,46 +581,46 @@ I want to open my own view to edit my writing.
       (other-window -1)
 
       ;; ----- Apply visual profile -----
-      (my/editing-profile)
+      (writing/editing-profile)
 
       ;; ----- Misc. -----
-      (my/resize-margins)))
+      (writing/resize-margins)))
 
   ;; ------------------------------------------------------------
   ;; Teardown (new – restores visual state)
   ;; ------------------------------------------------------------
-  (defun my-editing--teardown ()
+  (defun writing-editing--teardown ()
     "Restore the previous window configuration *and* visual settings."
     ;; Windows
-    (when (window-configuration-p my-editing--saved-config)
-      (set-window-configuration my-editing--saved-config))
+    (when (window-configuration-p writing-editing--saved-config)
+      (set-window-configuration writing-editing--saved-config))
 
     ;; Themes
-    (when (and (boundp 'custom-enabled-themes) my-editing--saved-theme)
+    (when (and (boundp 'custom-enabled-themes) writing-editing--saved-theme)
       (dolist (th custom-enabled-themes)
-        (unless (member th my-editing--saved-theme)
+        (unless (member th writing-editing--saved-theme)
           (disable-theme th)))
-      (dolist (th my-editing--saved-theme)
+      (dolist (th writing-editing--saved-theme)
         (unless (member th custom-enabled-themes)
           (load-theme th t))))
 
     ;; visual‑fill‑column‑width
     (when (boundp 'visual-fill-column-width)
-      (setq visual-fill-column-width my-editing--saved-fill-column-width))
+      (setq visual-fill-column-width writing-editing--saved-fill-column-width))
 
     ;; Fontaine preset
     (when (and (boundp 'fontaine-current-preset)
-               my-editing--saved-fontaine-preset)
-      (fontaine-set-preset my-editing--saved-fontaine-preset))
+               writing-editing--saved-fontaine-preset)
+      (fontaine-set-preset writing-editing--saved-fontaine-preset))
 
     ;; Clean up saved vars
-    (setq my-editing--saved-config nil
-          my-editing--saved-theme nil
-          my-editing--saved-fill-column-width nil
-          my-editing--saved-fontaine-preset nil))
+    (setq writing-editing--saved-config nil
+          writing-editing--saved-theme nil
+          writing-editing--saved-fill-column-width nil
+          writing-editing--saved-fontaine-preset nil))
 
               ;;;###autoload
-  (define-minor-mode my-editing-mode
+  (define-minor-mode writing/editing-mode
     "Minor mode that sets up a three‑pane editing layout for the current file.
 
               When enabled the current frame is split into:
@@ -638,14 +633,9 @@ I want to open my own view to edit my writing.
     :init-value nil
     :lighter " Edit"
     :global nil
-    (if my-editing-mode
-        (my-editing--setup)
-      (my-editing--teardown)))
-
-  ;; ------------------------------------------------------------
-  ;; Optional convenience keybinding
-  ;; ------------------------------------------------------------
-  ;; (global-set-key (kbd "C-c d e") #'my-editing-mode)
+    (if writing/editing-mode
+        (writing-editing--setup)
+      (writing-editing--teardown)))
 #+end_src
 
 ** TODO writing - scene break for multiple formats
