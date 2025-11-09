@@ -3953,13 +3953,13 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
     :doc "Functions related to writing"
     ;; writing mode
     "a" #'my-writing-env-mode
-    "e" #'my-editing-mode
-    "w" #'my/ews-org-count-words
+    "e" #'writing/editing-mode
+    "w" #'writing/ews-org-count-words
     "c" #'org-context-count-words
     ;; writing exercises
-    "r" #'my/create-writing-exercise
-    "q" #'my/create-empty-writing-file
-    "s" #'my/sinonimo
+    "r" #'writing/create-writing-exercise
+    "q" #'writing/create-empty-writing-file
+    "s" #'writing/sinonimo
     )
 
   ;; all my online functions in a convenient keybinding map
@@ -4007,7 +4007,6 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
     "w" (cons "writing" my/key-prefix-writing-map)
     )
 
-  ;;(keymap-set global-map "C-c d" my/key-prefix-map)
   (keymap-set global-map "C-q" my/key-prefix-map)
 #+end_src
 
