@@ -724,3 +724,20 @@ These are custom made org-ql searches for our writing environment and workflow.
               (and location (string-match-p ,loc location))))))
 #+end_src
 
+
+** Writing prefix keymap
+#+begin_src emacs-lisp
+  ;; all my writing functions in a convenient keybinding map
+  (defvar-keymap my/key-prefix-writing-map
+    :doc "Functions related to writing"
+    ;; writing mode
+    "a" #'my-writing-env-mode
+    "e" #'writing/editing-mode
+    "w" #'writing/ews-org-count-words
+    "c" #'org-context-count-words
+    ;; writing exercises
+    "r" #'writing/create-writing-exercise
+    "q" #'writing/create-empty-writing-file
+    "s" #'writing/sinonimo
+    )
+#+end_src

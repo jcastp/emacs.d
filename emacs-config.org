@@ -3948,20 +3948,6 @@ I want to have my own dedicated keymap for the functions I use the most.
 
 From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
 #+begin_src emacs-lisp
-  ;; all my writing functions in a convenient keybinding map
-  (defvar-keymap my/key-prefix-writing-map
-    :doc "Functions related to writing"
-    ;; writing mode
-    "a" #'my-writing-env-mode
-    "e" #'writing/editing-mode
-    "w" #'writing/ews-org-count-words
-    "c" #'org-context-count-words
-    ;; writing exercises
-    "r" #'writing/create-writing-exercise
-    "q" #'writing/create-empty-writing-file
-    "s" #'writing/sinonimo
-    )
-
   ;; all my online functions in a convenient keybinding map
   (defvar-keymap my/key-prefix-online-map
     :doc "Functions related to online activity"
