@@ -300,7 +300,7 @@ All the configurations needed for dired.
      :ensure nil
      :commands (dired dired-jump)
      :hook
-     ((dired-mode . dired-hide-details-mode)
+     (;; (dired-mode . dired-hide-details-mode)
       (dired-mode . hl-line-mode))
      :config
      (setq dired-recursive-copies 'always)
