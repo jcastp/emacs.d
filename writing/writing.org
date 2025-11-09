@@ -683,3 +683,44 @@ My personal package for creating novel files templates for rapid deployment.
   	    :rev :newest))
 #+end_src
 
+** org-ql searches for writing
+These are custom made org-ql searches for our writing environment and workflow.
+
+#+begin_src emacs-lisp
+  (defun writing/org-find-pov (char)
+    "Show sparse tree of scenes with POV character."
+    (interactive "sCharacter (POV): ")
+    (org-ql-search (current-buffer)
+      `(and (heading)
+            (let ((pov (org-entry-get (point) "POV")))
+              (and pov (string-match-p ,char pov))))))
+
+  ;; custom finder function for multivalued properties, with values separated by commas.
+  (defun writing/org-find-character (char)
+    "Show sparse tree of scenes with CHARACTER."
+    (interactive "sCharacter name: ")
+    (org-ql-search (current-buffer)
+      `(and (heading)
+            (let* ((chars-prop (org-entry-get (point) "Characters"))
+                   (chars-list (when chars-prop
+                                 (mapcar #'string-trim 
+                                         (split-string chars-prop ",")))))
+              (member ,char chars-list)))))
+
+  (defun writing/org-find-plot (term)
+    "Show sparse tree of scenes matching TERM in plot."
+    (interactive "sPlot term: ")
+    (org-ql-search (current-buffer)
+      `(and (heading)
+            (let ((plot (org-entry-get (point) "plot")))
+              (and plot (string-match-p ,term plot))))))
+
+  (defun writing/org-find-location (loc)
+    "Show sparse tree of scenes with LOCATION."
+    (interactive "sLocation: ")
+    (org-ql-search (current-buffer)
+      `(and (heading)
+            (let ((location (org-entry-get (point) "location")))
+              (and location (string-match-p ,loc location))))))
+#+end_src
+
