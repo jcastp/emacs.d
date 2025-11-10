@@ -745,18 +745,6 @@ These are custom made org-ql searches for our writing environment and workflow.
 
 * hydra for functions
 I want to create a hydra function for the most useful functions when writing.
-The functions I want to have:
-- count words:
-  - org-context-count-words
-  - writing/ews-org-count-words
-  - org-tracktable-write
-- writing tools:
-  - writing/buscarae
-  - writing/sinonimo
-  - writing/translate
-  - powerthesaurus-lookup-dwim
-- novel searches:
-  - writing/org-find-*
 
 #+begin_src emacs-lisp
   (defhydra hydra-writing (:color blue :hint nil)
