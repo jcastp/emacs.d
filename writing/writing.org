@@ -374,7 +374,7 @@ Sometimes I want to create a story prompt on the fly. These functions allow for 
       ))
 #+end_src
 
-* TODO writing mode function
+* writing mode function
 My own writing setup function.
 
 When I write, I find that I need to have full focus on the writing, and have a different visual aspect from my normal work. This function changes:
@@ -457,8 +457,9 @@ When I write, I find that I need to have full focus on the writing, and have a d
 
   #+END_src
 
-* TODO Focus writing mode function
+* Focus writing mode function
 This is the same as the =my-writing-env-mode=, but instead of opening the whole org file, it narrows to the section at point.
+
 #+BEGIN_src emacs-lisp
   ;; ------------------------------------------------------------
   ;; Focus mode variant - narrows to current org section
