@@ -501,6 +501,41 @@ This is the same as the =my-writing-env-mode=, but instead of opening the whole 
   (provide 'my-writing-env-mode-focus)
 #+end_src
 
+* TODO project writing mode
+This minor mode opens two side menus to track the directory (treemacs) and the org file headings (imenu-list).
+
+#+begin_src emacs-lisp
+  (define-minor-mode project-writing-mode
+    "Toggle treemacs and imenu-list together for a focused writing environment.
+
+  When enabled, opens treemacs with the current project exclusively
+  and activates imenu-list. When disabled, closes both windows.
+  Focus always returns to the original buffer for seamless transitions."
+    :lighter " ProjWrt"
+    :global nil
+    (let ((original-window (selected-window)))
+      (if project-writing-mode
+          ;; Enable: Open both windows, then return focus
+          (progn
+            (treemacs-add-and-display-current-project-exclusively)
+            (unless (get-buffer-window imenu-list-buffer-name)
+              (imenu-list-smart-toggle))
+            ;; Return focus to original window
+            (when (window-live-p original-window)
+              (select-window original-window)))
+        ;; Disable: Close both windows, focus stays in current buffer
+        (progn
+          ;; Close treemacs
+          (when (treemacs-get-local-window)
+            (delete-window (treemacs-get-local-window)))
+          ;; Close imenu-list
+          (when (get-buffer-window imenu-list-buffer-name)
+            (imenu-list-smart-toggle))
+          ;; Ensure focus is on original window
+          (when (window-live-p original-window)
+            (select-window original-window))))))
+#+end_src
+
 * TODO My editing function
 I want to open my own view to edit my writing.
 - I want to have a left window with the index of the file, usually an org mode file, so =imenu-list= is a good candidate.
