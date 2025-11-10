@@ -3260,6 +3260,15 @@ Only mounted when at home, and clear directory is mounted.
         )
     )
 #+end_src
+** TODO ox-hugo
+To create a static page blog with hugo, based on the orgmode format.
+https://ox-hugo.scripter.co/
+
+#+begin_src emacs-lisp
+  (use-package ox-hugo
+    :ensure t   ;Auto-install the package from Melpa
+    :after ox)
+#+end_src
 
 * Writing
 Here, I document all the config related to my writing.
