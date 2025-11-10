@@ -815,14 +815,18 @@ These are custom made org-ql searches for our writing environment and workflow.
   (defun writing/search-todos-recursive ()
     "Search for TODO items (not DONE) in current directory tree using org-ql.
   Finds all .org files recursively from the current buffer's directory
-  and displays all TODO keywords with an active (non-DONE) status."
+  and displays all TODO keywords with an active (non-DONE) status.
+  Results are grouped by file for easy navigation."
     (interactive)
     (let* ((current-dir (file-name-directory (or (buffer-file-name) default-directory)))
            (org-files (directory-files-recursively current-dir "\\.org$")))
       (if org-files
           (org-ql-search org-files
             '(and (todo) (not (done)))
-            :title "TODO items in writing project")
+            :title "TODO items in writing project"
+            :super-groups '((:auto-map (lambda (item)
+                                         (concat "File: "
+                                                 (file-name-nondirectory (buffer-file-name)))))))
         (message "No .org files found in %s and subdirectories" current-dir))))
 #+end_src
 
