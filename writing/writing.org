@@ -383,77 +383,121 @@ When I write, I find that I need to have full focus on the writing, and have a d
 - activates writeroom mode, with some custom setting (width, mainly)
 
 #+begin_src emacs-lisp
-  (require 'writeroom-mode)
-  (require 'fontaine)
+    (require 'writeroom-mode)
+    (require 'fontaine)
 
-  (defgroup my-writing-env nil
-    "Customization group for writing environment."
-    :group 'convenience)
+    (defgroup my-writing-env nil
+      "Customization group for writing environment."
+      :group 'convenience)
 
-  (defcustom my-writing-env-normal-theme 'ef-deuteranopia-dark
-    "Theme for normal environment."
-    :type 'symbol
-    :group 'my-writing-env)
+    (defcustom my-writing-env-normal-theme 'ef-deuteranopia-dark
+      "Theme for normal environment."
+      :type 'symbol
+      :group 'my-writing-env)
 
-  (defcustom my-writing-env-work-theme 'poet
-    "Theme for writing environment."
-    :type 'symbol
-    :group 'my-writing-env)
+    (defcustom my-writing-env-work-theme 'poet
+      "Theme for writing environment."
+      :type 'symbol
+      :group 'my-writing-env)
 
-  (defcustom my-writing-env-normal-font 'regular
-    "Fontaine preset for normal environment."
-    :type 'symbol
-    :group 'my-writing-env)
+    (defcustom my-writing-env-normal-font 'regular
+      "Fontaine preset for normal environment."
+      :type 'symbol
+      :group 'my-writing-env)
 
-  (defcustom my-writing-env-work-font 'writing-big
-    "Fontaine preset for writing environment."
-    :type 'symbol
-    :group 'my-writing-env)
+    (defcustom my-writing-env-work-font 'writing-big
+      "Fontaine preset for writing environment."
+      :type 'symbol
+      :group 'my-writing-env)
 
-  (defcustom my-writing-env-work-width 80
-    "Writeroom width for writing mode."
-    :type 'integer
-    :group 'my-writing-env)
+    (defcustom my-writing-env-work-width 80
+      "Writeroom width for writing mode."
+      :type 'integer
+      :group 'my-writing-env)
 
-  (defcustom my-writing-env-normal-width 90
-    "Writeroom width for normal mode."
-    :type 'integer
-    :group 'my-writing-env)
+    (defcustom my-writing-env-normal-width 90
+      "Writeroom width for normal mode."
+      :type 'integer
+      :group 'my-writing-env)
 
-  (defvar-local my-writing-env--writeroom-active nil
-    "Track if writeroom was activated by writing-env mode.")
+    (defvar-local my-writing-env--writeroom-active nil
+      "Track if writeroom was activated by writing-env mode.")
 
-  (defun my-writing-env--activate ()
-    "Activate writing environment."
-    (display-line-numbers-mode 1)
-    (consult-theme my-writing-env-work-theme)
-    (fontaine-set-preset my-writing-env-work-font)
-    (setq writeroom-width my-writing-env-work-width)
-    (writeroom-mode 1)
-    (setq my-writing-env--writeroom-active t))
+    (defun my-writing-env--activate ()
+      "Activate writing environment."
+      (display-line-numbers-mode 1)
+      (consult-theme my-writing-env-work-theme)
+      (fontaine-set-preset my-writing-env-work-font)
+      (setq writeroom-width my-writing-env-work-width)
+      (writeroom-mode 1)
+      (setq my-writing-env--writeroom-active t))
 
-  (defun my-writing-env--deactivate ()
-    "Deactivate writing environment."
-    (display-line-numbers-mode -1)
-    (consult-theme my-writing-env-normal-theme)
-    (fontaine-set-preset my-writing-env-normal-font)
-    (when my-writing-env--writeroom-active
-      (writeroom-mode -1)
-      (setq my-writing-env--writeroom-active nil)))
+    (defun my-writing-env--deactivate ()
+      "Deactivate writing environment."
+      (display-line-numbers-mode -1)
+      (consult-theme my-writing-env-normal-theme)
+      (fontaine-set-preset my-writing-env-normal-font)
+      (when my-writing-env--writeroom-active
+        (writeroom-mode -1)
+        (setq my-writing-env--writeroom-active nil)))
 
-  ;;;###autoload
-  (define-minor-mode my-writing-env-mode
-    "Toggle a distraction-free writing environment.
+    ;;;###autoload
+    (define-minor-mode my-writing-env-mode
+      "Toggle a distraction-free writing environment.
+
+    This mode changes the theme, font, and enables writeroom-mode
+    with customized settings optimized for focused writing."
+      :lighter " ✍"
+      :global nil
+      (if my-writing-env-mode
+          (my-writing-env--activate)
+        (my-writing-env--deactivate)))
+
+    (provide 'my-writing-env-mode)
+
+  #+END_src
+
+* TODO Focus writing mode function
+This is the same as the =my-writing-env-mode=, but instead of opening the whole org file, it narrows to the section at point.
+#+BEGIN_src emacs-lisp
+  ;; ------------------------------------------------------------
+  ;; Focus mode variant - narrows to current org section
+  ;; ------------------------------------------------------------
+  (defvar-local my-writing-env--narrowed nil
+    "Track if buffer was narrowed by writing-env-mode-focus.")
+
+  (defun my-writing-env-focus--activate ()
+    "Activate writing environment and narrow to current org section."
+    ;; First activate the base writing environment
+    (my-writing-env--activate)
+    ;; Then add narrowing if in org-mode
+    (when (derived-mode-p 'org-mode)
+      (org-narrow-to-subtree)
+      (setq my-writing-env--narrowed t)))
+
+  (defun my-writing-env-focus--deactivate ()
+    "Deactivate writing environment and restore buffer view."
+    ;; First widen if we narrowed
+    (when my-writing-env--narrowed
+      (widen)
+      (setq my-writing-env--narrowed nil))
+    ;; Then deactivate the base writing environment
+    (my-writing-env--deactivate))
+
+    ;;;###autoload
+  (define-minor-mode my-writing-env-mode-focus
+    "Toggle a distraction-free writing environment focused on current section.
 
   This mode changes the theme, font, and enables writeroom-mode
-  with customized settings optimized for focused writing."
-    :lighter " ✍"
+  with customized settings optimized for focused writing. Additionally,
+  it narrows the buffer to the current org section at point."
+    :lighter " ✍🔍"
     :global nil
-    (if my-writing-env-mode
-        (my-writing-env--activate)
-      (my-writing-env--deactivate)))
+    (if my-writing-env-mode-focus
+        (my-writing-env-focus--activate)
+      (my-writing-env-focus--deactivate)))
 
-  (provide 'my-writing-env-mode)
+  (provide 'my-writing-env-mode-focus)
 #+end_src
 
 * TODO My editing function
@@ -720,7 +764,7 @@ The functions I want to have:
   ^^^^^^^^------------------------------------------------------------------------
   _w_: Count words     _r_: RAE dictionary     _v_: Find POV        _m_: Writing mode
   _p_: EWS Word count  _s_: Synonyms           _c_: Find character  _e_: Editing mode
-  _t_: Track table     _l_: Translate          _o_: Find plot
+  _t_: Track table     _l_: Translate          _o_: Find plot       _n_: Focus mode
                      _d_: Thesaurus          _f_: Find location
 
   _q_: Quit
@@ -745,6 +789,7 @@ The functions I want to have:
     ;; Modes
     ("m" my-writing-env-mode "writing mode")
     ("e" writing/editing-mode "editing mode")
+    ("n" my-writing-env-mode-focus "focus mode")
 
     ;; Exit
     ("q" nil "quit"))
@@ -760,6 +805,7 @@ The functions I want to have:
     :doc "Functions related to writing"
     ;; writing mode
     "a" #'my-writing-env-mode
+    "f" #'my-writing-env-mode-focus
     "e" #'writing/editing-mode
     "w" #'writing/ews-org-count-words
     "c" #'org-context-count-words
@@ -767,5 +813,7 @@ The functions I want to have:
     "r" #'writing/create-writing-exercise
     "q" #'writing/create-empty-writing-file
     "s" #'writing/sinonimo
+    ;; hydra keybinding
+    "k" #'hydra-writing/body
     )
 #+end_src
