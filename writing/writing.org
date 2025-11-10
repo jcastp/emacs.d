@@ -225,8 +225,7 @@ https://github.com/SavchenkoValeriy/emacs-powerthesaurus
     :ensure t)
 #+end_src
 
-
-* org-remark
+* org-remark for text annotations
 Text annotations in org mode
 https://github.com/nobiot/org-remark
 Manual: https://nobiot.github.io/org-remark/
