@@ -811,6 +811,19 @@ These are custom made org-ql searches for our writing environment and workflow.
       `(and (heading)
             (let ((location (org-entry-get (point) "location")))
               (and location (string-match-p ,loc location))))))
+
+  (defun writing/search-todos-recursive ()
+    "Search for TODO items (not DONE) in current directory tree using org-ql.
+  Finds all .org files recursively from the current buffer's directory
+  and displays all TODO keywords with an active (non-DONE) status."
+    (interactive)
+    (let* ((current-dir (file-name-directory (or (buffer-file-name) default-directory)))
+           (org-files (directory-files-recursively current-dir "\\.org$")))
+      (if org-files
+          (org-ql-search org-files
+            '(and (todo) (not (done)))
+            :title "TODO items in writing project")
+        (message "No .org files found in %s and subdirectories" current-dir))))
 #+end_src
 
 * hydra for functions
@@ -824,8 +837,8 @@ I want to create a hydra function for the most useful functions when writing.
   _p_: Project mode         _r_: RAE dictionary   _w_: Count words      _v_: Find POV        
   _m_: Writing mode         _s_: Synonyms         _p_: EWS Word count   _c_: Find character  
   _n_: Focus writing mode   _l_: Translate        _t_: Track table      _o_: Find plot       
-  _e_: Editing mode         _d_: Thesaurus                              _f_: Find location
-
+  _e_: Editing mode         _d_: Thesaurus                            _f_: Find location
+                                                                  _a_: Find TODOs
   _q_: Quit
   "
     ;; Modes
@@ -850,6 +863,7 @@ I want to create a hydra function for the most useful functions when writing.
     ("c" writing/org-find-character "find character")
     ("o" writing/org-find-plot "find plot")
     ("f" writing/org-find-location "find location")
+    ("a" writing/search-todos-recursive "find TODOs")
 
 
     ;; Exit
