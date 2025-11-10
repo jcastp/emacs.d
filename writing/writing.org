@@ -726,10 +726,10 @@ The functions I want to have:
 #+begin_src emacs-lisp
   (defhydra hydra-writing (:color blue :hint nil)
     "
-  ^Count Words^        ^Writing Tools^         ^Novel Searches^
+  ^Count Words^        ^Writing Tools^         ^Novel Searches^     ^Modes^
   ^^^^^^^^------------------------------------------------------------------------
-  _w_: Count words     _r_: RAE dictionary     _v_: Find POV
-  _p_: Word count  properties  _s_: Synonyms           _c_: Find character
+  _w_: Count words     _r_: RAE dictionary     _v_: Find POV        _m_: Writing mode
+  _p_: EWS Word count  _s_: Synonyms           _c_: Find character  _e_: Editing mode
   _t_: Track table     _l_: Translate          _o_: Find plot
                      _d_: Thesaurus          _f_: Find location
 
@@ -751,6 +751,10 @@ The functions I want to have:
     ("c" writing/org-find-character "find character")
     ("o" writing/org-find-plot "find plot")
     ("f" writing/org-find-location "find location")
+
+    ;; Modes
+    ("m" my-writing-env-mode "writing mode")
+    ("e" writing/editing-mode "editing mode")
 
     ;; Exit
     ("q" nil "quit"))
