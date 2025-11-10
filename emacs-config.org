@@ -3238,6 +3238,29 @@ When you want to write something fast using org mode, but you don't want to crea
             (throw 'done (select-window (display-buffer buffer t))))))))
 #+end_src
 
+** org-journal
+This is for journaling every day, if possible.
+https://github.com/bastibe/org-journal
+
+Only mounted when at home, and clear directory is mounted.
+#+begin_src emacs-lisp
+  (if (and my-homeenvironment-p
+  	 my-clear-directory-is-mounted-p)
+      (use-package org-journal
+        :ensure t
+        :bind
+        ("C-c r ñ" . org-journal-new-entry)
+        :config
+        (setq org-journal-date-prefix "#+TITLE: ")
+        (setq org-journal-file-format "%Y-%m-%d.org")
+        ;;(setq org-journal-dir "~/Nextcloud/personal/diario/")
+        (setq org-journal-dir (expand-file-name "personal/diario" my-clear-directory))
+        (setq org-journal-date-format "%A, %d %B %Y")
+        (setq org-journal-encrypt-journal nil)
+        )
+    )
+#+end_src
+
 * Writing
 Here, I document all the config related to my writing.
 #+begin_src emacs-lisp
