@@ -785,36 +785,38 @@ I want to create a hydra function for the most useful functions when writing.
 #+begin_src emacs-lisp
   (defhydra hydra-writing (:color blue :hint nil)
     "
-  ^Count Words^        ^Writing Tools^         ^Novel Searches^     ^Modes^
+  ^Modes^                   ^Writing Tools^       ^Count words^         ^Searches^
   ^^^^^^^^------------------------------------------------------------------------
-  _w_: Count words     _r_: RAE dictionary     _v_: Find POV        _m_: Writing mode
-  _p_: EWS Word count  _s_: Synonyms           _c_: Find character  _e_: Editing mode
-  _t_: Track table     _l_: Translate          _o_: Find plot       _n_: Focus mode
-                     _d_: Thesaurus          _f_: Find location
+  _p_: Project mode         _r_: RAE dictionary   _w_: Count words      _v_: Find POV        
+  _m_: Writing mode         _s_: Synonyms         _p_: EWS Word count   _c_: Find character  
+  _n_: Focus writing mode   _l_: Translate        _t_: Track table      _o_: Find plot       
+  _e_: Editing mode         _d_: Thesaurus                              _f_: Find location
 
   _q_: Quit
   "
-    ;; Count words
-    ("w" org-context-count-words "count words")
-    ("p" writing/ews-org-count-words "add word properties")
-    ("t" org-tracktable-write "track table")
-
+    ;; Modes
+    ("p" project-writing-mode "project mode")    
+    ("m" my-writing-env-mode "writing mode")
+    ("n" my-writing-env-mode-focus "focus mode")    
+    ("e" writing/editing-mode "editing mode")
+        
     ;; Writing tools
     ("r" writing/buscarae "RAE dictionary")
     ("s" writing/sinonimo "synonyms")
     ("l" writing/translate "translate")
     ("d" powerthesaurus-lookup-dwim "thesaurus")
 
+    ;; Count words
+    ("w" org-context-count-words "count words")
+    ("k" writing/ews-org-count-words "add word properties")
+    ("t" org-tracktable-write "track table")
+    
     ;; Novel searches
     ("v" writing/org-find-pov "find POV")
     ("c" writing/org-find-character "find character")
     ("o" writing/org-find-plot "find plot")
     ("f" writing/org-find-location "find location")
 
-    ;; Modes
-    ("m" my-writing-env-mode "writing mode")
-    ("e" writing/editing-mode "editing mode")
-    ("n" my-writing-env-mode-focus "focus mode")
 
     ;; Exit
     ("q" nil "quit"))
