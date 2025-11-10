@@ -708,6 +708,56 @@ These are custom made org-ql searches for our writing environment and workflow.
               (and location (string-match-p ,loc location))))))
 #+end_src
 
+* hydra for functions
+I want to create a hydra function for the most useful functions when writing.
+The functions I want to have:
+- count words:
+  - org-context-count-words
+  - writing/ews-org-count-words
+  - org-tracktable-write
+- writing tools:
+  - writing/buscarae
+  - writing/sinonimo
+  - writing/translate
+  - powerthesaurus-lookup-dwim
+- novel searches:
+  - writing/org-find-*
+
+#+begin_src emacs-lisp
+  (defhydra hydra-writing (:color blue :hint nil)
+    "
+  ^Count Words^        ^Writing Tools^         ^Novel Searches^
+  ^^^^^^^^------------------------------------------------------------------------
+  _w_: Count words     _r_: RAE dictionary     _v_: Find POV
+  _p_: Word count  properties  _s_: Synonyms           _c_: Find character
+  _t_: Track table     _l_: Translate          _o_: Find plot
+                     _d_: Thesaurus          _f_: Find location
+
+  _q_: Quit
+  "
+    ;; Count words
+    ("w" org-context-count-words "count words")
+    ("p" writing/ews-org-count-words "add word properties")
+    ("t" org-tracktable-write "track table")
+
+    ;; Writing tools
+    ("r" writing/buscarae "RAE dictionary")
+    ("s" writing/sinonimo "synonyms")
+    ("l" writing/translate "translate")
+    ("d" powerthesaurus-lookup-dwim "thesaurus")
+
+    ;; Novel searches
+    ("v" writing/org-find-pov "find POV")
+    ("c" writing/org-find-character "find character")
+    ("o" writing/org-find-plot "find plot")
+    ("f" writing/org-find-location "find location")
+
+    ;; Exit
+    ("q" nil "quit"))
+
+  ;; global key for this macro
+  (keymap-global-set "<f8> <f8>" #'hydra-writing/body)
+#+End_src
 
 * Writing prefix keymap
 #+begin_src emacs-lisp
