@@ -375,6 +375,33 @@ Sometimes I want to create a story prompt on the fly. These functions allow for 
       ))
 #+end_src
 
+* Mutually exclusive writing modes
+These modes should be mutually exclusive. When one is activated, all others are automatically deactivated.
+
+The four mutually exclusive modes are:
+- =my-writing-env-mode= - Distraction-free writing environment
+- =my-writing-env-mode-focus= - Focused writing with narrowing to current section
+- =project-writing-mode= - Project navigation with treemacs and imenu-list
+- =writing/editing-mode= - Three-pane editing layout with notes
+
+#+begin_src emacs-lisp
+  (defvar my-writing-exclusive-modes
+    '(my-writing-env-mode
+      my-writing-env-mode-focus
+      project-writing-mode
+      writing/editing-mode)
+    "List of writing minor modes that should be mutually exclusive.")
+
+  (defun my-writing--deactivate-other-modes (current-mode)
+    "Deactivate all writing modes except CURRENT-MODE.
+  This function is called when activating any of the mutually exclusive
+  writing modes to ensure only one is active at a time."
+    (dolist (mode my-writing-exclusive-modes)
+      (unless (eq mode current-mode)
+        (when (and (boundp mode) (symbol-value mode))
+          (funcall mode -1)))))
+#+end_src
+
 * writing mode function
 My own writing setup function.
 
@@ -451,7 +478,9 @@ When I write, I find that I need to have full focus on the writing, and have a d
       :lighter " ✍"
       :global nil
       (if my-writing-env-mode
-          (my-writing-env--activate)
+          (progn
+            (my-writing--deactivate-other-modes 'my-writing-env-mode)
+            (my-writing-env--activate))
         (my-writing-env--deactivate)))
 
     (provide 'my-writing-env-mode)
@@ -496,7 +525,9 @@ This is the same as the =my-writing-env-mode=, but instead of opening the whole 
     :lighter " ✍🔍"
     :global nil
     (if my-writing-env-mode-focus
-        (my-writing-env-focus--activate)
+        (progn
+          (my-writing--deactivate-other-modes 'my-writing-env-mode-focus)
+          (my-writing-env-focus--activate))
       (my-writing-env-focus--deactivate)))
 
   (provide 'my-writing-env-mode-focus)
@@ -518,6 +549,7 @@ This minor mode opens two side menus to track the directory (treemacs) and the o
       (if project-writing-mode
           ;; Enable: Open both windows, then return focus
           (progn
+            (my-writing--deactivate-other-modes 'project-writing-mode)
             (treemacs-add-and-display-current-project-exclusively)
             (unless (get-buffer-window imenu-list-buffer-name)
               (imenu-list-smart-toggle))
@@ -689,7 +721,9 @@ I want to open my own view to edit my writing.
     :lighter " Edit"
     :global nil
     (if writing/editing-mode
-        (writing-editing--setup)
+        (progn
+          (my-writing--deactivate-other-modes 'writing/editing-mode)
+          (writing-editing--setup))
       (writing-editing--teardown)))
 #+end_src
 
