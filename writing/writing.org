@@ -3,7 +3,7 @@
 #+EMAIL: jcastp@pm.me
 #+language: es
 
-This 
+This is my personal config for writing.
 
 * Sentences end with just one space
 #+begin_src emacs-lisp
