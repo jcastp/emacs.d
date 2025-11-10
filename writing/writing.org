@@ -207,14 +207,15 @@ Seach for synonyms for Spanish words.
 #+end_src
 
 * Translate from english
-Translate a word
+https://github.com/lorniu/gt.el
+Translate from english to spanish
 
 #+begin_src emacs-lisp
-  (defun writing/translate (palabra)
-    "Traduccion de inglés a español"
-    (interactive "s¿Qué palabra quieres buscar? ")
-    (eww (concat "https://www.deepl.com/translator#en/es/" palabra))
-    )
+  (use-package gt 
+    :ensure t
+    :config
+    (setq gt-langs '(en es))
+    (setq gt-default-translator (gt-translator :engines (gt-google-engine))))
 #+end_src
 
 * TODO powerthesaurus
