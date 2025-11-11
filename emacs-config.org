@@ -1250,7 +1250,7 @@ https://github.com/protesilaos/spacious-padding
 
 ** Center a buffer in screen
 Sometimes I have just a single window and this is a problem for me in a big screen. This code just centers the text in the middle.
-Useful for reading books.
+Useful for reading books or long texts.
 
 #+begin_src emacs-lisp
 (defcustom my/centered-content-width 100
