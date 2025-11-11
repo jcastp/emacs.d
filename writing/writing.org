@@ -5,11 +5,6 @@
 
 This is my personal config for writing.
 
-* Sentences end with just one space
-#+begin_src emacs-lisp
-  (setq sentence-end-double-space nil)
-#+end_src
-
 * Writeroom
 Distraction free writing mode.
 https://github.com/joostkremers/writeroom-mode

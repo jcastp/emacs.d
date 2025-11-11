@@ -162,6 +162,11 @@ The questions are answered with a y or n, instead of yes or no.
   (fset 'yes-or-no-p 'y-or-n-p)
 #+end_src
 
+** Sentences end with just one space
+#+begin_src emacs-lisp
+  (setq sentence-end-double-space nil)
+#+end_src
+
 ** Ask before closing emacs
 To avoid closing everything because I slip my finger ...
 #+begin_src emacs-lisp
