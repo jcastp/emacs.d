@@ -34,10 +34,10 @@ Word counting with objective.
     )
 #+end_src
 
-* word count on subsections
+* CANCELED word count on subsections
 https://lists.gnu.org/archive/html/emacs-orgmode/2011-04/msg00713.html
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package org-wc
     :ensure t)
 #+end_src
