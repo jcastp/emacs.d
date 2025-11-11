@@ -879,12 +879,8 @@ The capture target is determined by checking files in this order:
         ;; Run the capture UI.
         (org-capture))))
 
+  ;; adding a keybinding, but also reachable through an hydra function below
   (global-set-key (kbd "C-c W") 'writing/capture-to-file)  
-
-  ;; Add writing capture templates to org-capture-templates
-  ;; (with-eval-after-load 'org-capture
-  ;;   (setq org-capture-templates
-  ;;         (append org-capture-templates writing/capture-templates)))
 #+end_src
 
 * hydra for functions
