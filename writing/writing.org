@@ -825,15 +825,15 @@ These are custom made org-ql searches for our writing environment and workflow.
         (message "No .org files found in %s and subdirectories" current-dir))))
 #+end_src
 
-
 * TODO capture to writing notes
 This function determines the appropriate notes file for org-capture in the writing environment.
 
 The capture target is determined by checking files in this order:
 1. =notes/notes.org= (relative to current directory, usually relative to novel.org)
-2. =novel-notes.org= (in current directory)
-3. =notes.org= (in current directory)
-4. Current buffer if none of the above exist
+2. =notas/notas.org= (spanish version, relative to current directory, usually relative to novela.org)
+3. =novel-notes.org= (in current directory)
+4. =notes.org= (in current directory)
+5. Current buffer if none of the above exist
 
 #+begin_src emacs-lisp
   (defun writing/capture-target-file ()
