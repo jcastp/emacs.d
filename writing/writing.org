@@ -1017,23 +1017,26 @@ The capture target is determined by checking files in this order:
 #+begin_src emacs-lisp
   (defun writing/capture-target-file ()
     "Determine the appropriate notes file for org-capture in writing environment.
+  Uses `project-current' to find the project base directory as reference point.
   Returns the file path based on the following priority:
-  1. notes/notes.org (relative to current directory)
-    1.1 notas/notas.org - spanish (relative to current directory)
-  2. novel-notes.org (in current directory)
-  3. notes.org (in current directory)
+  1. notes/notes.org (relative to project root)
+    1.1 notas/notas.org - spanish (relative to project root)
+  2. novel-notes.org (in project root)
+  3. notes.org (in project root)
   4. current buffer if none of the above exist"
-    (let* ((current-dir (file-name-directory (or (buffer-file-name) default-directory)))
-           (notes-subdir-en (expand-file-name "notes/notes.org" current-dir))
-           (notes-subdir-es (expand-file-name "notas/notas.org" current-dir))
-           (novel-notes (expand-file-name "novel-notes.org" current-dir))
-           (notes (expand-file-name "notes.org" current-dir)))
+    (let* ((project-dir (if-let ((project (project-current)))
+                            (project-root project)
+                          (file-name-directory (or (buffer-file-name) default-directory))))
+           (notes-subdir-en (expand-file-name "notes/notes.org" project-dir))
+           (notes-subdir-es (expand-file-name "notas/notas.org" project-dir))
+           (novel-notes (expand-file-name "novel-notes.org" project-dir))
+           (notes (expand-file-name "notes.org" project-dir)))
       (cond
        ((file-exists-p notes-subdir-en) notes-subdir-en)
        ((file-exists-p notes-subdir-es) notes-subdir-es)
        ((file-exists-p novel-notes) novel-notes)
        ((file-exists-p notes) notes)
-       (t (or (buffer-file-name) (expand-file-name "notes.org" current-dir))))))
+       (t (or (buffer-file-name) (expand-file-name "notes.org" project-dir))))))
 
   (defvar writing/capture-templates
     '(("w" "Writing Note" entry
@@ -1049,7 +1052,7 @@ The capture target is determined by checking files in this order:
     (let ((target (writing/capture-target-file)))
       ;; Build a temporary capture template that points at TARGET.
       (let ((org-capture-templates
-  	   writing/capture-templates))
+    	   writing/capture-templates))
         ;; Run the capture UI.
         (org-capture))))
 
