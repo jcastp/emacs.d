@@ -879,6 +879,8 @@ The capture target is determined by checking files in this order:
         ;; Run the capture UI.
         (org-capture))))
 
+  (global-set-key (kbd "C-c W") 'writing/capture-to-file)  
+
   ;; Add writing capture templates to org-capture-templates
   ;; (with-eval-after-load 'org-capture
   ;;   (setq org-capture-templates
