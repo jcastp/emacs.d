@@ -149,6 +149,24 @@ org-mode
 	":WORDCOUNT: " n
 	":END:")
 
+(scene
+	":PROPERTIES:" n
+	":PoV: "p n
+	":Characters: " n
+	":Plot: " n
+	":Timeline: " n
+	":Location: " n
+	":Description: " n
+	":Summary: " n
+	":Scene-motivation: " n
+	":Conflict-source: " n
+	":What-is-at-stake: " n
+	":Emotion: " n
+	":Comment: " n
+	":WORDCOUNT: " n
+	":END:")
+
+
 (5how
 	"#+begin_comment" n
 	"- *Quién*:" n
