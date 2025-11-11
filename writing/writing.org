@@ -159,14 +159,193 @@ Since I write in different languages, the dictionary applied is really important
     )
 #+end_src
 
-* TODO Buscar en la RAE
-Seach a word in the spanish dictionary.
+* Buscar en la RAE (API)
+Search a word using the RAE API which returns structured JSON data with definitions, etymology, conjugations, and more.
 
 #+begin_src emacs-lisp
-  (defun writing/buscarae (palabra)
-    "Busca una palabra en la RAE."
-    (interactive "s¿Qué palabra quieres buscar? ")
-    (eww (concat "https://dle.rae.es/" palabra)))
+  (require 'json)
+  (require 'url)
+
+  (defun writing/rae-api-lookup (palabra)
+    "Look up PALABRA in the RAE dictionary using the API.
+  Displays the word definition, etymology, and meanings in a buffer."
+    (interactive "sPalabra a buscar en la RAE: ")
+    (let* ((url (format "https://rae-api.com/api/words/%s"
+                        (url-hexify-string palabra)))
+           (buffer-name (format "*RAE: %s*" palabra))
+           (url-request-method "GET"))
+      (url-retrieve
+       url
+       (lambda (status palabra buffer-name)
+         (if (plist-get status :error)
+             (message "Error al buscar la palabra: %s"
+                      (plist-get status :error))
+           ;; Move past HTTP headers
+           (goto-char (point-min))
+           (re-search-forward "^$")
+           (let* ((json-object-type 'hash-table)
+                  (json-array-type 'list)
+                  (json-key-type 'string)
+                  (json-data (json-read))
+                  (ok (gethash "ok" json-data))
+                  (output-buffer (get-buffer-create buffer-name)))
+             (with-current-buffer output-buffer
+               (erase-buffer)
+               (org-mode)
+               (if ok
+                   (writing/rae-format-result json-data palabra)
+                 ;; Word not found - show suggestions
+                 (let ((suggestions (gethash "suggestions" json-data)))
+                   (insert (format "* Palabra no encontrada: %s\n\n" palabra))
+                   (insert "** Sugerencias:\n")
+                   (dolist (suggestion suggestions)
+                     (insert (format "- %s\n" suggestion)))))
+               (goto-char (point-min)))
+             (display-buffer output-buffer))))
+       (list palabra buffer-name))))
+
+  (defun writing/rae-format-result (json-data palabra)
+    "Format the JSON-DATA response from RAE API into an org-mode buffer."
+    (let* ((data (gethash "data" json-data))
+           (word (gethash "word" data))
+           (meanings (gethash "meanings" data)))
+      (insert (format "#+TITLE: %s\n\n" word))
+
+      ;; Process each meaning
+      (dolist (meaning meanings)
+        (let ((origin (gethash "origin" meaning))
+              (senses (gethash "senses" meaning))
+              (conjugations (gethash "conjugations" meaning)))
+
+          ;; Etymology - origin is an object with 'text' or 'raw' field
+          (when origin
+            (insert "* Etimología\n")
+            (let ((origin-text (or (gethash "text" origin)
+                                   (gethash "raw" origin))))
+              (when origin-text
+                (insert (format "%s\n\n" origin-text)))))
+
+          ;; Definitions
+          (insert "* Definiciones\n\n")
+          (let ((sense-num 1))
+            (dolist (sense senses)
+              (let ((category (gethash "category" sense))
+                    (verb-category (gethash "verb_category" sense))
+                    (description (gethash "description" sense))
+                    (synonyms (gethash "synonyms" sense))
+                    (antonyms (gethash "antonyms" sense)))
+
+                ;; Build category string
+                (let ((cat-str (cond
+                                ((and category verb-category)
+                                 (format "/%s %s/" category verb-category))
+                                (category (format "/%s/" category))
+                                (t ""))))
+                  (insert (format "** %d. %s\n" sense-num cat-str)))
+
+                ;; Description (this is the actual definition)
+                (when description
+                  (insert (format "%s\n\n" description)))
+
+                ;; Synonyms
+                (when (and synonyms (> (length synonyms) 0))
+                  (insert (format "*** Sinónimos: %s\n\n"
+                                  (mapconcat 'identity synonyms ", "))))
+
+                ;; Antonyms
+                (when (and antonyms (> (length antonyms) 0))
+                  (insert (format "*** Antónimos: %s\n\n"
+                                  (mapconcat 'identity antonyms ", "))))
+
+                (setq sense-num (1+ sense-num)))))
+
+          ;; Conjugations (for verbs)
+          (when conjugations
+            (insert "* Conjugaciones\n\n")
+            (writing/rae-format-conjugations conjugations))))))
+
+  (defun writing/rae-format-conjugations (conjugations)
+    "Format verb conjugations from the RAE API response."
+    (when conjugations
+      ;; Simple formatting - you can enhance this later
+      (insert "#+begin_example\n")
+      (maphash
+       (lambda (mood forms)
+         (insert (format "\n%s:\n" (upcase (if (stringp mood) mood (symbol-name mood)))))
+         (when (hash-table-p forms)
+           (maphash
+            (lambda (tense persons)
+              (insert (format "  %s:\n" (if (stringp tense) tense (symbol-name tense))))
+              (when (hash-table-p persons)
+                (maphash
+                 (lambda (person form)
+                   (insert (format "    %s: %s\n"
+                                   (if (stringp person) person (symbol-name person))
+                                   form)))
+                 persons)))
+            forms)))
+       conjugations)
+      (insert "#+end_example\n\n")))
+
+  (defun writing/rae-api-random ()
+    "Get a random word from the RAE dictionary."
+    (interactive)
+    (let* ((url "https://rae-api.com/api/random")
+           (url-request-method "GET"))
+      (url-retrieve
+       url
+       (lambda (status)
+         (if (plist-get status :error)
+             (message "Error al obtener palabra aleatoria: %s"
+                      (plist-get status :error))
+           (goto-char (point-min))
+           (re-search-forward "^$")
+           (let* ((json-object-type 'hash-table)
+                  (json-array-type 'list)
+                  (json-key-type 'string)
+                  (json-data (json-read))
+                  (palabra (gethash "word" (gethash "data" json-data))))
+             (kill-buffer)
+             (when palabra
+               (writing/rae-api-lookup palabra))))))))
+
+  ;; (defun writing/rae-api-daily ()
+  ;;   "Get the word of the day from the RAE dictionary."
+  ;;   (interactive)
+  ;;   (let* ((url-request-method "GET")
+  ;;          (url-request-extra-headers
+  ;;           '(("Accept" . "application/json")
+  ;;             ("User-Agent" . "Emacs"))))
+  ;;     (url-retrieve
+  ;;      "https://rae-api.com/api/daily"
+  ;;      (lambda (status)
+  ;;        (unwind-protect
+  ;;            (progn
+  ;;              ;; Check for HTTP errors
+  ;;              (when (plist-get status :error)
+  ;;                (error "Error al obtener palabra del día: %s"
+  ;;                       (cdr (plist-get status :error))))
+
+  ;;              ;; Check HTTP status code
+  ;;              (goto-char (point-min))
+  ;;              (when (re-search-forward "^HTTP/[0-9.]+ \\([0-9]+\\)" nil t)
+  ;;                (let ((status-code (string-to-number (match-string 1))))
+  ;;                  (unless (= status-code 200)
+  ;;                    (error "HTTP error %d al obtener palabra del día" status-code))))
+
+  ;;              ;; Parse JSON response
+  ;;              (goto-char (point-min))
+  ;;              (re-search-forward "^$")
+  ;;              (let* ((json-object-type 'hash-table)
+  ;;                     (json-array-type 'list)
+  ;;                     (json-key-type 'string)
+  ;;                     (json-data (json-read))
+  ;;                     (data (gethash "data" json-data))
+  ;;                     (palabra (when data (gethash "word" data))))
+  ;;                (if palabra
+  ;;                    (writing/rae-api-lookup palabra)
+  ;;                  (message "No se pudo obtener la palabra del día"))))
+  ;;          (kill-buffer (current-buffer)))))))
 #+end_src
 
 * Buscar sinónimos
@@ -900,7 +1079,7 @@ I want to create a hydra function for the most useful functions when writing.
      ("e" writing/editing-mode "editing mode")
          
      ;; Writing tools
-     ("r" writing/buscarae "RAE dictionary")
+     ("r" writing/rae-api-lookup "RAE dictionary")
      ("s" writing/sinonimo "synonyms")
      ("l" writing/translate "translate")
      ("d" powerthesaurus-lookup-dwim "thesaurus")
