@@ -3264,7 +3264,38 @@ https://ox-hugo.scripter.co/
 * Writing
 Here, I document all the config related to my writing.
 #+begin_src emacs-lisp
-  (org-babel-load-file "~/.emacs.d/writing/writing.org")
+  ;; (org-babel-load-file "~/.emacs.d/writing/writing.org")
+    (use-package org-context-extended
+    :ensure t
+    :vc (:url "https://codeberg.org/jcastp/org-context-extended"
+  	    :branch "main"
+  	    :rev :newest))
+
+    (use-package org-tracktable
+    :ensure t
+    :vc (:url "https://codeberg.org/jcastp/org-tracktable"
+  	    :branch "main"
+  	    :rev :newest))
+
+  (load-file "~/Nextcloud/escritura/software/emacs-writing/emacs-writing.el")
+
+  (defvar-keymap my/key-prefix-writing-map
+    :doc "Functions related to writing"
+    ;; writing mode
+    "a" #'my-writing-env-mode
+    "f" #'my-writing-env-mode-focus
+    "e" #'writing/editing-mode
+    "w" #'writing/ews-org-count-words
+    "c" #'org-context-count-words
+    ;; writing exercises
+    "r" #'writing/create-writing-exercise
+    "q" #'writing/create-empty-writing-file
+    "s" #'writing/sinonimo
+    ;; hydra keybinding
+    "k" #'hydra-writing/body
+    )
+
+  (keymap-global-set "<f8> <f8>" #'hydra-writing/body)
 #+end_src
 * Programming
 ** General
