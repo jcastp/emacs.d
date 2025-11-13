@@ -1186,7 +1186,7 @@ Doom modeline.
     ;; Do we need to show the minor modes?
     (setq doom-modeline-minor-modes nil)
     ;; word count of the buffer disabled, as it slows operations when word count grows
-    (setq doom-modeline-enable-word-count t)
+    ;; (setq doom-modeline-enable-word-count t)
     ;; Major modes in which to display word count continuously.
     ;; Also applies to any derived modes. Respects `doom-modeline-enable-word-count'.
     ;; If it brings the sluggish issue, disable `doom-modeline-enable-word-count' or
