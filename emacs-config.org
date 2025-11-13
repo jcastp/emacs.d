@@ -206,14 +206,16 @@ But backups are good to have:
 ** utf-8 everywhere
 UTF-8 everywhere.
 #+begin_src emacs-lisp
+  (prefer-coding-system 'utf-8)
+  (set-default-coding-systems 'utf-8)
   ;; make sure that UTF-8 is used everywhere.
-  (set-terminal-coding-system  'utf-8)
-  (set-keyboard-coding-system  'utf-8)
-  (set-language-environment    'utf-8)
-  (set-selection-coding-system 'utf-8)
-  (setq locale-coding-system   'utf-8)
-  (prefer-coding-system        'utf-8)
-  (set-input-method nil)
+  ;; (set-terminal-coding-system  'utf-8)
+  ;; (set-keyboard-coding-system  'utf-8)
+  ;; (set-language-environment    'utf-8)
+  ;; (set-selection-coding-system 'utf-8)
+  ;; (setq locale-coding-system   'utf-8)
+  ;; (prefer-coding-system        'utf-8)
+  ;; (set-input-method nil)
 #+end_src
 
 ** Movement
