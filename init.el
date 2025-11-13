@@ -5,15 +5,6 @@
 ;; lisp evaluation of recursion
 (setq max-lisp-eval-depth 5000)
 
-;; remove the GUI features
-(menu-bar-mode -1)
-(tool-bar-mode -1)
-(scroll-bar-mode -1)
-
-;; disable splash and startup screens
-(setq inhibit-splash-screen t
-      inhibit-startup-screen t)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; package initialization
 (use-package package
@@ -27,12 +18,6 @@
   (use-package-always-ensure t)
   (package-native-compile t)
   (warning-minimum-level :emergency))
-
-;; (require 'package)
-;; (package-initialize)
-
-;; (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 ;; remove the packages warning messages
@@ -87,7 +72,7 @@ This is the code that will be commited.")
 
 ;; define my clear directory
 (defvar my-clear-directory (expand-file-name "Nextcloud_claro/gocryptfs_claro" (getenv "HOME"))
-  "My decrupted directory.")
+  "My decrypted directory.")
 
 ;; check the directory exists
 ;;(file-directory-p my-clear-directory)

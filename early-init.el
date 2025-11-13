@@ -6,7 +6,7 @@
 (setq package-enable-at-startup nil)
 
 ;; garbage collector config
-(setq gc-cons-threshold (* 1024 1024 20))
+(setq gc-cons-threshold (* 1024 1024 100))
 (setq gc-cons-percentage 0.5)
 
 ;; the custom.el file location
@@ -19,6 +19,15 @@
 
 ;; Inhibit resizing the frame when changing the font
 (setq frame-inhibit-implied-resize t)
+
+;; remove the GUI features
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+
+;; disable splash and startup screens
+(setq inhibit-splash-screen t
+      inhibit-startup-screen t)
 
 (provide 'early-init)
 ;;; early-init.el ends here
