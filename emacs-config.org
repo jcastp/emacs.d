@@ -3460,8 +3460,8 @@ Load the emacs-writing package. Information is [[https://codeberg.org/jcastp/ema
 
   (use-package emacs-writing
     :vc (:url "https://codeberg.org/jcastp/emacs-writing"
-  	    :branch "main"
-  	    :rev :newest)
+   	    :branch "main"
+   	    :rev :newest)
     :after org
     :hook (org-mode . emacs-writing-mode)
     :config
