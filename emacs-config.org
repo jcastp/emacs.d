@@ -3434,22 +3434,33 @@ https://github.com/minad/tempel
 
 ** emacs-writing config
 Here, I document all the config related to my writing.
+
+Load the org-context-extended code, that adds helper functions and a flexible prose word count function:
 #+begin_src emacs-lisp
-  ;; (org-babel-load-file "~/.emacs.d/writing/writing.org")
-    (use-package org-context-extended
+  (use-package org-context-extended
     :ensure t
     :vc (:url "https://codeberg.org/jcastp/org-context-extended"
   	    :branch "main"
   	    :rev :newest))
+#+end_src
 
-    (use-package org-tracktable
+Load a custom implementation of the org-tracktable package, using the org-context-extended word counting function:
+#+begin_src emacs-lisp
+  (use-package org-tracktable
     :ensure t
     :vc (:url "https://codeberg.org/jcastp/org-tracktable"
   	    :branch "main"
   	    :rev :newest))
+#+end_src
 
+Load the emacs-writing package. Information is [[https://codeberg.org/jcastp/emacs-writing][here]].
+#+begin_src emacs-lisp
+  ;; testing purposes. It will change once the package is ready
   (load-file "~/Nextcloud/escritura/software/emacs-writing/emacs-writing.el")
+#+end_src
 
+Create a custom keymap for the writing functions
+#+begin_src emacs-lisp
   (defvar-keymap my/key-prefix-writing-map
     :doc "Functions related to writing"
     ;; writing mode
