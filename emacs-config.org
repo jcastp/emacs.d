@@ -497,7 +497,8 @@ Shows the free keybinding. Useful to assign new keybindings to some new function
 #+begin_src emacs-lisp
   (use-package free-keys
     :ensure t
-    )
+    :defer t
+    :commands (free-keys))
 #+end_src
 
 ** Which-key
