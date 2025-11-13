@@ -89,19 +89,14 @@ Unmap the C-z key, so no way to minimize or suspend emacs accidentally.
 ** Garbage collection
 Fine tune the garbage collection.
 #+begin_src emacs-lisp
-  ;; Adopt a sneaky garbage collection strategy of waiting until idle
-  ;; time to collect; staving off the collector while the user is working.  Thanks Doom -
-  ;; https://github.com/hlissner/doom-emacs/blob/develop/docs/faq.org#how-does-doom-start-up-so-quickly
-
-  (use-package gcmh
+   (use-package gcmh
     :ensure t
     :diminish gcmh-mode
     :custom
     (gcmh-mode 1)
     (gcmh-idle-delay 10)
-    (gcmh-high-cons-threshold (* 32 1024 1024))
-    (gc-cons-percentage 0.8)
-    )
+    (gcmh-high-cons-threshold (* 100 1024 1024))
+    (gc-cons-percentage 0.8))
 #+end_src
 
 ** Alternative and better C-g function
