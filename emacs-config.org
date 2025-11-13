@@ -159,7 +159,8 @@ We put some fringe space in the frames.
 ** Changes all yes/no questions to y/n type
 The questions are answered with a y or n, instead of yes or no.
 #+begin_src emacs-lisp
-  (fset 'yes-or-no-p 'y-or-n-p)
+  ;; (fset 'yes-or-no-p 'y-or-n-p)
+  (setq use-short-answers t)  
 #+end_src
 
 ** Sentences end with just one space
