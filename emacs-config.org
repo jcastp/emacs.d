@@ -295,7 +295,8 @@ Set the userAgent for eww.
   ;; where to store the recent list file
   (setq recentf-save-file (expand-file-name "recentf" my-data-dir))
   (recentf-mode 1)
-  ;;(global-set-key (kbd "C-c d r") #'recentf)
+  (setq recentf-max-saved-items 100
+       recentf-exclude '("/tmp/" "/ssh:" "/sudo:"))
 #+end_src
 
 ** dired config
@@ -577,9 +578,9 @@ This allows to delete a selected text area immediately, just as other text edito
 
 From Prot's article - https://protesilaos.com/codelog/2024-11-28-basic-emacs-configuration/
 #+begin_src emacs-lisp
-  (use-package delsel
-    :ensure nil ; no need to install it as it is built-in
-    :hook (after-init . delete-selection-mode))
+   (use-package delsel
+     :ensure nil ; no need to install it as it is built-in
+     :hook (after-init . delete-selection-mode))
 #+end_src
 
 ** helpful package
