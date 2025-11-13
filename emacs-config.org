@@ -503,7 +503,7 @@ Shows the free keybinding. Useful to assign new keybindings to some new function
 After pressing a key combo, it shows the key bindings associated.
 #+begin_src emacs-lisp
   ;; only use use-package for versions under 30, as version >30 have which-key as a default
-  (if (version< "29.4" emacs-version)
+  (if (version<= "30" emacs-version)
       (which-key-mode)
     (progn (
   	  (use-package which-key
