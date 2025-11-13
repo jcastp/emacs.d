@@ -999,7 +999,7 @@ Cursor doesn't blink:
 I don't need my line to be highlighted.
 #+begin_src emacs-lisp
   ;; Don't highlight the current line
-  (global-hl-line-mode' 0)
+  (global-hl-line-mode 0)
 #+end_src
 
 ** Font size increase/decrease
