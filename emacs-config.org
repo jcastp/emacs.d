@@ -26,11 +26,7 @@ https://cestlaz-nikola.github.io/posts/using-emacs-47-magit/
     :after transient
     :bind
     (:map global-map
-  	("C-x g" . magit-status)
-  	)
-    :config
-    ;;(global-set-key (kbd "C-x g") 'magit-status)
-    )
+  	("C-x g" . magit-status)))
   #+end_src
   
 ** diff-hl
@@ -67,8 +63,6 @@ Only evaluated if in my home environment, my encrypted directory is mounted, as 
       (use-package mastodon
         :ensure t
         :defer t
-        ;; :bind
-        ;; ("C-c d m" . mastodon)
         :config
         ;; account configuration
         (setq mastodon-instance-url "https://mastodon.online"
@@ -645,7 +639,8 @@ https://github.com/raxod502/prescient.el
   ;; To use prescient with vertico
   (use-package vertico-prescient
     :ensure t
-    )
+    :config
+    (vertico-prescient-mode 1))
 #+end_src
 
 ** consult
