@@ -1121,17 +1121,18 @@ When reaching the established width defined, the line will wrap, even before get
 ** All the icons
 Get all the fancy icons.
 #+begin_src emacs-lisp
-  (use-package all-the-icons
-    :ensure t
-    :config
-    )
+  ;; (use-package all-the-icons
+  ;;   :ensure t
+  ;;   :config
+  ;;   )
 
-  (use-package all-the-icons-completion
-    :ensure t
-    :config
-    (all-the-icons-completion-mode))
+  ;; (use-package all-the-icons-completion
+  ;;   :ensure t
+  ;;   :config
+  ;;   (all-the-icons-completion-mode))
 
-  ;; From Prot's article - https://protesilaos.com/codelog/2024-11-28-basic-emacs-configuration/
+  ;; ;; From Prot's 
+  article - https://protesilaos.com/codelog/2024-11-28-basic-emacs-configuration/
   (use-package nerd-icons
     :ensure t)
 
