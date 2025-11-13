@@ -382,9 +382,6 @@ Setting firefox or librewolf as the default browser for opening http/s links.
      (progn
        (setq browse-url-firefox-program "firefox")
        (setq browse-url-browser-function 'browse-url-firefox)))
-   
-   ;; (setq browse-url-firefox-program "firefox")
-   ;; (setq browse-url-browser-function 'browse-url-firefox)
 #+end_src
 
 ** Battery management
@@ -432,9 +429,7 @@ Specially defined for spanish question and exclamation marks.
   (use-package vundo
     :ensure t
     :config
-    (global-set-key (kbd "C-z") #'vundo)
-    ;;(global-set-key (kbd "C-<dead-grave>") #'vundo)
-  )
+    (global-set-key (kbd "C-z") #'vundo))
 #+end_src
 
 ** vlf related config
@@ -534,8 +529,7 @@ Reload this configuration file.
     "Reloads my orgmode configuration."
     (interactive)
     (load (concat user-emacs-directory "early-init.el"))
-    (load (concat user-emacs-directory "init.el"))
-    )
+    (load (concat user-emacs-directory "init.el")))
   (global-set-key (kbd "C-c r r" ) 'my/reload-config)
 #+end_src
 
@@ -889,9 +883,6 @@ https://github.com/abo-abo/avy
   (use-package avy
     :ensure t
     :config
-    ;; (global-set-key (kbd "C-x c c") 'avy-goto-char-2)
-    ;; (global-set-key (kbd "C-x c w") 'avy-goto-word-1)
-    ;; (global-set-key (kbd "C-x c l") 'avy-goto-line)
     )
     #+end_src
 
@@ -1230,8 +1221,8 @@ It darkens the buffers I'm not using.
     (setq pulsar-face 'pulsar-red)
     (setq pulsar-highlight-face 'pulsar-yellow)
     ;; integration with the `consult' package:
-    ;;(add-hook 'consult-after-jump-hook #'pulsar-recenter-top)
-    ;;(add-hook 'consult-after-jump-hook #'pulsar-reveal-entry)
+    (add-hook 'consult-after-jump-hook #'pulsar-recenter-top)
+    (add-hook 'consult-after-jump-hook #'pulsar-reveal-entry)
     ;; enable everywhere
     (pulsar-global-mode 1)
     :bind
