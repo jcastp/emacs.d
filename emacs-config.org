@@ -1131,8 +1131,7 @@ Get all the fancy icons.
   ;;   :config
   ;;   (all-the-icons-completion-mode))
 
-  ;; ;; From Prot's 
-  article - https://protesilaos.com/codelog/2024-11-28-basic-emacs-configuration/
+  ;; ;; From Prot's article - https://protesilaos.com/codelog/2024-11-28-basic-emacs-configuration/
   (use-package nerd-icons
     :ensure t)
 
