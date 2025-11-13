@@ -3456,7 +3456,22 @@ Load a custom implementation of the org-tracktable package, using the org-contex
 Load the emacs-writing package. Information is [[https://codeberg.org/jcastp/emacs-writing][here]].
 #+begin_src emacs-lisp
   ;; testing purposes. It will change once the package is ready
-  (load-file "~/Nextcloud/escritura/software/emacs-writing/emacs-writing.el")
+  ;; (load-file "~/Nextcloud/escritura/software/emacs-writing/emacs-writing.el")
+
+  (use-package emacs-writing
+    :vc (:url "https://codeberg.org/jcastp/emacs-writing"
+  	    :branch "main"
+  	    :rev :newest)
+    :after org
+    :hook (org-mode . emacs-writing-mode)
+    :config
+    ;; Customize settings
+    (setq my-writing-env-work-theme 'poet)
+    (setq my-writing-env-normal-theme 'ef-deuteranopia-dark)
+    (setq writing-stories-directory "~/writing/exercises")
+
+    ;; Keybindings
+    (global-set-key (kbd "<f8> <f8>") 'hydra-writing/body))
 #+end_src
 
 Create a custom keymap for the writing functions
