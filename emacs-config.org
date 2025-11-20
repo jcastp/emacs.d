@@ -3511,6 +3511,57 @@ Create a custom keymap for the writing functions
   (keymap-global-set "<f8> <f8>" #'hydra-org-scribe/body)
 #+end_src
 
+** Create a story file on the fly
+Sometimes I want to create a story prompt on the fly. These functions allow for creating the prompts and the file, so I can immediately start writing.
+
+This code depends on a custom script that generates writing prompts based on a list of keywords and some templates.
+
+#+begin_src emacs-lisp
+  (defvar my-writing-stories-directory "~/Nextcloud/escritura/historias/ejercicios"
+    "Directory where org files created by `my-writing/create-org-file' will be stored.")
+
+  (defun my-writing/create-empty-writing-file (title)
+    "Create a new empty org file with name format `%Y%m%d-<title>.org', where <title> is the `title' argument with spaces replaced by underscores. The file will be stored in `writing-stories-directory'."
+    (interactive "sEnter file name: ")
+    (let* ((date (format-time-string "%Y%m%d"))
+  	 ;; Create the filename with the timestamp and the title
+           (filename (concat date "-" (replace-regexp-in-string " " "_" title) ".org"))
+  	 ;; create the full path of the file
+           (full-path (concat my-writing-stories-directory "/" filename))
+  	 ;; Create a string with the title and author
+  	 (initial_title (format "#+TITLE: %s\n#+AUTHOR: %s\n#+EMAIL: %s" title user-full-name user-mail-address))
+  	   )
+      ;; very crude way to include some title in the file created
+      (append-to-file initial_title nil full-path)
+      (find-file full-path)
+      ))
+
+  (defun my-writing/create-writing-exercise (title)
+    "Create a new file with the current date and the specified TITLE.
+  The file is saved in the directory specified by `my-writing-stories-directory'.
+  The file name format is \"%Y%m%d-<text>.org\", with spaces in TEXT replaced by \"_\".
+  The function runs a Python script that generates a writing prompt
+  and stores the output in the file."
+    (interactive "sEnter file name: ")
+    (let* ((date (format-time-string "%Y%m%d"))
+  	 ;; Create the filename with the timestamp and the title
+           (file-name (concat date "-" (replace-regexp-in-string " " "_" title) ".org"))
+  	 ;; create the full path of the file
+           (file-path (concat my-writing-stories-directory "/" file-name))
+  	 ;; Get the output from the python script
+           (python-output (shell-command-to-string "python  ~/Nextcloud/escritura/software/writing_companion/writing_companion.py -s all prompt"))
+  	 ;; Create the initial org front matter
+  	 (initial_title (format "#+TITLE: %s\n#+AUTHOR: %s\n#+EMAIL: %s" title user-full-name user-mail-address)))
+      ;; insert the data in the file
+      (with-temp-file file-path
+        (insert initial_title )
+  	(insert "\n\n" python-output))
+      ;; open the file
+      (find-file file-path)
+      ))
+#+end_src
+
+
 * Programming
 ** General
 
