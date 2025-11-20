@@ -3450,7 +3450,7 @@ https://github.com/minad/tempel
     )
 #+end_src
 
-** emacs-writing config
+** org-scribe config
 Here, I document all the config related to my writing.
 
 Load the org-context-extended code, that adds helper functions and a flexible prose word count function:
@@ -3471,25 +3471,25 @@ Load a custom implementation of the org-tracktable package, using the org-contex
   	    :rev :newest))
 #+end_src
 
-Load the emacs-writing package. Information is [[https://codeberg.org/jcastp/emacs-writing][here]].
+Load the org-scribe package. Information is [[https://codeberg.org/jcastp/org-scribe][here]].
 #+begin_src emacs-lisp
   ;; testing purposes. It will change once the package is ready
-  ;; (load-file "~/Nextcloud/escritura/software/emacs-writing/emacs-writing.el")
+  ;; (load-file "~/Nextcloud/escritura/software/org-scribe/org-scribe.el")
 
-  (use-package emacs-writing
-    :vc (:url "https://codeberg.org/jcastp/emacs-writing"
+  (use-package org-scribe
+    :vc (:url "https://codeberg.org/jcastp/org-scribe"
    	    :branch "main"
    	    :rev :newest)
     :after org
-    :hook (org-mode . emacs-writing-mode)
+    :hook (org-mode . org-scribe-mode)
     :config
     ;; Customize settings
-    (setq my-writing-env-work-theme 'poet)
-    (setq my-writing-env-normal-theme 'ef-deuteranopia-dark)
+    (setq my-org-scribe-env-work-theme 'poet)
+    (setq my-org-scribe-env-normal-theme 'ef-deuteranopia-dark)
     (setq writing-stories-directory "~/writing/exercises")
 
     ;; Keybindings
-    (global-set-key (kbd "<f8> <f8>") 'hydra-writing/body))
+    (global-set-key (kbd "<f8> <f8>") 'hydra-org-scribe/body))
 #+end_src
 
 Create a custom keymap for the writing functions
@@ -3497,20 +3497,20 @@ Create a custom keymap for the writing functions
   (defvar-keymap my/key-prefix-writing-map
     :doc "Functions related to writing"
     ;; writing mode
-    "a" #'my-writing-env-mode
-    "f" #'my-writing-env-mode-focus
-    "e" #'writing/editing-mode
-    "w" #'writing/ews-org-count-words
+    "a" #'org-scribe/writing-env-mode
+    "f" #'org-scribe/writing-env-mode-focus
+    "e" #'org-scribe/editing-mode
+    "w" #'org-scribe/ews-org-count-words
     "c" #'org-context-count-words
     ;; writing exercises
     "r" #'writing/create-writing-exercise
     "q" #'writing/create-empty-writing-file
-    "s" #'writing/sinonimo
+    "s" #'org-scribe/sinonimo
     ;; hydra keybinding
-    "k" #'hydra-writing/body
+    "k" #'hydra-org-scribe/body
     )
 
-  (keymap-global-set "<f8> <f8>" #'hydra-writing/body)
+  (keymap-global-set "<f8> <f8>" #'hydra-org-scribe/body)
 #+end_src
 
 * Programming
