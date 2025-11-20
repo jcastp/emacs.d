@@ -3322,23 +3322,21 @@ Esto es una prueba de cómo funciona la traducción.
     :ensure t
     :config
     (setq gt-langs '(en es))
-
-    
-  ;; Configure the default translator
-  (setq gt-default-translator
-        (gt-translator
-         ;; Optional: Use a more specific Taker to ensure correct language handling
-         ;; This Taker focuses on the word or selected region, using the global gt-langs
-         :taker (gt-taker :langs gt-langs :text 'word) 
-         ;; Specify the translation engine(s)
-         :engines (gt-bing-engine)
-         ;; Optional: Change the output method for potentially better readability
-         ;; For example, using a dedicated buffer instead of the echo area:
-         ;; :render (gt-buffer-render)
-         ;; Or using a floating window:
-         ;; :render (gt-posframe-pop-render)
-         ;; The default render (gt-render) outputs to the echo area.
-         )))
+    ;; Configure the default translator
+    (setq gt-default-translator
+  	(gt-translator
+  	 ;; Optional: Use a more specific Taker to ensure correct language handling
+  	 ;; This Taker focuses on the word or selected region, using the global gt-langs
+  	 :taker (gt-taker :langs gt-langs :text 'word) 
+  	 ;; Specify the translation engine(s)
+  	 :engines (gt-bing-engine)
+  	 ;; Optional: Change the output method for potentially better readability
+  	 ;; For example, using a dedicated buffer instead of the echo area:
+  	 ;; :render (gt-buffer-render)
+  	 ;; Or using a floating window:
+  	 ;; :render (gt-posframe-pop-render)
+  	 ;; The default render (gt-render) outputs to the echo area.
+  	 )))
 #+end_src
 
 *** TODO powerthesaurus
