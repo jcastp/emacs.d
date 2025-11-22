@@ -1273,7 +1273,7 @@ Useful for reading books or long texts.
                   #'my/centered--update-margins nil t)
         (my/centered--update-margins))
     (progn
-      (visual-line-mode -1)
+      (visual-line-mode 1)
       (remove-hook 'window-configuration-change-hook 
                    #'my/centered--update-margins t)
       (set-window-margins nil 0 0))))
