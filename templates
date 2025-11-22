@@ -102,13 +102,13 @@ org-mode
 	"# end:"
 )
 
-(salto
+(fin
 
 "{{{scene-break}}}"
 
 )
 
-(fin
+(fin2
 	"#+LATEX: ~\\\\" n
 	"#+LATEX: ~\\\\" n
 	"#+HTML:<br><br>" n
