@@ -3490,6 +3490,15 @@ Load the org-scribe package. Information is [[https://codeberg.org/jcastp/org-sc
     (global-set-key (kbd "<f8> <f8>") 'hydra-org-scribe/body))
 #+end_src
 
+Load the org-scribe-planner package
+#+begin_src emacs-lisp
+  (use-package org-scribe-planner
+  :vc (:url "https://codeberg.org/jcastp/org-scribe-planner"
+  	    :branch "main"
+  	    :rev :newest)
+  :after org)
+#+end_src
+
 Create a custom keymap for the writing functions
 #+begin_src emacs-lisp
   (defvar-keymap my/key-prefix-writing-map
