@@ -128,7 +128,7 @@ org-mode
 
 (edit
 	"#+begin_comment" n
-	"*EDIT*: " p n
+	"*EDIT*: " (p (concat (completing-read "Type: " '("plot" "scene" "character" "prose")) " - ") type) n
 	"#+end_comment"
 	:ann "edit information"
 )
