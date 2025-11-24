@@ -4,7 +4,10 @@
 ;; Available everywhere
 fundamental-mode 
 
-(today (format-time-string "%Y-%m-%d"))
+(today (format-time-string "%Y-%m-%d")
+       :ann "Today's date"
+       :doc "Insert today's date"
+       )
 
 ;; for all text mode
 text-mode
@@ -13,17 +16,20 @@ text-mode
 	"┌─" (make-string (length str) ?─) "─┐" n
 	"│ " (s str)                       " │" n
 	"└─" (make-string (length str) ?─) "─┘" n
+	:ann "unicode rectangular box"
 	)
      
 (abox
 	"+-" (make-string (length str) ?-) "-+" n
 	"| " (s str)                       " |" n
 	"+-" (make-string (length str) ?-) "-+" n
+	:ann "ascii rectangular box"
 	)
       
 (cut
 	"--8<---------------cut here---------------start------------->8---" n r n
 	"--8<---------------cut here---------------end--------------->8---" n
+	:ann "text cut section"
 	)
 
 
@@ -35,6 +41,8 @@ org-mode
 (lisp
 	"#+begin_src emacs-lisp" n
 	"#+end_src"
+	:ann "elisp code snippet"
+	:doc "Insert emacs-lisp code"
 )
 
 (title
@@ -42,6 +50,7 @@ org-mode
 	"#+author: Javier Castilla" n
 	"#+EMAIL: jcastp@pm.me" n
 	"#+language: es"
+	:ann "Title for org files"
        )
 
 (export
@@ -100,11 +109,13 @@ org-mode
 	"# Local Variables:" n
 	"# ispell-local-dictionary: "spanish"" n
 	"# end:"
+	:ann "Export options for org files."
 )
 
 (fin
-
-"{{{scene-break}}}"
+	"{{{scene-break}}}"
+	:ann "Scene break"
+	:doc "Scene break macro"
 
 )
 
@@ -112,18 +123,21 @@ org-mode
 	"#+LATEX: ~\\\\" n
 	"#+LATEX: ~\\\\" n
 	"#+HTML:<br><br>" n
+	:ann "old scene break"
 )
 
 (edit
 	"#+begin_comment" n
 	"*EDIT*: " p n
 	"#+end_comment"
+	:ann "edit information"
 )
 
 (note
 	"#+begin_comment" n
 	"*NOTE*: " p n
 	"#+end_comment"
+	:ann "misc note"
 )
 
 (summary
@@ -147,7 +161,9 @@ org-mode
 	":Emocion: " n
 	":Comentario: " n
 	":WORDCOUNT: " n
-	":END:")
+	":END:"
+	:ann "Scene properties"
+	)
 
 (scene
 	":PROPERTIES:" n
@@ -164,7 +180,9 @@ org-mode
 	":Emotion: " n
 	":Comment: " n
 	":WORDCOUNT: " n
-	":END:")
+	":END:"
+	:ann "Scene properties"
+	)
 
 
 (5how
@@ -201,6 +219,7 @@ org-mode
 	"# " n
 	"**** Apertura a la Experiencia" n
 	"# Conservador - Experimentador" n
+	:ann "Character information"
 )
 
 (escrit
