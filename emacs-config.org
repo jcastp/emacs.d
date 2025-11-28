@@ -1253,36 +1253,41 @@ Sometimes I have just a single window and this is a problem for me in a big scre
 Useful for reading books or long texts.
 
 #+begin_src emacs-lisp
-(defcustom my/centered-content-width 100
-  "Width of the centered content area in characters."
-  :type 'integer
-  :group 'editing-basics)
+  (defcustom my/centered-content-width 100
+    "Width of the centered content area in characters."
+    :type 'integer
+    :group 'editing-basics)
 
-(defvar my/centered-mode nil)
+  (defun my/centered-content-width-value ()
+    "Prompt the user for a value and set `my/centered-content-width` to it."
+    (interactive)
+    (setq my/centered-content-width (string-to-number (read-from-minibuffer "Value for centered width: "))))
 
-(define-minor-mode my/centered-mode
-  "Minor mode to center buffer content using margins and visual line mode."
-  :init-value nil
-  :global nil
-  :lighter " [Centered]"
-  :group 'editing-basics
-  (if my/centered-mode
+  (defvar my/centered-mode nil)
+
+  (define-minor-mode my/centered-mode
+    "Minor mode to center buffer content using margins and visual line mode."
+    :init-value nil
+    :global nil
+    :lighter " [Centered]"
+    :group 'editing-basics
+    (if my/centered-mode
+        (progn
+          (visual-line-mode 1)
+          (add-hook 'window-configuration-change-hook 
+                    #'my/centered--update-margins nil t)
+          (my/centered--update-margins))
       (progn
         (visual-line-mode 1)
-        (add-hook 'window-configuration-change-hook 
-                  #'my/centered--update-margins nil t)
-        (my/centered--update-margins))
-    (progn
-      (visual-line-mode 1)
-      (remove-hook 'window-configuration-change-hook 
-                   #'my/centered--update-margins t)
-      (set-window-margins nil 0 0))))
+        (remove-hook 'window-configuration-change-hook 
+                     #'my/centered--update-margins t)
+        (set-window-margins nil 0 0))))
 
-(defun my/centered--update-margins ()
-  "Calculate and apply margins to center 100-character content."
-  (let* ((width (frame-width))
-         (margin (max 0 (/ (- width my/centered-content-width) 2))))
-    (set-window-margins nil margin margin)))
+  (defun my/centered--update-margins ()
+    "Calculate and apply margins to center 100-character content."
+    (let* ((width (frame-width))
+           (margin (max 0 (/ (- width my/centered-content-width) 2))))
+      (set-window-margins nil margin margin)))
 #+end_src
 
 ** emacs-rotate
