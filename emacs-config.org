@@ -3495,6 +3495,7 @@ Load the org-scribe package. Information is [[https://codeberg.org/jcastp/org-sc
     (global-set-key (kbd "<f8> <f8>") 'hydra-org-scribe/body))
 #+end_src
 
+** org-scribe-planner
 Load the org-scribe-planner package
 #+begin_src emacs-lisp
   (use-package org-scribe-planner
@@ -3504,6 +3505,7 @@ Load the org-scribe-planner package
   :after org)
 #+end_src
 
+** writing keybindings
 Create a custom keymap for the writing functions
 #+begin_src emacs-lisp
   (defvar-keymap my/key-prefix-writing-map
@@ -3574,7 +3576,6 @@ This code depends on a custom script that generates writing prompts based on a l
       (find-file file-path)
       ))
 #+end_src
-
 
 * Programming
 ** General
