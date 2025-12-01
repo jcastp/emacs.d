@@ -3391,17 +3391,17 @@ Check language syntax on the fly.
 #+end_src
 
 ** tree-sitter config
-Tree-Sitter is included in newer versions of emacs.
+Tree-Sitter is included in newer versions of emacs.x
 We just need to load the languages.
 
 #+begin_src emacs-lisp
-  (use-package tree-sitter-langs
+  (use-package tree-sitter
     :ensure t)
+  (use-package tree-sitter-langs
+    :ensure t
+    :after tree-sitter)
 
-  (require 'tree-sitter)
-  (require 'tree-sitter-langs)
-
-  (global-tree-sitter-mode)          ; enable globally
+  (add-hook 'prog-mode #'tree-sitter-mode) ;; only used in prog-mode
   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode) ; syntax highlighting
 #+end_src
 
