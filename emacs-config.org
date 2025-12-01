@@ -3251,16 +3251,6 @@ https://github.com/joostkremers/writeroom-mode
     )
 #+end_src
 
-*** Word count
-Word counting with objective.
-
-#+begin_src emacs-lisp
-  (use-package wc-mode
-    :ensure t
-    :config
-    (global-set-key (kbd "C-c 9") 'wc-mode)
-    )
-#+end_src
 *** TODO guess-language
 Since I write in different languages, the dictionary applied is really important. If I write in Spanish, I want the spanish dict to be applied, and not the english one.
 
@@ -4078,26 +4068,6 @@ To add text from other files, but without copying the information. It's just lik
   (set-face-attribute 'org-transclusion-fringe nil
   		    :foreground "green"
   		    :background "green"))
-#+end_src
-
-** TODO Count words in exported ascii mode
-orgmode has a lot of properties and facilities to make it work, but sometimes we only need the word count of the prose.
-This functions does this (to an extent).
-
-#+begin_src emacs-lisp
-  (defun my/count-words-ascii ()
-    "Export current Org buffer to ASCII in the background and count words.
-  This avoids counting comments or markup, and does not show any new buffers."
-    (interactive)
-    (save-excursion
-      (let* ((outfile (org-ascii-export-to-ascii nil nil nil t))  ;; export silently to temp file
-             (word-count 0))
-        (when (and outfile (file-exists-p outfile))
-          (with-temp-buffer
-            (insert-file-contents outfile)
-            (setq word-count (count-words (point-min) (point-max))))
-          (delete-file outfile))
-        (message "Total words of the ascii exported file: %d" word-count))))
 #+end_src
 
 ** TODO show-font
