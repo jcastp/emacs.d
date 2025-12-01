@@ -1289,7 +1289,7 @@ https://github.com/daichirata/emacs-rotate
 #+end_src
 
 ** treemacs
-To emulate the scrivener binder feature.
+I use this to emulate the scrivener binder feature, showing a lateral bar with all the relevant files for a novel.
 
 https://github.com/Alexander-Miller/treemacs
 #+begin_src emacs-lisp
@@ -3066,7 +3066,7 @@ Some people find it noisy and distracting that the Org headlines start with a po
 
 *** org-appear
 Show the invisible markers, only when the cursor is on them.
-/test/ this with *these* examples.
+/Test/ this with *these* _examples_.
 
 #+begin_src emacs-lisp
   (use-package org-appear
