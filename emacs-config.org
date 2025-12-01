@@ -96,7 +96,7 @@ Fine tune the garbage collection.
 ** Alternative and better C-g function
 https://emacsredux.com/blog/2025/06/01/let-s-make-keyboard-quit-smarter/
 
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
   (defun er-keyboard-quit-dwim ()
     "Do-What-I-Mean behaviour for a general `keyboard-quit'.
 
@@ -148,7 +148,6 @@ We put some fringe space in the frames.
 ** Changes all yes/no questions to y/n type
 The questions are answered with a y or n, instead of yes or no.
 #+begin_src emacs-lisp
-  ;; (fset 'yes-or-no-p 'y-or-n-p)
   (setq use-short-answers t)  
 #+end_src
 
@@ -180,7 +179,6 @@ But backups are good to have:
 #+begin_src emacs-lisp
   ;; backup in one place. flat, no tree structure
   ;; TODO change this to the variables for directories as it does not work as expected
-  ;;(setq backup-directory-alist '(("" . (concat my-data-dir "backups"))))
   (setq backup-directory-alist '(("" . "~/Nextcloud/config/.emacs.d/backups")))
   ;; What if the file is linked? We copy the file
   (setq backup-by-copying t)
@@ -326,45 +324,46 @@ From Prot's article - https://protesilaos.com/codelog/2024-11-28-basic-emacs-con
     (setq dired-subtree-use-backgrounds nil))
 #+end_src
 
-*** CANCELED dired-preview
+*** dired-preview
 Preview the files in dired.
 
 https://github.com/protesilaos/dired-preview
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (use-package dired-preview
     :ensure t
     :config
     (setq dired-preview-delay 0.1)
     (setq dired-preview-ignored-extensions-regexp
-  	(concat "\\."
-  		;; compressed files
-  		"\\(gz\\|"
-  		"zst\\|"
-  		"tar\\|"
-  		"xz\\|"
-  		"rar\\|"
-  		"zip\\|"
-  		"iso\\|"
-  		"mp3\\|"
-  		"mp4\\|"
-  		"3gp\\|"
-  		"odt\\|"
-  		"fodt\\|"
-  		"ods\\|"
-  		"fods\\|"
-  		"fodg\\|"
-  		"xlsx\\|"  		  		
-  		"epub"
-  		"\\)"))
+    	(concat "\\."
+    		;; compressed files
+    		"\\(gz\\|"
+    		"zst\\|"
+    		"tar\\|"
+    		"xz\\|"
+    		"rar\\|"
+    		"zip\\|"
+    		"iso\\|"
+    		"mp3\\|"
+    		"mp4\\|"
+    		"3gp\\|"
+    		"odt\\|"
+    		"fodt\\|"
+    		"ods\\|"
+    		"fods\\|"
+    		"fodg\\|"
+    		"xlsx\\|"  		  		
+    		"epub"
+    		"\\)"))
     (dired-preview-global-mode 1))
-#+end_src
 
-*** dired omit mode
-We want to hide some of the non interesting files in the dired views.
-The files are defined in the =dired-omit-files= and the extensions in the =dired-omit-extensions=.
-#+begin_src emacs-lisp
-  ;;(add-hook 'dired-mode-hook (lambda () (dired-omit-mode)))
+  (defun my-dired-preview-to-the-right ()
+    "My preferred `dired-preview-display-action-alist-function'."
+    '((display-buffer-in-side-window)
+      (side . right)
+      (window-width . 0.3)))
+
+  (setq dired-preview-display-action-alist #'my-dired-preview-to-the-right)
 #+end_src
 
 ** set firefox or librewolf as the default browser
@@ -1119,17 +1118,7 @@ When reaching the established width defined, the line will wrap, even before get
 ** All the icons
 Get all the fancy icons.
 #+begin_src emacs-lisp
-  ;; (use-package all-the-icons
-  ;;   :ensure t
-  ;;   :config
-  ;;   )
-
-  ;; (use-package all-the-icons-completion
-  ;;   :ensure t
-  ;;   :config
-  ;;   (all-the-icons-completion-mode))
-
-  ;; ;; From Prot's article - https://protesilaos.com/codelog/2024-11-28-basic-emacs-configuration/
+  ;; From Prot's article - https://protesilaos.com/codelog/2024-11-28-basic-emacs-configuration/
   (use-package nerd-icons
     :ensure t)
 
@@ -1681,15 +1670,6 @@ https://protesilaos.com/emacs/fontaine
 
 * Orgmode config
 All orgmode configs
-** Load the =org= package
-This comes from the old config, when I used the org-babel functions to tangled the config each time I ran emacs. This seems not to be used anymore.
-#+begin_src emacs-lisp
-  ;; load the org package soon in the config
-  ;; (use-package org
-  ;;   :ensure t
-  ;;   )
-#+end_src
-
 ** some org configs for better behavior and usage
 #+begin_src emacs-lisp
   (setq
@@ -3122,21 +3102,6 @@ https://github.com/minad/org-modern
     )
 #+end_src
 
-*** org-mode standard looks
-**** Custom faces for the todo keywords
-Implement something like this: https://orgmode.org/manual/Faces-for-TODO-keywords.html
-
-#+begin_src emacs-lisp
-  ;; (setq org-todo-keyword-faces
-  ;;       '(
-  ;;         ("TODO" . (:foreground "red3" :weight bold))
-  ;;         ("WAITING" . "LightSeaGreen")
-  ;;         ("ONGOING" . "orange")
-  ;;         ("DONE" . "LightGreen") ;; SeaGreen is also good, but this is clearer for me
-  ;;         ("CANCELED" . (:foreground "blue" :weight bold))
-  ;;         )
-  ;;       )
-#+end_src
 ** Orgmode extra packages
 *** org-mind-map
 To plot mindmaps based on the orgmode headers
@@ -3884,47 +3849,6 @@ https://www.emacswiki.org/emacs/EshellMultipleEshellBuffers
     (eshell 'N))
 #+end_src
 
-* CANCELED Email config
-Not tangled, due to problems with building mu in the OS.
-
-#+begin_src emacs-lisp :tangle no
-  ;; this will only load on my main system
-  (if my-desktopsystem-p
-      (progn
-        (use-package mu4e
-  	:ensure t
-  	;; installed from source
-  	:load-path "/usr/local/share/emacs/site-lisp/mu4e"
-  	:defer 10 ; Wait until 20 seconds after startup
-  	:bind (("C-c m" . mu4e))
-  	:config
-  	(setq mu4e-change-filenames-when-moving t ; avoid sync conflicts
-   	      mu4e-update-interval (* 10 60) ; check mail 10 minutes
-   	      mu4e-compose-format-flowed t ; re-flow mail so it's not hard wrapped
-   	      mu4e-get-mail-command "mbsync -a"
-   	      mu4e-maildir "~/mail/")
-
-  	;; folder configuration
-  	(setq mu4e-drafts-folder "/proton/Drafts"
-   	      mu4e-sent-folder   "/proton/Sent"
-   	      mu4e-refile-folder "/proton/All Mail"
-   	      mu4e-trash-folder  "/proton/Trash")
-
-  	(setq mu4e-maildir-shortcuts
-   	      '(("/proton/inbox"     . ?i)
-    		("/proton/Sent"      . ?s)
-    		("/proton/Trash"     . ?t)
-    		("/proton/Drafts"    . ?d)
-    		("/proton/All Mail"  . ?a)))
-
-  	(setq message-send-mail-function 'smtpmail-send-it
-   	      auth-sources '("~/.authinfo.gpg") ;need to use gpg version but only local smtp stored for now
-   	      smtpmail-smtp-server "127.0.0.1"
-   	      smtpmail-smtp-service 1025
-   	      smtpmail-stream-type  'starttls)
-  	)))
-#+end_src
-
 * emacs dashboard
 Load it at the end of the config.
 https://github.com/emacs-dashboard/emacs-dashboard
@@ -3996,43 +3920,6 @@ https://github.com/emacs-dashboard/emacs-dashboard
 
 * Testing
 Here there will be all the configs I'm testing, before committing them to the main config.
-** CANCELED resize the column fill and orgmode tags align
-Depending on the size of the frame, I need to resize the visual-fill-column-width and the org tags, so everything looks good.
-
-#+begin_src emacs-lisp :tangle no
-  (defvar my-middle-frame-size nil "The middle of the frame in column units.")
-
-  (defun my/get-middle-of-frame ()
-    "Get the middle position of the current frame and set `my-middle` global variable."
-    (interactive)
-    (let ((middle (/ (float (frame-width)) 2)))
-      (setq my-middle-frame-size (truncate middle))
-      ;; (message "Middle of the frame: %i" my-middle-frame-size)
-      ))
-
-  (defun my/adjust-frame-size (frame)
-    "Adjust several variables after resizing a frame."
-    (interactive)
-    (my/get-middle-of-frame)
-    ;; adjust the visual fill mode column
-    (setq-default visual-fill-column-width
-                  ;; select the minimum of these two values
-                  (max 80 (- my-middle-frame-size 5)))
-    (global-visual-fill-column-mode -1)
-    (global-visual-fill-column-mode 1)
-    ;; adjust the orgmode tags alignment values
-    ;; it chooses the minimum between these two values
-    (setq org-tags-column (min -70 (+ (* -1 my-middle-frame-size) 40)
-                               ))
-    ;; this is slow. I need to find a way to reapply the columns
-    ;; without restarting org-mode
-    ;;(org-mode-restart)
-    )
-
-  ;; hook for resizing a frame or window
-  ;;  (add-hook 'window-size-change-functions #'my/adjust-frame-size)
-#+end_src
-
 ** TODO hammy - time intervals
 https://github.com/alphapapa/hammy.el
 Time intervals, such as pomodoro.
@@ -4218,64 +4105,6 @@ This functions does this (to an extent).
 #+begin_src emacs-lisp
   (use-package show-font
     :ensure t)
-#+end_src
-
-** CANCELED alternative word count
-https://chrismaiorana.com/summer-productivity-reset-emacs-functions/
-#+begin_src emacs-lisp :tangle no
-  (defun csm/org-word-count ()
-    "Count words in region/buffer, estimate pages, and reading time.
-  Excludes lines beginning with * or #. Prints result in echo area."
-    (interactive)
-    (let* ((start (if (use-region-p) (region-beginning) (point-min)))
-           (end (if (use-region-p) (region-end) (point-max)))
-           (word-count
-            (save-excursion
-              (goto-char start)
-              (let ((count 0)
-                    (inhibit-field-text-motion t))
-                (while (< (point) end)
-                  (beginning-of-line)
-                  (unless (looking-at-p "^[*#<]")
-                    (let ((line-end (line-end-position)))
-                      (while (re-search-forward "\\w+\\W*" line-end t)
-                        (setq count (1+ count)))))
-                  (forward-line 1))
-                count)))
-           (words-per-page 400)
-           (reading-speed 215)
-           (page-count (/ (+ word-count words-per-page -1) words-per-page))
-           (reading-time (/ (+ word-count reading-speed -1) reading-speed)))
-      (message "%d words, ~%d pages, ~%d min read"
-               word-count page-count reading-time)))
-#+end_src
-
-** CANCELED zoom - resize windows based on frame size
-https://github.com/cyrus-and/zoom
-
-#+begin_src emacs-lisp :tangle no
-  (use-package zoom
-    :ensure t
-    :config
-    (zoom-mode t)
-    ;; fixed percentage
-    ;;(custom-set-variables
-    ;; '(zoom-size '(0.7 . 0.7)))
-
-    ;; Resize the selected window according to the frame width, for example:
-    ;; - 120 columns and 75% of the frame height if the frame width is larger than 1280 pixels;
-    ;; - frame width less than 120 columns, then 90%
-    ;; - golden ratio instead 0.618
-      (defun size-callback ()
-        (cond ;;((> (frame-pixel-width) 1280) '(120 . 0.75))
-         ;; frame-width is less than 120 columns
-      	  ((< (frame-width) 120) '(0.90 . 0.90))
-  	  ;; else, we use other percentage
-              (t                            '(0.7 . 0.7))))
-
-    (custom-set-variables
-     '(zoom-size 'size-callback))
-    )
 #+end_src
 
 * my own keymap
