@@ -1415,9 +1415,7 @@ Also, rotate the list of themes applied.
         '()
       ;; else block
       ;; rotates the list
-      (append (cdr list) (list (car list)))
-      )
-    )
+      (append (cdr list) (list (car list)))))
 
   ;; based on the election, load the theme, and rotate the list for future use.
   (with-eval-after-load 'consult
@@ -1426,17 +1424,13 @@ Also, rotate the list of themes applied.
         (progn
           (consult-theme (car my/themes-dark))
           ;; rotate the list - the applied theme goes to the back of the list
-          (setq my/themes-dark (my/rotate-list my/themes-dark))
-          )
+          (setq my/themes-dark (my/rotate-list my/themes-dark)))
       ;; else block
       ;; clear theme loading
       (progn
         (consult-theme (car my/themes-clear))
         ;; rotate the list - the applied theme goest to the back of the list
-        (setq my/themes-clear (my/rotate-list my/themes-clear))
-        )
-      )
-    )
+        (setq my/themes-clear (my/rotate-list my/themes-clear)))))
 #+end_src
 
 *** Toggle light and dark themes
