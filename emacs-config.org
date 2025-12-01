@@ -2707,17 +2707,36 @@ Extracted from the Emacs Writing Studio config.
        ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))))
 #+end_src
 
-**** TODO =Memoir= class for org2latex (complete these options)
+**** Consolidated Memoir LaTeX Export Classes
 https://www.ctan.org/pkg/memoir
 https://mirror.ibcp.fr/pub/CTAN/macros/latex/contrib/memoir/memman.pdf
 =memoir= is a class used to create beautiful documents.
 
-This =memoir= basic class creates documents based on parts (acts) and then chapters.
-(Below there is another class for just chapters, that ignores the parts/acts)
+This consolidated function creates all memoir variants (draft/final, with parts/chapter-only).
+
 #+begin_src emacs-lisp
-  (add-to-list 'org-latex-classes
-               '("memoir"
-                 "\\documentclass[a4paper,17pt,openright,twoside]{memoir}
+  (defun my/add-memoir-class (name &optional draft chapter-only)
+    "Add memoir LaTeX class with NAME.
+  When DRAFT is non-nil, enable draft mode.
+  When CHAPTER-ONLY is non-nil, start with chapters (no parts)."
+    (let* ((draft-option (if draft ",draft" ",final"))
+           (levels (if chapter-only
+                       ;; Chapter-only: no \\part level
+                       '(("\\chapter{%s}" . "\\chapter*{%s}")
+                         ("\\section{%s}" . "\\section*{%s}")
+                         ("\\subsection{%s}" . "\\subsection*{%s}")
+                         ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                         ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                         ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
+                     ;; Standard: includes \\part level
+                     '(("\\part{%s}" . "\\part*{%s}")
+                       ("\\chapter{%s}" . "\\chapter*{%s}")
+                       ("\\section{%s}" . "\\section*{%s}")
+                       ("\\subsection{%s}" . "\\subsection*{%s}")
+                       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                       ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                       ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+           (preamble (format "\\documentclass[a4paper,17pt%s,openright,twoside]{memoir}
   \\usepackage{ucs}
   \\usepackage[utf8]{inputenc}
   \\usepackage[spanish]{babel}
@@ -2725,215 +2744,47 @@ This =memoir= basic class creates documents based on parts (acts) and then chapt
   \\usepackage{graphicx}
   \\usepackage{minted}
 
-  \% Para poner notas en los márgenes
+  %% Para poner notas en los márgenes
   \\usepackage{todonotes}
 
-  \% Para tachar palabras
+  %% Para tachar palabras
   \\usepackage[normalem]{ulem}
 
+  %% for hyperlinks in the pdf
   \\usepackage{hyperref}
+  %% space between the paragraphs
   \\usepackage{parskip}
+  %% Needed for the utopia font
   \\usepackage{fourier}
 
   \\renewcommand*\\rmdefault{put}
 
+  %% new command that establish 3 newlines for breaking scenes
   \\newcommand{\\fin}{\\plainbreak*{3}}
 
-  % command to add edit notes with tiny size
+  %% command to add edit notes with tiny size
   \\newcommand{\\edit}[1] {\\todo[inline]{#1}}
   \\newcommand{\\adendo}[1] {\\todo[size=\\tiny]{#1}}
 
-  % Chapter style
-   \\chapterstyle{dash}
-
-  % How the page is formatted
-    \\pagestyle{Ruled}
-
-  \% change the paragraph spacing
-  \\setlength{\\parskip}{0.2\\baselineskip}
-
-                 [NO-DEFAULT-PACKAGES]
-                 [NO-PACKAGES]"
-                 ("\\part{%s}" . "\\part*{%s}")
-                 ("\\chapter{%s}" . "\\chapter*{%s}")
-                 ("\\section*{%s}" . "\\section*{%s}")
-                 ("\\subsection{%s}" . "\\subsection*{%s}")
-                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
-               )
-
-#+end_src
-
-**** TODO =Memoir_draft= class for org2latex (complete these options)
-memoir is a class used to create beautiful documents.
-
-#+begin_src emacs-lisp
-  (add-to-list 'org-latex-classes
-  	     '("memoir_draft"
-                 "\\documentclass[a4paper,17pt,draft,openright,twoside]{memoir}
-  \\usepackage{ucs}
-  \\usepackage[utf8]{inputenc}
-  \\usepackage[spanish]{babel}
-  \\usepackage{fontenc}
-  \\usepackage{graphicx}
-    \\usepackage{minted}
-
-  \% Para poner notas en los márgenes
-  \\usepackage{todonotes}
-
-  \% Para tachar palabras
-  \\usepackage[normalem]{ulem}
-
-  \\usepackage{hyperref}
-  \\usepackage{parskip}
-  \\usepackage{fourier}
-
-  \\renewcommand*\\rmdefault{put}
-
-  \\newcommand{\\fin}{\\plainbreak*{3}}
-
-  \% command to add edit notes with tiny size
-  \\newcommand{\\edit}[1] {\\todo[inline]{#1}}
-  \\newcommand{\\adendo}[1] {\\todo[size=\\tiny]{#1}}
-
-  \% Chapter style
+  %% Chapter style
   \\chapterstyle{dash}
 
-  \% How the page is formatted
+  %% How the page is formatted
   \\pagestyle{Ruled}
 
-  \% change the paragraph spacing
-  \\setlength{\\parskip}{0.2\\baselineskip}
-
-
-                 [NO-DEFAULT-PACKAGES]
-                 [NO-PACKAGES]"
-                 ("\\part{%s}" . "\\part*{%s}")
-                 ("\\chapter{%s}" . "\\chapter*{%s}")
-                 ("\\section{%s}" . "\\section*{%s}")
-                 ("\\subsection*{%s}" . "\\subsection*{%s}")
-                 ("\\subsubsection*{%s}" . "\\subsubsection*{%s}")
-                 ("\\paragraph*{%s}" . "\\paragraph*{%s}")
-                 ("\\subparagraph*{%s}" . "\\subparagraph*{%s}"))
-               )
-
-#+end_src
-
-**** TODO =Memoir_chapter= class for org2latex (complete these options)
-Same as memoir class above, but it start just with chapters, no "part"
-
-#+begin_src emacs-lisp
-  (add-to-list 'org-latex-classes
-  	     '("memoir_chapter"
-                 "\\documentclass[a4paper,17pt,openright,twoside,final]{memoir}
-  \\usepackage{ucs}
-  \\usepackage[utf8]{inputenc}
-  \\usepackage[spanish]{babel}
-  \\usepackage{fontenc}
-  \\usepackage{graphicx}
-    \\usepackage{minted}
-
-  \% Para poner notas en los márgenes
-  \\usepackage{todonotes}
-
-  \% Para tachar palabras
-  \\usepackage[normalem]{ulem}
-
-  \% for hyperlinks in the pdf
-  \\usepackage{hyperref}
-  \% space between the paragraphs
-  \\usepackage{parskip}
-  \% Needed for the utopia font
-  \\usepackage{fourier}
-
-  \\renewcommand*\\rmdefault{put}
-
-  \% new command that establish 3 newlines for breaking scenes
-  \\newcommand{\\fin}{\\plainbreak*{3}}
-
-  \% command to add edit notes with tiny size
-  \\newcommand{\\edit}[1] {\\todo[inline]{#1}}
-  \\newcommand{\\adendo}[1] {\\todo[size=\\tiny]{#1}}
-
-  \% Chapter style
-  \\chapterstyle{dash}
-
-  \% How the page is formatted
-  \\pagestyle{Ruled}
-
-  \% change the paragraph spacing
+  %% change the paragraph spacing
   \\setlength{\\parskip}{0.2\\baselineskip}
 
                  [NO-DEFAULT-PACKAGES]
-                 [NO-PACKAGES]"
+                 [NO-PACKAGES]" draft-option)))
+      (add-to-list 'org-latex-classes
+                   `(,name ,preamble ,@levels))))
 
-                 ("\\chapter{%s}" . "\\chapter*{%s}")
-                 ("\\section*{%s}" . "\\section*{%s}")
-                 ("\\subsection{%s}" . "\\subsection*{%s}")
-                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
-               )
-#+end_src
-
-**** TODO =Memoir_chapter_draft= class for org2latex (complete these options)
-Same as memoir class, but it start just with chapters, no "part"
-
-#+begin_src emacs-lisp
-  (add-to-list 'org-latex-classes
-  	     '("memoir_chapter_draft"
-                 "\\documentclass[a4paper,17pt,draft,openright,twoside]{memoir}
-  \\usepackage{ucs}
-  \\usepackage[utf8]{inputenc}
-  \\usepackage[spanish]{babel}
-  \\usepackage{fontenc}
-  \\usepackage{graphicx}
-    \\usepackage{minted}
-
-  \% Para poner notas en los márgenes
-  \\usepackage{todonotes}
-
-  \% Para tachar palabras
-  \\usepackage[normalem]{ulem}
-
-  \% for hyperlinks in the pdf
-  \\usepackage{hyperref}
-  \% space between the paragraphs
-  \\usepackage{parskip}
-  \% Needed for the utopia font
-  \\usepackage{fourier}
-
-  \\renewcommand*\\rmdefault{put}
-
-  \% new command that establish 3 newlines for breaking scenes
-  \\newcommand{\\fin}{\\plainbreak*{3}}
-
-  \% command to add edit notes with tiny size
-  \\newcommand{\\edit}[1] {\\todo[inline]{#1}}
-  \\newcommand{\\adendo}[1] {\\todo[size=\\tiny]{#1}}
-
-  \% Chapter style
-  \\chapterstyle{dash}
-
-  \% How the page is formatted
-  \\pagestyle{Ruled}
-
-  \% change the paragraph spacing
-  \\setlength{\\parskip}{0.2\\baselineskip}
-
-
-                 [NO-DEFAULT-PACKAGES]
-                 [NO-PACKAGES]"
-
-                 ("\\chapter{%s}" . "\\chapter*{%s}")
-                 ("\\section{%s}" . "\\section*{%s}")
-                 ("\\subsection*{%s}" . "\\subsection*{%s}")
-                 ("\\subsubsection*{%s}" . "\\subsubsection*{%s}")
-                 ("\\paragraph*{%s}" . "\\paragraph*{%s}")
-                 ("\\subparagraph*{%s}" . "\\subparagraph*{%s}"))
-               )
-
+  ;; Create all four memoir class variants
+  (my/add-memoir-class "memoir" nil nil)           ; Standard with parts
+  (my/add-memoir-class "memoir_draft" t nil)       ; Draft with parts
+  (my/add-memoir-class "memoir_chapter" nil t)     ; Final, chapter-only
+  (my/add-memoir-class "memoir_chapter_draft" t t) ; Draft, chapter-only
 #+end_src
 
 **** TODO reporting class for org2latex (complete these options)
