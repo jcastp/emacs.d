@@ -3397,13 +3397,15 @@ We just need to load the languages.
 
 #+begin_src emacs-lisp
   (use-package tree-sitter
-    :ensure t)
+    :ensure t
+    :defer t
+    :config
+    (add-hook 'prog-mode #'tree-sitter-mode) ;; only used in prog-mode
+    (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode) ; syntax highlighting
+    )
   (use-package tree-sitter-langs
     :ensure t
     :after tree-sitter)
-
-  (add-hook 'prog-mode #'tree-sitter-mode) ;; only used in prog-mode
-  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode) ; syntax highlighting
 #+end_src
 
 ts-fold to fold code in a convenient way.
@@ -3746,6 +3748,7 @@ https://github.com/emacs-dashboard/emacs-dashboard
 
 * Testing
 Here there will be all the configs I'm testing, before committing them to the main config.
+
 ** TODO hammy - time intervals
 https://github.com/alphapapa/hammy.el
 Time intervals, such as pomodoro.
@@ -3782,14 +3785,15 @@ Define the classic pomodoro timer:
                :advance (do (announce "Break time is over!")
                             (notify "Break time is over!")))))
 #+end_src
-** TODO freeze-it - kill your inner editor
+** CANCELED freeze-it - kill your inner editor
 https://github.com/rnkn/freeze-it
 
 An Emacs minor mode to kill your inner editor! Every writer struggles to balance their creative and critical sides, with progress frequently hindered by the temptation to go back and revise to get things just right. Freeze It aims to combat this temptation.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package freeze-it
     :ensure t
+    :defer t
     :config
     (freeze-it-show-delay 2.0)
     (freeze-it-go-back "Line"))
@@ -3797,15 +3801,14 @@ An Emacs minor mode to kill your inner editor! Every writer struggles to balance
 
 ** TODO markdown mode
 #+begin_src emacs-lisp
-(use-package markdown-mode
-  :ensure t
-  :mode ("README\\.md\\'" . gfm-mode)
-  :init (setq markdown-command '("pandoc" "--from=markdown" "--to=html5")))
+  (use-package markdown-mode
+    :ensure t
+    :mode ("README\\.md\\'" . gfm-mode)
+    :init (setq markdown-command '("pandoc" "--from=markdown" "--to=html5")))
 #+end_src
 
 ** TODO gptel
 https://github.com/karthink/gptel
-
 To interact with ollama local llms.
 
 #+begin_src emacs-lisp
@@ -3848,6 +3851,7 @@ To interact with ollama local llms.
           ;; Configure gptel
           (use-package gptel
             :ensure t
+  	  :defer t
             :config
   	  ;; default mode is orgmode, so I can copy and paste to my files
   	  (setq gptel-default-mode 'org-mode)
@@ -3912,6 +3916,7 @@ To add text from other files, but without copying the information. It's just lik
   (use-package show-font
     :ensure t)
 #+end_src
+
 
 * my own keymap
 I want to have my own dedicated keymap for the functions I use the most.
