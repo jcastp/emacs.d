@@ -1786,6 +1786,53 @@ These are the custom states for the tasks, and the character associated to it.
           )
         )
 #+end_src
+** TODO Custom faces for org-todo-keywords
+#+begin_src emacs-lisp :tangle yes
+  ;; Define theme-adaptive faces for org-todo keywords
+  (defface my/org-todo-active
+    '((((class color) (background light))
+       :foreground "#b60000" :weight bold)
+      (((class color) (background dark))
+       :foreground "#ff8f88" :weight bold))
+    "Face for active TODO keywords.")
+
+  (defface my/org-todo-next
+    '((((class color) (background light))
+       :foreground "#005f5f" :background "#c4ede0" :weight bold)
+      (((class color) (background dark))
+       :foreground "#6ae4b9" :background "#00382f" :weight bold))
+    "Face for NEXT keyword - ready to work on.")
+
+  (defface my/org-todo-waiting
+    '((((class color) (background light))
+       :foreground "#813e00" :background "#fff0c0" :weight bold)
+      (((class color) (background dark))
+       :foreground "#fec43f" :background "#4a3000" :weight bold))
+    "Face for WAITING/HOLD keywords.")
+
+  (defface my/org-todo-cancelled
+    '((((class color) (background light))
+       :foreground "#70627f" :strike-through t)
+      (((class color) (background dark))
+       :foreground "#9f94a5" :strike-through t))
+    "Face for CANCELLED keyword.")
+
+  (defface my/org-todo-done
+    '((((class color) (background light))
+       :foreground "#006800" :weight bold)
+      (((class color) (background dark))
+       :foreground "#44bc44" :weight bold))
+    "Face for DONE keyword.")
+
+  ;; Apply faces to keywords
+  (setq org-todo-keyword-faces
+        '(("TODO"      . my/org-todo-active)
+          ("NEXT"      . my/org-todo-next)
+          ("WAITING"   . my/org-todo-waiting)
+          ("HOLD"      . my/org-todo-waiting)
+          ("CANCELLED" . my/org-todo-cancelled)
+          ("DONE"      . my/org-todo-done)))
+#+end_src
 
 ** custom tags
 Create custom tags for different categories and contexts.
