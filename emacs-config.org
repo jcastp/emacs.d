@@ -2148,9 +2148,7 @@ This lets you choose refiling targets in heading depth of 9, and lets you get al
                              (org-agenda-files :maxlevel . 9)
                              ("referencias.org" :maxlevel . 9)
                              ("someday.org" :maxlevel . 9) ;; this is called someday.org now
-                             ("books.org" :maxlevel . 9)
-                             ("~/Nextcloud/escritura/retazos/ideas.org" :maxlevel . 9)
-    			   ))
+                             ("~/Nextcloud/escritura/retazos/ideas.org" :maxlevel . 9)))
 
   (setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
   ;;(setq org-refile-use-outline-path t)                  ; Show full paths for refiling
