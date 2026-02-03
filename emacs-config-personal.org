@@ -1,0 +1,9 @@
+This is my personal config file, where I load all related to my personal use.
+* Personal information
+This uses a special file, not commited, with my personal information, located in the path below.
+It contains the variables =user-full-name= and =user-mail-address=
+#+begin_src emacs-lisp
+  ;; to protect my personal information, this file is not commited
+  (load (expand-file-name "Nextcloud/config/.emacs.d/personal_info.el" (getenv "HOME")))
+#+end_src
+

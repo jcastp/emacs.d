@@ -44,14 +44,6 @@ https://github.com/dgutov/diff-hl
 * Personal
 Here I put my personal information and all the packages related to accounts.
 
-** Personal information
-This uses a special file, not commited, with my personal information, located in the path below.
-It contains the variables =user-full-name= and =user-mail-address=
-#+begin_src emacs-lisp
-  ;; to protect my personal information, this file is not commited
-  (load (expand-file-name "Nextcloud/config/.emacs.d/personal_info.el" (getenv "HOME")))
-#+end_src
-
 ** mastodon from emacs
 https://github.com/emacsmirror/mastodon
 
@@ -4025,6 +4017,7 @@ This will be loaded automatically when at home.
   (if my-homeenvironment-p
       (progn
         ;; here comes the actions I want to be done at a home environment
+        (org-babel-load-file "~/.emacs.d/emacs-config-personal.org")
         )
     )
 #+end_src
@@ -4033,10 +4026,9 @@ This will be loaded automatically when at home.
 Load the work related config when needed:
 #+begin_src emacs-lisp
   ;; process all elpaca queues before loading work environment
-  ;;(elpaca-process-queues)
   (if my-workenvironment-p
     (progn
-      ;; here comes the actions I want to be done at a home environment
+      ;; here comes the actions I want to be done at work environment
       (org-babel-load-file "~/.emacs.d/emacs-config-work.org")
       )
   )
