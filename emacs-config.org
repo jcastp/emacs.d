@@ -206,21 +206,6 @@ These settings relate to how emacs interacts with your operating system.
    )
 #+end_src
 
-** Save command history
-It is nice to have commands and their history saved so that every time you get back to work, you can just re-run stuff as you need it. It isn't a radical feature, it is just part of a good user experience.
-#+begin_src emacs-lisp
-  (setq savehist-file (expand-file-name "savehist" my-data-dir))
-  (savehist-mode 1)
-  (setq history-length t)
-  (setq history-delete-duplicates t)
-  (setq savehist-save-minibuffer-history 1)
-  (setq savehist-additional-variables
-        '(kill-ring
-          search-ring
-          regexp-search-ring)
-        )
-#+end_src
-
 ** auto revert mode
 When a file is changed in disk, the buffer reloads to reflect that change.
 #+begin_src emacs-lisp
@@ -233,27 +218,10 @@ Change dired buffers when the directory is changed:
   (add-hook 'dired-mode-hook 'auto-revert-mode)
 #+end_src
 
-** Bookmarks
-All the config related to the bookmarks.
-#+begin_src emacs-lisp
-  ;;define file to use.
-  (setq bookmark-default-file (expand-file-name "bookmarks" my-data-dir))
-  (setq bookmark-save-flag 1)  ;save bookmarks to .emacs.bmk after each entry
-#+end_src
-
 ** eww configuration
 Set the userAgent for eww.
 #+begin_src emacs-lisp
   (setq url-user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.51 Safari/537.36 Edg/99.0.1150.39")
-#+end_src
-
-** recentf
-#+begin_src emacs-lisp
-  ;; where to store the recent list file
-  (setq recentf-save-file (expand-file-name "recentf" my-data-dir))
-  (recentf-mode 1)
-  (setq recentf-max-saved-items 100
-       recentf-exclude '("/tmp/" "/ssh:" "/sudo:"))
 #+end_src
 
 ** dired config
@@ -361,17 +329,6 @@ I want to know how much battery if using a laptop.
     ;; it's nice to know how much power you have
     (display-battery-mode 1)
     )
-#+end_src
-
-** Abbreviation mode
-Defines a set of abbreviations that permits complete words with just some characters.
-#+begin_src emacs-lisp
-  ;;where do we read the abbrevs from
-  (setq abbrev-file-name (expand-file-name "abbrev_defs" my-data-dir))
-  (add-hook 'text-mode-hook 'abbrev-mode)
-  (add-hook 'prog-mode-hook 'abbrev-mode)
-  ;; save abbrevs when files are saved
-  (setq save-abbrevs 'silently)
 #+end_src
 
 ** electric pair mode
@@ -549,6 +506,17 @@ From Prot's article - https://protesilaos.com/codelog/2024-11-28-basic-emacs-con
     ("C-h k" . helpful-key)
     ("C-h x" . helpful-command)
     )
+#+end_src
+
+** Abbreviation mode
+Defines a set of abbreviations that permits complete words with just some characters.
+#+begin_src emacs-lisp
+  ;;where do we read the abbrevs from
+  (setq abbrev-file-name (expand-file-name "abbrev_defs" my-data-dir))
+  (add-hook 'text-mode-hook 'abbrev-mode)
+  (add-hook 'prog-mode-hook 'abbrev-mode)
+  ;; save abbrevs when files are saved
+  (setq save-abbrevs 'silently)
 #+end_src
 
 * vertico, prescient, consult, marginalia, embark
@@ -3392,75 +3360,6 @@ https://www.emacswiki.org/emacs/EshellMultipleEshellBuffers
     (eshell 'N))
 #+end_src
 
-* emacs dashboard
-Load it at the end of the config.
-https://github.com/emacs-dashboard/emacs-dashboard
-
-#+begin_src emacs-lisp
-  (if my-homeenvironment-p
-      (progn
-        (use-package dashboard
-  	:ensure t
-          :config
-  	;;(dashboard-setup-startup-hook)
-          (setq dashboard-show-shortcuts t)
-          (setq dashboard-set-navigator nil)
-          (setq dashboard-set-heading-icons t)
-          (setq dashboard-set-file-icons t)
-          ;; Set the title
-          (setq dashboard-banner-logo-title "Welcome to Javi's emacs")
-  	
-          ;; Set the banner
-  	;; Value can be
-          ;; - nil to display no banner
-          ;; - 'official which displays the official emacs logo
-          ;; - 'logo which displays an alternative emacs logo
-          ;; - 1, 2 or 3 which displays one of the text banners
-          ;; - "path/to/your/image.gif", "path/to/your/image.png" or "path/to/your/text.txt" which displays whatever gif/image/text you would prefer
-          ;; - a cons of '("path/to/your/image.png" . "path/to/your/text.txt")
-          ;;(setq dashboard-startup-banner 'logo)
-          (setq dashboard-startup-banner "~/Nextcloud/personal/steamboat_bender.png")
-
-  	;; set the projects backend to projects.el
-  	(setq dashboard-projects-backend 'project-el)
-
-          ;; Content is not centered by default. To center, set
-          (setq dashboard-center-content t)
-          ;; The items that will be shown in the dashboard.
-          (setq dashboard-items '((recents  . 5)
-                                  (bookmarks . 5)
-                                  (projects . 5)
-                                  (agenda . 5)
-                                  ;;(registers . 5)
-                                  ))
-  	
-  	;; ;; get the word of the day
-  	;; (setq wotd-def
-  	;;       (shell-command-to-string "python ~/Nextcloud/config/.emacs.d/rae_wotd.py"))
-  	;; ;; Define the function to include the wotd in the dashboard
-  	;; (defun dashboard-insert-wotd (list-size)
-  	;;   (insert (propertize "Palabra del día:\n"
-  	;; 		      'face '(:foreground "green" :weight bold)))
-  	;;   (insert wotd-def))
-  	;; ;; add the section to the dashboard
-  	;; (add-to-list 'dashboard-item-generators  '(wotd . dashboard-insert-wotd))
-  	;; (add-to-list 'dashboard-items '(wotd) nil)
-
-  	;;(add-hook 'elpaca-after-init-hook #'dashboard-insert-startupify-lists)
-  	;;(add-hook 'elpaca-after-init-hook #'dashboard-initialize)
-  	(dashboard-setup-startup-hook)
-  	)
-        
-        ;; (with-eval-after-load 'dashboard
-        ;; 	;;(global-set-key (kbd "C-c d d") 'dashboard-open)
-        ;;   (dashboard-open))
-
-        ;; set the initial buffer to the dashboard
-        ;;(setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
-        )
-    )
-#+end_src
-
 * Testing
 Here there will be all the configs I'm testing, before committing them to the main config.
 
@@ -3500,83 +3399,12 @@ Define the classic pomodoro timer:
                :advance (do (announce "Break time is over!")
                             (notify "Break time is over!")))))
 #+end_src
-** CANCELED freeze-it - kill your inner editor
-https://github.com/rnkn/freeze-it
-
-An Emacs minor mode to kill your inner editor! Every writer struggles to balance their creative and critical sides, with progress frequently hindered by the temptation to go back and revise to get things just right. Freeze It aims to combat this temptation.
-
-#+begin_src emacs-lisp :tangle no
-  (use-package freeze-it
-    :ensure t
-    :defer t
-    :config
-    (freeze-it-show-delay 2.0)
-    (freeze-it-go-back "Line"))
-#+end_src
-
 ** TODO markdown mode
 #+begin_src emacs-lisp
   (use-package markdown-mode
     :ensure t
     :mode ("README\\.md\\'" . gfm-mode)
     :init (setq markdown-command '("pandoc" "--from=markdown" "--to=html5")))
-#+end_src
-
-** TODO gptel
-https://github.com/karthink/gptel
-To interact with ollama local llms.
-
-#+begin_src emacs-lisp
-    ;; (if (file-executable-p "~/github/ollama/ollama")
-    ;;     (progn
-    ;;       (let*
-    ;; 	  ;; get all the models we have in this machine
-    ;; 	  ((output (shell-command-to-string "~/github/ollama/ollama list | awk '{print $1}' | grep -v NAME"))
-    ;; 	   (present_models (split-string output)))
-    ;; 	;; body of the let* part
-    ;; 	(use-package gptel
-    ;; 	  :ensure t
-    ;; 	  :config
-    ;; 	  ;; Ollama as the default engine
-    ;; 	  (setq
-    ;; 	   ;;gptel-default-mode 'org-mode
-    ;; 	   gptel-model (car present_models)
-    ;; 	   gptel-backend (gptel-make-ollama "Ollama"
-    ;; 			   :host "localhost:11434"
-    ;; 			   :stream t
-    ;; 			   :models present_models))))))
-
-
-  (defun my/gptel ()
-    "Start and configure my gptel configuration."
-    (interactive)
-    ;; Check if the ollama process is running
-    (let ((output (shell-command-to-string "ps aux | grep 'ollama serve' | grep -v grep")))
-      (if (string-match "github/ollama/ollama serve" output)
-          ;; Ollama is running
-          (progn
-            (message "Ollama is running"))
-        ;; Ollama is not running
-        (progn
-          (shell-command "~/github/ollama/ollama serve&" nil))))
-    ;; Check if the ollama binary is executable and configure gptel accordingly
-    (if (file-executable-p "~/github/ollama/ollama")
-        (let* ((output (shell-command-to-string "~/github/ollama/ollama list | awk '{print $1}' | grep -v NAME"))
-              (present_models (split-string output)))
-          ;; Configure gptel
-          (use-package gptel
-            :ensure t
-  	  :defer t
-            :config
-  	  ;; default mode is orgmode, so I can copy and paste to my files
-  	  (setq gptel-default-mode 'org-mode)
-            ;; Set Ollama as the default engine for gptel
-            (setq gptel-model (car present_models)
-                  gptel-backend (gptel-make-ollama "Ollama"
-                                                    :host "localhost:11434"
-                                                    :stream t
-                                                    :models present_models))
-  	  (global-set-key (kbd "C-q RET") 'gptel-send)))))
 #+end_src
 
 ** TODO casual - opinionated menus for emacs
@@ -3612,17 +3440,6 @@ https://toobnix.org/w/5vCCqXFtWJ3EK7W3HKPRUD
   (require 'casual-info) ; optional if using autoloaded menu
   (keymap-set Info-mode-map "C-o" #'casual-info-tmenu)
   )
-#+end_src
-
-** TODO org-transclusion
-To add text from other files, but without copying the information. It's just like a "window" to the other file, so you only maintain one copy of the information.
-#+begin_src emacs-lisp
-  (use-package org-transclusion
-  :ensure t
-  :config
-  (set-face-attribute 'org-transclusion-fringe nil
-  		    :foreground "green"
-  		    :background "green"))
 #+end_src
 
 ** TODO show-font

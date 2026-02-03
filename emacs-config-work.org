@@ -192,7 +192,6 @@ I need a different custom agenda commands to see the tasks better.
          )
 #+end_src
 
-
 ** TODO org-super-agenda config
 #+begin_src emacs-lisp
   (org-super-agenda-mode 1)
@@ -257,22 +256,6 @@ As work is different from home, I need specific templates.
                                 (file+headline "~/Nextcloud/trabajo/agenda/work_meetings.org" "Meetings")
                                 "** %T - %?\n"
   			      :jump-to-captured t)))
-#+end_src
-
-** gptel for work
-#+begin_src emacs-lisp
-    (use-package gptel
-      :ensure t
-      :config
-    ;; default mode is orgmode, so I can copy and paste to my files
-    (setq gptel-default-mode 'org-mode)
-      ;; Set Ollama as the default engine for gptel
-      (setq gptel-model 'phi4-mini:latest
-       gptel-backend (gptel-make-ollama "ollama"
-                                              :host "10.0.2.2:11434"
-                                              :stream t
-                                              :models '(phi4-mini:latest))))
-    (global-set-key (kbd "C-q RET") 'gptel-send)
 #+end_src
 
 ** Load the task list for work
