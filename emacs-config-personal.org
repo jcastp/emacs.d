@@ -44,7 +44,6 @@ All the config related to the bookmarks.
   (setq bookmark-save-flag 1)  ;save bookmarks to .emacs.bmk after each entry
 #+end_src
 
-
 * Online
 ** mastodon from emacs
 https://github.com/emacsmirror/mastodon
@@ -65,6 +64,1140 @@ Only evaluated if in my home environment, my encrypted directory is mounted, as 
         (setq mastodon-client--token-file (expand-file-name "personal/emacs/mastodon.plstore" my-clear-directory))
         )
     )
+#+end_src
+
+* Fonts and themes
+** Themes
+*** Establish the default theme
+Define some variables with the dark and clear themes, and a variable to control if the current theme is dark or clear.
+Also, rotate the list of themes applied.
+#+begin_src emacs-lisp
+  ;; define the lists of clear and dark themes
+  (setq my/themes-dark '(ef-deuteranopia-dark
+  		       modus-vivendi-tinted))
+  (setq my/themes-clear '(ef-deuteranopia-light
+  			modus-operandi))
+
+  ;; establish if we start with a dark or clear theme
+  ;; boolean variable: t is dark, nil is clear
+  (defvar my-theme-dark-p t)
+
+  ;; define a function to rotate a list. Custom, yes, I know it could be done better.
+  (defun my/rotate-list (list)
+    "Rotate the elements of LIST by one position, moving the first element to the end, and return the new list."
+    (if (null list)
+        ;; if block
+        ;; if the list is empty, returns an empty list
+        '()
+      ;; else block
+      ;; rotates the list
+      (append (cdr list) (list (car list)))))
+
+  ;; based on the election, load the theme, and rotate the list for future use.
+  (with-eval-after-load 'consult
+    (if my-theme-dark-p
+        ;; dark theme loading
+        (progn
+          (consult-theme (car my/themes-dark))
+          ;; rotate the list - the applied theme goes to the back of the list
+          (setq my/themes-dark (my/rotate-list my/themes-dark)))
+      ;; else block
+      ;; clear theme loading
+      (progn
+        (consult-theme (car my/themes-clear))
+        ;; rotate the list - the applied theme goest to the back of the list
+        (setq my/themes-clear (my/rotate-list my/themes-clear)))))
+#+end_src
+
+*** Toggle light and dark themes
+Function to change between dark and clear themes, based on past variables.
+#+begin_src emacs-lisp
+  (with-eval-after-load 'consult
+    (defun my/theme-changer ()
+      "Changes themes between clear and dark ones."
+      (interactive)
+      ;; since we want to change from dark to clear and viceversa, we swap the logic
+      (if (not my-theme-dark-p)
+          ;; this loads the dark theme
+          (progn
+            ;;(load-theme (car my/themes-dark) t)
+            (consult-theme (car my/themes-dark))
+            (message "The theme applied is %s" (car my/themes-dark))
+            ;; rotate the list
+            (setq my/themes-dark (my/rotate-list my/themes-dark))
+            ;; mark the theme is dark now
+            (setq my-theme-dark-p t))
+        ;; else block (clear theme)
+        (progn
+          ;;(load-theme (car my/themes-clear) t)
+          (consult-theme (car my/themes-clear))
+          (message "The theme applied is %s" (car my/themes-clear))
+          ;; rotate the list
+          (setq my/themes-clear (my/rotate-list my/themes-clear))
+          ;; mark the theme is clear now
+          (setq my-theme-dark-p nil)))))
+
+  (global-set-key (kbd "C-c 0") 'my/theme-changer)
+#+end_src
+  
+* orgmode config
+** Custom states for the tasks
+These are the custom states for the tasks, and the character associated to it.
+#+begin_src emacs-lisp
+  (setq org-todo-keywords
+        '(
+          ;; Status for tasks
+          (sequence "TODO(t)" "ONGOING(o)" "WAITING(w)" "|" "DONE(d!)" "CANCELED(c@/!)")
+          ;; Status for writing
+          (sequence "TOWRITE(h)" "TOREVIEW(j@/!)" "REDO(k@/!)" "RESTRUCTURE(n@/!)" "|" "FINISHED(l!)" "PURGE(ñ@/!)")
+          )
+        )
+#+end_src
+
+** custom tags
+Create custom tags for different categories and contexts.
+#+begin_src emacs-lisp
+  (setq org-tag-alist '(
+                        ;; Areas of responsibility
+                        ("personal" . ?p) ("health" . ?H) ("financial" . ?f)
+                        ;; Contexts
+                        ("@home" . ?h)  ("@errands" . ?E) ("@computer" . ?c) ("@online" . ?o)  ("@penpaper" . ?P)
+                        ;; interests
+  		      ("emacs" . ?e) ("writing" . ?w) ("reading" . ?r) ("calls" . ?C) ("blog" . ?b)
+                        ;; energy
+                        ("low_energy" . ?l) ("high_energy" . ?H)))
+#+end_src
+** Orgmode agenda config
+*** Agenda
+All the agenda configs
+
+**** org-agenda config
+#+begin_src emacs-lisp
+  ;; Agenda styling
+  (setq
+   org-agenda-tags-column 'auto
+   org-agenda-block-separator ?─
+   org-agenda-breadcrumbs-separator " ❱ "
+   ;;org-agenda-prefix-format '((agenda . " %i %-12:c%?-12t%b% s")
+   org-agenda-prefix-format '((agenda . " %i %-12:c%?-12t% s")  			    
+  			    (todo . " %i %-12:c")
+  			    (tags . " %i %-12:c")
+  			    (search . " %i %-12:c"))
+   org-agenda-time-grid
+   '((daily today require-timed)
+     (800 1000 1200 1400 1600 1800 2000)
+     " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄")
+   org-agenda-current-time-string
+   "⭠ now ─────────────────────────────────────────────────")
+
+#+end_src
+
+Have some fancy icons for the categories.
+#+begin_src emacs-lisp
+  (customize-set-value
+   'org-agenda-category-icon-alist
+   `(
+     ("calendar" "~/Nextcloud/config/icons/calendar.svg" nil nil :ascent center :mask heuristic)
+     ("tasks" "~/Nextcloud/config/icons/check-square.svg" nil nil :ascent center :mask heuristic)
+     ("projects" "~/Nextcloud/config/icons/list.svg" nil nil :ascent center :mask heuristic)
+     ("financial" "~/Nextcloud/config/icons/dollar-sign.svg" nil nil :ascent center :mask heuristic)
+     ("birthdays" "~/Nextcloud/config/icons/heart.svg" nil nil :ascent center :mask heuristic)
+     ("revision" "~/Nextcloud/config/icons/shuffle.svg" nil nil :ascent center :mask heuristic)
+     ("habits" "~/Nextcloud/config/icons/refresh-ccw.svg" nil nil :ascent center :mask heuristic)
+     ("care" "~/Nextcloud/config/icons/heart.svg" nil nil :ascent center :mask heuristic)          
+     )
+   )
+#+end_src
+
+**** Agenda files
+We define the agenda files in this variable. This comes from my gtd workflow, explained here: TBD.
+#+begin_src emacs-lisp
+  (setq org-agenda-files '(
+                           "~/Nextcloud/agenda/tasks.org"
+  			 ;; added this one to be able to search in it, and add from here to the main task files.
+  			 "~/Nextcloud/agenda/someday.org"
+                           ))
+#+end_src
+
+**** Get rid of the DONE tasks in the agenda view
+We dont want the cluttering in our views. If a task is done, don't show it on the agenda view.
+#+begin_src emacs-lisp
+  (setq org-agenda-skip-scheduled-if-done t)
+  (setq org-agenda-skip-deadline-if-done t)
+  (setq org-agenda-skip-timestamp-if-done t)
+#+end_src
+
+**** Show next 7 days in the agenda view
+I need a more clear view for things to come. We can see 15 days from now.
+#+begin_src emacs-lisp
+  ;;(setq org-agenda-span 'week)
+  (setq org-agenda-span 14)
+  (setq org-agenda-start-on-weekday 1) ;; the week starts in Monday
+#+end_src
+
+**** TODO Custom agenda commands
+We define some agenda custom commands, to refine views, and get a clearer undestanding of the tasks.
+#+begin_src emacs-lisp
+  (setq org-agenda-custom-commands
+        '(
+          ;; ;;;;;;;;;;;;;;;;;;;;;;;;;
+          ;; Custom agenda commands
+          ;; ;;;;;;;;;;;;;;;;;;;;;;;;;
+          ("c" . "My Custom Agendas")
+
+  	;; Ongoing and next (TODO) tasks
+          ("cn" "Tasks ongoing and next"
+           (
+  	  (tags-todo "-someday/ONGOING"
+                       ((org-agenda-overriding-header "\nTasks ongoing")
+                        ))
+  	  (tags-todo "-someday/TODO"
+                       ((org-agenda-overriding-header "\nTasks next")
+                        )))
+           nil
+           nil)
+
+
+
+          ;; All the unescheduled tasks in the org-agenda-files
+          ("cu" "Unscheduled TODO"
+           ((tags-todo "-someday"
+                       ((org-agenda-overriding-header "\nUnscheduled TODO")
+                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'timestamp)))))
+           nil
+           nil)
+
+          ;; All the HIGH priority tasks, no someday
+          ("ch" "high priority tasks"
+           (
+            (tags-todo "+PRIORITY=\"A\"-someday"
+                       (
+                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                        (org-agenda-overriding-header "High-priority unfinished tasks:")
+                        )
+                       )
+            )
+           )
+
+          ;; All tasks, sorted and grouped
+          ("ct" "all tasks, sorted"
+           (
+            ;; High priority tasks, no someday
+            (
+             tags-todo "+PRIORITY=\"A\"-someday"
+             (
+              (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+              (org-agenda-overriding-header "High-priority unfinished tasks:")
+              (org-agenda-prefix-format " %10c %5e ")
+              )
+             )
+
+            ;; Ongoing tasks that needs effort from my side
+            (tags-todo "-someday-books/ONGOING"
+                       (
+                        (org-agenda-overriding-header "Ongoing tasks:")
+                        (org-agenda-prefix-format " %10c %5e ")
+                        )
+                       )
+
+            ;; Tasks scheduled today
+            (agenda ""
+                    (
+                     (org-agenda-time-grid nil)
+                     (org-schedule-warning-days 1)        ;; [1]
+                     (org-agenda-entry-types '(:scheduled))  ;; [2]
+                     (org-agenda-overriding-header "Scheduled today tasks:")
+                     (org-agenda-prefix-format " %10c %5e ")
+                     )
+                    )
+
+            ;; Tasks that are waiting on something
+            (tags-todo "-someday-books/WAITING"
+                       (
+                        (org-agenda-overriding-header "Waiting tasks:")
+                        (org-agenda-prefix-format " %10c %5e ")
+                        )
+                       )
+
+            ;; Tasks still not started, that are not high priority
+            (tags-todo "-someday-books-calendar +PRIORITY={B\\|C}/TODO"
+                       (
+                        (org-agenda-overriding-header "TODO tasks:")
+                        (org-agenda-prefix-format " %10c %5e ")
+                        )
+                       )
+
+            ;; Calendar tasks
+            (tags-todo "calendar"
+                       (
+                        (org-agenda-overriding-header "Calendar tasks:")
+                        (org-agenda-prefix-format " %10c %5e ")
+                        )
+                       )
+
+            ;; Stuck tasks and projects
+            (stuck ""
+                   (
+                    (org-agenda-overriding-header "Stuck tasks:")
+                    (org-agenda-prefix-format " %10c %5e ")
+                    )
+                   )
+
+            ;; end configuration all tasks sorted and grouped
+            )
+           )
+
+          ;;;;;;;;;;;;
+          ;; Time based queries
+          ;;;;;;;;;;;;
+          ;; 'In a day' tasks
+          ("d" "Today"
+           (
+            (agenda "" ((org-agenda-span 1)
+                        (org-agenda-sorting-strategy
+                         (quote ((agenda time-up priority-down tag-up) ))
+                         )
+                                          ; this will show tasks with a deadline of 2 days more
+                        (org-deadline-warning-days 2)
+
+
+                        )
+                    )
+            )
+           )
+
+                                          ; 'In a week' tasks
+          ("w" "Week ahead"
+           (
+            (agenda "" ((org-agenda-span 7)
+                        (org-agenda-sorting-strategy
+                         (quote ((agenda time-up priority-down tag-up) ))
+                         )
+                        (org-deadline-warning-days 0)
+                        )
+                    )
+            )
+           )
+
+           ;;;;;;;;;;;;;;;;;;;;;;;
+          ;; Location/context based queries
+           ;;;;;;;;;;;;;;;;;;;;;;;
+
+                                          ; only shows home tagged entries
+          ("h" "At home" tags-todo "+home-someday"
+           (
+            (org-agenda-overriding-header "Home")
+            )
+           )
+
+                                          ; only shows outside tagged entries
+          ("o" "Outside tasks" tags-todo "+outside-someday"
+           (
+            (org-agenda-overriding-header "Outside")
+            )
+           )
+
+           ;;;;;;;;;;;;;;;;
+                                          ; someday entries
+          ("b" "Someday entries" tags-todo "+someday-objetivos-calendar"
+           (
+            (org-agenda-overriding-header "Someday")
+            )
+           )
+          )
+        )
+#+end_src
+
+*** org-superagenda
+This is the config for the org-superagenda mode
+
+#+begin_src emacs-lisp
+  (use-package org-super-agenda
+    :ensure t
+    :config
+    (org-super-agenda-mode 1)
+    (setq org-super-agenda-groups
+          '(;; Each group has an implicit boolean OR operator between its selectors.
+            (:name "Today"  ; Optionally specify section name
+                   :time-grid t  ; Items that appear on the time grid
+                   :todo "TODAY")  ; Items that have this TODO keyword
+            (:name "Important"
+                   ;; Single arguments given alone
+                   :priority "A")
+            (:name "emacs"
+                   :tag "emacs")
+            (:name "Home related tasks"
+                   :tag "home")
+  	  (:name "Writing related tasks"
+                   :tag "writing")
+  	  (:name "Things to read"
+                   :tag "reading")
+            )
+          )
+    )
+#+end_src
+
+*** Restrict agenda to project
+https://github.com/ballantony/emacs-writing/blob/main/DoomEmacsWriting.org
+
+Agenda restricted to the current project, to keep track of its TODOs.
+I will use it to keep track of the pending tasks of the writing projects.
+
+#+begin_src emacs-lisp
+  (defun my/agenda-restrict-to-current-project ()
+    "Show the Org agenda limited to the `.org` files of the current project.
+
+  If `project-current' cannot determine a project, fall back to the
+  current buffer’s directory."
+    (interactive)
+    ;; Determine the project root.
+    (let* ((proj   (or (project-current)
+                       ;; No project detected – use the directory of the
+                       ;; current buffer as a sensible fallback.
+                       (let ((default-directory (or (buffer-file-name)
+                                                    default-directory)))
+                         (list default-directory))))
+           (root   (car (project-roots proj)))   ; e.g. \"/home/user/foo/\"
+           ;; Gather all *.org* files under that root.
+           (org-files
+            (directory-files-recursively
+             root "\\.org\\'" nil
+             ;; Optional: ignore hidden directories like .git, .svn, etc.
+             (lambda (dir) (not (string-match-p "/\\.[^/]+\\'" dir))))))
+      ;; Temporarily bind `org-agenda-files' to that list and run the agenda.
+      (let ((org-agenda-files org-files))
+        (org-agenda))))   ;; generic agenda view
+        ;; (org-agenda nil "a"))))   ;; “a” = the default agenda view 
+
+  (global-set-key (kbd "C-c A") 'my/agenda-restrict-to-current-project)
+#+end_src
+
+
+** Refile entries
+This lets you choose refiling targets in heading depth of 9, and lets you get also the files in the same directory hierarchy.
+
+#+begin_src emacs-lisp
+  ;; all the targets
+  (setq org-refile-targets '(
+                             (org-agenda-files :maxlevel . 9)
+                             ("referencias.org" :maxlevel . 9)
+                             ("someday.org" :maxlevel . 9) ;; this is called someday.org now
+                             ("~/Nextcloud/escritura/retazos/ideas.org" :maxlevel . 9)))
+
+  (setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
+  ;;(setq org-refile-use-outline-path t)                  ; Show full paths for refiling
+  (setq org-refile-use-outline-path 'file)                  ; Show full paths for refiling
+#+end_src
+
+** org-habits
+Enable org-habits.
+
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org
+    (add-to-list 'org-modules 'org-habit t)
+    )
+#+end_src
+
+** TODO Capture templates
+Here I will add template captures for doing several things:
+
+#+begin_src emacs-lisp
+  (setq org-capture-templates'(
+  			     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                               ;; task related captures
+
+  			     ("t" "My TODO task format." entry
+                                (file+headline "~/Nextcloud/agenda/tasks.org" "Tasks")
+  			      "** TODO %i%? %^g\n:PROPERTIES:\n:CATEGORY: task\n:END:\n"
+                                :empty-lines-after 1)
+
+  			     ("p" "New project." entry
+                                (file+headline "~/Nextcloud/agenda/tasks.org" "Tasks")
+                                "** TODO %? %^g\n:PROPERTIES:\n:COOKIE_DATA: todo recursive\n:CATEGORY: project\n:END:\n"
+                                :empty-lines-after 1)
+
+  			     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                               ;; Writing related things
+
+  			     ;; Everything that I find interesting to create, no matter what it is
+  			     ("h" "Compost heap" item
+                                (file+headline "~/Nextcloud/escritura/retazos/compost_heap.org" "Compost heap")
+                                "%i"
+                                :empty-lines-after 1)
+
+  			     ;; A possible writing idea
+                               ("w" "Writing idea." entry
+                                (file+headline "~/Nextcloud/escritura/retazos/ideas.org" "Ideas")
+                                "** TODO %?\n*** Personajes\n- \n*** Ambientación\n*** Eventos\n"
+                                :empty-lines-after 1)
+
+                               ;; An interesenting character
+                               ("P" "Personaje" entry
+                                (file "~/Nextcloud/escritura/retazos/personajes.org")
+                                "* %i%?"
+                                :empty-lines-after 1)
+                               )
+        )
+#+end_src
+
+** Orgmode org-roam config
+Org-roam related config.
+*** org-roam general configuration
+
+This is a fix for a Debian installation that doesn't allow to connect directly to the sqlite backen. As seen here: https://github.com/magit/emacsql/blob/main/emacsql-sqlite.el
+#+begin_src emacs-lisp
+  (defun which-linux-distribution ()
+    "from lsb_release"
+    (interactive)
+    (when (eq system-type 'gnu/linux)
+      (shell-command-to-string "lsb_release -sd")))
+
+  (when (string-prefix-p "Debian" (which-linux-distribution))
+    (use-package sqlite3
+      :ensure t)    
+    )
+#+end_src
+
+#+begin_src emacs-lisp
+  ;; main org-roam config
+  (use-package org-roam
+    :ensure t
+    :init
+    (setq org-roam-v2-ack t)
+    ;; Create the new directory to store roam notes
+    (setq org-roam-directory (file-truename "~/Nextcloud/personal/roam"))
+    ;; Location of the roam database
+    (setq org-roam-db-location (file-truename "~/Nextcloud/personal/roam/org-roam.db"))
+    :bind (
+           ("C-c n l" . org-roam-buffer-toggle)
+           ("C-c n f" . org-roam-node-find)
+           ("C-c n i" . org-roam-node-insert)
+           ("C-c n c" . org-roam-capture)
+  	 ("C-c n t" . org-roam-tag-add)
+  	 ("C-c n r" . org-roam-ref-add)
+  	 ("C-c n u" . org-roam-ui-open)
+
+           :map org-roam-dailies-map
+           ("Y" . org-roam-dailies-capture-yesterday)
+  	 ("U" . org-roam-dailies-capture-today)
+           ("I" . org-roam-dailies-capture-tomorrow)
+           )
+    :bind-keymap
+    ("C-c n d" . org-roam-dailies-map)
+    :config
+    ;; provide org-roam completion links outside org files.
+    (setq org-roam-completion-everywhere t)
+    ;; Ensure the keymap is available
+    (require 'org-roam-dailies)
+    ;; org-roam export: https://www.orgroam.com/manual.html#org_002droam_002dexport
+    (require 'org-roam-export)
+    ;; autosync
+    (org-roam-db-autosync-mode 1)
+    )
+
+#+end_src
+
+Open the fleeting notes with a keybinding:
+#+begin_src emacs-lisp
+  (defun my/org-roam-fleeting-notes()
+    "Open my org-roam file with my fleeting notes"
+    (interactive)
+    (find-file "~/Nextcloud/personal/roam/fleeting_notes.org"))
+  (global-set-key (kbd "C-c n F") 'my/org-roam-fleeting-notes)
+#+end_src
+
+Org-roam capture templates:
+#+begin_src emacs-lisp
+  ;; TODO change these paths to variables: we can try concat or expand-file-name
+  ;; org-roam templates
+  (setq org-roam-capture-templates
+        '(
+          ;; default template
+          ("d" "default" plain
+           "* TODO ${title}\n%?"
+           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+           :unnarrowed t)
+          ("b" "book notes" plain (file "~/.emacs.d/roamtemplates/BookNoteTemplate.org")
+           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+filetags: book")
+           :unnarrowed t)
+          ("w" "writing idea" plain (file "~/.emacs.d/roamtemplates/WritingIdea.org")
+           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+filetags: writing")
+           :unnarrowed t)
+          ("c" "writing character" plain (file "~/.emacs.d/roamtemplates/CharacterIdea.org")
+           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+filetags: writing character")
+           :unnarrowed t)
+          ))
+#+end_src
+
+Org-roam window configuration and showing:
+#+begin_src emacs-lisp
+  ;; How the roam window shows
+  (add-to-list 'display-buffer-alist
+               '("\\*org-roam\\*"
+                 (display-buffer-in-side-window)
+                 (side . right)
+                 (slot . 0)
+                 (window-width . 0.33)
+                 (window-parameters . ((no-other-window . t)
+                                       (no-delete-other-windows . t)))))
+#+end_src
+
+Search by title and tags:
+#+begin_src emacs-lisp
+  ;; To search by title and tags, we will use the information contained here:
+  ;; https://github.com/org-roam/org-roam/pull/2054
+  (setq org-roam-node-display-template
+        (concat "${title:*} "
+                (propertize "${tags:20}" 'face 'org-tag)))
+#+end_src
+
+*** org-roam UI
+I want to check a graphical view of my notes:
+#+begin_src emacs-lisp
+  ;; org-roam-ui and its dependencies
+  ;; simple httpd
+  (use-package websocket
+    :ensure t)
+  (use-package simple-httpd
+    :ensure t)
+  (use-package org-roam-ui
+    :ensure t
+    :hook (org-roam . org-roam-ui-mode)
+    )
+
+  ;; Daily notes for org-roam
+  ;; Directory is relative to org-roam-directory
+  (setq org-roam-dailies-directory "daily/")
+
+
+  ;; Capture template for the dailies
+  (setq org-roam-dailies-capture-templates
+        '(("d" "default" entry
+           "* %?"
+           :if-new (file+head "%<%Y-%m-%d>.org"
+                              "#+title: %<%Y-%m-%d>\n#+filetags: daily\n"))))
+#+end_src
+
+*** Restrict agenda to org mode
+Functions to isolate the org-roam TODOs from my general agenda.
+Extracted from https://d12frosted.io/posts/2021-01-16-task-management-with-roam-vol5.html
+#+begin_src emacs-lisp
+  ;; I want to get all my org-roam TODOs in the agenda view, but I need to do it only with
+  ;; the files that contain the TODO keywords, and not the whole org-roam directory.
+
+  ;; https://d12frosted.io/posts/2021-01-16-task-management-with-roam-vol5.html
+
+  ;; we want to load these functions if org-roam is present
+  (if (not(require 'org-roam nil t))
+      ;; if condition
+      (message "org-roam not found")
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;; else condition
+
+    (setq my/roamtag "roamtag")
+
+    (defun vulpea-buffer-prop-set (name value)
+      "Set a file property called NAME to VALUE in buffer file.
+      If the property is already set, replace its value."
+      (setq name (downcase name))
+      (org-with-point-at 1
+        (let ((case-fold-search t))
+          (if (re-search-forward (concat "^#\\+" name ":\\(.*\\)")
+                                 (point-max) t)
+              (replace-match (concat "#+" name ": " value) 'fixedcase)
+            (while (and (not (eobp))
+                        (looking-at "^[#:]"))
+              (if (save-excursion (end-of-line) (eobp))
+                  (progn
+                    (end-of-line)
+                    (insert "\n"))
+                (forward-line)
+                (beginning-of-line)))
+            (insert "#+" name ": " value "\n")))))
+
+    (defun vulpea-buffer-prop-set-list (name values &optional separators)
+      "Set a file property called NAME to VALUES in current buffer.
+      VALUES are quoted and combined into single string using
+      `combine-and-quote-strings'.
+      If SEPARATORS is non-nil, it should be a regular expression
+      matching text that separates, but is not part of, the substrings.
+      If nil it defaults to `split-string-default-separators', normally
+      \"[ \f\t\n\r\v]+\", and OMIT-NULLS is forced to t.
+      If the property is already set, replace its value."
+      (vulpea-buffer-prop-set
+       name (combine-and-quote-strings values separators)))
+
+    (defun vulpea-buffer-tags-set (&rest tags)
+      "Set TAGS in current buffer.
+        If filetags value is already set, replace it."
+      (vulpea-buffer-prop-set "filetags" (string-join tags " ")))
+
+    (defun vulpea-buffer-prop-get (name)
+      "Get a buffer property called NAME as a string."
+      (org-with-point-at 1
+        (when (re-search-forward (concat "^#\\+" name ": \\(.*\\)")
+                                 (point-max) t)
+          (buffer-substring-no-properties
+           (match-beginning 1)
+           (match-end 1)))))
+
+
+    (defun vulpea-buffer-prop-get-list (name &optional separators)
+      "Get a buffer property NAME as a list using SEPARATORS.
+          If SEPARATORS is non-nil, it should be a regular expression
+          matching text that separates, but is not part of, the substrings.
+          If nil it defaults to `split-string-default-separators', normally
+          \"[ \f\t\n\r\v]+\", and OMIT-NULLS is forced to t."
+      (let ((value (vulpea-buffer-prop-get name)))
+        (when (and value (not (string-empty-p value)))
+          (split-string-and-unquote value separators))))
+
+    (defun vulpea-buffer-tags-get ()
+      "Return filetags value in current buffer."
+      (vulpea-buffer-prop-get-list "filetags" " "))
+
+    (defun vulpea-buffer-tags-add (tag)
+      "Add a TAG to filetags in current buffer."
+      (let* ((tags (vulpea-buffer-tags-get))
+             (tags (append tags (list tag))))
+        (apply #'vulpea-buffer-tags-set tags)))
+
+
+
+    (defun vulpea-project-p ()
+      "Return non-nil if current buffer has any todo entry.
+
+              TODO entries marked as done are ignored, meaning the this
+              function returns nil if current buffer contains only completed
+              tasks."
+      (seq-find                                 ; (3)
+       (lambda (type)
+         (eq type 'todo))
+       (org-element-map                         ; (2)
+           (org-element-parse-buffer 'headline) ; (1)
+           'headline
+         (lambda (h)
+           (org-element-property :todo-type h)))))
+
+    (defun vulpea-project-update-tag ()
+      "Update PROJECT tag in the current buffer."
+      (when (and (not (active-minibuffer-window))
+                 (vulpea-buffer-p))
+        (save-excursion
+          (goto-char (point-min))
+          (let* ((tags (vulpea-buffer-tags-get))
+                 (original-tags tags))
+            (if (vulpea-project-p)
+                (setq tags (cons "roamtag" tags))
+              (setq tags (remove "roamtag" tags)))
+
+            ;; cleanup duplicates
+            (setq tags (seq-uniq tags))
+
+            ;; update tags if changed
+            (when (or (seq-difference tags original-tags)
+                      (seq-difference original-tags tags))
+              (apply #'vulpea-buffer-tags-set tags))))))
+
+    (defun vulpea-buffer-p ()
+      "Return non-nil if the currently visited buffer is a note."
+      (and buffer-file-name
+           (string-prefix-p
+            (expand-file-name (file-name-as-directory org-roam-directory))
+            (file-name-directory buffer-file-name))))
+
+    (defun vulpea-project-files ()
+      "Return a list of note files containing 'roamtag' tag." ;
+      (seq-uniq
+       (seq-map
+        #'car
+        (org-roam-db-query
+         [:select [nodes:file]
+                  :from tags
+                  :left-join nodes
+                  :on (= tags:node-id nodes:id)
+                  :where (like tag (quote "%\"roamtag\"%"))]))))
+
+
+
+
+    ;; ---------------------------------
+    ;; this is the agenda part
+
+    ;; This will overwrite the current agenda files, and we don't want that
+    ;; (defun vulpea-agenda-files-update (&rest _)
+    ;;   "Update the value of `org-agenda-files'."
+    ;;   (setq org-agenda-files (vulpea-project-files)))
+
+    ;; (defun inject-vulpea-project-files (org-agenda-files)
+    ;;   (append org-agenda-files (vulpea-project-files)))
+    ;; (advice-add 'org-agenda-files :filter-return #'inject-vulpea-project-files)
+
+    (add-hook 'find-file-hook #'vulpea-project-update-tag)
+    (add-hook 'before-save-hook #'vulpea-project-update-tag)
+
+    ;; ;; original code that overwrites the agenda files (using the one above, this one is just for training)
+    ;;  (advice-add 'org-agenda :before #'vulpea-agenda-files-update)
+    ;;  (advice-add 'org-todo-list :before #'vulpea-agenda-files-update)
+    )
+#+end_src
+
+Just show the TODOs from org-roam, and not from the general agenda.
+
+#+begin_src emacs-lisp
+  (defun my/agenda-restrict-to-roam ()
+    "Restrict agenda to current project"
+    (interactive)
+    (let ((org-agenda-files (list org-roam-directory)))
+      (org-agenda)))
+  (global-set-key (kbd "C-c n a") 'my/agenda-restrict-to-roam)
+#+end_src
+
+*** org-roam random node opening
+Opens a random org-roam node.
+
+#+begin_src emacs-lisp
+  (defun my/random-roam-node ()
+    "Opens a random org-roam node."
+    (interactive)
+    (setq todo-nodes
+          (org-roam-db-query
+           ;; select the nodes that have the roamtag tag
+           [:select [nodes:file]
+                    :from tags
+                    :left-join nodes
+                    :on (= tags:node-id nodes:id)
+  		  ]
+  	 )
+          )
+    ;; get a random file from the list and open it
+    (find-file (car (nth (random (length todo-nodes)) todo-nodes))))
+
+  (global-set-key (kbd "C-c n R") 'my/random-roam-node)
+#+end_src
+
+Open a random roam node with the roamtag tag (that maps to a TODO entry).
+#+begin_src emacs-lisp
+  (defun my/random-roam-todo-node ()
+    "Opens a random org-roam node with the roamtag tag."
+    (interactive)
+    (setq todo-nodes
+  	(org-roam-db-query
+  	 ;; select the nodes that have the roamtag tag
+  	 [:select [nodes:file]
+                    :from tags
+                    :left-join nodes
+                    :on (= tags:node-id nodes:id)
+                    :where (like tag (quote "%\"roamtag\"%"))])
+  	)
+    ;; get a random file from the list and open it
+    (find-file (car (nth (random (length todo-nodes)) todo-nodes))))
+
+  (global-set-key (kbd "C-c n T") 'my/random-roam-todo-node)
+#+end_src
+
+** Orgmode export config
+All the functions defined for the org mode export
+
+*** Ignore exporting some headlines (just the headlines)
+This allows headlines to be ignored in the exports. To do so, the ignore tag (=C-c C-c ignore=) has to be in the header to be ignored. *We only ignore the headlines, the content is still shown.*
+
+#+begin_src emacs-lisp
+  ;;(load (expand-file-name "vendor/ox-extra/ox-extra.el" my-data-dir))
+  (use-package org-contrib
+    :ensure t
+    :config
+    (require 'ox-extra)
+    (ox-extras-activate '(ignore-headlines)))
+#+end_src
+
+*** html export
+**** Remove the "validate" link from html exports
+#+begin_src emacs-lisp
+  ;; don't show the "validate" link on org-html exports
+  (setq org-html-validation-link nil)
+#+end_src
+
+**** install htmlize
+This package is required to create the vanilla html export.
+
+#+begin_src emacs-lisp
+  (use-package htmlize
+    :ensure t)
+#+end_src
+
+*** Markdown export
+Export to markdown
+
+#+begin_src emacs-lisp
+  (require 'ox-md)
+#+end_src
+
+*** TODO Latex export
+All the latex exports in just one place.
+
+Config extracted from the Emacs Writing Studio ebook.
+#+begin_src emacs-lisp
+  (use-package ox-latex
+    :ensure nil
+    :demand t
+    :custom
+    ;; Multiple LaTeX passes for bibliographies
+    (org-latex-pdf-process
+     '("pdflatex -interaction nonstopmode -output-directory %o %f"
+       "bibtex %b"
+       "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+       "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+    ;; Add smart quotes for latex
+    (org-export-with-smart-quotes t)
+    ;; Clean temporary files after export
+    (org-latex-logfiles-extensions
+     (quote ("lof" "lot" "tex~" "aux" "idx" "log" "out"
+             "toc" "nav" "snm" "vrb" "dvi" "fdb_latexmk"
+             "blg" "brf" "fls" "entoc" "ps" "spl" "bbl"
+             "tex" "bcf"))))
+#+end_src
+**** ews format
+Extracted from the Emacs Writing Studio config.
+
+#+begin_src emacs-lisp
+  (with-eval-after-load 'ox-latex
+    (add-to-list
+     'org-latex-classes
+     '("ews"
+       "\\documentclass[11pt, twoside, hidelinks]{memoir}
+      \\setstocksize{9.25in}{7.5in}
+      \\settrimmedsize{\\stockheight}{\\stockwidth}{*}
+      \\setlrmarginsandblock{2cm}{1cm}{*} 
+      \\setulmarginsandblock{1.5cm}{2.25cm}{*}
+      \\checkandfixthelayout
+      \\setcounter{tocdepth}{0}
+      \\OnehalfSpacing
+      \\usepackage{ebgaramond}
+      \\usepackage[htt]{hyphenat}
+      \\chapterstyle{bianchi}
+      \\setsecheadstyle{\\normalfont \\raggedright \\textbf}
+      \\setsubsecheadstyle{\\normalfont \\raggedright \\textbf}
+      \\setsubsubsecheadstyle{\\normalfont\\centering}
+      \\renewcommand\\texttt[1]{{\\normalfont\\fontfamily{cmvtt}
+        \\selectfont #1}}
+      \\usepackage[font={small, it}]{caption}
+      \\pagestyle{myheadings}
+      \\usepackage{ccicons}
+      \\usepackage[authoryear]{natbib}
+      \\bibliographystyle{apalike}
+      \\usepackage{svg}"
+       ("\\chapter{%s}" . "\\chapter*{%s}")
+       ("\\section{%s}" . "\\section*{%s}")
+       ("\\subsection{%s}" . "\\subsection*{%s}")
+       ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))))
+#+end_src
+
+**** Consolidated Memoir LaTeX Export Classes
+https://www.ctan.org/pkg/memoir
+https://mirror.ibcp.fr/pub/CTAN/macros/latex/contrib/memoir/memman.pdf
+=memoir= is a class used to create beautiful documents.
+
+This consolidated function creates all memoir variants (draft/final, with parts/chapter-only).
+
+#+begin_src emacs-lisp
+  (defun my/add-memoir-class (name &optional draft chapter-only)
+    "Add memoir LaTeX class with NAME.
+  When DRAFT is non-nil, enable draft mode.
+  When CHAPTER-ONLY is non-nil, start with chapters (no parts)."
+    (let* ((draft-option (if draft ",draft" ",final"))
+           (levels (if chapter-only
+                       ;; Chapter-only: no \\part level
+                       '(("\\chapter{%s}" . "\\chapter*{%s}")
+                         ("\\section{%s}" . "\\section*{%s}")
+                         ("\\subsection{%s}" . "\\subsection*{%s}")
+                         ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                         ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                         ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
+                     ;; Standard: includes \\part level
+                     '(("\\part{%s}" . "\\part*{%s}")
+                       ("\\chapter{%s}" . "\\chapter*{%s}")
+                       ("\\section{%s}" . "\\section*{%s}")
+                       ("\\subsection{%s}" . "\\subsection*{%s}")
+                       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                       ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                       ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+           (preamble (format "\\documentclass[a4paper,17pt%s,openright,twoside]{memoir}
+  \\usepackage{ucs}
+  \\usepackage[utf8]{inputenc}
+  \\usepackage[spanish]{babel}
+  \\usepackage{fontenc}
+  \\usepackage{graphicx}
+  \\usepackage{minted}
+
+  %% Para poner notas en los márgenes
+  \\usepackage{todonotes}
+
+  %% Para tachar palabras
+  \\usepackage[normalem]{ulem}
+
+  %% for hyperlinks in the pdf
+  \\usepackage{hyperref}
+  %% space between the paragraphs
+  \\usepackage{parskip}
+  %% Needed for the utopia font
+  \\usepackage{fourier}
+
+  \\renewcommand*\\rmdefault{put}
+
+  %% new command that establish 3 newlines for breaking scenes
+  \\newcommand{\\fin}{\\plainbreak*{3}}
+
+  %% command to add edit notes with tiny size
+  \\newcommand{\\edit}[1] {\\todo[inline]{#1}}
+  \\newcommand{\\adendo}[1] {\\todo[size=\\tiny]{#1}}
+
+  %% Chapter style
+  \\chapterstyle{dash}
+
+  %% How the page is formatted
+  \\pagestyle{Ruled}
+
+  %% change the paragraph spacing
+  \\setlength{\\parskip}{0.2\\baselineskip}
+
+                 [NO-DEFAULT-PACKAGES]
+                 [NO-PACKAGES]" draft-option)))
+      (add-to-list 'org-latex-classes
+                   `(,name ,preamble ,@levels))))
+
+  ;; Create all four memoir class variants
+  (my/add-memoir-class "memoir" nil nil)           ; Standard with parts
+  (my/add-memoir-class "memoir_draft" t nil)       ; Draft with parts
+  (my/add-memoir-class "memoir_chapter" nil t)     ; Final, chapter-only
+  (my/add-memoir-class "memoir_chapter_draft" t t) ; Draft, chapter-only
+#+end_src
+
+**** TODO reporting class for org2latex (complete these options)
+
+#+begin_src emacs-lisp
+  (add-to-list 'org-latex-classes
+  	     '("reporting"
+                 "\\documentclass[a4paper,17pt,openright,twoside]{article}
+  \\usepackage{ucs}
+  \\usepackage[utf8]{inputenc}
+  \\usepackage[spanish]{babel}
+  \\usepackage{fontenc}
+  \\usepackage{graphicx}
+
+  \% Para poner notas en los márgenes
+  \\usepackage{todonotes}
+
+  \% Para tachar palabras
+  \\usepackage[normalem]{ulem}
+
+  \\usepackage{hyperref}
+  \\usepackage{parskip}
+  \\usepackage{fourier}
+
+  \\renewcommand*\\rmdefault{put}
+
+  \\newcommand{\\fin}{\\plainbreak*{3}}
+
+  \% command to add edit notes with tiny size
+  \\newcommand{\\edit}[1] {\\todo[inline]{#1}}
+  \\newcommand{\\adendo}[1] {\\todo[size=\\tiny]{#1}}
+
+
+
+
+                 [NO-DEFAULT-PACKAGES]
+                 [NO-PACKAGES]"
+                 ("\\part{%s}" . "\\part*{%s}")
+                 ("\\chapter{%s}" . "\\chapter*{%s}")
+                 ("\\section*{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
+               )
+
+#+end_src
+
+*** orgmode export
+We can export a document to org mode
+
+#+begin_src emacs-lisp
+  (require 'ox-org)
+#+end_src
+
+*** Beamer
+Export to beamer.
+https://orgmode.org/worg/exporters/beamer/tutorial.html
+
+#+begin_src emacs-lisp
+  (require 'ox-beamer)
+  (require 'ox-latex)
+  (setq org-export-allow-bind-keywords t)
+  (setq org-latex-listings 'minted)
+  (add-to-list 'org-latex-packages-alist '("" "minted"))
+  (org-babel-do-load-languages 'org-babel-load-languages '(
+                                                           (shell . t)
+                                                           (python . t)
+                                                           (C . t)
+                                                           (ruby . t)
+                                                           (js . t)
+                                                           (ditaa . t)
+                                                           (gnuplot . t)
+  							 (plantuml . t)
+  							 (dot . t)
+                                                           )
+                               )
+  (setq org-latex-pdf-process
+        '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+          "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+          "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+#+end_src
+
+*** ditaa location
+https://github.com/stathissideris/ditaa
+emacs can't find ditaa, so we have to specify the right location ourselves.
+
+#+begin_src emacs-lisp
+  (setq org-ditaa-jar-path "/usr/bin/ditaa")
+#+end_src
+
+** org-journal
+This is for journaling every day, if possible.
+https://github.com/bastibe/org-journal
+
+Only mounted when at home, and clear directory is mounted.
+#+begin_src emacs-lisp
+  (if (and my-homeenvironment-p
+  	 my-clear-directory-is-mounted-p)
+      (use-package org-journal
+        :ensure t
+        :bind
+        ("C-c r ñ" . org-journal-new-entry)
+        :config
+        (setq org-journal-date-prefix "#+TITLE: ")
+        (setq org-journal-file-format "%Y-%m-%d.org")
+        ;;(setq org-journal-dir "~/Nextcloud/personal/diario/")
+        (setq org-journal-dir (expand-file-name "personal/diario" my-clear-directory))
+        (setq org-journal-date-format "%A, %d %B %Y")
+        (setq org-journal-encrypt-journal nil)
+        )
+    )
+#+end_src
+** TODO ox-hugo
+To create a static page blog with hugo, based on the orgmode format.
+https://ox-hugo.scripter.co/
+
+#+begin_src emacs-lisp
+  (use-package ox-hugo
+    :ensure t   ;Auto-install the package from Melpa
+    :after ox)
+#+end_src
+
+** TODO epub exporter
+#+begin_src emacs-lisp
+  (use-package ox-epub
+    :ensure t)
 #+end_src
 
 * Writing
@@ -366,6 +1499,125 @@ This code depends on a custom script that generates writing prompts based on a l
       ;; open the file
       (find-file file-path)
       ))
+#+end_src
+
+* Miscellanea
+** Nov.el
+Read e-pub in emacs.
+
+https://tech.toryanderson.com/2022/11/23/viewing-epub-in-emacs/
+#+begin_src emacs-lisp
+  (use-package esxml
+    ;;:ensure (esxml :type git :host github :repo "tali713/esxml")
+    :ensure t
+    )
+
+  (use-package nov
+    :after esxml
+    ;;:ensure (nov :type git :host nil :repo "https://depp.brause.cc/nov.el.git")
+    :ensure t
+    :config
+    (setq nov-text-width 100)
+    ;;(setq nov-text-width t)
+    (setq visual-fill-column-center-text t)
+    ;;(add-hook 'nov-mode-hook 'visual-line-mode)
+    ;;(add-hook 'nov-mode-hook 'visual-fill-column-mode)
+    ;; We save the place we left the e-pub in this file:
+    (setq nov-save-place-file (expand-file-name "nov-places" my-data-dir))
+
+    ;; to define the fonts used by nov.el
+    ;; (defun my/nov-font-setup ()
+    ;;   (face-remap-add-relative 'variable-pitch :family "ETBembo"
+    ;;                            :height 1.0))
+    ;; (add-hook 'nov-mode-hook 'my/nov-font-setup)
+    
+    (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
+    )
+#+end_src
+
+** calibre
+https://github.com/chenyanming/calibredb.el
+
+#+begin_src emacs-lisp
+  ;; load this only on my home env
+  (if (and
+       my-homeenvironment-p
+       ;; the calibre library ddbb exists
+       (file-exists-p "/home/calibre_libros/metadata.db"))
+      (progn
+        ;; here comes the actions I want to be done at a home environment
+        (use-package calibredb
+          :ensure t
+          :config
+          (setq calibredb-root-dir "/home/calibre_libros/")
+          (setq calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir))
+          (setq calibredb-library-alist '(("/home/calibre_libros/")
+                                          ))
+          (setq calibredb-size-show t)
+          (setq calibredb-id-width 10)
+          )))
+#+end_src
+
+** reading list
+Here I will configure my personal method for a reading list.
+I used org-books, but the package seems to not be maintained, and the URL fetching seems to be broken, so I will rely on my own personal list.
+
+#+begin_src emacs-lisp
+  ;; where my book list will be stored
+  (defvar my-booklist-file (expand-file-name "Nextcloud/agenda/books.org" (getenv "HOME")))
+#+end_src
+
+
+#+begin_src emacs-lisp
+  (add-to-list 'org-capture-templates
+  	     '(
+  	       ;; books to read
+  	       "b"
+  	       "Manual book entry"
+  	       entry
+  	       (file "~/Nextcloud/agenda/books.org")
+  	       "* %^{TITLE}\n:PROPERTIES:\n:ADDED: %<[%Y-%02m-%02d]>\n:END:%^{AUTHOR}p\n%?"
+  	       :empty-lines 1
+  	       )
+  	     ;; append at the end of the capture list
+  	     t
+  	     )
+
+#+end_src
+** elfeed suite
+RSS read in emacs.
+#+begin_src emacs-lisp
+  ;; to store our rss feeds sources
+  (use-package elfeed-org
+    :ensure t)
+
+  (use-package elfeed-goodies
+    :ensure t)
+
+  (use-package elfeed
+    :ensure t
+    :init
+    (elfeed-org)
+    ;; elfeed goodies config
+    (elfeed-goodies/setup)
+    ;; (setq elfeed-goodies/entry-pane-position 'bottom)
+    ;; put the filter to 1 month ago by default
+    (setq-default elfeed-search-set-filter "@1-months-ago")
+    (setq-default elfeed-search-filter "@1-months-ago")
+
+    :config
+    (setq elfeed-db-directory (expand-file-name "elfeed/db/" my-data-dir))
+    (setq rmh-elfeed-org-files (list "~/Nextcloud/config/.emacs.d/elfeed/elfeed.org"))
+
+    ;; open elfeed and update it
+    (defun my/elfeed()
+      "Opens elfeed and updates it in just a go."
+      (interactive)
+      (elfeed)
+      (elfeed-update)
+      )
+    ;;(global-set-key (kbd "C-c d f") 'my/elfeed)
+    )
 #+end_src
 
 * emacs dashboard
