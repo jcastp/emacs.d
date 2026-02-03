@@ -325,12 +325,15 @@ From Prot's article - https://protesilaos.com/codelog/2024-11-28-basic-emacs-con
     (setq dired-subtree-use-backgrounds nil))
 #+end_src
 
-*** dired-preview
+*** CANCELED dired-preview
+:LOGBOOK:
+- State "CANCELED"   from              [2026-02-03 Tue 12:43]
+:END:
 Preview the files in dired.
 
 https://github.com/protesilaos/dired-preview
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package dired-preview
     :ensure t
     :config
@@ -3961,7 +3964,6 @@ To add text from other files, but without copying the information. It's just lik
   (use-package show-font
     :ensure t)
 #+end_src
-
 
 * my own keymap
 I want to have my own dedicated keymap for the functions I use the most.
