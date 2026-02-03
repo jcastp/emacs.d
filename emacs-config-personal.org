@@ -1,9 +1,336 @@
 This is my personal config file, where I load all related to my personal use.
+
+#+begin_src emacs-lisp
+  (message "Loading personal config file")
+#+end_src
+
 * Personal information
 This uses a special file, not commited, with my personal information, located in the path below.
 It contains the variables =user-full-name= and =user-mail-address=
 #+begin_src emacs-lisp
   ;; to protect my personal information, this file is not commited
   (load (expand-file-name "Nextcloud/config/.emacs.d/personal_info.el" (getenv "HOME")))
+#+end_src
+* Online
+** mastodon from emacs
+https://github.com/emacsmirror/mastodon
+
+I can now check mastodon from emacs.
+Only evaluated if in my home environment, my encrypted directory is mounted, as the auth information is stored there.
+
+#+begin_src emacs-lisp
+  (if (and my-clear-directory-is-mounted-p my-homeenvironment-p)
+      (use-package mastodon
+        :ensure t
+        :defer t
+        :config
+        ;; account configuration
+        (setq mastodon-instance-url "https://mastodon.online"
+    	    mastodon-active-user "jcastp")
+        ;; my auth information is now in my encrypted directory
+        (setq mastodon-client--token-file (expand-file-name "personal/emacs/mastodon.plstore" my-clear-directory))
+        )
+    )
+#+end_src
+
+* Writing
+** packages
+*** Writeroom
+Distraction free writing mode.
+https://github.com/joostkremers/writeroom-mode
+
+#+begin_src emacs-lisp
+  (use-package writeroom-mode
+    :ensure t
+    :config
+    (global-set-key (kbd "C-c 5") 'writeroom-mode)
+    ;; width of the writing area
+    (setq writeroom-width 90)
+    ;; extra space between the lines to see better
+    (setq writeroom-extra-line-spacing 4)
+    ;; Checking the modeline
+    (setq writeroom-mode-line t)
+    )
+#+end_src
+
+*** TODO guess-language
+Since I write in different languages, the dictionary applied is really important. If I write in Spanish, I want the spanish dict to be applied, and not the english one.
+
+#+begin_src emacs-lisp
+  (use-package guess-language
+    :ensure t
+    :config
+    (setq guess-language-languages '(en es))
+    (setq guess-language-min-paragraph-length 40)
+    ;; define the dicts I want to use for my languages
+    (setq guess-language-langcodes
+  	'((en . ("en_US" "English"))
+  	  (es . ("es_ES" "Spanish"))))
+    (guess-language-mode)
+    ;; activate the mode when I go to text files
+    (add-hook 'text-mode-hook (lambda () (guess-language-mode 1)))
+    (add-hook 'org-mode-hook (lambda () (guess-language-mode 1)))
+    )
+#+end_src
+
+*** Translate from english
+https://github.com/lorniu/gt.el
+Translate from english to spanish
+
+Esto es una prueba de cómo funciona la traducción.
+
+#+begin_src emacs-lisp
+  (use-package gt 
+    :ensure t
+    :config
+    (setq gt-langs '(en es))
+    ;; Configure the default translator
+    (setq gt-default-translator
+  	(gt-translator
+  	 ;; Optional: Use a more specific Taker to ensure correct language handling
+  	 ;; This Taker focuses on the word or selected region, using the global gt-langs
+  	 :taker (gt-taker :langs gt-langs :text 'word) 
+  	 ;; Specify the translation engine(s)
+  	 :engines (gt-bing-engine)
+  	 ;; Optional: Change the output method for potentially better readability
+  	 ;; For example, using a dedicated buffer instead of the echo area:
+  	 ;; :render (gt-buffer-render)
+  	 ;; Or using a floating window:
+  	 ;; :render (gt-posframe-pop-render)
+  	 ;; The default render (gt-render) outputs to the echo area.
+  	 )))
+#+end_src
+
+*** TODO powerthesaurus
+https://github.com/SavchenkoValeriy/emacs-powerthesaurus
+
+#+begin_src emacs-lisp
+  (use-package powerthesaurus
+    :ensure t)
+#+end_src
+
+*** org-remark for text annotations
+Text annotations in org mode
+https://github.com/nobiot/org-remark
+Manual: https://nobiot.github.io/org-remark/
+
+#+begin_src emacs-lisp
+  (use-package org-remark
+    :ensure t
+    :after org
+    :config
+    (require 'org-remark-global-tracking)
+    (org-remark-global-tracking-mode +1)
+
+    ;; Create a file of notes for each file, with the buffer name appended by "-notes"
+    (defun my/org-remark-file-name ()
+      (concat (file-name-base (org-remark-notes-file-name-function))
+              ".org"))
+    (setq org-remark-notes-file-name
+          #'my/org-remark-file-name)
+
+    ;; Key-bind `org-remark-mark' to global-map so that you can call it
+    ;; globally before the library is loaded.
+    (define-key global-map (kbd "C-c n m") #'org-remark-mark)
+    ;; The rest of keybidings are done only on loading `org-remark'
+    (with-eval-after-load 'org-remark
+      (define-key org-remark-mode-map (kbd "C-c n o") #'org-remark-open)
+      (define-key org-remark-mode-map (kbd "C-c n n") #'org-remark-view-next)
+      (define-key org-remark-mode-map (kbd "C-c n p") #'org-remark-view-prev)
+      (define-key org-remark-mode-map (kbd "C-c n r") #'org-remark-remove)
+      (define-key org-remark-mode-map (kbd "C-c n j") #'org-remark-change)
+      )
+    )
+  ;; Create highlighter pens for different parts
+  (with-eval-after-load 'org-remark
+    ;; Since I use alternate dark and clear themes, these must be useful for both
+    (org-remark-create "blue-structure"
+                       '(:underline "sky blue" :background "deep sky blue")
+                       '(CATEGORY "structure"))
+
+    ;; can be properly seen in both dark and clear themes
+    (org-remark-create "dark-blue-line"
+                       '(:underline "deep sky blue")
+                       '(CATEGORY "editing"))
+
+    (org-remark-create "gray-plot"
+                       '(:background "dim gray")
+  		     '(CATEGORY "plot"))
+
+    (org-remark-create "salmon-character"
+                       '(:background "salmon")
+  		     '(CATEGORY "character"))
+
+    (org-remark-create "yellow-dialogue"
+                       '(:background "yellow")
+  		     '(CATEGORY "dialogue"))
+
+    (org-remark-create "royal-blue-other"
+                       '(:background "royal blue")
+  		     '(CATEGORY "other"))
+    )
+#+end_src
+
+*** tempel - template expansion
+:PROPERTIES:
+:ID:       836dad1c-d03d-45d1-b9c7-0bce134fc86e
+:END:
+Template expansion, substituting the yasnippet package for something simpler.
+https://github.com/minad/tempel
+
+#+begin_src emacs-lisp
+  (use-package tempel
+    :ensure t
+    :after org
+    ;; Require trigger prefix before template name when completing.
+    :custom
+    (tempel-trigger-prefix "<")
+
+    :init
+    ;; Setup completion at point
+    (defun tempel-setup-capf ()
+      ;; Add the Tempel Capf to `completion-at-point-functions'.
+      ;; `tempel-expand' only triggers on exact matches. Alternatively use
+      ;; `tempel-complete' if you want to see all matches, but then you
+      ;; should also configure `tempel-trigger-prefix', such that Tempel
+      ;; does not trigger too often when you don't expect it. NOTE: We add
+      ;; `tempel-expand' *before* the main programming mode Capf, such
+      ;; that it will be tried first.
+      (setq-local completion-at-point-functions
+  		(cons #'tempel-expand
+                        completion-at-point-functions)))
+
+    (add-hook 'conf-mode-hook 'tempel-setup-capf)
+    (add-hook 'prog-mode-hook 'tempel-setup-capf)
+    (add-hook 'text-mode-hook 'tempel-setup-capf)
+    :bind
+    ;;("C-c d i" . tempel-insert)
+    :config
+    (setq tempel-path "~/.emacs.d/templates")
+    )
+#+end_src
+
+** org-scribe config
+Here, I document all the config related to my writing.
+
+Load the org-context-extended code, that adds helper functions and a flexible prose word count function:
+#+begin_src emacs-lisp
+  (use-package org-context-extended
+    :ensure t
+    :vc (:url "https://codeberg.org/jcastp/org-context-extended"
+  	    :branch "main"
+  	    :rev :newest))
+#+end_src
+
+Load a custom implementation of the org-tracktable package, using the org-context-extended word counting function:
+#+begin_src emacs-lisp
+  (use-package org-tracktable
+    :ensure t
+    :vc (:url "https://codeberg.org/jcastp/org-tracktable"
+  	    :branch "main"
+  	    :rev :newest))
+#+end_src
+
+Load the org-scribe package. Information is [[https://codeberg.org/jcastp/org-scribe][here]].
+#+begin_src emacs-lisp
+  ;; testing purposes. It will change once the package is ready
+  ;; (load-file "~/Nextcloud/escritura/software/org-scribe/org-scribe.el")
+
+  (use-package org-scribe
+    :vc (:url "https://codeberg.org/jcastp/org-scribe"
+   	    :branch "main"
+   	    :rev :newest)
+    :after org
+    :hook (org-mode . org-scribe-mode)
+    :config
+    ;; Customize settings
+    (setq my-org-scribe-env-work-theme 'poet)
+    (setq my-org-scribe-env-normal-theme 'ef-deuteranopia-dark)
+    (setq writing-stories-directory "~/writing/exercises")
+
+    ;; Keybindings
+    (global-set-key (kbd "<f8> <f8>") 'hydra-org-scribe/body))
+#+end_src
+
+** org-scribe-planner
+Load the org-scribe-planner package
+#+begin_src emacs-lisp
+  (use-package org-scribe-planner
+  :vc (:url "https://codeberg.org/jcastp/org-scribe-planner"
+  	    :branch "main"
+  	    :rev :newest)
+  :after org)
+#+end_src
+
+** writing keybindings
+Create a custom keymap for the writing functions
+#+begin_src emacs-lisp
+  (defvar-keymap my/key-prefix-writing-map
+    :doc "Functions related to writing"
+    ;; writing mode
+    "a" #'org-scribe/writing-env-mode
+    "f" #'org-scribe/writing-env-mode-focus
+    "e" #'org-scribe/editing-mode
+    "w" #'org-scribe/ews-org-count-words
+    "c" #'org-context-count-words
+    ;; writing exercises
+    "r" #'writing/create-writing-exercise
+    "q" #'writing/create-empty-writing-file
+    "s" #'org-scribe/sinonimo
+    ;; hydra keybinding
+    "k" #'hydra-org-scribe/body
+    )
+
+  (keymap-global-set "<f8> <f8>" #'hydra-org-scribe/body)
+#+end_src
+
+** Create a story file on the fly
+Sometimes I want to create a story prompt on the fly. These functions allow for creating the prompts and the file, so I can immediately start writing.
+
+This code depends on a custom script that generates writing prompts based on a list of keywords and some templates.
+
+#+begin_src emacs-lisp
+  (defvar my-writing-stories-directory "~/Nextcloud/escritura/historias/ejercicios"
+    "Directory where org files created by `my-writing/create-org-file' will be stored.")
+
+  (defun my-writing/create-empty-writing-file (title)
+    "Create a new empty org file with name format `%Y%m%d-<title>.org', where <title> is the `title' argument with spaces replaced by underscores. The file will be stored in `writing-stories-directory'."
+    (interactive "sEnter file name: ")
+    (let* ((date (format-time-string "%Y%m%d"))
+  	 ;; Create the filename with the timestamp and the title
+           (filename (concat date "-" (replace-regexp-in-string " " "_" title) ".org"))
+  	 ;; create the full path of the file
+           (full-path (concat my-writing-stories-directory "/" filename))
+  	 ;; Create a string with the title and author
+  	 (initial_title (format "#+TITLE: %s\n#+AUTHOR: %s\n#+EMAIL: %s" title user-full-name user-mail-address))
+  	   )
+      ;; very crude way to include some title in the file created
+      (append-to-file initial_title nil full-path)
+      (find-file full-path)
+      ))
+
+  (defun my-writing/create-writing-exercise (title)
+    "Create a new file with the current date and the specified TITLE.
+  The file is saved in the directory specified by `my-writing-stories-directory'.
+  The file name format is \"%Y%m%d-<text>.org\", with spaces in TEXT replaced by \"_\".
+  The function runs a Python script that generates a writing prompt
+  and stores the output in the file."
+    (interactive "sEnter file name: ")
+    (let* ((date (format-time-string "%Y%m%d"))
+  	 ;; Create the filename with the timestamp and the title
+           (file-name (concat date "-" (replace-regexp-in-string " " "_" title) ".org"))
+  	 ;; create the full path of the file
+           (file-path (concat my-writing-stories-directory "/" file-name))
+  	 ;; Get the output from the python script
+           (python-output (shell-command-to-string "python  ~/Nextcloud/escritura/software/writing_companion/writing_companion.py -s all prompt"))
+  	 ;; Create the initial org front matter
+  	 (initial_title (format "#+TITLE: %s\n#+AUTHOR: %s\n#+EMAIL: %s" title user-full-name user-mail-address)))
+      ;; insert the data in the file
+      (with-temp-file file-path
+        (insert initial_title )
+  	(insert "\n\n" python-output))
+      ;; open the file
+      (find-file file-path)
+      ))
 #+end_src
 
