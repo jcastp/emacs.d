@@ -42,7 +42,7 @@ My work require a different set of agendas:
   (setq org-agenda-files '(""))
   ;; And now, populate with the work environment
   ;; This needs to be changed when you change company!!!
-  (setq org-agenda-files '("~/Nextcloud/agenda/work/work.org"
+  (setq org-agenda-files '("~/Nextcloud/trabajo/agenda/work.org"
                            )
   )
 #+end_src
@@ -54,7 +54,7 @@ Since this is a different environment, I also have to change this to refile thin
     (setq org-refile-targets '(
                               (nil :maxlevel . 9)
                               (org-agenda-files :maxlevel . 9)
-  			    ("~/Nextcloud/agenda/work/work_backlog.org" :maxlevel . 9)
+  			    ("~/Nextcloud/trabajo/agenda/work_backlog.org" :maxlevel . 9)
                               )
     )
 
@@ -241,20 +241,20 @@ As work is different from home, I need specific templates.
   (setq org-capture-templates'(
 
                                ("t" "Tasks (work)" entry
-                                (file+headline "~/Nextcloud/agenda/work/work.org" "Inbox")
+                                (file+headline "~/Nextcloud/trabajo/agenda/work.org" "Inbox")
                                 "** TODO %? %^g \n")
 
                                ("i" "New incident." entry
-                                (file+headline "~/Nextcloud/agenda/work/work.org" "Incidents")
+                                (file+headline "~/Nextcloud/trabajo/agenda/work.org" "Incidents")
                                 "** TODO %?")
 
                                ("b" "Backlog entry." entry
-                                (file+headline "~/Nextcloud/agenda/work/work_backlog.org" "Backlog")
+                                (file+headline "~/Nextcloud/trabajo/agenda/work_backlog.org" "Backlog")
                                 "** TODO %?\n")
 
   			     ;; For meeting note taking
                                ("m" "Meeting notes" entry
-                                (file+headline "~/Nextcloud/agenda/work/work_meetings.org" "Meetings")
+                                (file+headline "~/Nextcloud/trabajo/agenda/work_meetings.org" "Meetings")
                                 "** %T - %?\n"
   			      :jump-to-captured t)))
 #+end_src
@@ -279,6 +279,6 @@ As work is different from home, I need specific templates.
 This will automatically open the relevant file to start working right away:
 
 #+begin_src emacs-lisp
-  (find-file "~/Nextcloud/agenda/work/work.org")
+  (find-file "~/Nextcloud/trabajo/agenda/work.org")
 #+end_src
 
