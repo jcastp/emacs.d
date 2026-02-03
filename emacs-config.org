@@ -2178,8 +2178,10 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
   (defvar-keymap my/key-prefix-online-map
     :doc "Functions related to online activity"
     "e" #'eww
-    "f" (cons "elfeed" #'my/elfeed)
-    "m" #'mastodon
+    "f" (when (fboundp #'elfeed)
+  	(cons "elfeed" #'elfeed))
+    "m" (when (fboundp #'mastodon)
+  	(cons "mastodon" #'mastodon))
     )
 
   ;; all my theme or font related keybindings
@@ -2209,15 +2211,15 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
     :doc "My personal keymap."
     "b" (cons "buffers" my/key-prefix-buffers-map)
     "c" #'my/centered-mode
-    ;;"d" #'dirvish
     "i" #'tempel-insert
     "o" (cons "online" my/key-prefix-online-map)
     "q" (cons "direct file access" my/key-prefix-direct-access-map)
     "u" #'consult-outline
     "r" #'consult-recent-file
     "t" (cons "themes and fonts" my/key-prefix-themes-map)
-    "w" (cons "writing" my/key-prefix-writing-map)
-    )
+    "w" (when (boundp 'my/key-prefix-writing-map)
+  	(cons "writing" my/key-prefix-writing-map))
+   ) 
 
   (keymap-set global-map "C-q" my/key-prefix-map)
 
