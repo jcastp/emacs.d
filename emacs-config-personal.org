@@ -140,6 +140,100 @@ Function to change between dark and clear themes, based on past variables.
   (global-set-key (kbd "C-c 0") 'my/theme-changer)
 #+end_src
   
+
+** fontaine presets for personal
+#+begin_src emacs-lisp
+  (setq fontaine-presets
+      '(
+        ;; daily operations, same config as normal config
+        (regular
+         :default-family "Aporetic Sans Mono"
+         :default-weight normal
+         :default-height 120
+         :fixed-pitch-family "Aporetic Sans Mono"
+         :fixed-pitch-weight Light ; falls back to :default-weight
+         :fixed-pitch-height 110
+         :variable-pitch-family "Aporetic Sans"
+         :variable-pitch-weight Medium
+         :variable-pitch-height 140
+         :bold-family nil ; use whatever the underlying face has
+         :bold-weight bold
+         :italic-family "Aporetic Sans"
+         :italic-slant italic
+         :line-spacing 0
+         )
+        (regular-aporetic-mono
+         :default-family "Aporetic Sans Mono"
+         :default-weight normal
+         :default-height 110
+         :fixed-pitch-family "Aporetic Sans Mono"
+         :fixed-pitch-weight Light ; falls back to :default-weight
+         :fixed-pitch-height 110
+         :variable-pitch-family "Aporetic Sans Mono"
+         :variable-pitch-weight Medium
+         :variable-pitch-height 110
+         :bold-family nil ; use whatever the underlying face has
+         :bold-weight bold
+         :italic-family "Aporetic Sans Mono"
+         :italic-slant italic
+         :line-spacing 0
+         )
+        ;; Bigger face for variable width, so I can focus on it
+        (writing
+         :default-family "ETBembo"
+         :default-weight normal
+         :default-height 150
+         :fixed-pitch-family "Aporetic Sans Mono"
+         :fixed-pitch-weight Light ; falls back to :default-weight
+         :fixed-pitch-height 120
+         :variable-pitch-family "ETBembo"
+         :variable-pitch-weight Medium
+         :variable-pitch-height 150
+         :bold-family nil ; use whatever the underlying face has
+         :bold-weight bold
+         :italic-family "ETBembo"
+         :italic-slant italic
+         :line-spacing 1
+         )
+        ;; Bigger face for variable width, so I can focus on it
+        (writing-big
+         :default-family "ETBembo"
+         :default-weight normal
+         :default-height 180
+         :fixed-pitch-family "Aporetic Sans Mono"
+         :fixed-pitch-weight Light ; falls back to :default-weight
+         :fixed-pitch-height 140
+         :variable-pitch-family "ETBembo"
+         :variable-pitch-weight Medium
+         :variable-pitch-height 180
+         :bold-family nil ; use whatever the underlying face has
+         :bold-weight bold
+         :italic-family "ETBembo"
+         :italic-slant italic
+         :line-spacing 1
+         )
+        ;; change the variable width face to have a different view when editing
+        (editing
+         :default-family "Aporetic Sans Mono"
+         :default-weight normal
+         :default-height 130
+         :fixed-pitch-family "Aporetic Sans Mono"
+         :fixed-pitch-weight nil ; falls back to :default-weight
+         :fixed-pitch-height 110
+         :variable-pitch-family "Gentium"
+         :variable-pitch-weight normal
+         :variable-pitch-height 150
+         :bold-family nil ; use whatever the underlying face has
+         :bold-weight bold
+         :italic-family "Gentium"
+         :italic-slant italic
+         :line-spacing 1
+         )
+      ))
+
+  ;; Establish the regular preset as default
+  (fontaine-set-preset 'regular)
+#+end_src
 * orgmode config
 ** Custom states for the tasks
 These are the custom states for the tasks, and the character associated to it.

@@ -50,6 +50,42 @@ Have some fancy icons for the categories.
 I work better with fixed fonts in this kind of environments
 
 #+begin_src emacs-lisp
+  (setq fontaine-presets
+        '(
+  	;; daily operations, same config as normal config
+  	(regular
+  	 :default-family "Aporetic Sans Mono"
+  	 :default-weight normal
+  	 :default-height 120
+  	 :fixed-pitch-family "Aporetic Sans Mono"
+  	 :fixed-pitch-weight Light ; falls back to :default-weight
+  	 :fixed-pitch-height 110
+  	 :variable-pitch-family "Aporetic Sans"
+  	 :variable-pitch-weight Medium
+  	 :variable-pitch-height 140
+  	 :bold-family nil ; use whatever the underlying face has
+  	 :bold-weight bold
+  	 :italic-family "Aporetic Sans"
+  	 :italic-slant italic
+  	 :line-spacing 0
+  	 )
+  	;; font for work
+  	(work
+  	 :default-family "Aporetic Sans"
+  	 :default-weight normal
+  	 :default-height 120
+  	 :fixed-pitch-family "Aporetic Sans Mono"
+  	 :fixed-pitch-weight Light ; falls back to :default-weight
+  	 :fixed-pitch-height 110
+  	 :variable-pitch-family "Aporetic Sans"
+  	 :variable-pitch-weight Medium
+  	 :variable-pitch-height 120
+  	 :bold-family nil ; use whatever the underlying face has
+  	 :bold-weight bold
+  	 :italic-family "Aporetic Sans"
+  	 :italic-slant italic
+  	 :line-spacing 0)))
+
   (fontaine-set-preset 'work)
 #+end_src
 

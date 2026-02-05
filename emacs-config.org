@@ -1005,7 +1005,7 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
   ;; TODO find a way to have the column numbers with fixed width
   (global-display-line-numbers-mode -1)
   (add-hook 'prog-mode-hook 'display-line-numbers-mode)
-  ;;(add-hook 'text-mode-hook 'display-line-numbers-mode)
+  (add-hook 'text-mode-hook 'display-line-numbers-mode)
 #+end_src
 
 ** Highlight indent guides
@@ -1362,118 +1362,8 @@ Allows to set different fonts dinamically.
 https://protesilaos.com/emacs/fontaine
 
 #+begin_src emacs-lisp
-  (use-package fontaine
-    :ensure t
-    :config
-    (setq fontaine-presets
-          '(
-            ;; daily operations, same config as normal config
-            (regular
-             :default-family "Aporetic Sans Mono"
-             :default-weight normal
-             :default-height 120
-             :fixed-pitch-family "Aporetic Sans Mono"
-             :fixed-pitch-weight Light ; falls back to :default-weight
-             :fixed-pitch-height 110
-             :variable-pitch-family "Aporetic Sans"
-             :variable-pitch-weight Medium
-             :variable-pitch-height 140
-             :bold-family nil ; use whatever the underlying face has
-             :bold-weight bold
-             :italic-family "Aporetic Sans"
-             :italic-slant italic
-             :line-spacing 0
-             )
-            (regular-aporetic-mono
-             :default-family "Aporetic Sans Mono"
-             :default-weight normal
-             :default-height 110
-             :fixed-pitch-family "Aporetic Sans Mono"
-             :fixed-pitch-weight Light ; falls back to :default-weight
-             :fixed-pitch-height 110
-             :variable-pitch-family "Aporetic Sans Mono"
-             :variable-pitch-weight Medium
-             :variable-pitch-height 110
-             :bold-family nil ; use whatever the underlying face has
-             :bold-weight bold
-             :italic-family "Aporetic Sans Mono"
-             :italic-slant italic
-             :line-spacing 0
-             )
-            ;; Bigger face for variable width, so I can focus on it
-            (writing
-             :default-family "ETBembo"
-             :default-weight normal
-             :default-height 150
-             :fixed-pitch-family "Aporetic Sans Mono"
-             :fixed-pitch-weight Light ; falls back to :default-weight
-             :fixed-pitch-height 120
-             :variable-pitch-family "ETBembo"
-             :variable-pitch-weight Medium
-             :variable-pitch-height 150
-             :bold-family nil ; use whatever the underlying face has
-             :bold-weight bold
-             :italic-family "ETBembo"
-             :italic-slant italic
-             :line-spacing 1
-             )
-            ;; Bigger face for variable width, so I can focus on it
-            (writing-big
-             :default-family "ETBembo"
-             :default-weight normal
-             :default-height 180
-             :fixed-pitch-family "Aporetic Sans Mono"
-             :fixed-pitch-weight Light ; falls back to :default-weight
-             :fixed-pitch-height 140
-             :variable-pitch-family "ETBembo"
-             :variable-pitch-weight Medium
-             :variable-pitch-height 180
-             :bold-family nil ; use whatever the underlying face has
-             :bold-weight bold
-             :italic-family "ETBembo"
-             :italic-slant italic
-             :line-spacing 1
-             )
-            ;; change the variable width face to have a different view when editing
-            (editing
-             :default-family "Aporetic Sans Mono"
-             :default-weight normal
-             :default-height 130
-             :fixed-pitch-family "Aporetic Sans Mono"
-             :fixed-pitch-weight nil ; falls back to :default-weight
-             :fixed-pitch-height 110
-             :variable-pitch-family "Gentium"
-             :variable-pitch-weight normal
-             :variable-pitch-height 150
-             :bold-family nil ; use whatever the underlying face has
-             :bold-weight bold
-             :italic-family "Gentium"
-             :italic-slant italic
-             :line-spacing 1
-             )
-    	  ;; font for work
-    	  (work
-             :default-family "Aporetic Sans"
-             :default-weight normal
-             :default-height 120
-             :fixed-pitch-family "Aporetic Sans Mono"
-             :fixed-pitch-weight Light ; falls back to :default-weight
-             :fixed-pitch-height 110
-             :variable-pitch-family "Aporetic Sans"
-             :variable-pitch-weight Medium
-             :variable-pitch-height 120
-             :bold-family nil ; use whatever the underlying face has
-             :bold-weight bold
-             :italic-family "Aporetic Sans"
-             :italic-slant italic
-             :line-spacing 0
-             )
-            )
-          )
-    )
-
-  ;; Establish the regular preset as default
-  (fontaine-set-preset 'regular)
+    (use-package fontaine
+      :ensure t)
 #+end_src
 
 * Orgmode config
