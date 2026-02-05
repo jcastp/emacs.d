@@ -1,40 +1,66 @@
-* Emacs config specific to the work environment
+#+title: Emacs config specific to the work environment
 This configuration is just a patch to work with the work environment.
 It is supposed to run over the generic emacs config, and overwrites that config with the custom config for work environment.
 
-** Clear theme
+* Defining my own work directory
+#+begin_src emacs-lisp :tangle yes
+(defvar my-work-dir "~/Nextcloud/trabajo/agenda/"
+  "My own working directory")
+
+(defvar my-work-file (concat my-work-dir "work.org")
+  "My own work file")
+
+(defvar my-backlog-file (concat my-work-dir "work_backlog.org")
+  "My own work backlog file")
+
+(defvar my-meetings-file (concat my-work-dir "work_meetings.org")
+  "My own work meetings file")
+#+end_src
+
+* Clear theme
 I use a clear theme.
 
 #+begin_src emacs-lisp
-  (consult-theme 'ef-owl)
+  (consult-theme 'modus-operandi-tinted)
 #+end_src
 
-** recent files for work
+* recent files for work
 #+begin_src emacs-lisp
   (setq recentf-save-file (expand-file-name "recentf-work" my-data-dir))
 #+end_src
 
-** Perspective saving for work
+* Perspective saving for work
 #+begin_src emacs-lisp
   (setq persp-state-default-file (expand-file-name "persp-save-work" user-emacs-directory))
   (add-hook 'kill-emacs-hook #'persp-state-save)
 #+end_src
-
-** Fixed width font for work environment
+* icons for the agenda categories
+Have some fancy icons for the categories.
+#+begin_src emacs-lisp
+  (customize-set-value
+   'org-agenda-category-icon-alist
+   `(
+     ("calendar" "~/Nextcloud/config/icons/calendar.svg" nil nil :ascent center :mask heuristic)
+     ("tasks" "~/Nextcloud/config/icons/check-square.svg" nil nil :ascent center :mask heuristic)
+     ("projects" "~/Nextcloud/config/icons/list.svg" nil nil :ascent center :mask heuristic)
+     ("okr" "~/Nextcloud/config/icons/target.svg" nil nil :ascent center :mask heuristic)
+     ("inbox" "~/Nextcloud/config/icons/inbox.svg" nil nil :ascent center :mask heuristic)))
+#+end_src
+* Fixed width font for work environment
 I work better with fixed fonts in this kind of environments
 
 #+begin_src emacs-lisp
-  (fontaine-set-preset 'aporetic-sans-mono)
+  (fontaine-set-preset 'work)
 #+end_src
 
-** Adjust the window width for work
+* Adjust the window width for work
 Since at work I don't open so many windows, we can use this width to better use what I get.
 
 #+begin_src emacs-lisp
   (setq-default visual-fill-column-width 100)
 #+end_src
 
-** Put the correct agenda files for work
+* Put the correct agenda files for work
 My work require a different set of agendas:
 
 #+begin_src emacs-lisp
@@ -42,19 +68,17 @@ My work require a different set of agendas:
   (setq org-agenda-files '(""))
   ;; And now, populate with the work environment
   ;; This needs to be changed when you change company!!!
-  (setq org-agenda-files '("~/Nextcloud/trabajo/agenda/work.org"
-                           )
-  )
+  (setq org-agenda-files '(my-work-file))
 #+end_src
 
-** Refile environment
+* Refile environment
 Since this is a different environment, I also have to change this to refile things in a different way.
 
 #+begin_src emacs-lisp
     (setq org-refile-targets '(
                               (nil :maxlevel . 9)
                               (org-agenda-files :maxlevel . 9)
-  			    ("~/Nextcloud/trabajo/agenda/work_backlog.org" :maxlevel . 9)
+  			    (my-backlog-file :maxlevel . 9)
                               )
     )
 
@@ -62,7 +86,7 @@ Since this is a different environment, I also have to change this to refile thin
     (setq org-refile-use-outline-path t)                  ; Show full paths for refiling
 #+end_src
 
-** TODO Better searches with custom agenda commands
+* TODO Better searches with custom agenda commands
 I need a different custom agenda commands to see the tasks better.
 
  #+begin_src emacs-lisp
@@ -190,9 +214,15 @@ I need a different custom agenda commands to see the tasks better.
             )
    	)
          )
+
+;; Search for tasks that have no EFFORT set
+(add-to-list 'org-agenda-custom-commands
+             '("e" "Tasks without EFFORT"
+               tags-todo "EFFORT=\"\""
+               ((org-agenda-overriding-header "Tasks missing effort estimates"))))   
 #+end_src
 
-** TODO org-super-agenda config
+* TODO org-super-agenda config
 #+begin_src emacs-lisp
   (org-super-agenda-mode 1)
   (setq org-super-agenda-groups
@@ -208,60 +238,58 @@ I need a different custom agenda commands to see the tasks better.
           ))
 #+end_src
 
-** Work tags definition
-
-#+begin_src emacs-lisp
+* Work tags definition
+#+begin_src emacs-lisp :tangle yes
 (setq org-tag-alist '(
-                      ;; environment, project or effort
-                      ("detection" . ?d) ("automation" . ?a) ("emailsec" . ?e) ("operations" . ?o)
+                      ("detection" . ?d) ("automation" . ?a) ("emailsec" . ?e)
                       ;; other tags
                       ("documentation" . ?D) ("procedures" . ?P)
                       ("knowledge" . ?K) ("training" . ?T)
                       ("incident" . ?I) ("task" . ?t)
+                      ;; based on my current role
+                      ("organization" . ?o)
                       )
       )
 #+end_src
 
-** Custom status for work related environment
+* Custom status for work related environment
 
 #+begin_src emacs-lisp
   (setq org-todo-keywords
         '(
           ;; Status for tasks
-          (sequence "TODO(t)" "WAITING(w@/!)" "ONGOING(o@/!)" "|" "DONE(d@/!)" "DELEGATED(D@/!)" "CANCELED(c@/!)")
-          )
-        )
+          (sequence "TODO(t)" "WAITING(w@/!)" "ONGOING(o@/!)" "|" "DONE(d@/!)" "DELEGATED(D@/!)" "CANCELED(c@/!)")))
 #+end_src
 
-** Custom work capture templates
+* Custom work capture templates
 As work is different from home, I need specific templates.
 
 #+begin_src emacs-lisp
-  (setq org-capture-templates'(
+(setq org-capture-templates'(
+                             ("i" "Inbox (work)" entry
+                              (file+headline my-work-file "Inbox")
+                              "** TODO %? %^g %^{EFFORT}p")
 
-                               ("t" "Tasks (work)" entry
-                                (file+headline "~/Nextcloud/trabajo/agenda/work.org" "Inbox")
-                                "** TODO %? %^g \n")
+                             ("I" "New incident." entry
+                              (file+headline my-work-file "Incidents")
+                              "** TODO %?")
 
-                               ("i" "New incident." entry
-                                (file+headline "~/Nextcloud/trabajo/agenda/work.org" "Incidents")
-                                "** TODO %?")
+                             ("b" "Backlog entry." entry
+                              (file+headline my-backlog-file "Backlog")
+                              "** TODO %?\n")
 
-                               ("b" "Backlog entry." entry
-                                (file+headline "~/Nextcloud/trabajo/agenda/work_backlog.org" "Backlog")
-                                "** TODO %?\n")
-
-  			     ;; For meeting note taking
-                               ("m" "Meeting notes" entry
-                                (file+headline "~/Nextcloud/trabajo/agenda/work_meetings.org" "Meetings")
-                                "** %T - %?\n"
-  			      :jump-to-captured t)))
+                             ;; For meeting note taking
+                             ("m" "Meeting notes" entry
+                              (file+headline my-meetings-file "Meetings")
+                              "** %T - %?\n"
+                              :jump-to-captured t
+                              )))
 #+end_src
 
-** Load the task list for work
+* Load the task list for work
 This will automatically open the relevant file to start working right away:
 
 #+begin_src emacs-lisp
-  (find-file "~/Nextcloud/trabajo/agenda/work.org")
+  (find-file my-work-file)
 #+end_src
 
