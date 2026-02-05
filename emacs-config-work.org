@@ -64,11 +64,11 @@ Since at work I don't open so many windows, we can use this width to better use 
 My work require a different set of agendas:
 
 #+begin_src emacs-lisp
-  ;; empty the org-agenda-files 
-  (setq org-agenda-files '(""))
-  ;; And now, populate with the work environment
-  ;; This needs to be changed when you change company!!!
-  (setq org-agenda-files '(my-work-file))
+  ;; empty the org-agenda-files
+    (setq org-agenda-files '(""))
+    ;; And now, populate with the work environment
+    ;; This needs to be changed when you change company!!!
+    (setq org-agenda-files (list my-work-file))
 #+end_src
 
 * Refile environment
@@ -78,9 +78,7 @@ Since this is a different environment, I also have to change this to refile thin
     (setq org-refile-targets '(
                               (nil :maxlevel . 9)
                               (org-agenda-files :maxlevel . 9)
-  			    (my-backlog-file :maxlevel . 9)
-                              )
-    )
+  			    (my-backlog-file :maxlevel . 9)))
 
     (setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
     (setq org-refile-use-outline-path t)                  ; Show full paths for refiling
