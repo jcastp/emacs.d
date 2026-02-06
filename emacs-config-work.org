@@ -73,16 +73,16 @@ I work better with fixed fonts in this kind of environments
   	(work
   	 :default-family "Aporetic Sans"
   	 :default-weight normal
-  	 :default-height 120
+  	 :default-height 140
   	 :fixed-pitch-family "Aporetic Sans Mono"
   	 :fixed-pitch-weight Light ; falls back to :default-weight
-  	 :fixed-pitch-height 110
+  	 :fixed-pitch-height 120
   	 :variable-pitch-family "Aporetic Sans"
   	 :variable-pitch-weight Medium
-  	 :variable-pitch-height 120
+  	 :variable-pitch-height 140
   	 :bold-family nil ; use whatever the underlying face has
   	 :bold-weight bold
-  	 :italic-family "Aporetic Sans"
+  	 :italic-family "Aporetic Sans Mono"
   	 :italic-slant italic
   	 :line-spacing 0)))
 
