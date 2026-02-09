@@ -93,8 +93,7 @@ This is the code that will be commited.")
     (setq my-clear-directory-is-mounted-p t)
   ;; if it is not mounted, then we should launch the script here
   (progn
-    ;; I think we should not launch this from here, but just examine what is wrong in the OS.
-    ;;(shell-command "bash ~/Nextcloud/config/mount-encrypted-dirs.sh")
+    (message "Encrypted directory not mounted")
     )
   )
 
