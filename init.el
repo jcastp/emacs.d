@@ -32,7 +32,7 @@
 (when (and (fboundp 'native-comp-available-p)
            (native-comp-available-p))
   (setq native-comp-async-report-warnings-errors nil
-        native-comp-deferred-compilation t))
+        native-comp-jit-compilation t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; personal configuration
