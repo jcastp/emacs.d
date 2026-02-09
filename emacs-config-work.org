@@ -299,25 +299,25 @@ I need a different custom agenda commands to see the tasks better.
 As work is different from home, I need specific templates.
 
 #+begin_src emacs-lisp
-(setq org-capture-templates'(
-                             ("i" "Inbox (work)" entry
-                              (file+headline my-work-file "Inbox")
-                              "** TODO %? %^g %^{EFFORT}p")
+  (setq org-capture-templates'(
+                               ("i" "Inbox (work)" entry
+                                (file+headline my-work-file "Inbox")
+                                "** TODO %? %^g %^{EFFORT}p")
 
-                             ("I" "New incident." entry
-                              (file+headline my-work-file "Incidents")
-                              "** TODO %?")
+                               ;; ("I" "New incident." entry
+                               ;;  (file+headline my-work-file "Incidents")
+                               ;;  "** TODO %?")
 
-                             ("b" "Backlog entry." entry
-                              (file+headline my-backlog-file "Backlog")
-                              "** TODO %?\n")
+                               ("b" "Backlog entry." entry
+                                (file+headline my-backlog-file "Backlog")
+                                "** TODO %?\n")
 
-                             ;; For meeting note taking
-                             ("m" "Meeting notes" entry
-                              (file+headline my-meetings-file "Meetings")
-                              "** %T - %?\n"
-                              :jump-to-captured t
-                              )))
+                               ;; For meeting note taking
+                               ("m" "Meeting notes" entry
+                                (file+headline my-meetings-file "Meetings")
+                                "** %T - %?\n"
+                                :jump-to-captured t
+                                )))
 #+end_src
 
 * Load the task list for work
