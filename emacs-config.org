@@ -1453,12 +1453,6 @@ Global custom keys to do things in org mode.
   (global-set-key "\C-cb" 'org-switchb)
 #+end_src
 
-** Org is a variable pitch mode
-Require the org mode.
-#+begin_src emacs-lisp
-  (add-hook 'org-mode-hook 'variable-pitch-mode)
-#+end_src
-
 ** Completion notes in to the Logbook
 Change notes are stored in the node's drawer, so we can fold it conveniently.
 #+begin_src emacs-lisp
