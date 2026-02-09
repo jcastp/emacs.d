@@ -71,7 +71,7 @@ I work better with fixed fonts in this kind of environments
   	 )
   	;; font for work
   	(work
-  	 :default-family "Aporetic Sans"
+  	 :default-family "Aporetic Sans Mono"
   	 :default-weight normal
   	 :default-height 140
   	 :fixed-pitch-family "Aporetic Sans Mono"
@@ -82,7 +82,7 @@ I work better with fixed fonts in this kind of environments
   	 :variable-pitch-height 140
   	 :bold-family nil ; use whatever the underlying face has
   	 :bold-weight bold
-  	 :italic-family "Aporetic Sans Mono"
+  	 :italic-family "Aporetic Sans"
   	 :italic-slant italic
   	 :line-spacing 0)))
 
