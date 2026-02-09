@@ -97,11 +97,6 @@ This is the code that will be commited.")
     )
   )
 
-;; get the org package
-;; (use-package org
-;;   :ensure t
-;;   )
-
 ;; load my config
 (org-babel-load-file "~/.emacs.d/emacs-config.org")
 
