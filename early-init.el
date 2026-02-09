@@ -5,10 +5,6 @@
 ;;; Code:
 (setq package-enable-at-startup nil)
 
-;; garbage collector config
-(setq gc-cons-threshold (* 1024 1024 100))
-(setq gc-cons-percentage 0.5)
-
 ;; the custom.el file location
 ;; from Prot's article - https://protesilaos.com/codelog/2024-11-28-basic-emacs-configuration/
 (setq custom-file (locate-user-emacs-file "custom.el"))
