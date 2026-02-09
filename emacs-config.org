@@ -527,7 +527,6 @@ https://github.com/minad/vertico
   (use-package vertico
     :ensure t
     :init
-    (add-to-list 'load-path "~/.emacs.d/straight/repos/vertico/extensions/")
     (load "vertico-multiform.el")
     (vertico-mode))
 #+end_src
