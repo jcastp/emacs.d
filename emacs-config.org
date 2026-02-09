@@ -996,14 +996,12 @@ No audible bell, but visual one:
 ** Line numbers
 This determines the style of line numbers in effect. If set to `nil', line numbers are disabled. For relative line numbers, set this to `relative'.
 #+begin_src emacs-lisp
-  ;; Dinamically calculate the width of the line numbers
-  (setq display-line-numbers-width-start nil)
-  ;;(setq display-line-numbers-width 4)
+  ;; Calculate width based on total lines in buffer at start
+  (setq display-line-numbers-width-start t)
   (setq display-line-numbers-offset 0)
   (setq display-line-numbers-type t)
   (setq display-line-numbers-grow-only t)
-  ;; TODO find a way to have the column numbers with fixed width
-  (global-display-line-numbers-mode -1)
+  (global-display-line-numbers-mode 1)
   (add-hook 'prog-mode-hook 'display-line-numbers-mode)
   (add-hook 'text-mode-hook 'display-line-numbers-mode)
 #+end_src
