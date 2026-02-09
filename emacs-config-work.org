@@ -50,7 +50,7 @@ Have some fancy icons for the categories.
 I work better with fixed fonts in this kind of environments
 
 #+begin_src emacs-lisp
-  (setq fontaine-presets
+    (setq fontaine-presets
         '(
   	;; daily operations, same config as normal config
   	(regular
