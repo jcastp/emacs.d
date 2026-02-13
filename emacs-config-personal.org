@@ -11,6 +11,7 @@ It contains the variables =user-full-name= and =user-mail-address=
   ;; to protect my personal information, this file is not commited
   (load (expand-file-name "Nextcloud/config/.emacs.d/personal_info.el" (getenv "HOME")))
 #+end_src
+
 * General config
 ** recentf
 #+begin_src emacs-lisp
@@ -42,6 +43,13 @@ All the config related to the bookmarks.
   ;;define file to use.
   (setq bookmark-default-file (expand-file-name "bookmarks" my-data-dir))
   (setq bookmark-save-flag 1)  ;save bookmarks to .emacs.bmk after each entry
+#+end_src
+
+
+** My reading list file
+#+begin_src emacs-lisp
+  ;; where my book list will be stored
+  (defvar my-booklist-file (expand-file-name "Nextcloud/agenda/books.org" (getenv "HOME")))
 #+end_src
 
 * Online
@@ -251,15 +259,15 @@ These are the custom states for the tasks, and the character associated to it.
 ** custom tags
 Create custom tags for different categories and contexts.
 #+begin_src emacs-lisp
-  (setq org-tag-alist '(
-                        ;; Areas of responsibility
+  (setq org-tag-alist '(;; Areas of responsibility
                         ("personal" . ?p) ("health" . ?H) ("financial" . ?f)
                         ;; Contexts
-                        ("@home" . ?h)  ("@errands" . ?E) ("@computer" . ?c) ("@online" . ?o)  ("@penpaper" . ?P)
+                        ("@home" . ?h) ("@errands" . ?E) ("@computer" . ?c) ("@online" . ?o) ("@penpaper" . ?P)
                         ;; interests
-  		      ("emacs" . ?e) ("writing" . ?w) ("reading" . ?r) ("calls" . ?C) ("blog" . ?b)
+                        ("emacs" . ?e) ("writing" . ?w) ("reading" . ?r) ("calls" . ?C) ("blog" . ?b)
+                        ("books" . ?B)
                         ;; energy
-                        ("low_energy" . ?l) ("high_energy" . ?H)))
+                        ("low_energy" . ?l) ("high_energy" . ?g)))
 #+end_src
 ** Orgmode agenda config
 *** Agenda
@@ -306,11 +314,11 @@ Have some fancy icons for the categories.
 **** Agenda files
 We define the agenda files in this variable. This comes from my gtd workflow, explained here: TBD.
 #+begin_src emacs-lisp
-  (setq org-agenda-files '(
+  (setq org-agenda-files (list
                            "~/Nextcloud/agenda/tasks.org"
-  			 ;; added this one to be able to search in it, and add from here to the main task files.
   			 "~/Nextcloud/agenda/someday.org"
-                           ))
+  			 my-booklist-file
+  			 ))
 #+end_src
 
 **** Get rid of the DONE tasks in the agenda view
@@ -373,6 +381,22 @@ We define some agenda custom commands, to refine views, and get a clearer undest
             )
            )
 
+  	("cb" "Books" ((tags-todo "books/READING"
+  				  ((org-agenda-overriding-header "Leyendo ahora:")
+  				   (org-agenda-prefix-format " %10c ")))
+                         (tags-todo "books/ONHOLD"
+  				  ((org-agenda-overriding-header "En pausa:")
+  				   (org-agenda-prefix-format " %10c ")))
+                         (tags-todo "books/TOREAD"
+  				  ((org-agenda-overriding-header "Por leer:")
+  				   (org-agenda-prefix-format " %10c ")))
+                         (tags "books/READ"
+  			     ((org-agenda-overriding-header "Leidos recientemente:")
+  			      (org-agenda-prefix-format " %10c ")
+  			      (org-agenda-cmp-user-defined #'my/org-agenda-cmp-read-date)
+  			      (org-agenda-sorting-strategy '(user-defined-down))))))
+
+  	
           ;; All tasks, sorted and grouped
           ("ct" "all tasks, sorted"
            (
@@ -565,7 +589,6 @@ I will use it to keep track of the pending tasks of the writing projects.
 
   (global-set-key (kbd "C-c A") 'my/agenda-restrict-to-current-project)
 #+end_src
-
 
 ** Refile entries
 This lets you choose refiling targets in heading depth of 9, and lets you get also the files in the same directory hierarchy.
@@ -1656,28 +1679,30 @@ https://github.com/chenyanming/calibredb.el
 Here I will configure my personal method for a reading list.
 I used org-books, but the package seems to not be maintained, and the URL fetching seems to be broken, so I will rely on my own personal list.
 
-#+begin_src emacs-lisp
-  ;; where my book list will be stored
-  (defvar my-booklist-file (expand-file-name "Nextcloud/agenda/books.org" (getenv "HOME")))
-#+end_src
-
 
 #+begin_src emacs-lisp
-  (add-to-list 'org-capture-templates
-  	     '(
-  	       ;; books to read
-  	       "b"
-  	       "Manual book entry"
-  	       entry
-  	       (file "~/Nextcloud/agenda/books.org")
-  	       "* %^{TITLE}\n:PROPERTIES:\n:ADDED: %<[%Y-%02m-%02d]>\n:END:%^{AUTHOR}p\n%?"
-  	       :empty-lines 1
-  	       )
-  	     ;; append at the end of the capture list
-  	     t
-  	     )
-
+      (add-to-list 'org-capture-templates
+                   '("b"
+      		 "Book to read"
+      		 entry
+      		 (file+headline my-booklist-file "Libros")
+      		 "* TOREAD %^{TITLE} :books:\n
+:PROPERTIES:\n
+:AUTHOR: %^{Author}\n
+:GENRE: %^{Genre|ficción|no-ficción|técnico|ensayo|poesia}\n
+:FORMAT: %^{Format|fisico|ebook|audiolibro}\n
+:PAGES: %^{Pages}\n
+:DATE_ADDED: %<%Y-%m-%d>\n
+:DATE_STARTED:\n
+:DATE_FINISHED:\n
+:RATING:\n
+:ROAM_LINK:\n
+:END:\n
+%?"
+      		 :empty-lines 1)
+                   t)
 #+end_src
+
 ** elfeed suite
 RSS read in emacs.
 #+begin_src emacs-lisp
