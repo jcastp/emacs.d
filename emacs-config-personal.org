@@ -1686,18 +1686,18 @@ I used org-books, but the package seems to not be maintained, and the URL fetchi
       		 "Book to read"
       		 entry
       		 (file+headline my-booklist-file "Libros")
-      		 "* TOREAD %^{TITLE} :books:\n
-:PROPERTIES:\n
-:AUTHOR: %^{Author}\n
-:GENRE: %^{Genre|ficción|no-ficción|técnico|ensayo|poesia}\n
-:FORMAT: %^{Format|fisico|ebook|audiolibro}\n
-:PAGES: %^{Pages}\n
-:DATE_ADDED: %<%Y-%m-%d>\n
-:DATE_STARTED:\n
-:DATE_FINISHED:\n
-:RATING:\n
-:ROAM_LINK:\n
-:END:\n
+      		 "* TOREAD %^{TITLE} :books:
+:PROPERTIES:
+:AUTHOR: %^{Author}
+:GENRE: %^{Genre|ficción|no-ficción|técnico|ensayo|poesia}
+:FORMAT: %^{Format|fisico|ebook|audiolibro}
+:PAGES: %^{Pages}
+:DATE_ADDED: %<%Y-%m-%d>
+:DATE_STARTED:
+:DATE_FINISHED:
+:RATING:
+:ROAM_LINK:
+:END:
 %?"
       		 :empty-lines 1)
                    t)
