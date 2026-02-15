@@ -1265,10 +1265,6 @@ https://orgmode.org/worg/exporters/beamer/tutorial.html
   							 (dot . t)
                                                            )
                                )
-  (setq org-latex-pdf-process
-        '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-          "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-          "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
 #+end_src
 
 *** ditaa location
