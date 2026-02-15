@@ -84,7 +84,7 @@ This is the code that will be commited.")
     (string-match (regexp-quote path) mount-output)))
 
 ;; This variable will control if my encrypted dir is mounted on the clear directory
-(defvar my-clear-directory-is-mounted-p 0
+(defvar my-clear-directory-is-mounted-p nil
   "My clear directory is correctly mounted - predicate.")
 
 ;; Check if the directory is mounted
