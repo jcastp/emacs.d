@@ -1211,7 +1211,8 @@ https://github.com/daichirata/emacs-rotate
 
 #+begin_src emacs-lisp
   (use-package rotate
-    :ensure t)
+    :ensure t
+    :defer t)
 #+end_src
 
 * Fonts and themes
@@ -1668,27 +1669,6 @@ https://github.com/minad/org-modern
 #+end_src
 
 ** Orgmode extra packages
-*** org-mind-map
-To plot mindmaps based on the orgmode headers
-
-#+begin_src emacs-lisp
-  ;; org-mind-map
-  (use-package org-mind-map
-    :ensure t
-    :init
-    (require 'ox-org)
-    :config
-    (setq org-mind-map-engine "dot")       ; Default. Directed Graph
-    ;; (setq org-mind-map-engine "neato")  ; Undirected Spring Graph
-    ;; (setq org-mind-map-engine "twopi")  ; Radial Layout
-    ;; (setq org-mind-map-engine "fdp")    ; Undirected Spring Force-Directed
-    ;; (setq org-mind-map-engine "sfdp")   ; Multiscale version of fdp for the layout of large graphs
-    ;; (setq org-mind-map-engine "circo")  ; Circular Layout
-
-    (setq org-mind-map-include-text nil)
-    )
-#+end_src
-
 *** TODO org-ql
 Query language for org files
 https://github.com/alphapapa/org-ql
@@ -1846,7 +1826,8 @@ GNUplot for emacs, to use in plotting graphics from tables.
 
 #+begin_src emacs-lisp
   (use-package gnuplot
-    :ensure t)
+    :ensure t
+    :defer t)
 #+end_src
 
 ** hydra
@@ -2019,7 +2000,8 @@ https://toobnix.org/w/5vCCqXFtWJ3EK7W3HKPRUD
 
 #+begin_src emacs-lisp
   (use-package show-font
-    :ensure t)
+    :ensure t
+    :defer t)
 #+end_src
 
 * home related load and startup
