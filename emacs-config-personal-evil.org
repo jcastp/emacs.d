@@ -1,0 +1,8 @@
+* Evil package
+This is my evil config
+
+#+begin_src emacs-lisp
+  (use-package evil
+    :config
+    (evil-mode 1))
+#+end_src
