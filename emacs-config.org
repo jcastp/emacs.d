@@ -723,7 +723,7 @@ When several buffers visit identically-named files, Emacs must give the buffers 
 The forward naming method includes part of the file's directory name at the beginning of the buffer name
 https://www.gnu.org/software/emacs/manual/html_node/emacs/Uniquify.html
 #+begin_src emacs-lisp
-  (require 'uniquify)
+  ;; (require 'uniquify)
   (setq uniquify-buffer-name-style 'forward)
 #+end_src
 
