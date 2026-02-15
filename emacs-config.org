@@ -1136,13 +1136,12 @@ It darkens the buffers I'm not using.
     (setq pulsar-face 'pulsar-red)
     (setq pulsar-highlight-face 'pulsar-yellow)
     ;; integration with the `consult' package:
-    (add-hook 'consult-after-jump-hook #'pulsar-recenter-top)
-    (add-hook 'consult-after-jump-hook #'pulsar-reveal-entry)
+    ;;(add-hook 'consult-after-jump-hook #'pulsar-recenter-top)
+    ;;(add-hook 'consult-after-jump-hook #'pulsar-reveal-entry)
     ;; enable everywhere
     (pulsar-global-mode 1)
     :bind
-    ("C-x l" . pulsar-highlight-line)
-    )
+    ("C-x l" . pulsar-highlight-line))
 #+end_src
 
 ** spacious padding
