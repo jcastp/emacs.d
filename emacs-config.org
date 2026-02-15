@@ -2060,7 +2060,7 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
     :doc "Functions related to online activity"
     "e" #'eww
     "f" (when (fboundp #'elfeed)
-  	(cons "elfeed" #'elfeed))
+  	(cons "elfeed" #'my/elfeed))
     "m" (when (fboundp #'mastodon)
   	(cons "mastodon" #'mastodon))
     )
