@@ -221,7 +221,7 @@ Change dired buffers when the directory is changed:
 ** eww configuration
 Set the userAgent for eww.
 #+begin_src emacs-lisp
-  (setq url-user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.51 Safari/537.36 Edg/99.0.1150.39")
+  (setq url-user-agent "Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0")
 #+end_src
 
 ** dired config
