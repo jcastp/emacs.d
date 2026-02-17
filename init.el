@@ -3,7 +3,7 @@
 
 ;;; Code:
 ;; lisp evaluation of recursion
-(setq max-lisp-eval-depth 5000)
+;; (setq max-lisp-eval-depth 5000)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; package initialization
@@ -93,9 +93,7 @@ This is the code that will be commited.")
     (setq my-clear-directory-is-mounted-p t)
   ;; if it is not mounted, then we should launch the script here
   (progn
-    (message "Encrypted directory not mounted")
-    )
-  )
+    (message "Encrypted directory not mounted")))
 
 ;; load my config
 (org-babel-load-file "~/.emacs.d/emacs-config.org")
