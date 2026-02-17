@@ -33,8 +33,7 @@ It is nice to have commands and their history saved so that every time you get b
   (setq savehist-additional-variables
         '(kill-ring
           search-ring
-          regexp-search-ring)
-        )
+          regexp-search-ring))
 #+end_src
 
 ** Bookmarks
@@ -69,9 +68,7 @@ Only evaluated if in my home environment, my encrypted directory is mounted, as 
         (setq mastodon-instance-url "https://mastodon.online"
     	    mastodon-active-user "jcastp")
         ;; my auth information is now in my encrypted directory
-        (setq mastodon-client--token-file (expand-file-name "personal/emacs/mastodon.plstore" my-clear-directory))
-        )
-    )
+        (setq mastodon-client--token-file (expand-file-name "personal/emacs/mastodon.plstore" my-clear-directory))))
 #+end_src
 
 * Fonts and themes
@@ -168,8 +165,7 @@ Function to change between dark and clear themes, based on past variables.
          :bold-weight bold
          :italic-family "Aporetic Sans"
          :italic-slant italic
-         :line-spacing 0
-         )
+         :line-spacing 0)
         (regular-aporetic-mono
          :default-family "Aporetic Sans Mono"
          :default-weight normal
@@ -184,8 +180,7 @@ Function to change between dark and clear themes, based on past variables.
          :bold-weight bold
          :italic-family "Aporetic Sans Mono"
          :italic-slant italic
-         :line-spacing 0
-         )
+         :line-spacing 0)
         ;; Bigger face for variable width, so I can focus on it
         (writing
          :default-family "ETBembo"
@@ -201,8 +196,7 @@ Function to change between dark and clear themes, based on past variables.
          :bold-weight bold
          :italic-family "ETBembo"
          :italic-slant italic
-         :line-spacing 1
-         )
+         :line-spacing 1)
         ;; Bigger face for variable width, so I can focus on it
         (writing-big
          :default-family "ETBembo"
@@ -218,8 +212,7 @@ Function to change between dark and clear themes, based on past variables.
          :bold-weight bold
          :italic-family "ETBembo"
          :italic-slant italic
-         :line-spacing 1
-         )
+         :line-spacing 1)
         ;; change the variable width face to have a different view when editing
         (editing
          :default-family "Aporetic Sans Mono"
@@ -235,9 +228,7 @@ Function to change between dark and clear themes, based on past variables.
          :bold-weight bold
          :italic-family "Gentium"
          :italic-slant italic
-         :line-spacing 1
-         )
-      ))
+         :line-spacing 1)))
 
   ;; Establish the regular preset as default
   (fontaine-set-preset 'regular)
@@ -251,9 +242,7 @@ These are the custom states for the tasks, and the character associated to it.
           ;; Status for tasks
           (sequence "TODO(t)" "ONGOING(o)" "WAITING(w)" "|" "DONE(d!)" "CANCELED(c@/!)")
           ;; Status for writing
-          (sequence "TOWRITE(h)" "TOREVIEW(j@/!)" "REDO(k@/!)" "RESTRUCTURE(n@/!)" "|" "FINISHED(l!)" "PURGE(ñ@/!)")
-          )
-        )
+          (sequence "TOWRITE(h)" "TOREVIEW(j@/!)" "REDO(k@/!)" "RESTRUCTURE(n@/!)" "|" "FINISHED(l!)" "PURGE(ñ@/!)")))
 #+end_src
 
 ** custom tags
@@ -306,9 +295,7 @@ Have some fancy icons for the categories.
      ("birthdays" "~/Nextcloud/config/icons/heart.svg" nil nil :ascent center :mask heuristic)
      ("revision" "~/Nextcloud/config/icons/shuffle.svg" nil nil :ascent center :mask heuristic)
      ("habits" "~/Nextcloud/config/icons/refresh-ccw.svg" nil nil :ascent center :mask heuristic)
-     ("care" "~/Nextcloud/config/icons/heart.svg" nil nil :ascent center :mask heuristic)          
-     )
-   )
+     ("care" "~/Nextcloud/config/icons/heart.svg" nil nil :ascent center :mask heuristic)))
 #+end_src
 
 **** Agenda files
@@ -317,8 +304,7 @@ We define the agenda files in this variable. This comes from my gtd workflow, ex
   (setq org-agenda-files (list
                            "~/Nextcloud/agenda/tasks.org"
   			 "~/Nextcloud/agenda/someday.org"
-  			 my-booklist-file
-  			 ))
+  			 my-booklist-file))
 #+end_src
 
 **** Get rid of the DONE tasks in the agenda view
@@ -358,8 +344,6 @@ We define some agenda custom commands, to refine views, and get a clearer undest
                         )))
            nil
            nil)
-
-
 
           ;; All the unescheduled tasks in the org-agenda-files
           ("cu" "Unscheduled TODO"
@@ -549,10 +533,7 @@ This is the config for the org-superagenda mode
   	  (:name "Writing related tasks"
                    :tag "writing")
   	  (:name "Things to read"
-                   :tag "reading")
-            )
-          )
-    )
+                   :tag "reading"))))
 #+end_src
 
 *** Restrict agenda to project
@@ -611,8 +592,7 @@ Enable org-habits.
 
 #+begin_src emacs-lisp
   (with-eval-after-load 'org
-    (add-to-list 'org-modules 'org-habit t)
-    )
+    (add-to-list 'org-modules 'org-habit t))
 #+end_src
 
 ** TODO Capture templates
@@ -652,9 +632,7 @@ Here I will add template captures for doing several things:
                                ("P" "Personaje" entry
                                 (file "~/Nextcloud/escritura/retazos/personajes.org")
                                 "* %i%?"
-                                :empty-lines-after 1)
-                               )
-        )
+                                :empty-lines-after 1)))
 #+end_src
 
 ** Orgmode org-roam config
@@ -671,8 +649,7 @@ This is a fix for a Debian installation that doesn't allow to connect directly t
 
   (when (string-prefix-p "Debian" (which-linux-distribution))
     (use-package sqlite3
-      :ensure t)    
-    )
+      :ensure t))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -709,8 +686,7 @@ This is a fix for a Debian installation that doesn't allow to connect directly t
     ;; org-roam export: https://www.orgroam.com/manual.html#org_002droam_002dexport
     (require 'org-roam-export)
     ;; autosync
-    (org-roam-db-autosync-mode 1)
-    )
+    (org-roam-db-autosync-mode 1))
 
 #+end_src
 
@@ -742,8 +718,7 @@ Org-roam capture templates:
            :unnarrowed t)
           ("c" "writing character" plain (file "~/.emacs.d/roamtemplates/CharacterIdea.org")
            :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+filetags: writing character")
-           :unnarrowed t)
-          ))
+           :unnarrowed t)))
 #+end_src
 
 Org-roam window configuration and showing:
@@ -779,8 +754,7 @@ I want to check a graphical view of my notes:
     :ensure t)
   (use-package org-roam-ui
     :ensure t
-    :hook (org-roam . org-roam-ui-mode)
-    )
+    :hook (org-roam . org-roam-ui-mode))
 
   ;; Daily notes for org-roam
   ;; Directory is relative to org-roam-directory
@@ -935,9 +909,6 @@ Extracted from https://d12frosted.io/posts/2021-01-16-task-management-with-roam-
                   :on (= tags:node-id nodes:id)
                   :where (like tag (quote "%\"roamtag\"%"))]))))
 
-
-
-
     ;; ---------------------------------
     ;; this is the agenda part
 
@@ -984,9 +955,7 @@ Opens a random org-roam node.
                     :from tags
                     :left-join nodes
                     :on (= tags:node-id nodes:id)
-  		  ]
-  	 )
-          )
+  		  ]))
     ;; get a random file from the list and open it
     (find-file (car (nth (random (length todo-nodes)) todo-nodes))))
 
@@ -1005,8 +974,7 @@ Open a random roam node with the roamtag tag (that maps to a TODO entry).
                     :from tags
                     :left-join nodes
                     :on (= tags:node-id nodes:id)
-                    :where (like tag (quote "%\"roamtag\"%"))])
-  	)
+                    :where (like tag (quote "%\"roamtag\"%"))]))
     ;; get a random file from the list and open it
     (find-file (car (nth (random (length todo-nodes)) todo-nodes))))
 
@@ -1262,9 +1230,7 @@ https://orgmode.org/worg/exporters/beamer/tutorial.html
                                                            (ditaa . t)
                                                            (gnuplot . t)
   							 (plantuml . t)
-  							 (dot . t)
-                                                           )
-                               )
+  							 (dot . t)))
 #+end_src
 
 *** ditaa location
@@ -1293,9 +1259,7 @@ Only mounted when at home, and clear directory is mounted.
         ;;(setq org-journal-dir "~/Nextcloud/personal/diario/")
         (setq org-journal-dir (expand-file-name "personal/diario" my-clear-directory))
         (setq org-journal-date-format "%A, %d %B %Y")
-        (setq org-journal-encrypt-journal nil)
-        )
-    )
+        (setq org-journal-encrypt-journal nil)))
 #+end_src
 ** TODO ox-hugo
 To create a static page blog with hugo, based on the orgmode format.
@@ -1329,8 +1293,7 @@ https://github.com/joostkremers/writeroom-mode
     ;; extra space between the lines to see better
     (setq writeroom-extra-line-spacing 4)
     ;; Checking the modeline
-    (setq writeroom-mode-line t)
-    )
+    (setq writeroom-mode-line t))
 #+end_src
 
 *** TODO guess-language
@@ -1349,8 +1312,7 @@ Since I write in different languages, the dictionary applied is really important
     (guess-language-mode)
     ;; activate the mode when I go to text files
     (add-hook 'text-mode-hook (lambda () (guess-language-mode 1)))
-    (add-hook 'org-mode-hook (lambda () (guess-language-mode 1)))
-    )
+    (add-hook 'org-mode-hook (lambda () (guess-language-mode 1))))
 #+end_src
 
 *** Translate from english
@@ -1418,9 +1380,8 @@ Manual: https://nobiot.github.io/org-remark/
       (define-key org-remark-mode-map (kbd "C-c n n") #'org-remark-view-next)
       (define-key org-remark-mode-map (kbd "C-c n p") #'org-remark-view-prev)
       (define-key org-remark-mode-map (kbd "C-c n r") #'org-remark-remove)
-      (define-key org-remark-mode-map (kbd "C-c n j") #'org-remark-change)
-      )
-    )
+      (define-key org-remark-mode-map (kbd "C-c n j") #'org-remark-change)))
+  
   ;; Create highlighter pens for different parts
   (with-eval-after-load 'org-remark
     ;; Since I use alternate dark and clear themes, these must be useful for both
@@ -1447,8 +1408,7 @@ Manual: https://nobiot.github.io/org-remark/
 
     (org-remark-create "royal-blue-other"
                        '(:background "royal blue")
-  		     '(CATEGORY "other"))
-    )
+  		     '(CATEGORY "other")))
 #+end_src
 
 *** tempel - template expansion
@@ -1486,8 +1446,7 @@ https://github.com/minad/tempel
     :bind
     ;;("C-c d i" . tempel-insert)
     :config
-    (setq tempel-path "~/.emacs.d/templates")
-    )
+    (setq tempel-path "~/.emacs.d/templates"))
 #+end_src
 
 ** org-scribe config
@@ -1558,8 +1517,7 @@ Create a custom keymap for the writing functions
     "q" #'writing/create-empty-writing-file
     "s" #'org-scribe/sinonimo
     ;; hydra keybinding
-    "k" #'hydra-org-scribe/body
-    )
+    "k" #'hydra-org-scribe/body)
 
   (keymap-global-set "<f8> <f8>" #'hydra-org-scribe/body)
 #+end_src
@@ -1586,8 +1544,7 @@ This code depends on a custom script that generates writing prompts based on a l
   	   )
       ;; very crude way to include some title in the file created
       (append-to-file initial_title nil full-path)
-      (find-file full-path)
-      ))
+      (find-file full-path)))
 
   (defun my-writing/create-writing-exercise (title)
     "Create a new file with the current date and the specified TITLE.
@@ -1610,8 +1567,7 @@ This code depends on a custom script that generates writing prompts based on a l
         (insert initial_title )
   	(insert "\n\n" python-output))
       ;; open the file
-      (find-file file-path)
-      ))
+      (find-file file-path)))
 #+end_src
 
 * Miscellanea
@@ -1622,8 +1578,7 @@ https://tech.toryanderson.com/2022/11/23/viewing-epub-in-emacs/
 #+begin_src emacs-lisp
   (use-package esxml
     ;;:ensure (esxml :type git :host github :repo "tali713/esxml")
-    :ensure t
-    )
+    :ensure t)
 
   (use-package nov
     :after esxml
@@ -1644,8 +1599,7 @@ https://tech.toryanderson.com/2022/11/23/viewing-epub-in-emacs/
     ;;                            :height 1.0))
     ;; (add-hook 'nov-mode-hook 'my/nov-font-setup)
     
-    (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
-    )
+    (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode)))
 #+end_src
 
 ** calibre
@@ -1667,14 +1621,12 @@ https://github.com/chenyanming/calibredb.el
           (setq calibredb-library-alist '(("/home/calibre_libros/")
                                           ))
           (setq calibredb-size-show t)
-          (setq calibredb-id-width 10)
-          )))
+          (setq calibredb-id-width 10))))
 #+end_src
 
 ** reading list
 Here I will configure my personal method for a reading list.
 I used org-books, but the package seems to not be maintained, and the URL fetching seems to be broken, so I will rely on my own personal list.
-
 
 #+begin_src emacs-lisp
       (add-to-list 'org-capture-templates
@@ -1729,10 +1681,7 @@ RSS read in emacs.
       "Opens elfeed and updates it in just a go."
       (interactive)
       (elfeed)
-      (elfeed-update)
-      )
-    ;;(global-set-key (kbd "C-c d f") 'my/elfeed)
-    )
+      (elfeed-update)))
 #+end_src
 
 * emacs dashboard
