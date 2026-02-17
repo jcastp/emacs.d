@@ -35,11 +35,22 @@ This is a personal Emacs configuration using **literate programming** via Org-mo
 
 - All `.el` files use `lexical-binding: t`
 - Packages are configured with `use-package` (always-ensure is on globally, so `:ensure t` is default)
-- The primary editing target is the `.org` files, not the generated `.el` files — never edit `emacs-config.el` directly
+- The primary editing target is the `.org` files, not the generated `.el` files — never edit `emacs-config.el`, `emacs-config-personal.el`, or `emacs-config-work.el` directly
+- `custom.el` is managed by Emacs customize system and `package-vc-selected-packages` — edit with care
 - Spanish keyboard layout is assumed (e.g., `C-ñ` for expand-region, Spanish electric pairs `¡!` `¿?`)
 - Spelling uses `hunspell` with multi-dictionary `en_US,es_ES`
 - Custom packages from Codeberg: `org-scribe`, `org-scribe-planner`, `org-context-extended` (installed via `package-vc-selected-packages` in `custom.el`)
 
+### Naming conventions
+
+- **Variables**: `my-` prefix (e.g., `my-config-dir`, `my-data-dir`)
+- **Functions**: `my/` prefix (e.g., `my/reload-config`, `my/centered-mode`)
+- **Predicates**: end with `-p` (e.g., `my-worksystem-p`, `my-homeenvironment-p`)
+
 ## Testing changes
 
-There is no test suite. To verify changes, reload the config inside Emacs with `C-c r r` (calls `my/reload-config`) or restart Emacs.
+There is no test suite. To verify changes:
+
+- **Inside Emacs**: `C-c r r` (calls `my/reload-config`, which reloads `early-init.el` and `init.el`)
+- **Headless check for errors**: `emacs --batch --debug-init --eval "(kill-emacs)"`
+- **Tangle an org file manually**: `emacs --batch --eval "(require 'org)" --eval '(org-babel-tangle-file "emacs-config.org")'`
