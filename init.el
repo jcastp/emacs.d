@@ -2,23 +2,18 @@
 ;;; Commentary:
 
 ;;; Code:
-;; lisp evaluation of recursion
-;; (setq max-lisp-eval-depth 5000)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; package initialization
-(use-package package
-  :config
-  (add-to-list 'package-archives
-               '("melpa" . "https://melpa.org/packages/"))
-  (package-initialize))
+(require 'package)
+(add-to-list 'package-archives
+             '("melpa" . "https://melpa.org/packages/"))
+(package-initialize)
 
-(use-package use-package
-  :custom
-  (use-package-always-ensure t)
-  (package-native-compile t)
-  (warning-minimum-level :emergency))
-
+;; use-package settings
+(setq use-package-always-ensure t)
+(setq package-native-compile t)
+(setq warning-minimum-level :emergency)
 
 ;; remove the packages warning messages
 (add-to-list 'display-buffer-alist

@@ -5,6 +5,10 @@
 ;;; Code:
 (setq package-enable-at-startup nil)
 
+;; Raise the recursion limit for package-initialize, which recursively
+;; activates all ~50+ packages and their dependency chains.
+(setq max-lisp-eval-depth 5000)
+
 ;; the custom.el file location
 ;; from Prot's article - https://protesilaos.com/codelog/2024-11-28-basic-emacs-configuration/
 (setq custom-file (locate-user-emacs-file "custom.el"))
