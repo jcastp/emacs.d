@@ -67,8 +67,7 @@ I work better with fixed fonts in this kind of environments
   	 :bold-weight bold
   	 :italic-family "Aporetic Sans"
   	 :italic-slant italic
-  	 :line-spacing 0
-  	 )
+  	 :line-spacing 0)
   	;; font for work
   	(work
   	 :default-family "Aporetic Sans Mono"
@@ -268,8 +267,7 @@ I need a different custom agenda commands to see the tasks better.
                  ;; Single arguments given alone
                  :priority "A")
           (:name "OKR"
-                 :tag "okr")
-          ))
+                 :tag "okr")))
 #+end_src
 
 * Work tags definition
@@ -281,9 +279,7 @@ I need a different custom agenda commands to see the tasks better.
                       ("knowledge" . ?K) ("training" . ?T)
                       ("incident" . ?I) ("task" . ?t)
                       ;; based on my current role
-                      ("organization" . ?o)
-                      )
-      )
+                      ("organization" . ?o)))
 #+end_src
 
 * Custom status for work related environment
@@ -316,8 +312,7 @@ As work is different from home, I need specific templates.
                                ("m" "Meeting notes" entry
                                 (file+headline my-meetings-file "Meetings")
                                 "** %T - %?\n"
-                                :jump-to-captured t
-                                )))
+                                :jump-to-captured t)))
 #+end_src
 
 * Load the task list for work
