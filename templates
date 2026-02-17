@@ -43,7 +43,14 @@ org-mode
 	"#+end_src"
 	:ann "elisp code snippet"
 	:doc "Insert emacs-lisp code"
-)
+	)
+
+(kql
+	"#+begin_src sql" n
+	"#+end_src"
+	:ann "code snippet for kql"
+	:doc "Insert kql code"
+	)
 
 (title
 	"#+title: " p n
