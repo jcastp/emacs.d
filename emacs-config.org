@@ -38,8 +38,7 @@ https://github.com/dgutov/diff-hl
     :config
     (global-diff-hl-mode)
     (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
-    (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
-    )
+    (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
 #+end_src
 * General config
 ** Unmap the C-z key
@@ -154,8 +153,7 @@ But backups are good to have:
   (setq delete-old-versions t
         kept-new-versions 6
         kept-old-versions 2
-        version-control t
-        )
+        version-control t)
 #+end_src
 
 ** utf-8 everywhere
@@ -202,8 +200,7 @@ These settings relate to how emacs interacts with your operating system.
    apropos-do-all t
 
    ;; Mouse yank commands yank at point instead of at click.
-   mouse-yank-at-point t
-   )
+   mouse-yank-at-point t)
 #+end_src
 
 ** auto revert mode
@@ -239,8 +236,7 @@ All the configurations needed for dired.
      (setq delete-by-moving-to-trash t)
      (setq dired-dwim-target t)
      ;; directories first in the listings
-     (setq dired-listing-switches "-aBhl  --group-directories-first")
-     )
+     (setq dired-listing-switches "-aBhl  --group-directories-first"))
  #+end_src
 
 *** dired subtree
@@ -259,51 +255,6 @@ From Prot's article - https://protesilaos.com/codelog/2024-11-28-basic-emacs-con
       ("S-TAB" . dired-subtree-remove))
     :config
     (setq dired-subtree-use-backgrounds nil))
-#+end_src
-
-*** CANCELED dired-preview
-:LOGBOOK:
-- State "CANCELED"   from              [2026-02-03 Tue 12:43]
-:END:
-Preview the files in dired.
-
-https://github.com/protesilaos/dired-preview
-
-#+begin_src emacs-lisp :tangle no
-  (use-package dired-preview
-    :ensure t
-    :config
-    (setq dired-preview-delay 0.1)
-    (setq dired-preview-ignored-extensions-regexp
-    	(concat "\\."
-    		;; compressed files
-    		"\\(gz\\|"
-    		"zst\\|"
-    		"tar\\|"
-    		"xz\\|"
-    		"rar\\|"
-    		"zip\\|"
-    		"iso\\|"
-    		"mp3\\|"
-    		"mp4\\|"
-    		"3gp\\|"
-    		"odt\\|"
-    		"fodt\\|"
-    		"ods\\|"
-    		"fods\\|"
-    		"fodg\\|"
-    		"xlsx\\|"  		  		
-    		"epub"
-    		"\\)"))
-    (dired-preview-global-mode 1))
-
-  (defun my-dired-preview-to-the-right ()
-    "My preferred `dired-preview-display-action-alist-function'."
-    '((display-buffer-in-side-window)
-      (side . right)
-      (window-width . 0.3)))
-
-  (setq dired-preview-display-action-alist #'my-dired-preview-to-the-right)
 #+end_src
 
 ** set firefox or librewolf as the default browser
@@ -327,8 +278,7 @@ I want to know how much battery if using a laptop.
   ;; Use this only on laptops...
   (unless (string-match-p "^Power N/A" (battery))
     ;; it's nice to know how much power you have
-    (display-battery-mode 1)
-    )
+    (display-battery-mode 1))
 #+end_src
 
 ** electric pair mode
@@ -340,14 +290,11 @@ Specially defined for spanish question and exclamation marks.
   (setq electric-pair-pairs
         '(
           (?\¡ . ?\!)
-          (?\¿ . ?\?)
-          )
-        )
+          (?\¿ . ?\?)))
 
   (setq electric-pair-inhibit-predicate
         `(lambda (c)
-           (if (char-equal c ?<) t (,electric-pair-inhibit-predicate c)))
-        )
+           (if (char-equal c ?<) t (,electric-pair-inhibit-predicate c))))
 #+end_src
 
 ** vundo - undo with visual cues
@@ -365,8 +312,7 @@ Very large files loading.
   (use-package vlf
     :ensure t
     :config
-    (require 'vlf-setup)
-    )
+    (require 'vlf-setup))
 #+end_src
 
 ** openwith
@@ -401,8 +347,7 @@ Open particular files with external applications.
              ;;       "okular"
              ;;       '(file))
              ))
-      (openwith-mode 1))
-    )
+      (openwith-mode 1)))
 #+end_src
 
 ** free keys
@@ -482,8 +427,7 @@ This conflicts with orgmode archive =C-c $=.
     (ispell-hunspell-add-multi-dic "en_US,es_ES")
     (global-font-lock-mode t)
     :hook
-    (text-mode . flyspell-mode)
-    )
+    (text-mode . flyspell-mode))
 #+end_src
 
 ** Delete after selecting a text area
@@ -504,8 +448,7 @@ From Prot's article - https://protesilaos.com/codelog/2024-11-28-basic-emacs-con
     ("C-h f" . helpful-callable)
     ("C-h v" . helpful-variable)
     ("C-h k" . helpful-key)
-    ("C-h x" . helpful-command)
-    )
+    ("C-h x" . helpful-command))
 #+end_src
 
 ** Abbreviation mode
@@ -601,10 +544,7 @@ https://github.com/minad/consult
            ("M-s L" . consult-locate)
            ("M-s g" . consult-grep)
            ("M-s G" . consult-git-grep)
-           ("M-s r" . consult-ripgrep)
-           )
-    :config
-    )
+           ("M-s r" . consult-ripgrep)))
 #+end_src
 
 ** marginalia
@@ -614,8 +554,7 @@ https://github.com/minad/marginalia/
   (use-package marginalia
     :ensure t
     :init
-      (marginalia-mode)
-  )
+      (marginalia-mode))
 #+end_src
 
 ** embark
@@ -638,8 +577,7 @@ https://github.com/oantolin/embark/
     (add-to-list 'display-buffer-alist
                  '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
                    nil
-                   (window-parameters (mode-line-format . none))))
-    )
+                   (window-parameters (mode-line-format . none)))))
 
   ;; Consult users will also want the embark-consult package.
   (use-package embark-consult
@@ -649,8 +587,7 @@ https://github.com/oantolin/embark/
     ;; if you want to have consult previews as you move around an
     ;; auto-updating embark collect buffer
     :hook
-    (embark-collect-mode . consult-preview-at-point-mode)
-    )
+    (embark-collect-mode . consult-preview-at-point-mode))
 #+end_src
 
 ** orderless
@@ -665,8 +602,7 @@ https://github.com/oantolin/orderless
     ;;       orderless-component-separator #'orderless-escapable-split-on-space)
     (setq completion-styles '(orderless basic)
           completion-category-defaults nil
-          completion-category-overrides '((file (styles partial-completion))))
-    )
+          completion-category-overrides '((file (styles partial-completion)))))
 #+end_src
 
 ** corfu completion
@@ -712,8 +648,7 @@ https://github.com/minad/cape
     ;; completion functions takes precedence over the global list.
     (add-hook 'completion-at-point-functions #'cape-dabbrev)
     (add-hook 'completion-at-point-functions #'cape-file)
-    (add-hook 'completion-at-point-functions #'cape-elisp-block)
-    )
+    (add-hook 'completion-at-point-functions #'cape-elisp-block))
 #+end_src
 
 * Navigation
@@ -730,35 +665,34 @@ https://www.gnu.org/software/emacs/manual/html_node/emacs/Uniquify.html
 ** Keyboard chords
 Shortcuts to commands using just quick key combinations.
 #+begin_src emacs-lisp
-  (use-package key-chord
-    :ensure t
-    :demand t
-    :init
-    (key-chord-mode 1)
-    :config
-    ;; Max time delay between two key presses to be considered a key chord
-    (setq key-chord-two-keys-delay 0.15)
-    ;; Max time delay between two presses of the same key to be considered a key chord.
-    ;; Should normally be a little longer than `key-chord-two-keys-delay'.
-    (setq key-chord-one-key-delay 0.25) ; default 0.2
-    
-    ;; eshell related commands
-    (key-chord-define-global "ññ" 'eshell)
-    (key-chord-define-global "ñl" 'my/eshell-new) ;; create a new eshell buffer
+    (use-package key-chord
+      :ensure t
+      :demand t
+      :init
+      (key-chord-mode 1)
+      :config
+      ;; Max time delay between two key presses to be considered a key chord
+      (setq key-chord-two-keys-delay 0.15)
+      ;; Max time delay between two presses of the same key to be considered a key chord.
+      ;; Should normally be a little longer than `key-chord-two-keys-delay'.
+      (setq key-chord-one-key-delay 0.25) ; default 0.2
+      
+      ;; eshell related commands
+      (key-chord-define-global "ññ" 'eshell)
+      (key-chord-define-global "ñl" 'my/eshell-new) ;; create a new eshell buffer
 
-    ;; Window related commands
-    (key-chord-define-global "kk" 'other-window)
-    (key-chord-define-global "hh" 'ace-window)
+      ;; Window related commands
+      ;; (key-chord-define-global "kk" 'other-window)
+      (key-chord-define-global "hh" 'ace-window)
 
-    ;; move related commands
-    (key-chord-define-global "jj" 'avy-goto-char-2)
-    (key-chord-define-global "jk" 'avy-goto-char-timer)
-    (key-chord-define-global "jl" 'avy-goto-line)
-    
-    ;;(key-chord-define-global "zz" 'undo-tree-visualize)
-    ;;(key-chord-define-global "ww" 'hydra-move/body)
-    ;;(key-chord-define-global "yy" 'hydra-buffer-mgmt/body)
-    )
+      ;; move related commands
+      (key-chord-define-global "jj" 'avy-goto-char-2)
+      (key-chord-define-global "jk" 'avy-goto-char-timer)
+      (key-chord-define-global "jl" 'avy-goto-line))
+      
+      ;; (key-chord-define-global "zz" 'undo-tree-visualize)
+      ;; (key-chord-define-global "ww" 'hydra-move/body)
+      ;; (key-chord-define-global "yy" 'hydra-buffer-mgmt/body)
 #+end_src
 
 ** Imenu-list
@@ -781,8 +715,7 @@ Imenu shows the outline of your file as a browsable sidebar in another window.
     (global-unset-key (kbd "M-i"))
     (global-set-key (kbd "M-g I") #'imenu-list-smart-toggle)
     ;; Once you open imenu, focus on it
-    (setq imenu-list-focus-after-activation t)
-    )
+    (setq imenu-list-focus-after-activation t))
 #+end_src
 
 ** ace-window
@@ -799,8 +732,7 @@ Used in the hydra snippets.
     ;; make the characters bigger, so it is easy to see
     (custom-set-faces
      '(aw-leading-char-face
-       ((t (:inherit ace-jump-face-foreground :height 5.0)))))
-    )
+       ((t (:inherit ace-jump-face-foreground :height 5.0))))))
 #+end_src
 
 ** avy
@@ -808,10 +740,8 @@ A better way to jump through text.
 https://github.com/abo-abo/avy
 #+begin_src emacs-lisp
   (use-package avy
-    :ensure t
-    :config
-    )
-    #+end_src
+    :ensure t)
+#+end_src
 
 ** perspective.el
 https://github.com/nex3/perspective-el
@@ -830,8 +760,7 @@ https://github.com/nex3/perspective-el
     (persp-mode)
     :config
     ;; sort the persps by the creation time
-    (setq persp-sort 'created)
-    )
+    (setq persp-sort 'created))
 #+end_src
 
 *** TODO Automatic saving persp on exit
@@ -883,9 +812,7 @@ But I want to automatically load some perspectives when I'm at home:
       				 ))
 
   	(dolist (my-file my-persp-files)
-  	  (persp-state-load (f-join my-persp-save-dir my-file))
-  	  ))
-        ))
+  	  (persp-state-load (f-join my-persp-save-dir my-file))))))
 #+end_src
 
 * UI improvements
@@ -959,8 +886,7 @@ Different sizes for the different org headings.
     `(org-level-3 ((t (:height 1.1))))
     `(org-level-2 ((t (:height 1.2))))
     `(org-level-1 ((t (:height 1.3))))
-    `(org-document-title ((t (:height 1.6 :underline nil))))
-    )
+    `(org-document-title ((t (:height 1.6 :underline nil)))))
 #+end_src
 
 ** Open indirect buffer
@@ -1001,8 +927,6 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
   (setq display-line-numbers-type t)
   (setq display-line-numbers-grow-only t)
   (global-display-line-numbers-mode 1)
-  ;; (add-hook 'prog-mode-hook 'display-line-numbers-mode)
-  ;; (add-hook 'text-mode-hook 'display-line-numbers-mode)
 #+end_src
 
 ** Highlight indent guides
@@ -1014,8 +938,7 @@ https://github.com/DarthFennec/highlight-indent-guides
     :config
     (setq highlight-indent-guides-method 'character)
     (setq highlight-indent-guides-character ?\|)
-    (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
-    )
+    (add-hook 'prog-mode-hook 'highlight-indent-guides-mode))
 #+end_src
 
 ** Long lines get wrapped
@@ -1036,10 +959,7 @@ When reaching the established width defined, the line will wrap, even before get
     ;; This sets the value to all the buffers, as initially it is a per-buffer variable
     (setq-default visual-fill-column-width 110)
     ;; set the text in the center of the window
-    (setq-default visual-fill-column-center-text t)
-    ;; enable it only for text buffers: org, text, ...
-    ;; (add-hook 'text-mode-hook 'visual-fill-column-mode)
-    )
+    (setq-default visual-fill-column-center-text t))
 #+end_src
 
 ** All the icons
@@ -1100,8 +1020,7 @@ Doom modeline.
     ;; Whether display the `lsp' state. Non-nil to display in the mode-line.
     (setq doom-modeline-lsp t)
     ;; Whether display the time. It respects `display-time-mode'.
-    (setq doom-modeline-time t)
-    )
+    (setq doom-modeline-time t))
 #+end_src
 
 ** Dimmer
@@ -1117,8 +1036,7 @@ It darkens the buffers I'm not using.
 
     ;; configure the dimmer
     (setq dimmer-adjustment-mode :background)
-    (setq dimmer-fraction 0.1)
-    )
+    (setq dimmer-fraction 0.1))
 #+end_src
 
 ** Highlighting the line when changing windows
@@ -1159,8 +1077,7 @@ https://github.com/protesilaos/spacious-padding
              :tab-width 4
              :right-divider-width 30
              :scroll-bar-width 8))
-    (spacious-padding-mode 1)
-    )
+    (spacious-padding-mode 1))
 #+end_src
 
 ** Center a buffer in screen
@@ -1350,8 +1267,7 @@ Use fixed font for code blocks and other non prose blocks, and configure all oth
    '(org-indent                ((t (:inherit (org-hide fixed-pitch)))))
    '(org-table                 ((t (:inherit (org-hide fixed-pitch)))))
    ;; check if this works
-   '(org-comment               ((t (:inherit (org-hide fixed-pitch) :height 0.8))))
-   )
+   '(org-comment               ((t (:inherit (org-hide fixed-pitch) :height 0.8)))))
 #+end_src
 
 ** fontaine
@@ -1377,8 +1293,7 @@ All orgmode configs
    ;; C-a and C-e will move the cursor just the heading. No todo keyworks, no tags
    org-special-ctrl-a/e t
    ;; insert new heading after the current subtree
-   org-insert-heading-respect-content t
-   )
+   org-insert-heading-respect-content t)
 #+end_src
 
 ** org templates modification
@@ -1440,8 +1355,7 @@ I need to have the orgmode indented to see clearly where I am, so I enable it on
 #+begin_src emacs-lisp
   (setq org-blank-before-new-entry '(
                                      (heading . t)
-                                     (plain-list-item . nil)
-                                     ))
+                                     (plain-list-item . nil)))
 #+end_src
 
 ** Custom keybindings for org mode
@@ -1549,9 +1463,7 @@ Remap the org-clock-in to a better key binding.
                      (equal org-clock-current-task (nth 4 (org-heading-components)))))
               (org-clock-out)
             (org-clock-in))
-        (org-clock-in))
-      )
-    )
+        (org-clock-in))))
 
   ;; keybindings
   (global-set-key (kbd "C-c C-x C-i") 'org-clock-in)
@@ -1602,8 +1514,7 @@ https://lucidmanager.org/productivity/ricing-org-mode/
   (setq org-pretty-entities t
         org-startup-with-inline-images t
         org-image-actual-width '(800)
-        org-hide-emphasis-markers t
-        )
+        org-hide-emphasis-markers t)
 
   ;; Line spacing, in pixels
   (setq-default line-spacing 0)
@@ -1637,8 +1548,7 @@ Show the invisible markers, only when the cursor is on them.
 #+begin_src emacs-lisp
   (use-package org-appear
     :ensure t
-    :hook (org-mode . org-appear-mode)
-    )
+    :hook (org-mode . org-appear-mode))
 #+end_src
 
 *** org-modern
@@ -1664,8 +1574,7 @@ https://github.com/minad/org-modern
     ;; (org-modern-statistics nil)
     ;; (org-modern-progress nil)
     ;; The progress bar for task pending/completed is too wide for me
-    (org-modern-progress 8)
-    )
+    (org-modern-progress 8))
 #+end_src
 
 ** Orgmode extra packages
@@ -1679,8 +1588,7 @@ https://github.com/alphapapa/org-ql
     :bind
     ("C-c q f" . org-ql-find-in-agenda)
     ("C-c q s" . org-ql-search)
-    ("C-c q v" . org-ql-view)
-    )
+    ("C-c q v" . org-ql-view))
   ;; adding this to load some org-ql libraries on startup
   (require 'org-ql-search)
 #+end_src
@@ -1691,9 +1599,7 @@ https://www.graphviz.org/pdf/dotguide.pdf
 ** Pandoc exporter
 #+begin_src emacs-lisp
   (use-package ox-pandoc
-    :ensure t
-    :config
-    )
+    :ensure t)
 #+end_src
 
 ** Create an org scratch buffer
@@ -1733,16 +1639,14 @@ Check language syntax on the fly.
     :ensure t
     :demand t
     :init
-    (global-flycheck-mode t)
-    )
+    (global-flycheck-mode t))
 
   (with-eval-after-load 'flycheck
     ;; change the key bindings, as ther conflict with org mode
     (define-key flycheck-mode-map flycheck-keymap-prefix nil)
     (setq flycheck-keymap-prefix (kbd "C-c g"))
     (define-key flycheck-mode-map flycheck-keymap-prefix
-                flycheck-command-map)
-    )
+                flycheck-command-map))
 #+end_src
 
 ** tree-sitter config
@@ -1754,9 +1658,9 @@ We just need to load the languages.
     :ensure t
     :defer t
     :config
-    (add-hook 'prog-mode #'tree-sitter-mode) ;; only used in prog-mode
-    (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode) ; syntax highlighting
-    )
+    (add-hook 'prog-mode #'tree-sitter-mode) ; only used in prog-mode
+    (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)) ; syntax highlighting
+    
   (use-package tree-sitter-langs
     :ensure t
     :after tree-sitter)
@@ -1776,8 +1680,7 @@ ts-fold to fold code in a convenient way.
     ((prog-mode-hook . ts-fold-mode)
      (ts-fold-mode . ts-fold-indicators-mode))
     :config
-    (setq ts-fold-line-count-show t)
-    )
+    (setq ts-fold-line-count-show t))
 #+end_src
 ** eglot configuration
 Configuring eglot to work with vanilla python and its tree-sitter enabled mode:
@@ -1793,10 +1696,8 @@ Configuring eglot to work with vanilla python and its tree-sitter enabled mode:
 
     :hook
     ;;((python-mode . eglot-ensure))
-    ((python-ts-mode . eglot-ensure))
-    )
-  ;;(add-hook 'python-mode-hook 'eglot-ensure)
-#+end_src
+    ((python-ts-mode . eglot-ensure)))
+    #+end_src
 
 ** Shell scripts
 
@@ -1992,8 +1893,7 @@ https://toobnix.org/w/5vCCqXFtWJ3EK7W3HKPRUD
   (keymap-set ibuffer-mode-map "s" #'casual-ibuffer-sortby-tmenu)
 
   (require 'casual-info) ; optional if using autoloaded menu
-  (keymap-set Info-mode-map "C-o" #'casual-info-tmenu)
-  )
+  (keymap-set Info-mode-map "C-o" #'casual-info-tmenu))
 #+end_src
 
 ** TODO show-font
@@ -2012,9 +1912,7 @@ This will be loaded automatically when at home.
       (progn
         ;; here comes the actions I want to be done at a home environment
         (message "this is before loading my perso file")
-        (org-babel-load-file "~/.emacs.d/emacs-config-personal.org")
-        )
-    )
+        (org-babel-load-file "~/.emacs.d/emacs-config-personal.org")))
 #+end_src
 
 * Work related config load
@@ -2024,9 +1922,7 @@ Load the work related config when needed:
   (if my-workenvironment-p
     (progn
       ;; here comes the actions I want to be done at work environment
-      (org-babel-load-file "~/.emacs.d/emacs-config-work.org")
-      )
-  )
+      (org-babel-load-file "~/.emacs.d/emacs-config-work.org")))
 #+end_src
 
 * my own keymap
@@ -2043,30 +1939,26 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
     "f" (when (fboundp #'elfeed)
   	(cons "elfeed" #'my/elfeed))
     "m" (when (fboundp #'mastodon)
-  	(cons "mastodon" #'mastodon))
-    )
+  	(cons "mastodon" #'mastodon)))
 
   ;; all my theme or font related keybindings
   (defvar-keymap my/key-prefix-themes-map
     :doc "Functions related to theme activities"
     "f" #'fontaine-set-preset
     "t" #'consult-theme
-    "v" #'visual-fill-column-mode
-    )
+    "v" #'visual-fill-column-mode)
 
   ;; all my buffer related functions
   (defvar-keymap my/key-prefix-buffers-map
     :doc "Functions related to manipulate buffers"
     ;; empty, for now
-    "o" #'my/scratch-org-buffer
-    )
+    "o" #'my/scratch-org-buffer)
 
   (defvar-keymap my/key-prefix-direct-access-map
     :doc "Functions related to open my frequently used files."
     "c" (cons "personal config" (lambda () (interactive) (persp-state-load "~/Nextcloud/config/.emacs.d/perspectives/config-persp")))
     "k" (cons "emacs keys" (lambda () (interactive) (find-file "~/Nextcloud/tech/org-keys.org")))
-    "t" (cons "tasks file" (lambda () (interactive) (persp-state-load "~/Nextcloud/config/.emacs.d/perspectives/tareas-persp")))
-    )
+    "t" (cons "tasks file" (lambda () (interactive) (persp-state-load "~/Nextcloud/config/.emacs.d/perspectives/tareas-persp"))))
 
   ;; general keybindings for my personal keymaps
   (defvar-keymap my/key-prefix-map
@@ -2080,8 +1972,7 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
     "r" #'consult-recent-file
     "t" (cons "themes and fonts" my/key-prefix-themes-map)
     "w" (when (boundp 'my/key-prefix-writing-map)
-  	(cons "writing" my/key-prefix-writing-map))
-   ) 
+  	(cons "writing" my/key-prefix-writing-map))) 
 
   (keymap-set global-map "C-q" my/key-prefix-map)
 
