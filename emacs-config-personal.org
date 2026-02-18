@@ -1696,6 +1696,42 @@ This way, we can recover the last session and restore all the persps we had then
   (add-hook 'kill-emacs-hook #'persp-state-save)
 #+end_src
 
+* Testing
+** TODO One key to open the writing environment
+I want to reduce the friction needed to start writing, so I'm going to create a function to open directly my writing work.
+
+#+begin_src emacs-lisp
+
+  (defvar my-writing-project "test"
+    "This is the directory where I'm working on my writing.")
+
+  (defun writing/start-session ()
+    "One-key entry point for a writing session.
+  Loads the escritura perspective, opens project-find-file in the
+  novel directory, and activates writing mode."
+    (interactive)
+    ;; 1. Load writing perspective
+    (persp-state-load
+     (expand-file-name "escritura-persp" my-persp-save-dir))
+    ;; 2. Navigate to novel project
+    (let ((default-directory 
+       (expand-file-name 
+        my-writing-project 
+        (expand-file-name "~/Nextcloud/escritura/historias/novela")))) 
+      ;; If you just want the 'novela' folder, remove my-writing-project from above.
+      ;; Use 'find-file' if 'novela' isn't a git/project root. 
+      ;; Use 'project-find-file' if it is.
+      (call-interactively #'project-find-file))
+
+    ;; 3. Activate writing mode
+    (if (fboundp #'org-scribe-mode)
+        (org-scribe/writing-env-mode 1)))
+
+  ;; Assign a top-level key — F7 is likely free
+  (global-set-key (kbd "<f7>") #'writing/start-session)
+  ;; Also add to direct-access map:
+  ;; "w" (cons "writing session" #'writing/start-session)
+#+end_src
 
 * emacs dashboard
 Load it at the end of the config.
