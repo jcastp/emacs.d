@@ -1955,9 +1955,24 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
 
   (defvar-keymap my/key-prefix-direct-access-map
     :doc "Functions related to open my frequently used files."
-    "c" (cons "personal config" (lambda () (interactive) (persp-state-load "~/Nextcloud/config/.emacs.d/perspectives/config-persp")))
-    "k" (cons "emacs keys" (lambda () (interactive) (find-file "~/Nextcloud/tech/org-keys.org")))
-    "t" (cons "tasks file" (lambda () (interactive) (persp-state-load "~/Nextcloud/config/.emacs.d/perspectives/tareas-persp"))))
+    "c" (cons "personal config"
+  	     (lambda ()
+  	       (interactive)
+  	       (persp-state-load "~/Nextcloud/config/.emacs.d/perspectives/config-persp")))
+    "k" (cons "emacs keys"
+  	(lambda ()
+  	  (interactive)
+  	  (find-file "~/Nextcloud/tech/org-keys.org")))
+    "t" (cons "tasks file"
+  	   (lambda ()
+  	     (interactive)
+  	     (persp-state-load "~/Nextcloud/config/.emacs.d/perspectives/tareas-persp")))
+    "e" (cons "escritura persp"
+  	      (lambda ()
+  		(interactive)
+  		(persp-state-load
+  		 (expand-file-name "escritura-persp"
+  				   my-persp-save-dir)))))
 
   ;; general keybindings for my personal keymaps
   (defvar-keymap my/key-prefix-map
