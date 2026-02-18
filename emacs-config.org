@@ -763,18 +763,6 @@ https://github.com/nex3/perspective-el
     (setq persp-sort 'created))
 #+end_src
 
-*** TODO Automatic saving persp on exit
-:PROPERTIES:
-:ID:       84abe67a-d65c-4f3b-b09e-60be026394dc
-:END:
-With this config, we define a custom default file for saving the persps when we exit emacs.
-This way, we can recover the last session and restore all the persps we had then.
-
-#+begin_src emacs-lisp
-  ;; (setq persp-state-default-file (expand-file-name "persp-save" user-emacs-directory))
-  ;; (add-hook 'kill-emacs-hook #'persp-state-save)
-#+end_src
-  
 *** TODO automatic load some perspectives
 This function allows to load my defined perspectives and sessions.
 

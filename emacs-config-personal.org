@@ -1652,6 +1652,7 @@ I used org-books, but the package seems to not be maintained, and the URL fetchi
 #+end_src
 
 ** elfeed suite
+
 RSS read in emacs.
 #+begin_src emacs-lisp
   ;; to store our rss feeds sources
@@ -1683,6 +1684,18 @@ RSS read in emacs.
       (elfeed)
       (elfeed-update)))
 #+end_src
+
+
+** perspective autosave on exit
+With this config, we define a custom default file for saving the persps when we exit emacs.
+This way, we can recover the last session and restore all the persps we had then.
+
+#+begin_src emacs-lisp
+  (setq persp-state-default-file
+        (expand-file-name "perspectives/autosave-persp" my-data-dir))
+  (add-hook 'kill-emacs-hook #'persp-state-save)
+#+end_src
+
 
 * emacs dashboard
 Load it at the end of the config.
