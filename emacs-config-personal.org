@@ -1501,27 +1501,6 @@ Load the org-scribe-planner package
   :after org)
 #+end_src
 
-** writing keybindings
-Create a custom keymap for the writing functions
-#+begin_src emacs-lisp
-  (defvar-keymap my/key-prefix-writing-map
-    :doc "Functions related to writing"
-    ;; writing mode
-    "a" #'org-scribe/writing-env-mode
-    "f" #'org-scribe/writing-env-mode-focus
-    "e" #'org-scribe/editing-mode
-    "w" #'org-scribe/ews-org-count-words
-    "c" #'org-context-count-words
-    ;; writing exercises
-    "r" #'writing/create-writing-exercise
-    "q" #'writing/create-empty-writing-file
-    "s" #'org-scribe/sinonimo
-    ;; hydra keybinding
-    "k" #'hydra-org-scribe/body)
-
-  (keymap-global-set "<f8> <f8>" #'hydra-org-scribe/body)
-#+end_src
-
 ** Create a story file on the fly
 Sometimes I want to create a story prompt on the fly. These functions allow for creating the prompts and the file, so I can immediately start writing.
 
@@ -1568,6 +1547,27 @@ This code depends on a custom script that generates writing prompts based on a l
   	(insert "\n\n" python-output))
       ;; open the file
       (find-file file-path)))
+#+end_src
+
+** writing keybindings
+Create a custom keymap for the writing functions
+#+begin_src emacs-lisp
+  (defvar-keymap my/key-prefix-writing-map
+    :doc "Functions related to writing"
+    ;; writing mode
+    "a" #'org-scribe/writing-env-mode
+    "f" #'org-scribe/writing-env-mode-focus
+    "e" #'org-scribe/editing-mode
+    "w" #'org-scribe/ews-org-count-words
+    "c" #'org-context-count-words
+    ;; writing exercises
+    "r" #'my-writing/create-writing-exercise
+    "q" #'my-writing/create-empty-writing-file
+    "s" #'org-scribe/sinonimo
+    ;; hydra keybinding
+    "k" #'hydra-org-scribe/body)
+
+  (keymap-global-set "<f8> <f8>" #'hydra-org-scribe/body)
 #+end_src
 
 * Miscellanea
