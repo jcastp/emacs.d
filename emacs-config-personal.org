@@ -1553,7 +1553,7 @@ This code depends on a custom script that generates writing prompts based on a l
   	 ;; create the full path of the file
            (full-path (concat my-writing-stories-directory "/" filename))
   	 ;; Create a string with the title and author
-  	 (initial_title (format "#+TITLE: %s\n#+AUTHOR: %s\n#+EMAIL: %s" title user-full-name user-mail-address))
+  	 (initial_title (format "#+TITLE: %s\n#+AUTHOR: %s\n#+EMAIL: %s\n#+MACRO: scene-break SCENE-BREAK\n" title user-full-name user-mail-address))
   	   )
       ;; very crude way to include some title in the file created
       (append-to-file initial_title nil full-path)
@@ -1574,7 +1574,7 @@ This code depends on a custom script that generates writing prompts based on a l
   	 ;; Get the output from the python script
            (python-output (shell-command-to-string "python  ~/Nextcloud/escritura/software/writing_companion/writing_companion.py -s all prompt"))
   	 ;; Create the initial org front matter
-  	 (initial_title (format "#+TITLE: %s\n#+AUTHOR: %s\n#+EMAIL: %s" title user-full-name user-mail-address)))
+  	 (initial_title (format "#+TITLE: %s\n#+AUTHOR: %s\n#+EMAIL: %s\n#+MACRO: scene-break SCENE-BREAK\n" title user-full-name user-mail-address)))
       ;; insert the data in the file
       (with-temp-file file-path
         (insert initial_title )
