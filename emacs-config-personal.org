@@ -1449,6 +1449,40 @@ https://github.com/minad/tempel
     (setq tempel-path "~/.emacs.d/templates"))
 #+end_src
 
+** TODO writing - scene break for multiple formats
+I want to have just one line, macro or function to signal the change of scenes, independent from the export backend.
+
+#+begin_src emacs-lisp
+    (defun org-export-replace-scene-breaks (text backend _info)
+    "Replace SCENE-BREAK markers with backend-appropriate scene separators."
+    (let ((replacement
+           (pcase backend
+             ;; Markdown, ASCII, man: visible marker for reliability
+             ((or 'ascii 'md 'man)
+              "\n***\n\n")
+             ;; HTML: visual spacing
+             ('html "<br><br><br>\n")
+             ;; LaTeX/PDF: vertical space
+             ('latex "\\vspace{\\baselineskip}\\vspace{\\baselineskip}\\vspace{\\baselineskip}\n")
+             ;; Everything else: 3 blank lines
+             (_ "\n\n\n"))))
+      (replace-regexp-in-string "SCENE-BREAK" replacement text t t)))
+
+  (add-to-list 'org-export-filter-final-output-functions #'org-export-replace-scene-breaks)
+#+end_src
+
+This should be used
+At the top of your `.org` document, add:
+
+#+MACRO: scene-break SCENE-BREAK
+
+You insert {{{scene-break}}} wherever you want a scene break.
+{{{scene-break}}}
+
+The macro expands to the literal text SCENE-BREAK.
+
+After Org finishes generating the export, the filter org-export-replace-scene-breaks replaces all SCENE-BREAK markers with the correct text (three newlines, <br>, etc.).
+
 ** org-scribe config
 Here, I document all the config related to my writing.
 
