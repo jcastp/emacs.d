@@ -1471,13 +1471,13 @@ I want to have just one line, macro or function to signal the change of scenes, 
   (add-to-list 'org-export-filter-final-output-functions #'org-export-replace-scene-breaks)
 #+end_src
 
-This should be used
-At the top of your `.org` document, add:
+This should be used at the top of your `.org` document, add:
 
-#+MACRO: scene-break SCENE-BREAK
+#+begin_example
+#+#+MACRO: scene-break SCENE-BREAK
+#+end_example
 
 You insert {{{scene-break}}} wherever you want a scene break.
-{{{scene-break}}}
 
 The macro expands to the literal text SCENE-BREAK.
 
