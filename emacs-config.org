@@ -1820,21 +1820,26 @@ Extracted from https://d12frosted.io/posts/2021-01-16-task-management-with-roam-
          (lambda (h)
            (org-element-property :todo-type h)))))
 
+    (defvar vulpea--updating-tag nil
+      "Re-entry guard for `vulpea-project-update-tag'.")
+
     (defun vulpea-project-update-tag ()
       "Update PROJECT tag in the current buffer."
-      (when (and (not (active-minibuffer-window))
-                 (vulpea-buffer-p))
-        (save-excursion
-          (goto-char (point-min))
-          (let* ((tags (vulpea-buffer-tags-get))
-                 (original-tags tags))
-            (if (vulpea-project-p)
-                (setq tags (cons "roamtag" tags))
-              (setq tags (remove "roamtag" tags)))
-            (setq tags (seq-uniq tags))
-            (when (or (seq-difference tags original-tags)
-                      (seq-difference original-tags tags))
-              (apply #'vulpea-buffer-tags-set tags))))))
+      (unless vulpea--updating-tag
+        (let ((vulpea--updating-tag t))
+          (when (and (not (active-minibuffer-window))
+                     (vulpea-buffer-p))
+            (save-excursion
+              (goto-char (point-min))
+              (let* ((tags (vulpea-buffer-tags-get))
+                     (original-tags tags))
+                (if (vulpea-project-p)
+                    (setq tags (cons "roamtag" tags))
+                  (setq tags (remove "roamtag" tags)))
+                (setq tags (seq-uniq tags))
+                (when (or (seq-difference tags original-tags)
+                          (seq-difference original-tags tags))
+                  (apply #'vulpea-buffer-tags-set tags))))))))
 
     (defun vulpea-buffer-p ()
       "Return non-nil if the currently visited buffer is a note."
