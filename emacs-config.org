@@ -2266,8 +2266,10 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
     "u" #'consult-outline
     "r" #'consult-recent-file
     "t" (cons "themes and fonts" my/key-prefix-themes-map)
+    "a" (when (boundp 'my/key-prefix-ai-map)
+  	(cons "AI" my/key-prefix-ai-map))
     "w" (when (boundp 'my/key-prefix-writing-map)
-  	(cons "writing" my/key-prefix-writing-map))) 
+  	(cons "writing" my/key-prefix-writing-map)))
 
   (keymap-set global-map "C-q" my/key-prefix-map)
 

@@ -1287,6 +1287,43 @@ Create a custom keymap for the writing functions
   (keymap-global-set "<f8> <f8>" #'hydra-org-scribe/body)
 #+end_src
 
+* AI Assistant
+** gptel - local LLM integration
+Use gptel to interact with a local llama-swap instance.
+#+begin_src emacs-lisp
+  (use-package gptel
+    :ensure t
+    :demand t
+    :config
+    (setq gptel-default-mode 'org-mode)
+
+    ;; Local llama-swap backend (OpenAI-compatible API)
+    (setq-default gptel-backend
+                  (gptel-make-openai "llama-swap"
+                    :host "localhost:8080"
+                    :protocol "http"
+                    :stream t
+                    :models '("llama3.2"
+  			      "gpt-oss"
+  			      "phi4-mini-4b-augmented"
+  			      "phi4-mini-4b"
+  			      "phi4-reasoning"
+  			      "qwen3.5-27B"
+  			      "qwen3-30b-VL")))
+
+    (setq-default gptel-model "llama3.2"))
+#+end_src
+
+** AI keybindings
+#+begin_src emacs-lisp
+  (defvar-keymap my/key-prefix-ai-map
+    :doc "Functions related to AI assistance"
+    "a" #'gptel            ;; open gptel chat buffer
+    "s" #'gptel-send       ;; send region/buffer to LLM
+    "m" #'gptel-menu       ;; transient menu for options
+    "x" #'gptel-abort)     ;; abort current request
+#+end_src
+
 * Miscellanea
 ** Nov.el
 Read e-pub in emacs.
