@@ -2149,32 +2149,52 @@ https://github.com/kickingvegas/casual-suite?tab=readme-ov-file
 I want to have a set of menus where I can see the different options and discover commands I didn't know about. See this video for the explanation:
 https://toobnix.org/w/5vCCqXFtWJ3EK7W3HKPRUD
 
+This is the manual for it: https://kickingvegas.github.io/casual/index.html#SEC_Contents
+
 #+begin_src emacs-lisp
   (use-package casual
-  :ensure t
-  :config
-  ;;casual agenda
-  (require 'casual-agenda) ; optional if using autoloaded menu
-  (keymap-set org-agenda-mode-map "C-o" #'casual-agenda-tmenu)
-  ;; casual bookmarks
-  (require 'casual-bookmarks) ; optional if using autoloaded menu
-  (keymap-set bookmark-bmenu-mode-map "C-o" #'casual-bookmarks-tmenu)
-  ;; casual dired
-  (require 'casual-dired) ; optional if using autoloaded menu
-  (keymap-set dired-mode-map "C-o" #'casual-dired-tmenu)
-  (keymap-set dired-mode-map "s" #'casual-dired-sort-by-tmenu) ; optional
-  (keymap-set dired-mode-map "/" #'casual-dired-search-replace-tmenu) ; optional
+    :ensure t
+    :config
 
-  (require 'casual-editkit) ; optional if using autoloaded menu
-  (keymap-global-set "C-o" #'casual-editkit-main-tmenu)
+    ;;casual agenda
+    (require 'casual-agenda) ; optional if using autoloaded menu
+    (keymap-set org-agenda-mode-map "C-o" #'casual-agenda-tmenu)
+    ;; bindings to make jumping consistent between Org Agenda and Casual Agenda
+    (keymap-set org-agenda-mode-map "M-j" #'org-agenda-clock-goto)
+    (keymap-set org-agenda-mode-map "J" #'bookmark-jump)
+    
+    ;; casual bookmarks
+    (require 'casual-bookmarks) ; optional if using autoloaded menu
+    (keymap-set bookmark-bmenu-mode-map "C-o" #'casual-bookmarks-tmenu)
+    (keymap-set bookmark-bmenu-mode-map "J" #'bookmark-jump)
 
-  (require 'casual-ibuffer) ; optional if using autoloaded menu
-  (keymap-set ibuffer-mode-map "C-o" #'casual-ibuffer-tmenu)
-  (keymap-set ibuffer-mode-map "F" #'casual-ibuffer-filter-tmenu)
-  (keymap-set ibuffer-mode-map "s" #'casual-ibuffer-sortby-tmenu)
+    ;; casual calendar
+    (require 'casual-calendar) ; optional if using autoloaded menu
+    (keymap-set calendar-mode-map "C-o" #'casual-calendar)
+    
+    ;; casual dired
+    (require 'casual-dired) ; optional if using autoloaded menu
+    (keymap-set dired-mode-map "C-o" #'casual-dired-tmenu)
+    (keymap-set dired-mode-map "s" #'casual-dired-sort-by-tmenu) ; optional
+    (keymap-set dired-mode-map "/" #'casual-dired-search-replace-tmenu) ; optional
 
-  (require 'casual-info) ; optional if using autoloaded menu
-  (keymap-set Info-mode-map "C-o" #'casual-info-tmenu))
+    ;; editkit
+    (require 'casual-editkit) ; optional if using autoloaded menu
+    (keymap-global-set "C-o" #'casual-editkit-main-tmenu)
+
+    ;; ibuffer
+    (require 'casual-ibuffer) ; optional if using autoloaded menu
+    (keymap-set ibuffer-mode-map "C-o" #'casual-ibuffer-tmenu)
+    (keymap-set ibuffer-mode-map "F" #'casual-ibuffer-filter-tmenu)
+    (keymap-set ibuffer-mode-map "s" #'casual-ibuffer-sortby-tmenu)
+
+    ;; Info
+    (require 'casual-info) ; optional if using autoloaded menu
+    (keymap-set Info-mode-map "C-o" #'casual-info-tmenu)
+
+    ;; org mode
+    (keymap-set org-mode-map "M-m" #'casual-org-tmenu)
+    (keymap-set org-table-fedit-map "M-m" #'casual-org-table-fedit-tmenu))
 #+end_src
 
 ** TODO show-font
