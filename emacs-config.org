@@ -1385,9 +1385,9 @@ Put a note or a timestamp when something changes. For example:
   ;; Define theme-adaptive faces for org-todo keywords
   (defface my/org-todo-active
     '((((class color) (background light))
-       :foreground "#b60000" :weight bold)
+       :foreground "#a60000" :background "#ffd5d5" :weight bold)
       (((class color) (background dark))
-       :foreground "#ff8f88" :weight bold))
+       :foreground "#ff8f88" :background "#3f1210" :weight bold))
     "Face for active TODO keywords.")
 
   (defface my/org-todo-next
@@ -1406,16 +1406,16 @@ Put a note or a timestamp when something changes. For example:
 
   (defface my/org-todo-cancelled
     '((((class color) (background light))
-       :foreground "#70627f" :strike-through t)
+       :foreground "#505050" :background "#e8e0f0" :strike-through t)
       (((class color) (background dark))
-       :foreground "#9f94a5" :strike-through t))
+       :foreground "#b0a0b8" :background "#2e2540" :strike-through t))
     "Face for CANCELLED keyword.")
 
   (defface my/org-todo-done
     '((((class color) (background light))
-       :foreground "#006800" :weight bold)
+       :foreground "#006800" :background "#ccf0cc" :weight bold)
       (((class color) (background dark))
-       :foreground "#44bc44" :weight bold))
+       :foreground "#44bc44" :background "#002f00" :weight bold))
     "Face for DONE keyword.")
 
   ;; Apply faces to keywords
