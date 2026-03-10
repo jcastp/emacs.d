@@ -1397,12 +1397,12 @@ Put a note or a timestamp when something changes. For example:
        :foreground "#6ae4b9" :background "#00382f" :weight bold))
     "Face for NEXT keyword - ready to work on.")
 
-  (defface my/org-todo-waiting
+  (defface my/org-todo-blocked
     '((((class color) (background light))
        :foreground "#813e00" :background "#fff0c0" :weight bold)
       (((class color) (background dark))
        :foreground "#fec43f" :background "#4a3000" :weight bold))
-    "Face for WAITING/HOLD keywords.")
+    "Face for BLOCKED/HOLD keywords.")
 
   (defface my/org-todo-cancelled
     '((((class color) (background light))
@@ -1422,8 +1422,8 @@ Put a note or a timestamp when something changes. For example:
   (setq org-todo-keyword-faces
         '(("TODO"      . my/org-todo-active)
           ("NEXT"      . my/org-todo-next)
-          ("WAITING"   . my/org-todo-waiting)
-          ("HOLD"      . my/org-todo-waiting)
+          ("BLOCKED"   . my/org-todo-blocked)
+          ("HOLD"      . my/org-todo-blocked)
           ("CANCELLED" . my/org-todo-cancelled)
           ("DONE"      . my/org-todo-done)))
 #+end_src
@@ -1550,7 +1550,8 @@ https://github.com/minad/org-modern
     :custom
     (org-modern-hide-stars 'leading)
     (org-modern-table nil)
-    ;; (org-modern-keyword nil)
+    (org-modern-todo nil)
+    (org-modern-keyword nil)
     (org-modern-timestamp nil)
     ;; (org-modern-priority t)
     (org-modern-checkbox nil)
