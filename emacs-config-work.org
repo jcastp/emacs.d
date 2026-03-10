@@ -26,6 +26,7 @@ I use a clear theme.
 
 * recent files for work
 #+begin_src emacs-lisp
+  (recentf-mode 1)
   (setq recentf-save-file (expand-file-name "recentf-work" my-data-dir))
 #+end_src
 
