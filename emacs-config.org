@@ -399,7 +399,7 @@ Reload this configuration file.
   (defun my/reload-config()
     "Reloads my orgmode configuration."
     (interactive)
-    (load (concat user-emacs-directory "early-init.el"))
+    ;;(load (concat user-emacs-directory "early-init.el"))
     (load (concat user-emacs-directory "init.el")))
   (global-set-key (kbd "C-c r r" ) 'my/reload-config)
 #+end_src
