@@ -178,6 +178,30 @@ I need a different custom agenda commands to see the tasks better.
    	  )
    	 )
 
+   	  ("co" "OKR progress"
+   (
+    (tags-todo "+okr/ONGOING"
+               ((org-agenda-overriding-header "OKR tasks in progress:")
+                (org-agenda-prefix-format " %i %-20:c %5e ")))
+
+    (tags-todo "+okr/TODO"
+               ((org-agenda-overriding-header "OKR tasks not yet started:")
+                (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                (org-agenda-sorting-strategy '(priority-down effort-up))
+                (org-agenda-prefix-format " %i %-20:c %5e ")))
+
+    (tags-todo "+okr/WAITING"
+               ((org-agenda-overriding-header "OKR tasks blocked:")
+                (org-agenda-prefix-format " %i %-20:c ")))
+
+    (tags "+okr/DONE|DELEGATED"
+          ((org-agenda-overriding-header "OKR tasks completed or delegated this quarter:")
+           (org-agenda-prefix-format " %i %-20:c ")
+           (org-agenda-sorting-strategy '(timestamp-down))
+           (org-agenda-max-entries 20)))
+    )
+   )
+
            ("ct" "all tasks, sorted"
 
             ;; High priority tasks
