@@ -2194,7 +2194,8 @@ This is the manual for it: https://kickingvegas.github.io/casual/index.html#SEC_
 
     ;; org mode
     ;;(keymap-set org-mode-map "M-m" #'casual-org-tmenu)
-    ;;(keymap-set org-table-fedit-map "M-m" #'casual-org-table-fedit-tmenu))
+    ;;(keymap-set org-table-fedit-map "M-m" #'casual-org-table-fedit-tmenu)
+    )
 #+end_src
 
 ** TODO show-font
