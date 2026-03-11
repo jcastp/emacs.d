@@ -243,7 +243,7 @@ These are the custom states for the tasks, and the character associated to it.
           ;; Status for tasks
           (sequence "TODO(t)" "ONGOING(o)" "BLOCKED(b)" "|" "DONE(d!)" "CANCELED(c@/!)")
           ;; Status for writing
-          (sequence "TOWRITE(h)" "TOREVIEW(j@/!)" "REDO(k@/!)" "RESTRUCTURE(n@/!)" "|" "FINISHED(l!)" "PURGE(ñ@/!)")))
+  	(sequence "TOWRITE(h)" "WRITING(j@/!)" "REVIEW(k@/!)" "REWORK(n@/!)" "|" "FINISHED(l!)" "PURGE(ñ@/!)")))
 #+end_src
 
 ** custom tags
