@@ -1063,7 +1063,7 @@ Only mounted when at home, and clear directory is mounted.
         (setq org-journal-date-format "%A, %d %B %Y")
         (setq org-journal-encrypt-journal nil)))
 #+end_src
-** TODO ox-hugo
+** ox-hugo
 To create a static page blog with hugo, based on the orgmode format.
 https://ox-hugo.scripter.co/
 
@@ -1071,6 +1071,33 @@ https://ox-hugo.scripter.co/
   (use-package ox-hugo
     :ensure t   ;Auto-install the package from Melpa
     :after ox)
+#+end_src
+
+*** Hugo blog capture template
+#+begin_src emacs-lisp
+  (defun my/blog-capture-template ()
+    "Return an ox-hugo subtree capture template for a new blog draft."
+    (let* ((title (read-from-minibuffer "Post title: "))
+           (slug  (replace-regexp-in-string
+                   "[^a-z0-9]+" "-"
+                   (downcase (string-trim title)))))
+      (mapconcat #'identity
+                 `(,(concat "** TODO " title)
+                   ":PROPERTIES:"
+                   ,(concat ":EXPORT_FILE_NAME: " slug)
+                   ,(concat ":EXPORT_DATE: " (format-time-string "%Y-%m-%d"))
+                   ":END:"
+                   "%?\n")
+                 "\n")))
+
+  (add-to-list 'org-capture-templates
+               '("B" "Blog draft" entry
+                 (file+olp "~/Nextcloud/personal/hugo_blog/content-org/all-posts.org"
+                           "drafts")
+                 (function my/blog-capture-template)
+                 :jump-to-captured t
+                 :empty-lines-before 1)
+               t)
 #+end_src
 
 ** TODO epub exporter
