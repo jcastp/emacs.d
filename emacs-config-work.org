@@ -2,19 +2,22 @@
 This configuration is just a patch to work with the work environment.
 It is supposed to run over the generic emacs config, and overwrites that config with the custom config for work environment.
 
-* Defining my own work directory
+* Defining my own work directory and files
 #+begin_src emacs-lisp :tangle yes
-(defvar my-work-dir "~/Nextcloud/trabajo/agenda/"
-  "My own working directory")
+  (defvar my-work-dir "~/Nextcloud/trabajo/agenda/"
+    "My own working directory")
 
-(defvar my-work-file (concat my-work-dir "work.org")
-  "My own work file")
+  (defvar my-work-file (concat my-work-dir "work.org")
+    "My own work file")
 
-(defvar my-backlog-file (concat my-work-dir "work_backlog.org")
-  "My own work backlog file")
+  (defvar my-backlog-file (concat my-work-dir "work_backlog.org")
+    "My own work backlog file")
 
-(defvar my-meetings-file (concat my-work-dir "work_meetings.org")
-  "My own work meetings file")
+  (defvar my-meetings-file (concat my-work-dir "work_meetings.org")
+    "My own work meetings file")
+
+  (defvar my-people-file (concat my-work-dir "work_people.org")
+    "Employee 1:1 meeting notes")
 #+end_src
 
 * Clear theme
@@ -100,13 +103,13 @@ Since at work I don't open so many windows, we can use this width to better use 
 My work require a different set of agendas:
 
 #+begin_src emacs-lisp
-  ;; empty the org-agenda-files
-    (setq org-agenda-files '(""))
-    ;; And now, populate with the work environment
-    ;; This needs to be changed when you change company!!!
-    (setq org-agenda-files (list my-work-file))
+  ;; This needs to be changed when you change company!!!
+  (setq org-agenda-files (list
+  			my-work-file     ;; tasks file
+  			my-meetings-file ;; meetings file
+  			my-people-file   ;; people file
+  			))
 #+end_src
-
 
 * Refile environment
 Since this is a different environment, I also have to change this to refile things in a different way.
@@ -121,295 +124,308 @@ Since this is a different environment, I also have to change this to refile thin
     (setq org-refile-use-outline-path t)                  ; Show full paths for refiling
 #+end_src
 
-* TODO Better searches with custom agenda commands
+* TODO custom agenda view commands
 I need a different custom agenda commands to see the tasks better.
 
 #+begin_src emacs-lisp
   ;; Work agenda span: one week, starting Monday
   (setq org-agenda-span 7)
   (setq org-agenda-start-on-weekday 1)
-  
+
   ;; Require CLOSED timestamp on done tasks (needed for weekly review)
   (setq org-log-done 'time)
 #+end_src
 
- #+begin_src emacs-lisp
-   ;; empty the agenda view, so we can use a modular approach
-   (setq org-agenda-custom-commands '())
+#+begin_src emacs-lisp
+  ;; empty the agenda view, so we can use a modular approach
+  (setq org-agenda-custom-commands '())
 
-   ;; ──────────────────────────────────────────────────────────────────
-   ;; d — Daily driver
-   ;; Open at start of day. Question: what do I work on right now?
-   ;; ──────────────────────────────────────────────────────────────────
-   (add-to-list 'org-agenda-custom-commands
-   	     '("d" "Daily driver"
-   	       (
-   		;; Incidents override everything — deal with them first
-   		(tags-todo "+incident"
-   			   ((org-agenda-overriding-header "[ INCIDENTS ]")
-   			    (org-agenda-sorting-strategy '(priority-down ts-up))
-   			    (org-agenda-prefix-format " %i %-16:c %5e ")))
+  ;; ──────────────────────────────────────────────────────────────────
+  ;; d — Daily driver
+  ;; Open at start of day. Question: what do I work on right now?
+  ;; ──────────────────────────────────────────────────────────────────
+  (add-to-list 'org-agenda-custom-commands
+     	     '("d" "Daily driver"
+     	       (
+     		;; Incidents override everything — deal with them first
+     		(tags-todo "+incident"
+     			   ((org-agenda-overriding-header "[ INCIDENTS ]")
+     			    (org-agenda-sorting-strategy '(priority-down ts-up))
+     			    (org-agenda-prefix-format " %i %-16:c %5e ")))
 
-   		;; Priority A: explicit commitments
-   		(tags-todo "+PRIORITY=\"A\"-incident"
-   			   ((org-agenda-overriding-header "[ PRIORITY — must do today ]")
-   			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("BLOCKED" "DONE" "DELEGATED" "CANCELED")))
-   			    (org-agenda-sorting-strategy '(effort-up ts-up))
-   			    (org-agenda-prefix-format " %i %-16:c %5e ")))
+     		;; Priority A: explicit commitments
+     		(tags-todo "+PRIORITY=\"A\"-incident"
+     			   ((org-agenda-overriding-header "[ PRIORITY — must do today ]")
+     			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("BLOCKED" "DONE" "DELEGATED" "CANCELED")))
+     			    (org-agenda-sorting-strategy '(effort-up ts-up))
+     			    (org-agenda-prefix-format " %i %-16:c %5e ")))
 
-   		;; Ongoing — what you were already in the middle of
-   		(tags-todo "-incident/ONGOING"
-   			   ((org-agenda-overriding-header "[ IN PROGRESS ]")
-   			    (org-agenda-sorting-strategy '(priority-down effort-up ts-up))
-   			    (org-agenda-prefix-format " %i %-16:c %5e ")))
+     		;; Ongoing — what you were already in the middle of
+     		(tags-todo "-incident/ONGOING"
+     			   ((org-agenda-overriding-header "[ IN PROGRESS ]")
+     			    (org-agenda-sorting-strategy '(priority-down effort-up ts-up))
+     			    (org-agenda-prefix-format " %i %-16:c %5e ")))
 
-   		;; Time-bound: scheduled for today, past due, active timestamps
-   		(agenda ""
-   			((org-agenda-span 1)
-   			 (org-agenda-time-grid '((daily today require-timed)
-   						 (800 1000 1200 1400 1600 1800)
-   						 " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
-   			 (org-deadline-warning-days 2)
-   			 (org-agenda-sorting-strategy '(time-up priority-down))
-   			 (org-agenda-overriding-header "[ SCHEDULE ]")))
+     		;; Time-bound: scheduled for today, past due, active timestamps
+     		(agenda ""
+     			((org-agenda-span 1)
+     			 (org-agenda-time-grid '((daily today require-timed)
+     						 (800 1000 1200 1400 1600 1800)
+     						 " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
+     			 (org-deadline-warning-days 2)
+     			 (org-agenda-sorting-strategy '(time-up priority-down))
+     			 (org-agenda-overriding-header "[ SCHEDULE ]")))
 
-   		;; Blocked — blocked, but worth a nudge if you have time
-   		(tags-todo "/BLOCKED"
-   			   ((org-agenda-overriding-header "[ BLOCKED — check in if possible ]")
-   			    (org-agenda-sorting-strategy '(ts-up priority-down))
-   			    (org-agenda-prefix-format " %i %-16:c ")))
-   		)
-   	       )
-   	     )
+     		;; Blocked — blocked, but worth a nudge if you have time
+     		(tags-todo "/BLOCKED"
+     			   ((org-agenda-overriding-header "[ BLOCKED — check in if possible ]")
+     			    (org-agenda-sorting-strategy '(ts-up priority-down))
+     			    (org-agenda-prefix-format " %i %-16:c ")))
+     		)
+     	       )
+     	     )
 
-   ;; ──────────────────────────────────────────────────────────────────
-   ;; f — Focus check
-   ;; During the day. Question: what am I doing right now?
-   ;; ──────────────────────────────────────────────────────────────────
-   (add-to-list 'org-agenda-custom-commands
-   	     '("f" "Focus — what am I doing right now"
-   	       (
-   		(tags-todo "/ONGOING"
-   			   ((org-agenda-overriding-header "[ IN PROGRESS ]")
-   			    (org-agenda-sorting-strategy '(priority-down effort-up ts-up))
-   			    (org-agenda-prefix-format " %i %-16:c %5e ")))
+  ;; ──────────────────────────────────────────────────────────────────
+  ;; f — Focus check
+  ;; During the day. Question: what am I doing right now?
+  ;; ──────────────────────────────────────────────────────────────────
+  (add-to-list 'org-agenda-custom-commands
+     	     '("f" "Focus — what am I doing right now"
+     	       (
+     		(tags-todo "/ONGOING"
+     			   ((org-agenda-overriding-header "[ IN PROGRESS ]")
+     			    (org-agenda-sorting-strategy '(priority-down effort-up ts-up))
+     			    (org-agenda-prefix-format " %i %-16:c %5e ")))
 
-   		(tags-todo "/BLOCKED"
-   			   ((org-agenda-overriding-header "[ BLOCKED — blocked on others ]")
-   			    (org-agenda-sorting-strategy '(ts-up priority-down))
-   			    (org-agenda-prefix-format " %i %-16:c ")))
-   		)
-   	       )
-   	     )
+     		(tags-todo "/BLOCKED"
+     			   ((org-agenda-overriding-header "[ BLOCKED — blocked on others ]")
+     			    (org-agenda-sorting-strategy '(ts-up priority-down))
+     			    (org-agenda-prefix-format " %i %-16:c ")))
+     		)
+     	       )
+     	     )
 
-   ;; ──────────────────────────────────────────────────────────────────
-   ;; W — Weekly planning
-   ;; Monday morning. Question: what are my commitments this week?
-   ;; ──────────────────────────────────────────────────────────────────
-   (add-to-list 'org-agenda-custom-commands
-   	     '("W" "Weekly planning — Monday"
-   	       (
-   		;; Hard commitments: what has a deadline this fortnight
-   		(agenda ""
-   			((org-agenda-span 14)
-   			 (org-agenda-time-grid nil)
-   			 (org-agenda-entry-types '(:deadline))
-   			 (org-agenda-overriding-header "[ DEADLINES — next 2 weeks ]")
-   			 (org-agenda-sorting-strategy '(deadline-up priority-down))))
+  ;; ──────────────────────────────────────────────────────────────────
+  ;; W — Weekly planning
+  ;; Monday morning. Question: what are my commitments this week?
+  ;; ──────────────────────────────────────────────────────────────────
+  (add-to-list 'org-agenda-custom-commands
+     	     '("W" "Weekly planning — Monday"
+     	       (
+     		;; Hard commitments: what has a deadline this fortnight
+     		(agenda ""
+     			((org-agenda-span 14)
+     			 (org-agenda-time-grid nil)
+     			 (org-agenda-entry-types '(:deadline))
+     			 (org-agenda-overriding-header "[ DEADLINES — next 2 weeks ]")
+     			 (org-agenda-sorting-strategy '(deadline-up priority-down))))
 
-   		;; Strategic: OKR-linked tasks that need attention
-   		(tags-todo "+okr"
-   			   ((org-agenda-overriding-header "[ OKR — strategic tasks ]")
-   			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
-   			    (org-agenda-sorting-strategy '(todo-state-up priority-down effort-up))
-   			    (org-agenda-prefix-format " %i %-16:c %5e ")))
+     		;; Strategic: OKR-linked tasks that need attention
+     		(tags-todo "+okr"
+     			   ((org-agenda-overriding-header "[ OKR — strategic tasks ]")
+     			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
+     			    (org-agenda-sorting-strategy '(todo-state-up priority-down effort-up))
+     			    (org-agenda-prefix-format " %i %-16:c %5e ")))
 
-   		;; In flight: what was already ongoing going into this week
-   		(tags-todo "/ONGOING"
-   			   ((org-agenda-overriding-header "[ ONGOING — carryover from last week ]")
-   			    (org-agenda-sorting-strategy '(priority-down effort-up))
-   			    (org-agenda-prefix-format " %i %-16:c %5e ")))
+     		;; In flight: what was already ongoing going into this week
+     		(tags-todo "/ONGOING"
+     			   ((org-agenda-overriding-header "[ ONGOING — carryover from last week ]")
+     			    (org-agenda-sorting-strategy '(priority-down effort-up))
+     			    (org-agenda-prefix-format " %i %-16:c %5e ")))
 
-   		;; Blocked: may need escalation before week is out
-   		(tags-todo "/BLOCKED"
-   			   ((org-agenda-overriding-header "[ BLOCKED — may need escalation ]")
-   			    (org-agenda-sorting-strategy '(ts-up priority-down))
-   			    (org-agenda-prefix-format " %i %-16:c ")))
+     		;; Blocked: may need escalation before week is out
+     		(tags-todo "/BLOCKED"
+     			   ((org-agenda-overriding-header "[ BLOCKED — may need escalation ]")
+     			    (org-agenda-sorting-strategy '(ts-up priority-down))
+     			    (org-agenda-prefix-format " %i %-16:c ")))
 
-   		;; Priority A not yet started: strong candidates for this week
-   		(tags-todo "+PRIORITY=\"A\"/TODO"
-   			   ((org-agenda-overriding-header "[ PRIORITY A — not yet started ]")
-   			    (org-agenda-sorting-strategy '(effort-up ts-up))
-   			    (org-agenda-prefix-format " %i %-16:c %5e ")))
+     		;; Priority A not yet started: strong candidates for this week
+     		(tags-todo "+PRIORITY=\"A\"/TODO"
+     			   ((org-agenda-overriding-header "[ PRIORITY A — not yet started ]")
+     			    (org-agenda-sorting-strategy '(effort-up ts-up))
+     			    (org-agenda-prefix-format " %i %-16:c %5e ")))
 
-   		;; Priority B not yet started: good-if-you-get-to-it work
-   		(tags-todo "+PRIORITY=\"B\"/TODO"
-   			   ((org-agenda-overriding-header "[ PRIORITY B — fill-in work ]")
-   			    (org-agenda-sorting-strategy '(effort-up ts-up))
-   			    (org-agenda-prefix-format " %i %-16:c %5e ")))
-   		)
-   	       )
-   	     )
+     		;; Priority B not yet started: good-if-you-get-to-it work
+     		(tags-todo "+PRIORITY=\"B\"/TODO"
+     			   ((org-agenda-overriding-header "[ PRIORITY B — fill-in work ]")
+     			    (org-agenda-sorting-strategy '(effort-up ts-up))
+     			    (org-agenda-prefix-format " %i %-16:c %5e ")))
+     		)
+     	       )
+     	     )
 
-   ;; ──────────────────────────────────────────────────────────────────
-   ;; R — Weekly review
-   ;; Friday afternoon. Question: what did I do, what is stuck?
-   ;; ──────────────────────────────────────────────────────────────────
-   (add-to-list 'org-agenda-custom-commands
-   	     '("R" "Weekly review — Friday"
-   	       (
-   		;; What you actually finished: the win list
-   		(tags "+CLOSED>=\"<-7d>\""
-   		      ((org-agenda-overriding-header "[ COMPLETED THIS WEEK ]")
-   		       (org-agenda-skip-function
-   			'(org-agenda-skip-entry-if 'nottodo '("DONE")))
-   		       (org-agenda-sorting-strategy '(timestamp-down))
-   		       (org-agenda-prefix-format " %i %-16:c ")))
+  ;; ──────────────────────────────────────────────────────────────────
+  ;; R — Weekly review
+  ;; Friday afternoon. Question: what did I do, what is stuck?
+  ;; ──────────────────────────────────────────────────────────────────
+  (add-to-list 'org-agenda-custom-commands
+     	     '("R" "Weekly review — Friday"
+     	       (
+     		;; What you actually finished: the win list
+     		(tags "+CLOSED>=\"<-7d>\""
+     		      ((org-agenda-overriding-header "[ COMPLETED THIS WEEK ]")
+     		       (org-agenda-skip-function
+     			'(org-agenda-skip-entry-if 'nottodo '("DONE")))
+     		       (org-agenda-sorting-strategy '(timestamp-down))
+     		       (org-agenda-prefix-format " %i %-16:c ")))
 
-   		;; What you handed off: track for follow-up
-   		(tags "+CLOSED>=\"<-7d>\""
-   		      ((org-agenda-overriding-header "[ DELEGATED THIS WEEK ]")
-   		       (org-agenda-skip-function
-   			'(org-agenda-skip-entry-if 'nottodo '("DELEGATED")))
-   		       (org-agenda-sorting-strategy '(timestamp-down))
-   		       (org-agenda-prefix-format " %i %-16:c ")))
+     		;; What you handed off: track for follow-up
+     		(tags "+CLOSED>=\"<-7d>\""
+     		      ((org-agenda-overriding-header "[ DELEGATED THIS WEEK ]")
+     		       (org-agenda-skip-function
+     			'(org-agenda-skip-entry-if 'nottodo '("DELEGATED")))
+     		       (org-agenda-sorting-strategy '(timestamp-down))
+     		       (org-agenda-prefix-format " %i %-16:c ")))
 
-   		;; What is still blocked: decide to chase or park
-   		(tags-todo "/BLOCKED"
-   			   ((org-agenda-overriding-header "[ STILL BLOCKED — chase or park? ]")
-   			    (org-agenda-sorting-strategy '(ts-up priority-down))
-   			    (org-agenda-prefix-format " %i %-16:c ")))
+     		;; What is still blocked: decide to chase or park
+     		(tags-todo "/BLOCKED"
+     			   ((org-agenda-overriding-header "[ STILL BLOCKED — chase or park? ]")
+     			    (org-agenda-sorting-strategy '(ts-up priority-down))
+     			    (org-agenda-prefix-format " %i %-16:c ")))
 
-   		;; What has no schedule yet: needs to go somewhere next week
-   		(tags-todo "/TODO"
-   			   ((org-agenda-overriding-header "[ UNSCHEDULED — needs a home next week ]")
-   			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'timestamp))
-   			    (org-agenda-sorting-strategy '(priority-down effort-up))
-   			    (org-agenda-prefix-format " %i %-16:c %5e ")))
-   		)
-   	       )
-   	     )
+     		;; What has no schedule yet: needs to go somewhere next week
+     		(tags-todo "/TODO"
+     			   ((org-agenda-overriding-header "[ UNSCHEDULED — needs a home next week ]")
+     			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'timestamp))
+     			    (org-agenda-sorting-strategy '(priority-down effort-up))
+     			    (org-agenda-prefix-format " %i %-16:c %5e ")))
+     		)
+     	       )
+     	     )
 
-   ;; ──────────────────────────────────────────────────────────────────
-   ;; ca — By domain
-   ;; Planning sessions / 1:1s. Question: status by area?
-   ;; ──────────────────────────────────────────────────────────────────
-   (add-to-list 'org-agenda-custom-commands
-   	     '("ca" "By domain area"
-   	       (
-   		;; Incidents cut across all domains — show them first
-   		(tags-todo "+incident"
-   			   ((org-agenda-overriding-header "[ INCIDENTS ]")
-   			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
-   			    (org-agenda-sorting-strategy '(priority-down ts-up))
-   			    (org-agenda-prefix-format " %i %-16:c %5e ")))
+  ;; ──────────────────────────────────────────────────────────────────
+  ;; ca — By domain
+  ;; Planning sessions / 1:1s. Question: status by area?
+  ;; ──────────────────────────────────────────────────────────────────
+  (add-to-list 'org-agenda-custom-commands
+     	     '("ca" "By domain area"
+     	       (
+     		;; Incidents cut across all domains — show them first
+     		(tags-todo "+incident"
+     			   ((org-agenda-overriding-header "[ INCIDENTS ]")
+     			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
+     			    (org-agenda-sorting-strategy '(priority-down ts-up))
+     			    (org-agenda-prefix-format " %i %-16:c %5e ")))
 
-   		(tags-todo "+detection-incident"
-   			   ((org-agenda-overriding-header "[ DETECTION ]")
-   			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
-   			    (org-agenda-sorting-strategy '(todo-state-up priority-down effort-up))
-   			    (org-agenda-prefix-format " %i %-16:c %5e ")))
+     		(tags-todo "+detection-incident"
+     			   ((org-agenda-overriding-header "[ DETECTION ]")
+     			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
+     			    (org-agenda-sorting-strategy '(todo-state-up priority-down effort-up))
+     			    (org-agenda-prefix-format " %i %-16:c %5e ")))
 
-   		(tags-todo "+automation-incident"
-   			   ((org-agenda-overriding-header "[ AUTOMATION ]")
-   			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
-   			    (org-agenda-sorting-strategy '(todo-state-up priority-down effort-up))
-   			    (org-agenda-prefix-format " %i %-16:c %5e ")))
+     		(tags-todo "+automation-incident"
+     			   ((org-agenda-overriding-header "[ AUTOMATION ]")
+     			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
+     			    (org-agenda-sorting-strategy '(todo-state-up priority-down effort-up))
+     			    (org-agenda-prefix-format " %i %-16:c %5e ")))
 
-   		(tags-todo "+emailsec-incident"
-   			   ((org-agenda-overriding-header "[ EMAIL SECURITY ]")
-   			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
-   			    (org-agenda-sorting-strategy '(todo-state-up priority-down effort-up))
-   			    (org-agenda-prefix-format " %i %-16:c %5e ")))
+     		(tags-todo "+emailsec-incident"
+     			   ((org-agenda-overriding-header "[ EMAIL SECURITY ]")
+     			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
+     			    (org-agenda-sorting-strategy '(todo-state-up priority-down effort-up))
+     			    (org-agenda-prefix-format " %i %-16:c %5e ")))
 
-   		(tags-todo "+organization-incident"
-   			   ((org-agenda-overriding-header "[ ORGANIZATION / MANAGEMENT ]")
-   			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
-   			    (org-agenda-sorting-strategy '(todo-state-up priority-down effort-up))
-   			    (org-agenda-prefix-format " %i %-16:c %5e ")))
+     		(tags-todo "+organization-incident"
+     			   ((org-agenda-overriding-header "[ ORGANIZATION / MANAGEMENT ]")
+     			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
+     			    (org-agenda-sorting-strategy '(todo-state-up priority-down effort-up))
+     			    (org-agenda-prefix-format " %i %-16:c %5e ")))
 
-   		;; Catch-all: tasks with no domain tag — they need one
-   		(tags-todo "-incident-detection-automation-emailsec-organization"
-   			   ((org-agenda-overriding-header "[ UNTAGGED — needs a domain tag ]")
-   			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
-   			    (org-agenda-sorting-strategy '(priority-down effort-up))
-   			    (org-agenda-prefix-format " %i %-16:c %5e ")))
-   		)
-   	       )
-   	     )
+     		;; Catch-all: tasks with no domain tag — they need one
+     		(tags-todo "-incident-detection-automation-emailsec-organization"
+     			   ((org-agenda-overriding-header "[ UNTAGGED — needs a domain tag ]")
+     			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
+     			    (org-agenda-sorting-strategy '(priority-down effort-up))
+     			    (org-agenda-prefix-format " %i %-16:c %5e ")))
+     		)
+     	       )
+     	     )
 
-   ;; ──────────────────────────────────────────────────────────────────
-   ;; co — OKR alignment
-   ;; Quarterly check-ins / manager 1:1. Question: are OKRs on track?
-   ;; ──────────────────────────────────────────────────────────────────
-   (add-to-list 'org-agenda-custom-commands
-   	     '("co" "OKR alignment"
-   	       (
-   		(tags-todo "+okr/ONGOING"
-   			   ((org-agenda-overriding-header "[ OKR — in progress ]")
-   			    (org-agenda-sorting-strategy '(priority-down effort-up ts-up))
-   			    (org-agenda-prefix-format " %i %-20:c %5e ")))
+  ;; ──────────────────────────────────────────────────────────────────
+  ;; co — OKR alignment
+  ;; Quarterly check-ins / manager 1:1. Question: are OKRs on track?
+  ;; ──────────────────────────────────────────────────────────────────
+  (add-to-list 'org-agenda-custom-commands
+     	     '("co" "OKR alignment"
+     	       (
+     		(tags-todo "+okr/ONGOING"
+     			   ((org-agenda-overriding-header "[ OKR — in progress ]")
+     			    (org-agenda-sorting-strategy '(priority-down effort-up ts-up))
+     			    (org-agenda-prefix-format " %i %-20:c %5e ")))
 
-   		(tags-todo "+okr/BLOCKED"
-   			   ((org-agenda-overriding-header "[ OKR — BLOCKED — escalate ]")
-   			    (org-agenda-sorting-strategy '(ts-up priority-down))
-   			    (org-agenda-prefix-format " %i %-20:c ")))
+     		(tags-todo "+okr/BLOCKED"
+     			   ((org-agenda-overriding-header "[ OKR — BLOCKED — escalate ]")
+     			    (org-agenda-sorting-strategy '(ts-up priority-down))
+     			    (org-agenda-prefix-format " %i %-20:c ")))
 
-   		(tags-todo "+okr/TODO"
-   			   ((org-agenda-overriding-header "[ OKR — not yet started ]")
-   			    (org-agenda-sorting-strategy '(priority-down effort-up))
-   			    (org-agenda-prefix-format " %i %-20:c %5e ")))
+     		(tags-todo "+okr/TODO"
+     			   ((org-agenda-overriding-header "[ OKR — not yet started ]")
+     			    (org-agenda-sorting-strategy '(priority-down effort-up))
+     			    (org-agenda-prefix-format " %i %-20:c %5e ")))
 
-   		(tags "+okr/DONE"
-   		      ((org-agenda-overriding-header "[ OKR — recently completed ]")
-   		       (org-agenda-sorting-strategy '(timestamp-down))
-   		       (org-agenda-max-entries 20)
-   		       (org-agenda-prefix-format " %i %-20:c ")))
+     		(tags "+okr/DONE"
+     		      ((org-agenda-overriding-header "[ OKR — recently completed ]")
+     		       (org-agenda-sorting-strategy '(timestamp-down))
+     		       (org-agenda-max-entries 20)
+     		       (org-agenda-prefix-format " %i %-20:c ")))
 
-   		(tags "+okr/DELEGATED"
-   		      ((org-agenda-overriding-header "[ OKR — delegated ]")
-   		       (org-agenda-sorting-strategy '(timestamp-down))
-   		       (org-agenda-prefix-format " %i %-20:c ")))
-   		)
-   	       )
-   	     )
+     		(tags "+okr/DELEGATED"
+     		      ((org-agenda-overriding-header "[ OKR — delegated ]")
+     		       (org-agenda-sorting-strategy '(timestamp-down))
+     		       (org-agenda-prefix-format " %i %-20:c ")))
+     		)
+     	       )
+     	     )
 
-   ;; ──────────────────────────────────────────────────────────────────
-   ;; ci — Inbox triage
-   ;; After capture bursts. Question: what needs to be processed?
-   ;; ──────────────────────────────────────────────────────────────────
-   (add-to-list 'org-agenda-custom-commands
-   	     '("ci" "Inbox triage — process captured items"
-   	       (
-   		;; Tasks with no domain: they are floating and invisible in the domain view
-   		(tags-todo "-incident-detection-automation-emailsec-organization-okr"
-   			   ((org-agenda-overriding-header "[ NEEDS DOMAIN TAG ]")
-   			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
-   			    (org-agenda-sorting-strategy '(ts-up))
-   			    (org-agenda-prefix-format " %i %-16:c ")))
+  ;; ──────────────────────────────────────────────────────────────────
+  ;; ci — Inbox triage
+  ;; After capture bursts. Question: what needs to be processed?
+  ;; ──────────────────────────────────────────────────────────────────
+  (add-to-list 'org-agenda-custom-commands
+     	     '("ci" "Inbox triage — process captured items"
+     	       (
+     		;; Tasks with no domain: they are floating and invisible in the domain view
+     		(tags-todo "-incident-detection-automation-emailsec-organization-okr"
+     			   ((org-agenda-overriding-header "[ NEEDS DOMAIN TAG ]")
+     			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
+     			    (org-agenda-sorting-strategy '(ts-up))
+     			    (org-agenda-prefix-format " %i %-16:c ")))
 
-   		;; Tasks with no explicit priority set (default B = never touched)
-   		(tags-todo "PRIORITY=\"B\""
-   			   ((org-agenda-overriding-header "[ NEEDS PRIORITY DECISION ]")
-   			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
-   			    (org-agenda-sorting-strategy '(ts-up))
-   			    (org-agenda-prefix-format " %i %-16:c ")))
+     		;; Tasks with no explicit priority set (default B = never touched)
+     		(tags-todo "PRIORITY=\"B\""
+     			   ((org-agenda-overriding-header "[ NEEDS PRIORITY DECISION ]")
+     			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
+     			    (org-agenda-sorting-strategy '(ts-up))
+     			    (org-agenda-prefix-format " %i %-16:c ")))
 
-   		;; Tasks without effort: cannot be scheduled
-   		(tags-todo "EFFORT=\"\""
-   			   ((org-agenda-overriding-header "[ NEEDS EFFORT ESTIMATE ]")
-   			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
-   			    (org-agenda-sorting-strategy '(priority-down ts-up))
-   			    (org-agenda-prefix-format " %i %-16:c ")))
-   		)
-   	       )
-   	     )
+     		;; Tasks without effort: cannot be scheduled
+     		(tags-todo "EFFORT=\"\""
+     			   ((org-agenda-overriding-header "[ NEEDS EFFORT ESTIMATE ]")
+     			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
+     			    (org-agenda-sorting-strategy '(priority-down ts-up))
+     			    (org-agenda-prefix-format " %i %-16:c ")))
+     		)
+     	       )
+     	     )
 
-   ;; Search for tasks that have no EFFORT set
-   (add-to-list 'org-agenda-custom-commands
-                '("e" "Tasks without EFFORT"
-                  tags-todo "EFFORT=\"\""
-                  ((org-agenda-overriding-header "Tasks missing effort estimates"))))
+  ;; people tasks
+  (add-to-list 'org-agenda-custom-commands
+     	     '("p" "People - direct reports"
+  	       (
+  		;; All open action items from 1:1s
+  		(tags-todo "+people"
+  			   ((org-agenda-overriding-header "[ OPEN PEOPLE ACTIONS ]")
+  			    (org-agenda-sorting-strategy '(priority-down ts-up))
+  			    (org-agenda-prefix-format " %i %-12:c ")))
+  		 )
+  	       )
+     	     )
+
+  ;; Search for tasks that have no EFFORT set
+  (add-to-list 'org-agenda-custom-commands
+               '("e" "Tasks without EFFORT"
+                 tags-todo "EFFORT=\"\""
+                 ((org-agenda-overriding-header "Tasks missing effort estimates"))))
 #+end_src
 
 * TODO org-super-agenda config
@@ -431,7 +447,8 @@ I need a different custom agenda commands to see the tasks better.
           (:name "Email Security" :tag "emailsec"         :order 32)
           (:name "Organization"   :tag "organization"     :order 33)
           (:name "Priority C"     :priority "C"           :order 90)
-          (:discard (:anything t))))
+          (:name "People"         :tag "people"           :order 95)
+          (:name "Other"          :anything t             :order 99)))
 #+end_src
 
 * Work tags definition
@@ -459,6 +476,9 @@ I need a different custom agenda commands to see the tasks better.
 As work is different from home, I need specific templates.
 
 #+begin_src emacs-lisp
+  (defvar my/capture-person nil
+    "Employee name selected during org-capture, shared between target and template body.")
+
   (setq org-capture-templates'(
                                ("i" "Inbox (work)" entry
                                 (file+headline my-work-file "Inbox")
@@ -473,10 +493,34 @@ As work is different from home, I need specific templates.
                                 "** TODO %?\n")
 
                                ;; For meeting note taking
-                               ("m" "Meeting notes" entry
+                               ("m" "Work meeting notes" entry
                                 (file+headline my-meetings-file "Meetings")
                                 "** %T - %?\n"
-                                :jump-to-captured t)))
+                                :jump-to-captured t)
+
+  			     ;; people meetings
+  			     ("p" "1:1 meeting" entry
+  			      (function (lambda ()
+  					  (let ((person (completing-read "Employee: "
+  									 '("Miguel" "Ioana" "Nicolas" "Tom" "Chaitanya"))))
+  					    (setq my/capture-person person)
+  					    (find-file my-people-file)
+  					    (goto-char (org-find-olp (list my-people-file person))))))
+  			      "** %<%Y-%m-%d %a> - follow-up\n*** Notes\n%?\n*** Actions\n"
+  			      :jump-to-captured t)
+
+  			     ;; And a quick action capture from within a 1:1 note:
+  			     ("P" "People action item" entry
+  			      (function (lambda ()
+  					  (let ((person (completing-read "Employee: "
+  									 '("Miguel" "Ioana" "Nicolas" "Tom" "Chaitanya"))))
+  					    (setq my/capture-person person)
+  					    (find-file my-people-file)
+  					    (goto-char (org-find-olp (list my-people-file person))))))
+  			      "*** TODO [%(identity my/capture-person)] %? :people:%(downcase my/capture-person):\n    DEADLINE: %^t"
+  			      :jump-to-captured t)
+
+  			     ))
 #+end_src
 
 * TODO org-jira integration
