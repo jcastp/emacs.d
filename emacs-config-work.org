@@ -480,7 +480,7 @@ As work is different from home, I need specific templates.
 #+end_src
 
 * TODO org-jira integration
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (use-package org-jira
     :ensure t
     :bind (("C-q j b" . org-jira-browse-issue)
@@ -517,6 +517,24 @@ As work is different from home, I need specific templates.
     		;; :limit 10
     		:filename "automation")
     	  ))
+    )
+#+end_src
+
+This doesn't work in the auth part.
+#+begin_src emacs-lisp :tangle no
+  (use-package jira
+    :ensure t
+    :config
+    (setq jira-base-url "https://jira.tools.3stripes.net") ;; Jira instance URL
+    ;;(setq jira-username "johndoe@acme.com") ;; Jira username (usually, an email)
+    ;; API token for Jira
+    ;; See https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/
+    ;; (setq jira-token "foobar123123")
+    (setq jira-token-is-personal-access-token t)
+    (setq jira-api-version 2) ;; Version 2 is also allowed
+    ;; (Optional) API token for JIRA TEMPO plugin
+    ;; See https://apidocs.tempo.io/
+    ;;(setq jira-tempo-token "foobar123123")
     )
 #+end_src
 
