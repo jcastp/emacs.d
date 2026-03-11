@@ -453,14 +453,14 @@ I need a different custom agenda commands to see the tasks better.
 
 * Work tags definition
 #+begin_src emacs-lisp :tangle yes
-(setq org-tag-alist '(
-                      ("detection" . ?d) ("automation" . ?a) ("emailsec" . ?e)
-                      ;; other tags
-                      ("documentation" . ?D) ("procedures" . ?P)
-                      ("knowledge" . ?K) ("training" . ?T)
-                      ("incident" . ?I) ("task" . ?t)
-                      ;; based on my current role
-                      ("organization" . ?o)))
+  (setq org-tag-alist '(
+                        ("detection" . ?d) ("automation" . ?a) ("emailsec" . ?e)
+                        ;; other tags
+                        ("documentation" . ?D) ("procedures" . ?P)
+                        ("knowledge" . ?K) ("training" . ?T)
+                        ("incident" . ?I) ("task" . ?t)
+                        ;; based on my current role
+                        ("organization" . ?o) ("people" . ?p)))
 #+end_src
 
 * Custom status for work related environment
