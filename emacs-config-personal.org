@@ -831,7 +831,7 @@ Config extracted from the Emacs Writing Studio ebook.
     :custom
     ;; Multiple LaTeX passes for bibliographies
     (org-latex-pdf-process
-     '("pdflatex -interaction nonstopmode -output-directory %o %f"
+     '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
        "bibtex %b"
        "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
        "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
@@ -885,9 +885,30 @@ https://www.ctan.org/pkg/memoir
 https://mirror.ibcp.fr/pub/CTAN/macros/latex/contrib/memoir/memman.pdf
 =memoir= is a class used to create beautiful documents.
 
+The classes defined here are:
+- =memoir=
+- =memoir_draft=
+- =memoir_chapter=
+- =memoir_chapter_draft=
+
 This consolidated function creates all memoir variants (draft/final, with parts/chapter-only).
 
 #+begin_src emacs-lisp
+  (defvar my/latex-spanish-preamble
+    "\\usepackage[utf8]{inputenc}
+  \\usepackage[T1]{fontenc}
+  \\usepackage[spanish]{babel}
+  \\usepackage{graphicx}
+  \\usepackage{todonotes}
+  \\usepackage[normalem]{ulem}
+  \\usepackage{hyperref}
+  \\usepackage{parskip}
+  \\usepackage{fourier}
+  \\newcommand{\\fin}{\\plainbreak*{3}}
+  \\newcommand{\\edit}[1]{\\todo[inline]{#1}}
+  \\newcommand{\\adendo}[1]{\\todo[size=\\tiny]{#1}}"
+    "Shared LaTeX preamble for Spanish memoir/reporting classes.")
+
   (defun my/add-memoir-class (name &optional draft chapter-only)
     "Add memoir LaTeX class with NAME.
   When DRAFT is non-nil, enable draft mode.
@@ -909,35 +930,12 @@ This consolidated function creates all memoir variants (draft/final, with parts/
                        ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
                        ("\\paragraph{%s}" . "\\paragraph*{%s}")
                        ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
-           (preamble (format "\\documentclass[a4paper,17pt%s,openright,twoside]{memoir}
-  \\usepackage{ucs}
-  \\usepackage[utf8]{inputenc}
-  \\usepackage[spanish]{babel}
-  \\usepackage{fontenc}
-  \\usepackage{graphicx}
+           (preamble (concat
+                      (format "\\documentclass[a4paper,17pt%s,openright,twoside]{memoir}\n"
+                              draft-option)
+                      my/latex-spanish-preamble
+                      "
   \\usepackage{minted}
-
-  %% Para poner notas en los márgenes
-  \\usepackage{todonotes}
-
-  %% Para tachar palabras
-  \\usepackage[normalem]{ulem}
-
-  %% for hyperlinks in the pdf
-  \\usepackage{hyperref}
-  %% space between the paragraphs
-  \\usepackage{parskip}
-  %% Needed for the utopia font
-  \\usepackage{fourier}
-
-  \\renewcommand*\\rmdefault{put}
-
-  %% new command that establish 3 newlines for breaking scenes
-  \\newcommand{\\fin}{\\plainbreak*{3}}
-
-  %% command to add edit notes with tiny size
-  \\newcommand{\\edit}[1] {\\todo[inline]{#1}}
-  \\newcommand{\\adendo}[1] {\\todo[size=\\tiny]{#1}}
 
   %% Chapter style
   \\chapterstyle{dash}
@@ -949,61 +947,39 @@ This consolidated function creates all memoir variants (draft/final, with parts/
   \\setlength{\\parskip}{0.2\\baselineskip}
 
                  [NO-DEFAULT-PACKAGES]
-                 [NO-PACKAGES]" draft-option)))
+                 [NO-PACKAGES]")))
       (add-to-list 'org-latex-classes
                    `(,name ,preamble ,@levels))))
 
-  ;; Create all four memoir class variants
-  (my/add-memoir-class "memoir" nil nil)           ; Standard with parts
-  (my/add-memoir-class "memoir_draft" t nil)       ; Draft with parts
-  (my/add-memoir-class "memoir_chapter" nil t)     ; Final, chapter-only
-  (my/add-memoir-class "memoir_chapter_draft" t t) ; Draft, chapter-only
+  (with-eval-after-load 'ox-latex
+    (my/add-memoir-class "memoir" nil nil)           ; Standard with parts
+    (my/add-memoir-class "memoir_draft" t nil)       ; Draft with parts
+    (my/add-memoir-class "memoir_chapter" nil t)     ; Final, chapter-only
+    (my/add-memoir-class "memoir_chapter_draft" t t)) ; Draft, chapter-only
 #+end_src
 
 **** TODO reporting class for org2latex (complete these options)
 
 #+begin_src emacs-lisp
-  (add-to-list 'org-latex-classes
-  	     '("reporting"
-                 "\\documentclass[a4paper,17pt,openright,twoside]{article}
-  \\usepackage{ucs}
-  \\usepackage[utf8]{inputenc}
-  \\usepackage[spanish]{babel}
-  \\usepackage{fontenc}
-  \\usepackage{graphicx}
+  (with-eval-after-load 'ox-latex
+    (add-to-list 'org-latex-classes
+                 `("reporting"
+                   ,(concat "\\documentclass[a4paper,17pt,openright,twoside]{memoir}\n"
+                            my/latex-spanish-preamble
+                            "
 
-  \% Para poner notas en los márgenes
-  \\usepackage{todonotes}
-
-  \% Para tachar palabras
-  \\usepackage[normalem]{ulem}
-
-  \\usepackage{hyperref}
-  \\usepackage{parskip}
-  \\usepackage{fourier}
-
-  \\renewcommand*\\rmdefault{put}
-
-  \\newcommand{\\fin}{\\plainbreak*{3}}
-
-  \% command to add edit notes with tiny size
-  \\newcommand{\\edit}[1] {\\todo[inline]{#1}}
-  \\newcommand{\\adendo}[1] {\\todo[size=\\tiny]{#1}}
-
-
-
+  %% How the page is formatted
+  \\pagestyle{plain}
 
                  [NO-DEFAULT-PACKAGES]
-                 [NO-PACKAGES]"
-                 ("\\part{%s}" . "\\part*{%s}")
-                 ("\\chapter{%s}" . "\\chapter*{%s}")
-                 ("\\section*{%s}" . "\\section*{%s}")
-                 ("\\subsection{%s}" . "\\subsection*{%s}")
-                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
-               )
-
+                 [NO-PACKAGES]")
+                   ("\\part{%s}" . "\\part*{%s}")
+                   ("\\chapter{%s}" . "\\chapter*{%s}")
+                   ("\\section{%s}" . "\\section*{%s}")
+                   ("\\subsection{%s}" . "\\subsection*{%s}")
+                   ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                   ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                   ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
 #+end_src
 
 *** orgmode export
