@@ -455,6 +455,10 @@ Defines a set of abbreviations that permits complete words with just some charac
   (setq save-abbrevs 'silently)
 #+end_src
 
+** save place
+#+begin_src emacs-lisp
+  (save-place-mode 1)
+#+end_src
 * vertico, prescient, consult, marginalia, embark
 ** vertico
 Vertical auto completion in the minibuffer
