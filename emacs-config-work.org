@@ -173,6 +173,7 @@ I need a different custom agenda commands to see the tasks better.
      						 (800 1000 1200 1400 1600 1800)
      						 " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
      			 (org-deadline-warning-days 2)
+     			 (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
      			 (org-agenda-sorting-strategy '(time-up priority-down))
      			 (org-agenda-overriding-header "[ SCHEDULE ]")))
 
@@ -217,6 +218,7 @@ I need a different custom agenda commands to see the tasks better.
      			((org-agenda-span 14)
      			 (org-agenda-time-grid nil)
      			 (org-agenda-entry-types '(:deadline))
+     			 (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
      			 (org-agenda-overriding-header "[ DEADLINES — next 2 weeks ]")
      			 (org-agenda-sorting-strategy '(deadline-up priority-down))))
 
