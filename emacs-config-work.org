@@ -495,7 +495,7 @@ As work is different from home, I need specific templates.
                                ;; For meeting note taking
                                ("m" "Work meeting notes" entry
                                 (file+headline my-meetings-file "Meetings")
-                                "** %T - %?\n"
+                                "** %T - %?\n*** Notes\n\n*** Actions\n"
                                 :jump-to-captured t)
 
   			     ;; people meetings
