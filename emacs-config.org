@@ -2105,9 +2105,7 @@ This serves to resize the windows
     (pdf-tools-install t))
 
   (use-package saveplace-pdf-view
-    :ensure t
-    :config
-    (save-place-mode 1))
+    :ensure t)
 #+end_src
 
 ** eshell improvements
