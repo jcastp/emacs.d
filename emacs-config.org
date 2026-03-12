@@ -425,7 +425,6 @@ This conflicts with orgmode archive =C-c $=.
     (add-to-list 'ispell-hunspell-dict-paths-alist '("spanish" "/usr/share/hunspell/es_ES.aff"))
     (ispell-set-spellchecker-params)
     (ispell-hunspell-add-multi-dic "en_US,es_ES")
-    (global-font-lock-mode t)
     :hook
     (text-mode . flyspell-mode))
 #+end_src
