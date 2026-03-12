@@ -1947,7 +1947,7 @@ We just need to load the languages.
     :ensure t
     :defer t
     :config
-    (add-hook 'prog-mode #'tree-sitter-mode) ; only used in prog-mode
+    (add-hook 'prog-mode-hook #'tree-sitter-mode) ; only used in prog-mode
     (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)) ; syntax highlighting
     
   (use-package tree-sitter-langs
