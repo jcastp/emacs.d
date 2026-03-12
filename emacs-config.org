@@ -1539,6 +1539,14 @@ Show the invisible markers, only when the cursor is on them.
     :hook (org-mode . org-appear-mode))
 #+end_src
 
+*** Disable org-lint flycheck checker
+Flycheck auto-enables =org-lint= in org buffers, which can be noisy. Disable it.
+
+#+begin_src emacs-lisp
+  (with-eval-after-load 'flycheck
+    (setq flycheck-checkers (delq 'org-lint flycheck-checkers)))
+#+end_src
+
 *** org-modern
 https://github.com/minad/org-modern
 
