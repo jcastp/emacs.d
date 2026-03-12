@@ -900,7 +900,7 @@ Then, always move focus to that right window."
 No audible bell, but visual one:
 #+begin_src emacs-lisp
   (setq ring-bell-function 'ignore)
-  (setq visible-bell t)
+  ;; (setq visible-bell t)
 #+end_src
 
 ** Line numbers
