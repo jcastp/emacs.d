@@ -471,6 +471,10 @@ I need a different custom agenda commands to see the tasks better.
 As work is different from home, I need specific templates.
 
 #+begin_src emacs-lisp
+  (defvar my/direct-reports nil
+    "List of direct reports for 1:1 capture templates. Loaded from my-data-dir.")
+  (load (expand-file-name "direct-reports.el" my-data-dir) t)
+
   (defvar my/capture-person nil
     "Employee name selected during org-capture, shared between target and template body.")
 
@@ -497,7 +501,7 @@ As work is different from home, I need specific templates.
   			     ("p" "1:1 meeting" entry
   			      (function (lambda ()
   					  (let ((person (completing-read "Employee: "
-  									 '("Miguel" "Ioana" "Nicolas" "Tom" "Chaitanya"))))
+  									 my/direct-reports)))
   					    (setq my/capture-person person)
   					    (find-file my-people-file)
   					    (goto-char (org-find-olp (list my-people-file person))))))
@@ -508,13 +512,12 @@ As work is different from home, I need specific templates.
   			     ("P" "People action item" entry
   			      (function (lambda ()
   					  (let ((person (completing-read "Employee: "
-  									 '("Miguel" "Ioana" "Nicolas" "Tom" "Chaitanya"))))
+  									 my/direct-reports)))
   					    (setq my/capture-person person)
   					    (find-file my-people-file)
   					    (goto-char (org-find-olp (list my-people-file person))))))
   			      "*** TODO [%(identity my/capture-person)] %<%Y-%m-%d %a %H:%M> %? :people:%(downcase my/capture-person):\n    DEADLINE: %^t"
   			      :jump-to-captured t)
-
   			     ))
 #+end_src
 
