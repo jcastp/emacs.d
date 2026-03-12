@@ -478,47 +478,52 @@ As work is different from home, I need specific templates.
   (defvar my/capture-person nil
     "Employee name selected during org-capture, shared between target and template body.")
 
-  (setq org-capture-templates'(
-                               ("i" "Inbox (work)" entry
-                                (file+headline my-work-file "Inbox")
-                                "** TODO %? %^g %^{EFFORT}p")
+  ;; Work owns the full template list — reset it, then add each entry.
+  (setq org-capture-templates '())
 
-                               ;; ("I" "New incident." entry
-                               ;;  (file+headline my-work-file "Incidents")
-                               ;;  "** TODO %?")
+  (add-to-list 'org-capture-templates
+               '("i" "Inbox (work)" entry
+                 (file+headline my-work-file "Inbox")
+                 "** TODO %? %^g %^{EFFORT}p"))
 
-                               ("b" "Backlog entry." entry
-                                (file+headline my-backlog-file "Backlog")
-                                "** TODO %?\n")
+  ;; ("I" "New incident." entry
+  ;;  (file+headline my-work-file "Incidents")
+  ;;  "** TODO %?")
 
-                               ;; For meeting note taking
-                               ("m" "Work meeting notes" entry
-                                (file+headline my-meetings-file "Meetings")
-                                "** %T - %?\n*** Notes\n\n*** Actions\n"
-                                :jump-to-captured t)
+  (add-to-list 'org-capture-templates
+               '("b" "Backlog entry." entry
+                 (file+headline my-backlog-file "Backlog")
+                 "** TODO %?\n"))
 
-  			     ;; people meetings
-  			     ("p" "1:1 meeting" entry
-  			      (function (lambda ()
-  					  (let ((person (completing-read "Employee: "
-  									 my/direct-reports)))
-  					    (setq my/capture-person person)
-  					    (find-file my-people-file)
-  					    (goto-char (org-find-olp (list my-people-file person))))))
-  			      "** %<%Y-%m-%d %a %H:%M> - follow-up\n*** Notes\n%?\n*** Actions\n"
-  			      :jump-to-captured t)
+  (add-to-list 'org-capture-templates
+               '("m" "Work meeting notes" entry
+                 (file+headline my-meetings-file "Meetings")
+                 "** %T - %?\n*** Notes\n\n*** Actions\n"
+                 :jump-to-captured t))
 
-  			     ;; And a quick action capture from within a 1:1 note:
-  			     ("P" "People action item" entry
-  			      (function (lambda ()
-  					  (let ((person (completing-read "Employee: "
-  									 my/direct-reports)))
-  					    (setq my/capture-person person)
-  					    (find-file my-people-file)
-  					    (goto-char (org-find-olp (list my-people-file person))))))
-  			      "*** TODO [%(identity my/capture-person)] %<%Y-%m-%d %a %H:%M> %? :people:%(downcase my/capture-person):\n    DEADLINE: %^t"
-  			      :jump-to-captured t)
-  			     ))
+  ;; people meetings
+  (add-to-list 'org-capture-templates
+  	     '("p" "1:1 meeting" entry
+  	       (function (lambda ()
+  			   (let ((person (completing-read "Employee: "
+  							  my/direct-reports)))
+  			     (setq my/capture-person person)
+  			     (find-file my-people-file)
+  			     (goto-char (org-find-olp (list my-people-file person))))))
+  	       "** %<%Y-%m-%d %a %H:%M> - follow-up\n*** Notes\n%?\n*** Actions\n"
+  	       :jump-to-captured t))
+
+  ;; And a quick action capture from within a 1:1 note:
+  (add-to-list 'org-capture-templates
+  	     '("P" "People action item" entry
+  	       (function (lambda ()
+  			   (let ((person (completing-read "Employee: "
+  							  my/direct-reports)))
+  			     (setq my/capture-person person)
+  			     (find-file my-people-file)
+  			     (goto-char (org-find-olp (list my-people-file person))))))
+  	       "*** TODO [%(identity my/capture-person)] %<%Y-%m-%d %a %H:%M> %? :people:%(downcase my/capture-person):\n    DEADLINE: %^t"
+  	       :jump-to-captured t))
 #+end_src
 
 * TODO org-jira integration
