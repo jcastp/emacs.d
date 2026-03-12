@@ -1506,17 +1506,6 @@ https://lucidmanager.org/productivity/ricing-org-mode/
 
   ;; Change the ellipsis
   (setq org-ellipsis "…")
-
-  ;; Add frame borders and window dividers
-  (modify-all-frames-parameters
-   '((right-divider-width . 10)
-     (internal-border-width . 10)))
-  (dolist (face '(window-divider
-                  window-divider-first-pixel
-                  window-divider-last-pixel))
-    (face-spec-reset-face face)
-    (set-face-foreground face (face-attribute 'default :background)))
-  (set-face-background 'fringe (face-attribute 'default :background))
 #+end_src
 
 *** Org with spaces instead of the asterisks
