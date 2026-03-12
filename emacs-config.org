@@ -1888,14 +1888,14 @@ Opens a random org-roam node:
   (defun my/random-roam-node ()
     "Opens a random org-roam node."
     (interactive)
-    (setq todo-nodes
-          (org-roam-db-query
-           [:select [nodes:file]
-                    :from tags
-                    :left-join nodes
-                    :on (= tags:node-id nodes:id)
-                    ]))
-    (find-file (car (nth (random (length todo-nodes)) todo-nodes))))
+    (let ((todo-nodes
+           (org-roam-db-query
+            [:select [nodes:file]
+                     :from tags
+                     :left-join nodes
+                     :on (= tags:node-id nodes:id)
+                     ])))
+      (find-file (car (nth (random (length todo-nodes)) todo-nodes)))))
 
   (global-set-key (kbd "C-c n R") 'my/random-roam-node)
 #+end_src
@@ -1905,14 +1905,14 @@ Opens a random org-roam node with the roamtag tag (maps to a TODO entry):
   (defun my/random-roam-todo-node ()
     "Opens a random org-roam node with the roamtag tag."
     (interactive)
-    (setq todo-nodes
-          (org-roam-db-query
-           [:select [nodes:file]
-                    :from tags
-                    :left-join nodes
-                    :on (= tags:node-id nodes:id)
-                    :where (like tag (quote "%\"roamtag\"%"))]))
-    (find-file (car (nth (random (length todo-nodes)) todo-nodes))))
+    (let ((todo-nodes
+           (org-roam-db-query
+            [:select [nodes:file]
+                     :from tags
+                     :left-join nodes
+                     :on (= tags:node-id nodes:id)
+                     :where (like tag (quote "%\"roamtag\"%"))])))
+      (find-file (car (nth (random (length todo-nodes)) todo-nodes)))))
 
   (global-set-key (kbd "C-c n T") 'my/random-roam-todo-node)
 #+end_src
