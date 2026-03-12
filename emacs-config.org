@@ -41,12 +41,6 @@ https://github.com/dgutov/diff-hl
     (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
 #+end_src
 * General config
-** Unmap the C-z key
-Unmap the C-z key, so no way to minimize or suspend emacs accidentally.
-#+begin_src emacs-lisp
-  (global-unset-key (kbd "C-z"))
-#+end_src
-
 ** Garbage collection
 Fine tune the garbage collection.
 #+begin_src emacs-lisp
