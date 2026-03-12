@@ -393,13 +393,6 @@ I need a different custom agenda commands to see the tasks better.
      			    (org-agenda-sorting-strategy '(ts-up))
      			    (org-agenda-prefix-format " %i %-16:c ")))
 
-     		;; Tasks with no explicit priority set (default B = never touched)
-     		(tags-todo "PRIORITY=\"B\""
-     			   ((org-agenda-overriding-header "[ NEEDS PRIORITY DECISION ]")
-     			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
-     			    (org-agenda-sorting-strategy '(ts-up))
-     			    (org-agenda-prefix-format " %i %-16:c ")))
-
      		;; Tasks without effort: cannot be scheduled
      		(tags-todo "EFFORT=\"\""
      			   ((org-agenda-overriding-header "[ NEEDS EFFORT ESTIMATE ]")
