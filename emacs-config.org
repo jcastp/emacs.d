@@ -1917,6 +1917,57 @@ Opens a random org-roam node with the roamtag tag (maps to a TODO entry):
   (global-set-key (kbd "C-c n T") 'my/random-roam-todo-node)
 #+end_src
 
+** org-roam utility functions
+
+#+begin_src emacs-lisp
+  (defun my/org-roam-orphans ()
+    "List notes with no backlinks (orphaned nodes) and visit the selected one."
+    (interactive)
+    (let ((orphans (org-roam-db-query
+                    [:select [nodes:title nodes:file nodes:id]
+                     :from nodes
+                     :left-join links :on (= links:dest nodes:id)
+                     :where (is links:dest nil)])))
+      (if (not orphans)
+          (message "No orphaned notes found")
+        (let* ((choice (completing-read
+                        (format "Orphaned notes (%d): " (length orphans))
+                        (mapcar #'car orphans) nil t))
+               (entry (cl-find choice orphans :key #'car :test #'string=)))
+          (find-file (cadr entry))))))
+
+  (defun my/org-roam-stale-notes ()
+    "List notes not modified in the last 90 days and visit the selected one.
+`mtime' lives on the `files' table, not `nodes', so we join and filter in
+Elisp using `float-time' to handle org-roam's stored time format."
+    (interactive)
+    (let* ((cutoff (- (float-time) (* 90 86400.0)))
+           (rows (org-roam-db-query
+                  [:select [nodes:title nodes:file files:mtime]
+                   :from nodes
+                   :join files :on (= nodes:file files:file)]))
+           (stale (seq-filter
+                   (lambda (row) (< (float-time (nth 2 row)) cutoff))
+                   rows)))
+      (if (not stale)
+          (message "No stale notes found")
+        (let* ((choice (completing-read
+                        (format "Stale notes (%d): " (length stale))
+                        (mapcar #'car stale) nil t))
+               (entry (cl-find choice stale :key #'car :test #'string=)))
+          (find-file (cadr entry))))))
+
+  (defun my/org-roam-creative-prompt ()
+    "Generate a random creative connection between two notes."
+    (interactive)
+    (let* ((nodes (org-roam-node-list))
+           (node1 (nth (random (length nodes)) nodes))
+           (node2 (nth (random (length nodes)) nodes)))
+      (message "Connect '%s' to '%s'"
+               (org-roam-node-title node1)
+               (org-roam-node-title node2))))
+#+end_src
+
 * Programming
 ** General
 
@@ -2305,7 +2356,7 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
   (message "finishing loading my keymap")
 #+end_src
 
-* Export config :noexport:ignore:
+* Export config                                                          :noexport:ignore:
 # ############################
 # General options
 # ############################
