@@ -423,15 +423,9 @@ I need a different custom agenda commands to see the tasks better.
   		 )
   	       )
      	     )
-
-  ;; Search for tasks that have no EFFORT set
-  (add-to-list 'org-agenda-custom-commands
-               '("e" "Tasks without EFFORT"
-                 tags-todo "EFFORT=\"\""
-                 ((org-agenda-overriding-header "Tasks missing effort estimates"))))
 #+end_src
 
-* TODO org-super-agenda config
+* org-super-agenda config
 #+begin_src emacs-lisp
   (org-super-agenda-mode 1)
 
