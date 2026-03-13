@@ -18,6 +18,14 @@ It is supposed to run over the generic emacs config, and overwrites that config 
 
   (defvar my-people-file (concat my-work-dir "work_people.org")
     "Employee 1:1 meeting notes")
+
+  ;; this file includes, as of now:
+  ;; - my reports
+  ;; - my company's Jira URL
+  (defvar my-work-info-file (concat my-work-dir "company_info.el")
+    "Varied information about my company.")
+  ;; load the information for our company
+  (load my-work-info-file t)
 #+end_src
 
 * Clear theme
@@ -471,9 +479,11 @@ I need a different custom agenda commands to see the tasks better.
 As work is different from home, I need specific templates.
 
 #+begin_src emacs-lisp
-  (defvar my/direct-reports nil
-    "List of direct reports for 1:1 capture templates. Loaded from my-data-dir.")
-  (load (expand-file-name "direct-reports.el" my-data-dir) t)
+  ;; (defvar my/direct-reports nil
+  ;;   "List of direct reports for 1:1 capture templates. Loaded from my-data-dir.")
+  ;; (defvar my/jira-url nil
+  ;;   "Jira instance URL. Loaded from my-data-dir, not committed to git.")
+
 
   (defvar my/capture-person nil
     "Employee name selected during org-capture, shared between target and template body.")
@@ -545,12 +555,12 @@ As work is different from home, I need specific templates.
            ("C-q j m" . org-jira-add-comment)
            ("C-q j e" . org-jira-update-comment))
     :config
-    (setq jiralib-url "https://jira.tools.3stripes.net")
+    (setq jiralib-url my/jira-url)
     (setq jiralib-target-api-version 2)
     (setq jiralib-token
       	(cons "Authorization"
                 (concat "Bearer " (auth-source-pick-first-password
-      				 :host "https://jira.tools.3stripes.net"))))
+      				 :host my/jira-url))))
     
     ;; custom Jira queries
     (setq org-jira-custom-jqls
