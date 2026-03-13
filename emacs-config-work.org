@@ -589,6 +589,15 @@ This doesn't work in the auth part.
     )
 #+end_src
 
+* org-babel languages
+Activate a minimal set of babel languages for use in work org documents.
+
+#+begin_src emacs-lisp
+  (org-babel-do-load-languages 'org-babel-load-languages
+                               '((shell . t)
+                                 (python . t)))
+#+end_src
+
 * Load the task list for work
 This will automatically open the relevant file to start working right away:
 
