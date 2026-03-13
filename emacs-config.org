@@ -1421,12 +1421,12 @@ Put a note or a timestamp when something changes. For example:
        :foreground "#fec43f" :background "#4a3000" :weight bold))
     "Face for BLOCKED/HOLD keywords.")
 
-  (defface my/org-todo-cancelled
+  (defface my/org-todo-canceled
     '((((class color) (background light))
        :foreground "#505050" :background "#e8e0f0" :strike-through t)
       (((class color) (background dark))
        :foreground "#b0a0b8" :background "#2e2540" :strike-through t))
-    "Face for CANCELLED keyword.")
+    "Face for CANCELED keyword.")
 
   (defface my/org-todo-done
     '((((class color) (background light))
@@ -1441,7 +1441,7 @@ Put a note or a timestamp when something changes. For example:
           ("NEXT"      . my/org-todo-next)
           ("BLOCKED"   . my/org-todo-blocked)
           ("HOLD"      . my/org-todo-blocked)
-          ("CANCELLED" . my/org-todo-cancelled)
+          ("CANCELED" . my/org-todo-canceled)
           ("DONE"      . my/org-todo-done)))
 #+end_src
 
