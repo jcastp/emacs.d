@@ -593,5 +593,6 @@ This doesn't work in the auth part.
 This will automatically open the relevant file to start working right away:
 
 #+begin_src emacs-lisp
-  (find-file my-work-file)
+  (when (file-exists-p my-work-file)
+    (find-file my-work-file))
 #+end_src
