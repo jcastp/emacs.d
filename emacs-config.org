@@ -44,14 +44,15 @@ https://github.com/dgutov/diff-hl
 ** Garbage collection
 Fine tune the garbage collection.
 #+begin_src emacs-lisp
-   (use-package gcmh
-    :ensure t
-    :diminish gcmh-mode
-    :custom
-    (gcmh-mode 1)
-    (gcmh-idle-delay 10)
-    (gcmh-high-cons-threshold (* 100 1024 1024))
-    (gc-cons-percentage 0.8))
+  (use-package gcmh
+   :ensure t
+   :diminish gcmh-mode
+   :custom
+   (gcmh-idle-delay 10)
+   (gcmh-high-cons-threshold (* 100 1024 1024))
+   (gc-cons-percentage 0.8)
+   :config
+   (gcmh-mode 1))
 #+end_src
 
 ** Alternative and better C-g function
