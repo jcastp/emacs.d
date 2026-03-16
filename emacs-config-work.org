@@ -35,6 +35,15 @@ I use a clear theme.
   (consult-theme 'modus-operandi-tinted)
 #+end_src
 
+* Work environment visual indicators
+Deep blue cursor, left fringe, and frame title prefix to distinguish work from personal instances.
+
+#+begin_src emacs-lisp
+  (set-cursor-color "#00008B")
+  (set-face-background 'fringe "#00008B")
+  (setq-default frame-title-format "[WORK] %b - (%f)")
+#+end_src
+
 * recent files for work
 #+begin_src emacs-lisp
   (recentf-mode 1)
