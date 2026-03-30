@@ -1995,37 +1995,33 @@ Check language syntax on the fly.
 #+end_src
 
 ** tree-sitter config
-Tree-Sitter is included in newer versions of emacs.x
-We just need to load the languages.
+Tree-Sitter is built into Emacs 29+. We use =treesit-auto= to manage grammars
+and automatically remap major modes to their =*-ts-mode= variants.
+Note: =emacs-lisp-ts-mode= does not exist yet upstream.
 
 #+begin_src emacs-lisp
-  (use-package tree-sitter
+  (use-package treesit-auto
     :ensure t
-    :defer t
+    :custom
+    (treesit-auto-install 'prompt)
     :config
-    (add-hook 'prog-mode-hook #'tree-sitter-mode) ; only used in prog-mode
-    (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)) ; syntax highlighting
-    
-  (use-package tree-sitter-langs
-    :ensure t
-    :after tree-sitter)
+    (treesit-auto-add-to-auto-mode-alist '(python))
+    (global-treesit-auto-mode))
 #+end_src
 
 ts-fold to fold code in a convenient way.
 
 #+begin_src emacs-lisp
-  ;; to fold code blocks based on tree-sitter
-  (use-package ts-fold
-    :vc (:url "https://github.com/emacs-tree-sitter/ts-fold"
-  	    :branch "main")
+  (use-package treesit-fold
+    :vc (:url "https://github.com/emacs-tree-sitter/treesit-fold"
+  	    :branch "master")
     :bind
-    ("C-<return>" . ts-fold-toggle)
-    ("C-M-<return>". ts-fold-close-all)
+    ("C-<return>" . treesit-fold-toggle)
+    ("C-M-<return>" . treesit-fold-close-all)
     :hook
-    ((prog-mode-hook . ts-fold-mode)
-     (ts-fold-mode . ts-fold-indicators-mode))
+    (prog-mode . treesit-fold-mode)
     :config
-    (setq ts-fold-line-count-show t))
+    (setq treesit-fold-line-count-show t))
 #+end_src
 ** eglot configuration
 Configuring eglot to work with vanilla python and its tree-sitter enabled mode:
