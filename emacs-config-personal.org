@@ -1319,7 +1319,6 @@ Load the org-scribe package. Information is [[https://codeberg.org/jcastp/org-sc
    	    :branch "main"
    	    :rev :newest)
     :after org
-    :hook (org-mode . org-scribe-mode)
     :config
     ;; Customize settings
     (setq my-org-scribe-env-work-theme 'poet)
