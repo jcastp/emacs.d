@@ -1313,12 +1313,14 @@ Load the org-scribe package. Information is [[https://codeberg.org/jcastp/org-sc
 #+begin_src emacs-lisp
   ;; testing purposes. It will change once the package is ready
   ;; (load-file "~/Nextcloud/escritura/software/org-scribe/org-scribe.el")
-
+  (use-package ts)
   (use-package org-scribe
+    :ensure t
     :vc (:url "https://codeberg.org/jcastp/org-scribe"
-   	    :branch "main"
-   	    :rev :newest)
+     	    :branch "development"
+     	    :rev :newest)
     :after org
+    :demand t
     :config
     ;; Customize settings
     (setq my-org-scribe-env-work-theme 'poet)
