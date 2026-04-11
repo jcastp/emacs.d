@@ -1292,7 +1292,7 @@ After Org finishes generating the export, the filter org-export-replace-scene-br
 Here, I document all the config related to my writing.
 
 Load the org-context-extended code, that adds helper functions and a flexible prose word count function:
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package org-context-extended
     :ensure t
     :vc (:url "https://codeberg.org/jcastp/org-context-extended"
@@ -1301,7 +1301,7 @@ Load the org-context-extended code, that adds helper functions and a flexible pr
 #+end_src
 
 Load a custom implementation of the org-tracktable package, using the org-context-extended word counting function:
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package org-tracktable
     :ensure t
     :vc (:url "https://codeberg.org/jcastp/org-tracktable"
@@ -1310,7 +1310,7 @@ Load a custom implementation of the org-tracktable package, using the org-contex
 #+end_src
 
 Load the org-scribe package. Information is [[https://codeberg.org/jcastp/org-scribe][here]].
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   ;; testing purposes. It will change once the package is ready
   ;; (load-file "~/Nextcloud/escritura/software/org-scribe/org-scribe.el")
 
@@ -1332,8 +1332,8 @@ Load the org-scribe package. Information is [[https://codeberg.org/jcastp/org-sc
 
 ** org-scribe-planner
 Load the org-scribe-planner package
-#+begin_src emacs-lisp
-  (use-package org-scribe-planner
+#+begin_src emacs-lisp :tangle no
+  (use-package org-scribe-planner 
   :vc (:url "https://codeberg.org/jcastp/org-scribe-planner"
   	    :branch "main"
   	    :rev :newest)

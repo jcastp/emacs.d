@@ -2000,12 +2000,11 @@ Check language syntax on the fly.
 Tree-Sitter is included in newer versions of emacs.x
 We just need to load the languages.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp 
   (use-package tree-sitter
     :ensure t
-    :defer t
     :config
-    (add-hook 'prog-mode-hook #'tree-sitter-mode) ; only used in prog-mode
+    (global-tree-sitter-mode)
     (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)) ; syntax highlighting
     
   (use-package tree-sitter-langs
@@ -2017,6 +2016,9 @@ ts-fold to fold code in a convenient way.
 
 #+begin_src emacs-lisp
   ;; to fold code blocks based on tree-sitter
+  (use-package fringe-helper
+    :ensure t)
+
   (use-package ts-fold
     :vc (:url "https://github.com/emacs-tree-sitter/ts-fold"
   	    :branch "main")
@@ -2167,7 +2169,7 @@ Here there will be all the configs I'm testing, before committing them to the ma
 https://github.com/alphapapa/hammy.el
 Time intervals, such as pomodoro.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package hammy
     :ensure t
     :config
@@ -2175,7 +2177,7 @@ Time intervals, such as pomodoro.
 #+end_src
 
 Define the classic pomodoro timer:
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (hammy-define (propertize "🍅" 'face '(:foreground "tomato"))
     :documentation "The classic pomodoro timer."
     :intervals
