@@ -2046,42 +2046,24 @@ GNUplot for emacs, to use in plotting graphics from tables.
     :defer t)
 #+end_src
 
-** hydra
-Use of hydra for some purposes.
-
-*** hydra for resizing windows
-This serves to resize the windows
+** Window resize menu
+Using built-in =transient= instead of =hydra=.
 
 #+begin_src emacs-lisp
-  (use-package hydra
-    :ensure t
-    :config
-    (global-unset-key (kbd "C-c k"))
-    (global-set-key
-     (kbd "C-c k")
-     (defhydra hydra-resize
-       (:body-pre (next-line))
-       "
-  ^Resize^
-  ^^^^^^-------------------------------------------------------
-  _f_: shrink horizontally         _s_: swap windows
-  _b_: enlarge horizontally        _r_: rotate layout
-  _p_: shrink vertical
-  _n_: enlarge vertical
-  "
+  (transient-define-prefix my/resize-transient ()
+    "Resize and arrange windows."
+    [["Horizontal"
+      ("f" "shrink" shrink-window-horizontally :transient t)
+      ("b" "enlarge" enlarge-window-horizontally :transient t)]
+     ["Vertical"
+      ("p" "enlarge" enlarge-window :transient t)
+      ("n" "shrink" shrink-window :transient t)]
+     ["Other"
+      ("s" "swap" ace-swap-window)
+      ("r" "rotate" rotate-layout)
+      ("q" "quit" transient-quit-one)]])
 
-       ;; ("<left>" shrink-window-horizontally)
-       ;; ("<right>" enlarge-window-horizontally)
-       ;; ("<up>" enlarge-window)
-       ;; ("<down>" shrink-window)
-       ("f" shrink-window-horizontally)
-       ("b" enlarge-window-horizontally)
-       ("p" enlarge-window)
-       ("n" shrink-window)
-       ("s" ace-swap-window)
-       ("r" rotate-layout)
-
-       ("q" nil "quit"))))
+  (global-set-key (kbd "C-c k") #'my/resize-transient)
 #+end_src
 
 ** pdf-tools
