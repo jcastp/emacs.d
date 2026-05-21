@@ -511,7 +511,7 @@ https://github.com/minad/consult
     :demand t
     :bind (
            ;; misc commands
-           ;;("C-x b" . consult-buffer) ;; defined in perspective section
+           ("C-x b" . consult-buffer)
            ("C-x r b" . consult-bookmark)
            ("M-y" . consult-yank-from-kill-ring)
   	 ;;("C-c d t" . consult-theme)
@@ -732,64 +732,65 @@ https://github.com/abo-abo/avy
     :ensure t)
 #+end_src
 
-** perspective.el
-https://github.com/nex3/perspective-el
+** tab-bar workspaces
+Built-in since Emacs 27. Replaces =perspective=.
+Session save/restore uses =window-state-get/put= plus the list of open files.
+
+Note: existing =perspectives/= files are in perspective's proprietary format and
+cannot be read by the new loader. Recreate sessions once with =C-c w s= after
+setting up each workspace.
+
 #+begin_src emacs-lisp
-  (use-package perspective
-    :ensure t
-    :custom
-    (persp-mode-prefix-key (kbd "C-c w"))  ; pick your own prefix key here
-    :bind
-    ("C-c w w" . persp-switch)
-    ("C-c w b" . persp-ibuffer)         ; or use a nicer switcher, see below
-    ;; Redefining the buffer search to align with persp philosophy.
-    ("C-x b" . persp-switch-to-buffer*)
-    ("C-x C-b" . persp-switch-to-buffer)
-    :init
-    (persp-mode)
+  (use-package tab-bar
+    :ensure nil
     :config
-    ;; sort the persps by the creation time
-    (setq persp-sort 'created))
-#+end_src
+    (setq tab-bar-new-tab-choice t)
+    (setq tab-bar-close-button-show nil)
+    (setq tab-bar-new-button-show nil)
+    (tab-bar-mode 1)
+    :bind
+    ("C-c w w" . tab-bar-switch-to-tab)
+    ("C-c w n" . tab-bar-new-tab)
+    ("C-c w r" . tab-bar-rename-tab)
+    ("C-c w k" . tab-bar-close-tab)
+    ("C-x C-b" . ibuffer))
 
-*** TODO automatic load some perspectives
-This function allows to load my defined perspectives and sessions.
+  (defvar my-tab-session-dir (expand-file-name "tab-sessions/" my-data-dir)
+    "Directory for saved tab sessions.")
 
-#+begin_src emacs-lisp
-  (with-eval-after-load 'perspective
-    ;; where I define my own perspective saved files
-    (setq my-persp-save-dir (expand-file-name  "perspectives/" my-data-dir))
+  (defun my/tab-session-save (name)
+    "Save current window layout and open files as a named tab session."
+    (interactive "sSession name: ")
+    (let ((file (expand-file-name name my-tab-session-dir))
+          (buffers (delq nil (mapcar #'buffer-file-name (buffer-list))))
+          (state (window-state-get (frame-root-window))))
+      (make-directory my-tab-session-dir t)
+      (with-temp-file file
+        (print (list :buffers buffers :window-state state) (current-buffer)))
+      (message "Saved session: %s" name)))
 
-    ;; a function to load a perspective saved file from a given directory
-    (defun my/load-perspective ()
-      "Given a directory with perspective saved files, the user chooses one, and it automatically
-    loads it."
-      ;; 
-      (interactive)
-      (let ((file (read-file-name "Select a file: " my-persp-save-dir)))
-        (persp-state-load file)
-        ;; show a message
-        (message "You chose: %s" file)))
+  (defun my/tab-session-load (file)
+    "Load a named tab session from FILE, opening a new tab if needed."
+    (interactive (list (read-file-name "Load session: " my-tab-session-dir)))
+    (let* ((data (with-temp-buffer
+                   (insert-file-contents file)
+                   (read (current-buffer))))
+           (buffers (plist-get data :buffers))
+           (state   (plist-get data :window-state))
+           (tab-name (file-name-base file)))
+      (if (member tab-name (mapcar (lambda (tab) (alist-get 'name tab)) (tab-bar-tabs)))
+          (tab-bar-switch-to-tab tab-name)
+        (tab-bar-new-tab)
+        (tab-bar-rename-tab tab-name))
+      (dolist (f buffers)
+        (when (and f (file-exists-p f))
+          (find-file-noselect f)))
+      (when state
+        (window-state-put state (frame-root-window) 'safe))
+      (message "Loaded session: %s" tab-name)))
 
-    (define-key persp-mode-map (kbd "C-c w l") 'my/load-perspective))
-#+end_src
-
-But I want to automatically load some perspectives when I'm at home:
-#+begin_src emacs-lisp
-  (defvar my-persp-load nil
-    "Define if we want to load the personal persp.")
-
-  (if (and my-homeenvironment-p my-persp-load)
-      (progn
-        (with-eval-after-load 'org
-  	(defvar my-persp-files '(
-      				 "config-persp"
-      				 "tareas-persp"
-  				 "escritura-persp"
-      				 ))
-
-  	(dolist (my-file my-persp-files)
-  	  (persp-state-load (f-join my-persp-save-dir my-file))))))
+  (global-set-key (kbd "C-c w l") #'my/tab-session-load)
+  (global-set-key (kbd "C-c w s") #'my/tab-session-save)
 #+end_src
 
 * UI improvements
@@ -2274,7 +2275,7 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
     "c" (cons "personal config"
   	     (lambda ()
   	       (interactive)
-  	       (persp-state-load "~/Nextcloud/config/.emacs.d/perspectives/config-persp")))
+  	       (my/tab-session-load (expand-file-name "config" my-tab-session-dir))))
     "k" (cons "emacs keys"
   	(lambda ()
   	  (interactive)
@@ -2282,13 +2283,11 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
     "t" (cons "tasks file"
   	   (lambda ()
   	     (interactive)
-  	     (persp-state-load "~/Nextcloud/config/.emacs.d/perspectives/tareas-persp")))
-    "e" (cons "escritura persp"
+  	     (my/tab-session-load (expand-file-name "tareas" my-tab-session-dir))))
+    "e" (cons "escritura tab"
   	      (lambda ()
   		(interactive)
-  		(persp-state-load
-  		 (expand-file-name "escritura-persp"
-  				   my-persp-save-dir)))))
+  		(my/tab-session-load (expand-file-name "escritura" my-tab-session-dir)))))
 
   ;; general keybindings for my personal keymaps
   (defvar-keymap my/key-prefix-map
