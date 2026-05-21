@@ -1017,26 +1017,25 @@ It darkens the buffers I'm not using.
 #+end_src
 
 ** Highlighting the line when changing windows
+Using built-in =pulse.el= instead of the external =pulsar= package.
 #+begin_src emacs-lisp
-  (use-package pulsar
-    :after consult
-    :ensure t
-    :hook
-    (consult-after-jump . pulsar-recenter-top)
-    (consult-after-jump . pulsar-reveal-entry)
-    :config
-    (setq pulsar-pulse t)
-    (setq pulsar-delay 0.1)
-    (setq pulsar-iterations 10)
-    (setq pulsar-face 'pulsar-red)
-    (setq pulsar-highlight-face 'pulsar-yellow)
-    ;; integration with the `consult' package:
-    ;;(add-hook 'consult-after-jump-hook #'pulsar-recenter-top)
-    ;;(add-hook 'consult-after-jump-hook #'pulsar-reveal-entry)
-    ;; enable everywhere
-    (pulsar-global-mode 1)
-    :bind
-    ("C-x l" . pulsar-highlight-line))
+  (require 'pulse)
+
+  (defun my/pulse-line (&rest _)
+    "Briefly highlight the current line using built-in pulse.el."
+    (interactive)
+    (pulse-momentary-highlight-one-line (point)))
+
+  ;; Pulse after navigation commands
+  (dolist (cmd '(scroll-up-command scroll-down-command
+                 recenter-top-bottom other-window
+                 windmove-left windmove-right windmove-up windmove-down))
+    (advice-add cmd :after #'my/pulse-line))
+
+  ;; Pulse after consult jumps
+  (add-hook 'consult-after-jump-hook #'my/pulse-line)
+
+  (global-set-key (kbd "C-x l") #'my/pulse-line)
 #+end_src
 
 ** spacious padding
