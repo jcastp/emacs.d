@@ -1127,9 +1127,13 @@ https://github.com/daichirata/emacs-rotate
 
 * Fonts and themes
 ** Themes
-*** leuven themes
+*** themes
 #+begin_src emacs-lisp
   (use-package leuven-theme
+    :ensure t)
+  (use-package doric-themes
+    :ensure t)
+  (use-package ef-themes
     :ensure t)
 #+end_src
 
@@ -1171,12 +1175,6 @@ https://github.com/kunalb/poet
   (use-package poet-theme
     :ensure t
     :defer t)
-#+end_src
-
-*** doric themes
-#+begin_src emacs-lisp
-  (use-package doric-themes
-    :ensure t)
 #+end_src
 
 ** Font setup
