@@ -41,19 +41,6 @@ https://github.com/dgutov/diff-hl
     (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
 #+end_src
 * General config
-** Garbage collection
-Fine tune the garbage collection.
-#+begin_src emacs-lisp :tangle no
-  (use-package gcmh
-   :ensure t
-   :diminish gcmh-mode
-   :custom
-   (gcmh-idle-delay 10)
-   (gcmh-high-cons-threshold (* 100 1024 1024))
-   (gc-cons-percentage 0.8)
-   :config
-   (gcmh-mode 1))
-#+end_src
 
 ** Alternative and better C-g function
 https://emacsredux.com/blog/2025/06/01/let-s-make-keyboard-quit-smarter/
@@ -234,23 +221,6 @@ All the configurations needed for dired.
      (setq dired-listing-switches "-aBhl  --group-directories-first"))
  #+end_src
 
-*** dired subtree
-Show subdirectory contents with tab.
-
-From Prot's article - https://protesilaos.com/codelog/2024-11-28-basic-emacs-configuration/
-#+begin_src emacs-lisp :tangle no
-  (use-package dired-subtree
-    :ensure t
-    :after dired
-    :bind
-    ( :map dired-mode-map
-      ("<tab>" . dired-subtree-toggle)
-      ("TAB" . dired-subtree-toggle)
-      ("<backtab>" . dired-subtree-remove)
-      ("S-TAB" . dired-subtree-remove))
-    :config
-    (setq dired-subtree-use-backgrounds nil))
-#+end_src
 
 ** set firefox or librewolf as the default browser
 Setting firefox or librewolf as the default browser for opening http/s links.
@@ -300,59 +270,6 @@ Specially defined for spanish question and exclamation marks.
     (global-set-key (kbd "C-z") #'vundo))
 #+end_src
 
-** vlf related config
-Very large files loading.
-#+begin_src emacs-lisp :tangle no
-  ;; very large files support
-  (use-package vlf
-    :ensure t
-    :config
-    (require 'vlf-setup))
-#+end_src
-
-** openwith
-Open particular files with external applications.
-#+begin_src emacs-lisp :tangle no
-  (use-package openwith
-    :ensure t
-    :config
-    (when (require 'openwith nil 'noerror)
-      (setq openwith-associations
-            (list
-             ;; videos
-             (list (openwith-make-extension-regexp
-                    '("mpg" "mpeg" "mp3" "mp4"
-                      "avi" "wmv" "wav" "mov" "flv"
-                      "ogm" "ogg" "mkv"))
-                   "vlc"
-                   '(file))
-             ;; office documents
-             (list (openwith-make-extension-regexp
-                    '("doc" "docx" "xls" "xlsx" "ppt" "pptx"
-                      "odt" "ods" "odg" "odp" "fodg"
-                      "fods" "fodt"))
-                   "libreoffice"
-                   '(file))
-             ;; help documents
-             '("\\.lyx" "lyx" (file))
-             '("\\.chm" "kchmviewer" (file))
-             ;; pdf files
-             ;; (list (openwith-make-extension-regexp
-             ;;        '("pdf" "ps" "ps.gz" "dvi"))
-             ;;       "okular"
-             ;;       '(file))
-             ))
-      (openwith-mode 1)))
-#+end_src
-
-** free keys
-Shows the free keybinding. Useful to assign new keybindings to some new functions.
-#+begin_src emacs-lisp :tangle no
-  (use-package free-keys
-    :ensure t
-    :defer t
-    :commands (free-keys))
-#+end_src
 
 ** Which-key
 After pressing a key combo, it shows the key bindings associated.
@@ -360,16 +277,6 @@ After pressing a key combo, it shows the key bindings associated.
   (which-key-mode)
 #+end_src
 
-** expand region
-https://github.com/magnars/expand-region.el
-
-Select relevant regions incrementally.
-#+begin_src emacs-lisp :tangle no
-  (use-package expand-region
-    :ensure t
-    :config
-    (global-set-key (kbd "C-ñ") 'er/expand-region))
-#+end_src
 
 ** project.el configuration
 #+begin_src emacs-lisp
@@ -460,29 +367,6 @@ https://github.com/minad/vertico
     (vertico-mode))
 #+end_src
 
-*** vertico posframe
-#+begin_src emacs-lisp :tangle no
-  (use-package vertico-posframe
-    :ensure t
-    :after vertico
-    :init
-    (vertico-posframe-mode 1)
-    :config
-    (setq vertico-posframe-width 120)
-    (setq vertico-posframe-height 12)
-    (setq vertico-multiform-commands
-  	'((consult-line
-             posframe
-             (vertico-posframe-poshandler . posframe-poshandler-frame-top-center)
-             (vertico-posframe-border-width . 10)
-             ;; NOTE: This is useful when emacs is used in both in X and
-             ;; terminal, for posframe do not work well in terminal, so
-             ;; vertico-buffer-mode will be used as fallback at the
-             ;; moment.
-             (vertico-posframe-fallback-mode . vertico-buffer-mode))
-            (t posframe)))
-    (vertico-multiform-mode 1))
-#+end_src
 
 ** prescient
 For better auto completion suggestions:
@@ -868,17 +752,6 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
   (global-display-line-numbers-mode 1)
 #+end_src
 
-** Highlight indent guides
-Highlight the indent guides with a pipe character, so it's easier to see where we need to align the code.
-https://github.com/DarthFennec/highlight-indent-guides
-#+begin_src emacs-lisp :tangle no
-  (use-package highlight-indent-guides
-    :ensure t
-    :config
-    (setq highlight-indent-guides-method 'character)
-    (setq highlight-indent-guides-character ?\|)
-    (add-hook 'prog-mode-hook 'highlight-indent-guides-mode))
-#+end_src
 
 ** Long lines get wrapped
 Long lines get wrapped when they reach the edge. We activate it for all the buffers.
@@ -956,21 +829,6 @@ Doom modeline.
     (setq doom-modeline-time t))
 #+end_src
 
-** Dimmer
-It darkens the buffers I'm not using.
-#+begin_src emacs-lisp :tangle no
-  (use-package dimmer
-    :ensure t
-    :config
-    (dimmer-configure-which-key)
-    (dimmer-mode t)
-    (dimmer-configure-magit)
-    ;;(dimmer-configure-org)
-
-    ;; configure the dimmer
-    (setq dimmer-adjustment-mode :background)
-    (setq dimmer-fraction 0.1))
-#+end_src
 
 ** Highlighting the line when changing windows
 Using built-in =pulse.el= instead of the external =pulsar= package.
@@ -1065,20 +923,6 @@ https://github.com/daichirata/emacs-rotate
 #+end_src
 
 
-** TODO popper
-#+begin_src emacs-lisp :tangle no
-  (use-package popper 
-    :ensure t
-    :bind (("C-¡" . popper-toggle)
-  	 ("M-¡" . popper-cycle))
-    :init
-    (setq popper-reference-buffers
-  	'("\\*Messages\\*" "\\*Warnings\\*" "\\*Compile\\*"
-            "\\*eshell\\*" eshell-mode
-            "\\*Python\\*" inferior-python-mode
-            flycheck-error-list-mode))
-    (popper-mode 1))
-#+end_src
 
 * Fonts and themes
 ** Themes
@@ -1270,17 +1114,6 @@ To create and use internal valid and unique links in org-mode, we will use the =
   (setq org-id-locations-file (expand-file-name "org-id-locations" my-data-dir))
 #+end_src
 
-** org-toc
-Table of Contents for orgmode documents. I don't use it that much, but can be useful.
-
-https://github.com/snosov1/toc-org
-
-#+begin_src emacs-lisp :tangle no
-  (use-package toc-org
-    :ensure t
-    :config
-    (add-hook 'org-mode-hook 'toc-org-mode))
-#+end_src
 
 ** org-indent-mode on all the buffers
 I need to have the orgmode indented to see clearly where I am, so I enable it on every orgmode buffer.
@@ -1470,15 +1303,6 @@ Some people find it noisy and distracting that the Org headlines start with a po
   (setq org-startup-indented t)
 #+end_src
 
-*** org-appear
-Show the invisible markers, only when the cursor is on them.
-/Test/ this with *these* _examples_.
-
-#+begin_src emacs-lisp :tangle no
-  (use-package org-appear
-    :ensure t
-    :hook (org-mode . org-appear-mode))
-#+end_src
 
 *** Disable org-lint flycheck checker
 Flycheck auto-enables =org-lint= in org buffers, which can be noisy. Disable it.
@@ -1488,32 +1312,6 @@ Flycheck auto-enables =org-lint= in org buffers, which can be noisy. Disable it.
     (setq flycheck-checkers (delq 'org-lint flycheck-checkers)))
 #+end_src
 
-*** org-modern
-https://github.com/minad/org-modern
-
-#+begin_src emacs-lisp :tangle no
-  (use-package org-modern
-    :ensure t
-    :hook
-    (org-mode . org-modern-mode)
-    :custom
-    (org-modern-hide-stars 'leading)
-    (org-modern-table nil)
-    (org-modern-todo nil)
-    (org-modern-keyword nil)
-    (org-modern-timestamp nil)
-    ;; (org-modern-priority t)
-    (org-modern-checkbox nil)
-    (org-modern-tag t)
-    ;; (org-modern-block-name nil)
-    (org-modern-footnote nil)
-    (org-modern-internal-target nil)
-    (org-modern-radio-target nil)
-    ;; (org-modern-statistics nil)
-    ;; (org-modern-progress nil)
-    ;; The progress bar for task pending/completed is too wide for me
-    (org-modern-progress 8))
-#+end_src
 
 ** Orgmode extra packages
 *** TODO org-ql
@@ -1927,32 +1725,6 @@ Replaced flycheck — eglot uses flymake, so flycheck was redundant.
            ("C-c g l" . flymake-show-buffer-diagnostics)))
 #+end_src
 
-** tree-sitter config
-Tree-sitter is built into Emacs 29+. The external =tree-sitter= and
-=tree-sitter-langs= packages are not needed — use =python-ts-mode= and
-other =*-ts-mode= modes directly.
-
-ts-fold depends on the external tree-sitter package, so it is disabled.
-Native code folding alternative: =hs-minor-mode= (built-in).
-
-#+begin_src emacs-lisp :tangle no
-  ;; ts-fold disabled: depends on external tree-sitter which was removed.
-  ;; Alternative: (add-hook 'prog-mode-hook #'hs-minor-mode)
-  (use-package fringe-helper
-    :ensure t)
-
-  (use-package ts-fold
-    :vc (:url "https://github.com/emacs-tree-sitter/ts-fold"
-  	    :branch "main")
-    :bind
-    ("C-<return>" . ts-fold-toggle)
-    ("C-M-<return>". ts-fold-close-all)
-    :hook
-    ((prog-mode-hook . ts-fold-mode)
-     (ts-fold-mode . ts-fold-indicators-mode))
-    :config
-    (setq ts-fold-line-count-show t))
-#+end_src
 ** eglot configuration
 Configuring eglot to work with vanilla python and its tree-sitter enabled mode:
 #+begin_src emacs-lisp 
@@ -1993,14 +1765,6 @@ Use python3 to run code.
 #+end_src
 
 * Miscellanea
-** gnuplot
-GNUplot for emacs, to use in plotting graphics from tables.
-
-#+begin_src emacs-lisp :tangle no
-  (use-package gnuplot
-    :ensure t
-    :defer t)
-#+end_src
 
 ** Window resize menu
 Using built-in =transient= instead of =hydra=.
@@ -2069,42 +1833,6 @@ https://www.emacswiki.org/emacs/EshellMultipleEshellBuffers
 * Testing
 Here there will be all the configs I'm testing, before committing them to the main config.
 
-** TODO hammy - time intervals
-https://github.com/alphapapa/hammy.el
-Time intervals, such as pomodoro.
-
-#+begin_src emacs-lisp :tangle no
-  (use-package hammy
-    :ensure t
-    :config
-    (hammy-mode))
-#+end_src
-
-Define the classic pomodoro timer:
-#+begin_src emacs-lisp :tangle no
-  (hammy-define (propertize "🍅" 'face '(:foreground "tomato"))
-    :documentation "The classic pomodoro timer."
-    :intervals
-    (list
-     (interval :name "Work"
-               :duration "25 minutes"
-               :before (do (announce "Starting work time.")
-  			 (notify "Starting work time."))
-               :advance (do (announce "Break time!")
-                            (notify "Break time!")))
-     (interval :name "Break"
-               :duration (do (if (and (not (zerop cycles))
-                                      (zerop (mod cycles 3)))
-  			       ;; If a multiple of three cycles have
-  			       ;; elapsed, the fourth work period was
-  			       ;; just completed, so take a longer break.
-  			       "30 minutes"
-                               "5 minutes"))
-               :before (do (announce "Starting break time.")
-  			 (notify "Starting break time."))
-               :advance (do (announce "Break time is over!")
-                            (notify "Break time is over!")))))
-#+end_src
 ** TODO markdown mode
 #+begin_src emacs-lisp
   (use-package markdown-mode
@@ -2168,13 +1896,6 @@ This is the manual for it: https://kickingvegas.github.io/casual/index.html#SEC_
     )
 #+end_src
 
-** TODO show-font
-
-#+begin_src emacs-lisp :tangle no
-  (use-package show-font
-    :ensure t
-    :defer t)
-#+end_src
 
 * home related load and startup
 This will be loaded automatically when at home.
