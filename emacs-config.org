@@ -221,7 +221,6 @@ All the configurations needed for dired.
      (setq dired-listing-switches "-aBhl  --group-directories-first"))
  #+end_src
 
-
 ** set firefox or librewolf as the default browser
 Setting firefox or librewolf as the default browser for opening http/s links.
 #+begin_src emacs-lisp
@@ -270,13 +269,11 @@ Specially defined for spanish question and exclamation marks.
     (global-set-key (kbd "C-z") #'vundo))
 #+end_src
 
-
 ** Which-key
 After pressing a key combo, it shows the key bindings associated.
 #+begin_src emacs-lisp
   (which-key-mode)
 #+end_src
-
 
 ** project.el configuration
 #+begin_src emacs-lisp
@@ -366,7 +363,6 @@ https://github.com/minad/vertico
     (load "vertico-multiform.el")
     (vertico-mode))
 #+end_src
-
 
 ** prescient
 For better auto completion suggestions:
@@ -752,7 +748,6 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
   (global-display-line-numbers-mode 1)
 #+end_src
 
-
 ** Long lines get wrapped
 Long lines get wrapped when they reach the edge. We activate it for all the buffers.
 #+begin_src emacs-lisp
@@ -828,7 +823,6 @@ Doom modeline.
     ;; Whether display the time. It respects `display-time-mode'.
     (setq doom-modeline-time t))
 #+end_src
-
 
 ** Highlighting the line when changing windows
 Using built-in =pulse.el= instead of the external =pulsar= package.
@@ -921,8 +915,6 @@ https://github.com/daichirata/emacs-rotate
     :ensure t
     :defer t)
 #+end_src
-
-
 
 * Fonts and themes
 ** Themes
@@ -1114,7 +1106,6 @@ To create and use internal valid and unique links in org-mode, we will use the =
   (setq org-id-locations-file (expand-file-name "org-id-locations" my-data-dir))
 #+end_src
 
-
 ** org-indent-mode on all the buffers
 I need to have the orgmode indented to see clearly where I am, so I enable it on every orgmode buffer.
 #+begin_src emacs-lisp
@@ -1303,7 +1294,6 @@ Some people find it noisy and distracting that the Org headlines start with a po
   (setq org-startup-indented t)
 #+end_src
 
-
 *** Disable org-lint flycheck checker
 Flycheck auto-enables =org-lint= in org buffers, which can be noisy. Disable it.
 
@@ -1311,7 +1301,6 @@ Flycheck auto-enables =org-lint= in org buffers, which can be noisy. Disable it.
   (with-eval-after-load 'flycheck
     (setq flycheck-checkers (delq 'org-lint flycheck-checkers)))
 #+end_src
-
 
 ** Orgmode extra packages
 *** TODO org-ql
@@ -1895,7 +1884,6 @@ This is the manual for it: https://kickingvegas.github.io/casual/index.html#SEC_
     ;;(keymap-set org-table-fedit-map "M-m" #'casual-org-table-fedit-tmenu)
     )
 #+end_src
-
 
 * home related load and startup
 This will be loaded automatically when at home.

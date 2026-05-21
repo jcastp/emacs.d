@@ -44,7 +44,6 @@ All the config related to the bookmarks.
   (setq bookmark-save-flag 1)  ;save bookmarks to .emacs.bmk after each entry
 #+end_src
 
-
 ** My reading list file
 #+begin_src emacs-lisp
   ;; where my book list will be stored
@@ -146,7 +145,6 @@ Function to change between dark and clear themes, based on past variables.
   (global-set-key (kbd "C-c 0") 'my/theme-changer)
 #+end_src
   
-
 ** fontaine presets for personal
 #+begin_src emacs-lisp
   (setq fontaine-presets
@@ -1153,14 +1151,6 @@ Esto es una prueba de cómo funciona la traducción.
   	 )))
 #+end_src
 
-*** TODO powerthesaurus
-https://github.com/SavchenkoValeriy/emacs-powerthesaurus
-
-#+begin_src emacs-lisp
-  (use-package powerthesaurus
-    :ensure t)
-#+end_src
-
 *** org-remark for text annotations
 Text annotations in org mode
 https://github.com/nobiot/org-remark
@@ -1292,7 +1282,6 @@ You insert {{{scene-break}}} wherever you want a scene break.
 The macro expands to the literal text SCENE-BREAK.
 
 After Org finishes generating the export, the filter org-export-replace-scene-breaks replaces all SCENE-BREAK markers with the correct text (three newlines, <br>, etc.).
-
 
 ** Create a story file on the fly
 Sometimes I want to create a story prompt on the fly. These functions allow for creating the prompts and the file, so I can immediately start writing.
@@ -1513,7 +1502,6 @@ RSS read in emacs.
       (elfeed)
       (elfeed-update)))
 #+end_src
-
 
 ** tab-bar autosave on exit
 Save all named tabs as session files when exiting Emacs.
