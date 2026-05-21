@@ -18,8 +18,8 @@ Git control version.
 https://cestlaz-nikola.github.io/posts/using-emacs-47-magit/
 
 #+begin_src emacs-lisp
-  (use-package transient
-    :ensure t)
+  ;; (use-package transient
+  ;;   :ensure t)
 
   (use-package magit
     :ensure t
@@ -43,7 +43,7 @@ https://github.com/dgutov/diff-hl
 * General config
 ** Garbage collection
 Fine tune the garbage collection.
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package gcmh
    :ensure t
    :diminish gcmh-mode
@@ -238,7 +238,7 @@ All the configurations needed for dired.
 Show subdirectory contents with tab.
 
 From Prot's article - https://protesilaos.com/codelog/2024-11-28-basic-emacs-configuration/
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package dired-subtree
     :ensure t
     :after dired
@@ -302,7 +302,7 @@ Specially defined for spanish question and exclamation marks.
 
 ** vlf related config
 Very large files loading.
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   ;; very large files support
   (use-package vlf
     :ensure t
@@ -312,7 +312,7 @@ Very large files loading.
 
 ** openwith
 Open particular files with external applications.
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package openwith
     :ensure t
     :config
@@ -347,7 +347,7 @@ Open particular files with external applications.
 
 ** free keys
 Shows the free keybinding. Useful to assign new keybindings to some new functions.
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package free-keys
     :ensure t
     :defer t
@@ -357,26 +357,14 @@ Shows the free keybinding. Useful to assign new keybindings to some new function
 ** Which-key
 After pressing a key combo, it shows the key bindings associated.
 #+begin_src emacs-lisp
-  ;; only use use-package for versions under 30, as version >30 have which-key as a default
-  (if (version<= "30" emacs-version)
-      (which-key-mode)
-    (progn (
-  	  (use-package which-key
-              :ensure t
-              :config
-              (which-key-mode)
-              ))))
-
-   (use-package which-key-posframe
-     :config
-     (which-key-posframe-mode))
+  (which-key-mode)
 #+end_src
 
 ** expand region
 https://github.com/magnars/expand-region.el
 
 Select relevant regions incrementally.
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package expand-region
     :ensure t
     :config
@@ -473,7 +461,7 @@ https://github.com/minad/vertico
 #+end_src
 
 *** vertico posframe
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package vertico-posframe
     :ensure t
     :after vertico
@@ -723,7 +711,7 @@ Imenu shows the outline of your file as a browsable sidebar in another window.
 To better manage more buffers in screen, as seen here: https://github.com/abo-abo/ace-window
 
 Used in the hydra snippets.
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp 
   (use-package ace-window
     :ensure t
     :config
@@ -921,7 +909,7 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
 ** Highlight indent guides
 Highlight the indent guides with a pipe character, so it's easier to see where we need to align the code.
 https://github.com/DarthFennec/highlight-indent-guides
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package highlight-indent-guides
     :ensure t
     :config
@@ -1014,7 +1002,7 @@ Doom modeline.
 
 ** Dimmer
 It darkens the buffers I'm not using.
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package dimmer
     :ensure t
     :config
@@ -1123,8 +1111,8 @@ https://github.com/daichirata/emacs-rotate
 
 
 ** TODO popper
-#+begin_src emacs-lisp
-  (use-package popper
+#+begin_src emacs-lisp :tangle no
+  (use-package popper 
     :ensure t
     :bind (("C-¡" . popper-toggle)
   	 ("M-¡" . popper-cycle))
@@ -1149,7 +1137,7 @@ https://github.com/daichirata/emacs-rotate
 Protesilaos very good themes. These themes are already included in the standard emacs, so we can get rid of the use-package definition, and retain only the config.
 #+begin_src emacs-lisp
   (use-package modus-themes
-    :ensure t
+    :ensure nil
     :config
     ;; Add all your customizations prior to loading the themes
     (setq
@@ -1175,12 +1163,6 @@ Protesilaos very good themes. These themes are already included in the standard 
        (t . (monochrome no-bold 1.0)))
      ;; scales up the headings
      modus-themes-scale-headings t))
-#+end_src
-
-*** Protesilaos ef themes
-#+begin_src emacs-lisp
-  (use-package ef-themes
-    :ensure t)
 #+end_src
 
 *** poet theme
@@ -1340,7 +1322,7 @@ Table of Contents for orgmode documents. I don't use it that much, but can be us
 
 https://github.com/snosov1/toc-org
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package toc-org
     :ensure t
     :config
@@ -1539,7 +1521,7 @@ Some people find it noisy and distracting that the Org headlines start with a po
 Show the invisible markers, only when the cursor is on them.
 /Test/ this with *these* _examples_.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package org-appear
     :ensure t
     :hook (org-mode . org-appear-mode))
@@ -1556,7 +1538,7 @@ Flycheck auto-enables =org-lint= in org buffers, which can be noisy. Disable it.
 *** org-modern
 https://github.com/minad/org-modern
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package org-modern
     :ensure t
     :hook
@@ -2074,7 +2056,7 @@ Use python3 to run code.
 ** gnuplot
 GNUplot for emacs, to use in plotting graphics from tables.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package gnuplot
     :ensure t
     :defer t)
@@ -2266,7 +2248,7 @@ This is the manual for it: https://kickingvegas.github.io/casual/index.html#SEC_
 
 ** TODO show-font
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package show-font
     :ensure t
     :defer t)
