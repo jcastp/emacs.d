@@ -1958,44 +1958,31 @@ Elisp using `float-time' to handle org-roam's stored time format."
 * Programming
 ** General
 
-*** flycheck config
-Check language syntax on the fly.
+*** flymake config
+Built-in syntax checking. Integrates natively with eglot.
+Replaced flycheck — eglot uses flymake, so flycheck was redundant.
 
 #+begin_src emacs-lisp
-  (use-package flycheck
-    :ensure t
-    :demand t
-    :init
-    (global-flycheck-mode t))
-
-  (with-eval-after-load 'flycheck
-    ;; change the key bindings, as ther conflict with org mode
-    (define-key flycheck-mode-map flycheck-keymap-prefix nil)
-    (setq flycheck-keymap-prefix (kbd "C-c g"))
-    (define-key flycheck-mode-map flycheck-keymap-prefix
-                flycheck-command-map))
+  (use-package flymake
+    :ensure nil
+    :hook (prog-mode . flymake-mode)
+    :bind (:map flymake-mode-map
+           ("C-c g n" . flymake-goto-next-error)
+           ("C-c g p" . flymake-goto-prev-error)
+           ("C-c g l" . flymake-show-buffer-diagnostics)))
 #+end_src
 
 ** tree-sitter config
-Tree-Sitter is included in newer versions of emacs.x
-We just need to load the languages.
+Tree-sitter is built into Emacs 29+. The external =tree-sitter= and
+=tree-sitter-langs= packages are not needed — use =python-ts-mode= and
+other =*-ts-mode= modes directly.
 
-#+begin_src emacs-lisp 
-  (use-package tree-sitter
-    :ensure t
-    :config
-    (global-tree-sitter-mode)
-    (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)) ; syntax highlighting
-    
-  (use-package tree-sitter-langs
-    :ensure t
-    :after tree-sitter)
-#+end_src
+ts-fold depends on the external tree-sitter package, so it is disabled.
+Native code folding alternative: =hs-minor-mode= (built-in).
 
-ts-fold to fold code in a convenient way.
-
-#+begin_src emacs-lisp
-  ;; to fold code blocks based on tree-sitter
+#+begin_src emacs-lisp :tangle no
+  ;; ts-fold disabled: depends on external tree-sitter which was removed.
+  ;; Alternative: (add-hook 'prog-mode-hook #'hs-minor-mode)
   (use-package fringe-helper
     :ensure t)
 
