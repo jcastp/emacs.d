@@ -590,10 +590,10 @@ setting up each workspace.
     (setq tab-bar-new-button-show nil)
     (tab-bar-mode 1)
     :bind
-    ("C-c w w" . tab-bar-switch-to-tab)
-    ("C-c w n" . tab-bar-new-tab)
-    ("C-c w r" . tab-bar-rename-tab)
-    ("C-c w k" . tab-bar-close-tab)
+    ;; ("C-c w w" . tab-bar-switch-to-tab)
+    ;; ("C-c w n" . tab-bar-new-tab)
+    ;; ("C-c w r" . tab-bar-rename-tab)
+    ;; ("C-c w k" . tab-bar-close-tab)
     ("C-x C-b" . ibuffer))
 
   (defvar my-tab-session-dir (expand-file-name "tab-sessions/" my-data-dir)
