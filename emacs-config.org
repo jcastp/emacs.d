@@ -1937,9 +1937,13 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
   (defvar-keymap my/key-prefix-direct-access-map
     :doc "Functions related to open my frequently used files."
     "c" (cons "personal config"
-  	     (lambda ()
-  	       (interactive)
-  	       (my/tab-session-load (expand-file-name "config" my-tab-session-dir))))
+  	    (lambda ()
+  	      (interactive)
+  	      (find-file "~/.emacs.d/emacs-config.org")))
+    ;; "c" (cons "personal config"
+    ;; 	     (lambda ()
+    ;; 	       (interactive)
+    ;; 	       (my/tab-session-load (expand-file-name "config" my-tab-session-dir))))
     "k" (cons "emacs keys"
   	(lambda ()
   	  (interactive)
