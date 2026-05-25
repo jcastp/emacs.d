@@ -575,11 +575,6 @@ https://github.com/abo-abo/avy
 
 ** tab-bar workspaces
 Built-in since Emacs 27. Replaces =perspective=.
-Session save/restore uses =window-state-get/put= plus the list of open files.
-
-Note: existing =perspectives/= files are in perspective's proprietary format and
-cannot be read by the new loader. Recreate sessions once with =C-c w s= after
-setting up each workspace.
 
 #+begin_src emacs-lisp
   (use-package tab-bar
@@ -590,48 +585,7 @@ setting up each workspace.
     (setq tab-bar-new-button-show nil)
     (tab-bar-mode 1)
     :bind
-    ;; ("C-c w w" . tab-bar-switch-to-tab)
-    ;; ("C-c w n" . tab-bar-new-tab)
-    ;; ("C-c w r" . tab-bar-rename-tab)
-    ;; ("C-c w k" . tab-bar-close-tab)
     ("C-x C-b" . ibuffer))
-
-  (defvar my-tab-session-dir (expand-file-name "tab-sessions/" my-data-dir)
-    "Directory for saved tab sessions.")
-
-  (defun my/tab-session-save (name)
-    "Save current window layout and open files as a named tab session."
-    (interactive "sSession name: ")
-    (let ((file (expand-file-name name my-tab-session-dir))
-          (buffers (delq nil (mapcar #'buffer-file-name (buffer-list))))
-          (state (window-state-get (frame-root-window))))
-      (make-directory my-tab-session-dir t)
-      (with-temp-file file
-        (print (list :buffers buffers :window-state state) (current-buffer)))
-      (message "Saved session: %s" name)))
-
-  (defun my/tab-session-load (file)
-    "Load a named tab session from FILE, opening a new tab if needed."
-    (interactive (list (read-file-name "Load session: " my-tab-session-dir)))
-    (let* ((data (with-temp-buffer
-                   (insert-file-contents file)
-                   (read (current-buffer))))
-           (buffers (plist-get data :buffers))
-           (state   (plist-get data :window-state))
-           (tab-name (file-name-base file)))
-      (if (member tab-name (mapcar (lambda (tab) (alist-get 'name tab)) (tab-bar-tabs)))
-          (tab-bar-switch-to-tab tab-name)
-        (tab-bar-new-tab)
-        (tab-bar-rename-tab tab-name))
-      (dolist (f buffers)
-        (when (and f (file-exists-p f))
-          (find-file-noselect f)))
-      (when state
-        (window-state-put state (frame-root-window) 'safe))
-      (message "Loaded session: %s" tab-name)))
-
-  (global-set-key (kbd "C-c w l") #'my/tab-session-load)
-  (global-set-key (kbd "C-c w s") #'my/tab-session-save)
 #+end_src
 
 * UI improvements
@@ -1940,10 +1894,6 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
   	    (lambda ()
   	      (interactive)
   	      (find-file "~/.emacs.d/emacs-config.org")))
-    ;; "c" (cons "personal config"
-    ;; 	     (lambda ()
-    ;; 	       (interactive)
-    ;; 	       (my/tab-session-load (expand-file-name "config" my-tab-session-dir))))
     "k" (cons "emacs keys"
   	(lambda ()
   	  (interactive)
@@ -1951,11 +1901,11 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
     "t" (cons "tasks file"
   	   (lambda ()
   	     (interactive)
-  	     (my/tab-session-load (expand-file-name "tareas" my-tab-session-dir))))
+  	     (find-file "~/Nextcloud/agenda/tasks.org")))
     "e" (cons "escritura tab"
   	      (lambda ()
   		(interactive)
-  		(my/tab-session-load (expand-file-name "escritura" my-tab-session-dir)))))
+  		(find-file "~/Nextcloud/escritura/historias/novela"))))
 
   ;; general keybindings for my personal keymaps
   (defvar-keymap my/key-prefix-map

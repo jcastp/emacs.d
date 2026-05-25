@@ -1503,20 +1503,6 @@ RSS read in emacs.
       (elfeed-update)))
 #+end_src
 
-** tab-bar autosave on exit
-Save all named tabs as session files when exiting Emacs.
-Replaces the old perspective autosave hook.
-
-#+begin_src emacs-lisp
-  (defun my/tab-sessions-save-all ()
-    "Save all open named tabs as session files on exit."
-    (dolist (tab (tab-bar-tabs))
-      (let ((name (alist-get 'name tab)))
-        (unless (string= name "New Tab")
-          (my/tab-session-save name)))))
-
-  (add-hook 'kill-emacs-hook #'my/tab-sessions-save-all)
-#+end_src
 
 * Testing
 ** TODO One key to open the writing environment
@@ -1529,23 +1515,13 @@ I want to reduce the friction needed to start writing, so I'm going to create a 
 
   (defun writing/start-session ()
     "One-key entry point for a writing session.
-  Loads the escritura perspective, opens project-find-file in the
-  novel directory, and activates writing mode."
+  Opens project-find-file in the novel directory and activates writing mode."
     (interactive)
-    ;; 1. Load writing tab session
-    (my/tab-session-load
-     (expand-file-name "escritura" my-tab-session-dir))
-    ;; 2. Navigate to novel project
-    (let ((default-directory 
-       (expand-file-name 
-        my-writing-project 
-        (expand-file-name "~/Nextcloud/escritura/historias/novela")))) 
-      ;; If you just want the 'novela' folder, remove my-writing-project from above.
-      ;; Use 'find-file' if 'novela' isn't a git/project root. 
-      ;; Use 'project-find-file' if it is.
+    (let ((default-directory
+       (expand-file-name
+        my-writing-project
+        (expand-file-name "~/Nextcloud/escritura/historias/novela"))))
       (call-interactively #'project-find-file))
-
-    ;; 3. Activate writing mode
     (if (fboundp #'org-scribe-mode)
         (org-scribe/writing-env-mode 1)))
 
