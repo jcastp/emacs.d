@@ -50,6 +50,24 @@ All the config related to the bookmarks.
   (defvar my-booklist-file (expand-file-name "Nextcloud/agenda/books.org" (getenv "HOME")))
 #+end_src
 
+** ibuffer filter groups
+Group buffers by project area. The catch-all "Other" group at the end catches anything unmatched.
+#+begin_src emacs-lisp
+  (setq ibuffer-saved-filter-groups
+        '(("personal"
+           ("Emacs config" (filename . "/.emacs.d/"))
+           ("Agenda"       (filename . "/Nextcloud/agenda/"))
+           ("Writing"      (filename . "/Nextcloud/escritura/"))
+           ("Org-roam"     (filename . "/Nextcloud/org-roam/"))
+           ("Blog"         (filename . "/Nextcloud/personal/"))
+           ("Special"      (or (name . "^\\*")
+                               (mode  . special-mode))))))
+
+  (add-hook 'ibuffer-mode-hook
+            (lambda ()
+              (ibuffer-switch-to-saved-filter-groups "personal")))
+#+end_src
+
 * Online
 ** mastodon from emacs
 https://github.com/emacsmirror/mastodon
