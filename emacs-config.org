@@ -88,7 +88,7 @@ https://git.sr.ht/~ashton314/emacs-bedrock/tree/main/item/init.el
 ** fringe bars
 We put some fringe space in the frames.
 #+begin_src emacs-lisp
-  (fringe-mode 0)
+  (fringe-mode 4)
 #+end_src
 
 ** Changes all yes/no questions to y/n type
@@ -342,7 +342,6 @@ https://github.com/minad/vertico
   (use-package vertico
     :ensure t
     :init
-    (load "vertico-multiform.el")
     (vertico-mode))
 #+end_src
 
@@ -516,7 +515,6 @@ Imenu shows the outline of your file as a browsable sidebar in another window.
     ;; Auto-resize after update to nil
     (setq imenu-list-auto-resize nil)
     ;; map the keys
-    (global-unset-key (kbd "M-i"))
     (global-set-key (kbd "M-g I") #'imenu-list-smart-toggle)
     ;; Once you open imenu, focus on it
     (setq imenu-list-focus-after-activation t))
@@ -1056,21 +1054,12 @@ Change notes are stored in the node's drawer, so we can fold it conveniently.
 #+end_src
 
 ** Custom notes and timestamp
-Put a note or a timestamp when something changes. For example:
-- When the tasks is marked as DONE
-- When the schedule or deadline date is changed
-#+begin_src emacs-lisp
-  ;; Adds a timestamp to the state
-  ;;(setq org-log-done 'time)
-  ;; Adds a custom note to the state
-  ;;(setq org-log-done 'note)
-  (setq org-log-done nil)
+Put a note or a timestamp when something changes.
+=org-log-done= is set to ='time= in =emacs-config-personal.org= (required for the weekly review agenda command).
 
-  ;; When the deadline or the schedule date is moved.
-  ;; to keep track of how many times I have moved a task to the future.
-  ;;(setq org-log-redeadline (quote time))
+#+begin_src emacs-lisp
+  ;; Don't log deadline/schedule date changes.
   (setq org-log-redeadline nil)
-  ;;(setq org-log-reschedule (quote time))
   (setq org-log-reschedule nil)
 #+end_src
 
@@ -1664,10 +1653,6 @@ Use python3 to run code.
   (setq python-shell-interpreter "python3")
 #+end_src
 
-*** Eglot inspect mode on python-ts-mode
-#+begin_src emacs-lisp
-  (add-hook 'python-ts-mode-hook 'treesit-inspect-mode)
-#+end_src
 
 * Miscellanea
 
@@ -1739,7 +1724,7 @@ https://www.emacswiki.org/emacs/EshellMultipleEshellBuffers
 Here there will be all the configs I'm testing, before committing them to the main config.
 
 ** TODO markdown mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package markdown-mode
     :ensure t
     :mode ("README\\.md\\'" . gfm-mode)
@@ -1754,7 +1739,7 @@ https://toobnix.org/w/5vCCqXFtWJ3EK7W3HKPRUD
 
 This is the manual for it: https://kickingvegas.github.io/casual/index.html#SEC_Contents
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package casual
     :ensure t
     :config
