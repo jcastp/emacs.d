@@ -143,7 +143,6 @@ Function to change between dark and clear themes, based on past variables.
       (if (not my-theme-dark-p)
           ;; this loads the dark theme
           (progn
-            ;;(load-theme (car my/themes-dark) t)
             (consult-theme (car my/themes-dark))
             (message "The theme applied is %s" (car my/themes-dark))
             ;; rotate the list
@@ -152,7 +151,6 @@ Function to change between dark and clear themes, based on past variables.
             (setq my-theme-dark-p t))
         ;; else block (clear theme)
         (progn
-          ;;(load-theme (car my/themes-clear) t)
           (consult-theme (car my/themes-clear))
           (message "The theme applied is %s" (car my/themes-clear))
           ;; rotate the list
@@ -164,6 +162,11 @@ Function to change between dark and clear themes, based on past variables.
 #+end_src
   
 ** fontaine presets for personal
+#+begin_src emacs-lisp
+  (use-package fontaine
+    :ensure t)
+#+end_src
+
 #+begin_src emacs-lisp
   (setq fontaine-presets
       '(
@@ -330,14 +333,6 @@ We dont want the cluttering in our views. If a task is done, don't show it on th
   (setq org-agenda-skip-scheduled-if-done t)
   (setq org-agenda-skip-deadline-if-done t)
   (setq org-agenda-skip-timestamp-if-done t)
-#+end_src
-
-**** Show next 7 days in the agenda view
-I need a more clear view for things to come. We can see 15 days from now.
-#+begin_src emacs-lisp
-  ;;(setq org-agenda-span 'week)
-  (setq org-agenda-span 14)
-  (setq org-agenda-start-on-weekday 1) ;; the week starts in Monday
 #+end_src
 
 **** TODO Custom agenda commands
@@ -1197,7 +1192,7 @@ Manual: https://nobiot.github.io/org-remark/
       (define-key org-remark-mode-map (kbd "C-c n o") #'org-remark-open)
       (define-key org-remark-mode-map (kbd "C-c n n") #'org-remark-view-next)
       (define-key org-remark-mode-map (kbd "C-c n p") #'org-remark-view-prev)
-      (define-key org-remark-mode-map (kbd "C-c n r") #'org-remark-remove)
+      (define-key org-remark-mode-map (kbd "C-c n x") #'org-remark-remove)
       (define-key org-remark-mode-map (kbd "C-c n j") #'org-remark-change)))
   
   ;; Create highlighter pens for different parts
@@ -1423,19 +1418,9 @@ https://tech.toryanderson.com/2022/11/23/viewing-epub-in-emacs/
     :ensure t
     :config
     (setq nov-text-width 100)
-    ;;(setq nov-text-width t)
     (setq visual-fill-column-center-text t)
-    ;;(add-hook 'nov-mode-hook 'visual-line-mode)
-    ;;(add-hook 'nov-mode-hook 'visual-fill-column-mode)
     ;; We save the place we left the e-pub in this file:
     (setq nov-save-place-file (expand-file-name "nov-places" my-data-dir))
-
-    ;; to define the fonts used by nov.el
-    ;; (defun my/nov-font-setup ()
-    ;;   (face-remap-add-relative 'variable-pitch :family "ETBembo"
-    ;;                            :height 1.0))
-    ;; (add-hook 'nov-mode-hook 'my/nov-font-setup)
-    
     (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode)))
 #+end_src
 
@@ -1500,9 +1485,6 @@ RSS read in emacs.
     :ensure t
     :init
     (elfeed-org)
-    ;; elfeed goodies config
-    (elfeed-goodies/setup)
-    ;; (setq elfeed-goodies/entry-pane-position 'bottom)
     ;; put the filter to 1 month ago by default
     (setq-default elfeed-search-filter "@1-months-ago")
 
@@ -1522,7 +1504,8 @@ RSS read in emacs.
 ** TODO One key to open the writing environment
 I want to reduce the friction needed to start writing, so I'm going to create a function to open directly my writing work.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
+  ;; TODO: set my-writing-project to the real project subdirectory name before enabling
 
   (defvar my-writing-project "test"
     "This is the directory where I'm working on my writing.")
@@ -1586,30 +1569,8 @@ https://github.com/emacs-dashboard/emacs-dashboard
                                   (agenda . 5)
                                   ;;(registers . 5)
                                   ))
-  	
-  	;; ;; get the word of the day
-  	;; (setq wotd-def
-  	;;       (shell-command-to-string "python ~/Nextcloud/config/.emacs.d/rae_wotd.py"))
-  	;; ;; Define the function to include the wotd in the dashboard
-  	;; (defun dashboard-insert-wotd (list-size)
-  	;;   (insert (propertize "Palabra del día:\n"
-  	;; 		      'face '(:foreground "green" :weight bold)))
-  	;;   (insert wotd-def))
-  	;; ;; add the section to the dashboard
-  	;; (add-to-list 'dashboard-item-generators  '(wotd . dashboard-insert-wotd))
-  	;; (add-to-list 'dashboard-items '(wotd) nil)
-
-  	;;(add-hook 'elpaca-after-init-hook #'dashboard-insert-startupify-lists)
-  	;;(add-hook 'elpaca-after-init-hook #'dashboard-initialize)
   	(dashboard-setup-startup-hook)
   	)
-        
-        ;; (with-eval-after-load 'dashboard
-        ;; 	;;(global-set-key (kbd "C-c d d") 'dashboard-open)
-        ;;   (dashboard-open))
-
-        ;; set the initial buffer to the dashboard
-        ;;(setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
         )
     )
 #+end_src

@@ -18,9 +18,6 @@ Git control version.
 https://cestlaz-nikola.github.io/posts/using-emacs-47-magit/
 
 #+begin_src emacs-lisp
-  ;; (use-package transient
-  ;;   :ensure t)
-
   (use-package magit
     :ensure t
     :after transient
@@ -141,14 +138,7 @@ But backups are good to have:
 ** utf-8 everywhere
 UTF-8 everywhere.
 #+begin_src emacs-lisp
-  ;; make sure that UTF-8 is used everywhere.
-  (set-terminal-coding-system  'utf-8)
-  (set-keyboard-coding-system  'utf-8)
-  (set-language-environment    'utf-8)
-  (set-selection-coding-system 'utf-8)
-  (setq-default buffer-file-coding-system 'utf-8)
-  (setq locale-coding-system   'utf-8)
-  (prefer-coding-system        'utf-8)
+  (set-language-environment "UTF-8")
   (set-input-method nil)
 #+end_src
 
@@ -191,12 +181,6 @@ When a file is changed in disk, the buffer reloads to reflect that change.
   (global-auto-revert-mode 1)
 #+end_src
 
-Change dired buffers when the directory is changed:
-#+begin_src emacs-lisp
-  ;; auto refresh dired when file changes
-  (add-hook 'dired-mode-hook 'auto-revert-mode)
-#+end_src
-
 ** eww configuration
 Set the userAgent for eww.
 #+begin_src emacs-lisp
@@ -210,8 +194,7 @@ All the configurations needed for dired.
      :ensure nil
      :commands (dired dired-jump)
      :hook
-     (;; (dired-mode . dired-hide-details-mode)
-      (dired-mode . hl-line-mode))
+     (dired-mode . hl-line-mode)
      :config
      (setq dired-recursive-copies 'always)
      (setq dired-recursive-deletes 'always)
@@ -286,7 +269,6 @@ Reload this configuration file.
   (defun my/reload-config()
     "Reloads my orgmode configuration."
     (interactive)
-    ;;(load (concat user-emacs-directory "early-init.el"))
     (load (concat user-emacs-directory "init.el")))
   (global-set-key (kbd "C-c r r" ) 'my/reload-config)
 #+end_src
@@ -394,13 +376,10 @@ https://github.com/minad/consult
            ("C-x b" . consult-buffer)
            ("C-x r b" . consult-bookmark)
            ("M-y" . consult-yank-from-kill-ring)
-  	 ;;("C-c d t" . consult-theme)
            ;; Go commands
            ("M-g M-g" . consult-goto-line)
-  	 ;;("C-c d o" . consult-outline)
-  	 ("M-i" . consult-imenu)
+           ("M-i" . consult-imenu)
            ("M-g i" . consult-imenu-multi)
-           ;;("M-g o" . consult-outline)
            ("M-g h" . consult-org-heading)
            ("M-g a" . consult-org-agenda)
            ("M-g m" . consult-mark)
@@ -430,9 +409,8 @@ https://github.com/oantolin/embark/
   (use-package embark
     :ensure t
     :bind
-    (("C-." . embark-act)         ;; pick some comfortable binding
-     ;;("C-;" . embark-dwim)        ;; good alternative: M-.
-     ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
+    (("C-." . embark-act)
+     ("C-h B" . embark-bindings))
 
     :init
     ;; Optionally replace the key help with a completing-read interface
@@ -519,10 +497,6 @@ Shortcuts to commands using just quick key combinations.
       (key-chord-define-global "jj" 'avy-goto-char-2)
       (key-chord-define-global "jk" 'avy-goto-char-timer)
       (key-chord-define-global "jl" 'avy-goto-line))
-      
-      ;; (key-chord-define-global "zz" 'undo-tree-visualize)
-      ;; (key-chord-define-global "ww" 'hydra-move/body)
-      ;; (key-chord-define-global "yy" 'hydra-buffer-mgmt/body)
 #+end_src
 
 ** Imenu-list
@@ -943,7 +917,6 @@ Establish the fonts with variables, so we don't need to change them on evey plac
 
 *** font definition
 #+begin_src emacs-lisp
-  ;;(set-face-attribute 'default nil :font "Aporetic Sans Mono")
   (set-face-attribute 'default nil :font my-default-font)
 #+end_src
 
@@ -998,15 +971,6 @@ Use fixed font for code blocks and other non prose blocks, and configure all oth
    '(org-table                 ((t (:inherit (org-hide fixed-pitch)))))
    ;; check if this works
    '(org-comment               ((t (:inherit (org-hide fixed-pitch) :height 0.8)))))
-#+end_src
-
-** fontaine
-Allows to set different fonts dinamically.
-https://protesilaos.com/emacs/fontaine
-
-#+begin_src emacs-lisp
-    (use-package fontaine
-      :ensure t)
 #+end_src
 
 * Orgmode config
@@ -1674,14 +1638,12 @@ Configuring eglot to work with vanilla python and its tree-sitter enabled mode:
   (use-package eglot
     :ensure nil
     :config
-    ;;(add-to-list 'eglot-server-programs '(python-mode . ("pylsp")))
     (add-to-list 'eglot-server-programs '(python-ts-mode . ("pylsp")))
 
     (setq-default eglot-workspace-configuration
   		'((:pylsp . (:configurationSources ["flake8"] :plugins (:pycodestyle (:enabled nil) :mccabe (:enabled nil) :flake8 (:enabled t))))))
 
     :hook
-    ;;((python-mode . eglot-ensure))
     ((python-ts-mode . eglot-ensure)))
     #+end_src
 

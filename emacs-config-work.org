@@ -41,11 +41,6 @@ I use a clear theme.
   (setq recentf-save-file (expand-file-name "recentf-work" my-data-dir))
 #+end_src
 
-* Perspective saving for work
-#+begin_src emacs-lisp
-  (setq persp-state-default-file (expand-file-name "persp-save-work" user-emacs-directory))
-  (add-hook 'kill-emacs-hook #'persp-state-save)
-#+end_src
 * icons for the agenda categories
 Have some fancy icons for the categories.
 #+begin_src emacs-lisp
@@ -60,6 +55,11 @@ Have some fancy icons for the categories.
 #+end_src
 * Fixed width font for work environment
 I work better with fixed fonts in this kind of environments
+
+#+begin_src emacs-lisp
+  (use-package fontaine
+    :ensure t)
+#+end_src
 
 #+begin_src emacs-lisp
     (setq fontaine-presets
