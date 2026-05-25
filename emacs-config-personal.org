@@ -1478,9 +1478,6 @@ RSS read in emacs.
   (use-package elfeed-org
     :ensure t)
 
-  ;; (use-package elfeed-goodies
-  ;;   :ensure t)
-
   (use-package elfeed
     :ensure t
     :init
@@ -1502,7 +1499,6 @@ RSS read in emacs.
       (elfeed)
       (elfeed-update)))
 #+end_src
-
 
 * Testing
 ** TODO One key to open the writing environment
