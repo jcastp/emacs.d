@@ -240,8 +240,9 @@ Specially defined for spanish question and exclamation marks.
           (?\¿ . ?\?)))
 
   (setq electric-pair-inhibit-predicate
-        `(lambda (c)
-           (if (char-equal c ?<) t (,electric-pair-inhibit-predicate c))))
+        (lambda (c)
+          (if (char-equal c ?<) t
+            (electric-pair-default-inhibit c))))
 #+end_src
 
 ** vundo - undo with visual cues

@@ -65,6 +65,7 @@ Group buffers by project area. The catch-all "Other" group at the end catches an
 
   (add-hook 'ibuffer-mode-hook
             (lambda ()
+              (ibuffer-auto-mode 1)
               (ibuffer-switch-to-saved-filter-groups "personal")))
 #+end_src
 
@@ -1487,7 +1488,6 @@ https://github.com/emacs-dashboard/emacs-dashboard
         (use-package dashboard
   	:ensure t
           :config
-  	;;(dashboard-setup-startup-hook)
           (setq dashboard-show-shortcuts t)
           (setq dashboard-set-navigator nil)
           (setq dashboard-set-heading-icons t)
