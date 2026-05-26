@@ -1261,6 +1261,14 @@ When you want to write something fast using org mode, but you don't want to crea
             (throw 'done (select-window (display-buffer buffer t))))))))
 #+end_src
 
+** org-modern
+#+begin_src emacs-lisp
+  (use-package org-modern
+    :ensure t
+    :config
+    (with-eval-after-load 'org (global-org-modern-mode)))
+#+end_src
+
 * org-roam config
 ** org-roam general configuration
 
@@ -1653,7 +1661,6 @@ Use python3 to run code.
 #+begin_src emacs-lisp
   (setq python-shell-interpreter "python3")
 #+end_src
-
 
 * Miscellanea
 
