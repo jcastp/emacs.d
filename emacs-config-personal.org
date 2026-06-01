@@ -44,11 +44,29 @@ All the config related to the bookmarks.
   (setq bookmark-save-flag 1)  ;save bookmarks to .emacs.bmk after each entry
 #+end_src
 
-
 ** My reading list file
 #+begin_src emacs-lisp
   ;; where my book list will be stored
   (defvar my-booklist-file (expand-file-name "Nextcloud/agenda/books.org" (getenv "HOME")))
+#+end_src
+
+** ibuffer filter groups
+Group buffers by project area. The catch-all "Other" group at the end catches anything unmatched.
+#+begin_src emacs-lisp
+  (setq ibuffer-saved-filter-groups
+        '(("personal"
+           ("Emacs config" (filename . "/.emacs.d/"))
+           ("Agenda"       (filename . "/Nextcloud/agenda/"))
+           ("Writing"      (filename . "/Nextcloud/escritura/"))
+           ("Org-roam"     (filename . "/Nextcloud/org-roam/"))
+           ("Blog"         (filename . "/Nextcloud/personal/"))
+           ("Special"      (or (name . "^\\*")
+                               (mode  . special-mode))))))
+
+  (add-hook 'ibuffer-mode-hook
+            (lambda ()
+              (ibuffer-auto-mode 1)
+              (ibuffer-switch-to-saved-filter-groups "personal")))
 #+end_src
 
 * Online
@@ -86,7 +104,7 @@ Also, rotate the list of themes applied.
 
   ;; establish if we start with a dark or clear theme
   ;; boolean variable: t is dark, nil is clear
-  (defvar my-theme-dark-p nil)
+  (defvar my-theme-dark-p t)
 
   ;; define a function to rotate a list. Custom, yes, I know it could be done better.
   (defun my/rotate-list (list)
@@ -126,7 +144,6 @@ Function to change between dark and clear themes, based on past variables.
       (if (not my-theme-dark-p)
           ;; this loads the dark theme
           (progn
-            ;;(load-theme (car my/themes-dark) t)
             (consult-theme (car my/themes-dark))
             (message "The theme applied is %s" (car my/themes-dark))
             ;; rotate the list
@@ -135,7 +152,6 @@ Function to change between dark and clear themes, based on past variables.
             (setq my-theme-dark-p t))
         ;; else block (clear theme)
         (progn
-          ;;(load-theme (car my/themes-clear) t)
           (consult-theme (car my/themes-clear))
           (message "The theme applied is %s" (car my/themes-clear))
           ;; rotate the list
@@ -146,8 +162,12 @@ Function to change between dark and clear themes, based on past variables.
   (global-set-key (kbd "C-c 0") 'my/theme-changer)
 #+end_src
   
-
 ** fontaine presets for personal
+#+begin_src emacs-lisp
+  (use-package fontaine
+    :ensure t)
+#+end_src
+
 #+begin_src emacs-lisp
   (setq fontaine-presets
       '(
@@ -316,16 +336,22 @@ We dont want the cluttering in our views. If a task is done, don't show it on th
   (setq org-agenda-skip-timestamp-if-done t)
 #+end_src
 
-**** Show next 7 days in the agenda view
-I need a more clear view for things to come. We can see 15 days from now.
-#+begin_src emacs-lisp
-  ;;(setq org-agenda-span 'week)
-  (setq org-agenda-span 14)
-  (setq org-agenda-start-on-weekday 1) ;; the week starts in Monday
-#+end_src
-
 **** TODO Custom agenda commands
 We define some agenda custom commands, to refine views, and get a clearer undestanding of the tasks.
+
+**** Sort comparator for books by DATE_FINISHED
+#+begin_src emacs-lisp
+  (defun my/org-agenda-cmp-read-date (a b)
+    "Compare agenda entries A and B by DATE_FINISHED property, descending."
+    (let ((date-a (org-entry-get (get-text-property 0 'org-hd-marker a) "DATE_FINISHED"))
+          (date-b (org-entry-get (get-text-property 0 'org-hd-marker b) "DATE_FINISHED")))
+      (cond ((and date-a date-b) (if (string< date-b date-a) 1 -1))
+            (date-a 1)
+            (date-b -1)
+            (t nil))))
+#+end_src
+
+**** Agenda commands
 #+begin_src emacs-lisp
   ;; Personal agenda span: 14 days, starting Monday
   (setq org-agenda-span 14)
@@ -477,7 +503,7 @@ We define some agenda custom commands, to refine views, and get a clearer undest
           ;; ──────────────────────────────────────────────────────────────────
           ("cw" "Writing pipeline"
            (
-            (tags-todo "writing/ONGOING"
+            (tags-todo "writing/WRITING"
                        ((org-agenda-overriding-header "[ IN PROGRESS ]")
                         (org-agenda-sorting-strategy '(priority-down ts-up))
                         (org-agenda-prefix-format " %i %-20:c ")))
@@ -487,18 +513,13 @@ We define some agenda custom commands, to refine views, and get a clearer undest
                         (org-agenda-sorting-strategy '(priority-down ts-up))
                         (org-agenda-prefix-format " %i %-20:c ")))
 
-            (tags-todo "writing/TOREVIEW"
+            (tags-todo "writing/REVIEW"
                        ((org-agenda-overriding-header "[ NEEDS REVIEW ]")
                         (org-agenda-sorting-strategy '(ts-up))
                         (org-agenda-prefix-format " %i %-20:c ")))
 
-            (tags-todo "writing/REDO"
+            (tags-todo "writing/REWORK"
                        ((org-agenda-overriding-header "[ NEEDS REWORK ]")
-                        (org-agenda-sorting-strategy '(ts-up))
-                        (org-agenda-prefix-format " %i %-20:c ")))
-
-            (tags-todo "writing/RESTRUCTURE"
-                       ((org-agenda-overriding-header "[ NEEDS RESTRUCTURING ]")
                         (org-agenda-sorting-strategy '(ts-up))
                         (org-agenda-prefix-format " %i %-20:c ")))
 
@@ -1084,21 +1105,26 @@ https://ox-hugo.scripter.co/
 
 * Writing
 ** packages
-*** Writeroom
-Distraction free writing mode.
-https://github.com/joostkremers/writeroom-mode
+*** Writing focus mode
+Distraction-free writing using built-in features and =my/centered-mode=.
+Replaces =writeroom-mode=.
 
 #+begin_src emacs-lisp
-  (use-package writeroom-mode
-    :ensure t
-    :config
-    (global-set-key (kbd "C-c 5") 'writeroom-mode)
-    ;; width of the writing area
-    (setq writeroom-width 90)
-    ;; extra space between the lines to see better
-    (setq writeroom-extra-line-spacing 4)
-    ;; Checking the modeline
-    (setq writeroom-mode-line t))
+  (defun my/writing-focus-mode ()
+    "Toggle a distraction-free writing environment.
+  Uses my/centered-mode for margins, extra line spacing, and hides line numbers."
+    (interactive)
+    (if (bound-and-true-p my/centered-mode)
+        (progn
+          (my/centered-mode -1)
+          (setq-local line-spacing 0)
+          (display-line-numbers-mode 1))
+      (progn
+        (my/centered-mode 1)
+        (setq-local line-spacing 4)
+        (display-line-numbers-mode -1))))
+
+  (global-set-key (kbd "C-c 5") #'my/writing-focus-mode)
 #+end_src
 
 *** TODO guess-language
@@ -1146,74 +1172,6 @@ Esto es una prueba de cómo funciona la traducción.
   	 ;; :render (gt-posframe-pop-render)
   	 ;; The default render (gt-render) outputs to the echo area.
   	 )))
-#+end_src
-
-*** TODO powerthesaurus
-https://github.com/SavchenkoValeriy/emacs-powerthesaurus
-
-#+begin_src emacs-lisp
-  (use-package powerthesaurus
-    :ensure t)
-#+end_src
-
-*** org-remark for text annotations
-Text annotations in org mode
-https://github.com/nobiot/org-remark
-Manual: https://nobiot.github.io/org-remark/
-
-#+begin_src emacs-lisp
-  (use-package org-remark
-    :ensure t
-    :after org
-    :config
-    (require 'org-remark-global-tracking)
-    (org-remark-global-tracking-mode +1)
-
-    ;; Create a file of notes for each file, with the buffer name appended by "-notes"
-    (defun my/org-remark-file-name ()
-      (concat (file-name-base (org-remark-notes-file-name-function))
-              ".org"))
-    (setq org-remark-notes-file-name
-          #'my/org-remark-file-name)
-
-    ;; Key-bind `org-remark-mark' to global-map so that you can call it
-    ;; globally before the library is loaded.
-    (define-key global-map (kbd "C-c n m") #'org-remark-mark)
-    ;; The rest of keybidings are done only on loading `org-remark'
-    (with-eval-after-load 'org-remark
-      (define-key org-remark-mode-map (kbd "C-c n o") #'org-remark-open)
-      (define-key org-remark-mode-map (kbd "C-c n n") #'org-remark-view-next)
-      (define-key org-remark-mode-map (kbd "C-c n p") #'org-remark-view-prev)
-      (define-key org-remark-mode-map (kbd "C-c n r") #'org-remark-remove)
-      (define-key org-remark-mode-map (kbd "C-c n j") #'org-remark-change)))
-  
-  ;; Create highlighter pens for different parts
-  (with-eval-after-load 'org-remark
-    ;; Since I use alternate dark and clear themes, these must be useful for both
-    (org-remark-create "blue-structure"
-                       '(:underline "sky blue" :background "deep sky blue")
-                       '(CATEGORY "structure"))
-
-    ;; can be properly seen in both dark and clear themes
-    (org-remark-create "dark-blue-line"
-                       '(:underline "deep sky blue")
-                       '(CATEGORY "editing"))
-
-    (org-remark-create "gray-plot"
-                       '(:background "dim gray")
-  		     '(CATEGORY "plot"))
-
-    (org-remark-create "salmon-character"
-                       '(:background "salmon")
-  		     '(CATEGORY "character"))
-
-    (org-remark-create "yellow-dialogue"
-                       '(:background "yellow")
-  		     '(CATEGORY "dialogue"))
-
-    (org-remark-create "royal-blue-other"
-                       '(:background "royal blue")
-  		     '(CATEGORY "other")))
 #+end_src
 
 *** tempel - template expansion
@@ -1287,59 +1245,6 @@ You insert {{{scene-break}}} wherever you want a scene break.
 The macro expands to the literal text SCENE-BREAK.
 
 After Org finishes generating the export, the filter org-export-replace-scene-breaks replaces all SCENE-BREAK markers with the correct text (three newlines, <br>, etc.).
-
-** org-scribe config
-Here, I document all the config related to my writing.
-
-Load the org-context-extended code, that adds helper functions and a flexible prose word count function:
-#+begin_src emacs-lisp
-  (use-package org-context-extended
-    :ensure t
-    :vc (:url "https://codeberg.org/jcastp/org-context-extended"
-  	    :branch "main"
-  	    :rev :newest))
-#+end_src
-
-Load a custom implementation of the org-tracktable package, using the org-context-extended word counting function:
-#+begin_src emacs-lisp
-  (use-package org-tracktable
-    :ensure t
-    :vc (:url "https://codeberg.org/jcastp/org-tracktable"
-  	    :branch "main"
-  	    :rev :newest))
-#+end_src
-
-Load the org-scribe package. Information is [[https://codeberg.org/jcastp/org-scribe][here]].
-#+begin_src emacs-lisp
-  ;; testing purposes. It will change once the package is ready
-  ;; (load-file "~/Nextcloud/escritura/software/org-scribe/org-scribe.el")
-  (use-package ts)
-  (use-package org-scribe
-    :ensure t
-    :vc (:url "https://codeberg.org/jcastp/org-scribe"
-     	    :branch "development"
-     	    :rev :newest)
-    :after org
-    :demand t
-    :config
-    ;; Customize settings
-    (setq my-org-scribe-env-work-theme 'poet)
-    (setq my-org-scribe-env-normal-theme 'ef-deuteranopia-dark)
-    (setq writing-stories-directory "~/writing/exercises")
-
-    ;; Keybindings
-    (global-set-key (kbd "<f8> <f8>") 'hydra-org-scribe/body))
-#+end_src
-
-** org-scribe-planner
-Load the org-scribe-planner package
-#+begin_src emacs-lisp
-  (use-package org-scribe-planner
-  :vc (:url "https://codeberg.org/jcastp/org-scribe-planner"
-  	    :branch "main"
-  	    :rev :newest)
-  :after org)
-#+end_src
 
 ** Create a story file on the fly
 Sometimes I want to create a story prompt on the fly. These functions allow for creating the prompts and the file, so I can immediately start writing.
@@ -1472,19 +1377,9 @@ https://tech.toryanderson.com/2022/11/23/viewing-epub-in-emacs/
     :ensure t
     :config
     (setq nov-text-width 100)
-    ;;(setq nov-text-width t)
     (setq visual-fill-column-center-text t)
-    ;;(add-hook 'nov-mode-hook 'visual-line-mode)
-    ;;(add-hook 'nov-mode-hook 'visual-fill-column-mode)
     ;; We save the place we left the e-pub in this file:
     (setq nov-save-place-file (expand-file-name "nov-places" my-data-dir))
-
-    ;; to define the fonts used by nov.el
-    ;; (defun my/nov-font-setup ()
-    ;;   (face-remap-add-relative 'variable-pitch :family "ETBembo"
-    ;;                            :height 1.0))
-    ;; (add-hook 'nov-mode-hook 'my/nov-font-setup)
-    
     (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode)))
 #+end_src
 
@@ -1545,16 +1440,10 @@ RSS read in emacs.
   (use-package elfeed-org
     :ensure t)
 
-  (use-package elfeed-goodies
-    :ensure t)
-
   (use-package elfeed
     :ensure t
     :init
     (elfeed-org)
-    ;; elfeed goodies config
-    (elfeed-goodies/setup)
-    ;; (setq elfeed-goodies/entry-pane-position 'bottom)
     ;; put the filter to 1 month ago by default
     (setq-default elfeed-search-filter "@1-months-ago")
 
@@ -1570,45 +1459,25 @@ RSS read in emacs.
       (elfeed-update)))
 #+end_src
 
-
-** perspective autosave on exit
-With this config, we define a custom default file for saving the persps when we exit emacs.
-This way, we can recover the last session and restore all the persps we had then.
-
-#+begin_src emacs-lisp
-  (setq persp-state-default-file
-        (expand-file-name "perspectives/autosave-persp" my-data-dir))
-  (add-hook 'kill-emacs-hook #'persp-state-save)
-#+end_src
-
 * Testing
 ** TODO One key to open the writing environment
 I want to reduce the friction needed to start writing, so I'm going to create a function to open directly my writing work.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
+  ;; TODO: set my-writing-project to the real project subdirectory name before enabling
 
   (defvar my-writing-project "test"
     "This is the directory where I'm working on my writing.")
 
   (defun writing/start-session ()
     "One-key entry point for a writing session.
-  Loads the escritura perspective, opens project-find-file in the
-  novel directory, and activates writing mode."
+  Opens project-find-file in the novel directory and activates writing mode."
     (interactive)
-    ;; 1. Load writing perspective
-    (persp-state-load
-     (expand-file-name "escritura-persp" my-persp-save-dir))
-    ;; 2. Navigate to novel project
-    (let ((default-directory 
-       (expand-file-name 
-        my-writing-project 
-        (expand-file-name "~/Nextcloud/escritura/historias/novela")))) 
-      ;; If you just want the 'novela' folder, remove my-writing-project from above.
-      ;; Use 'find-file' if 'novela' isn't a git/project root. 
-      ;; Use 'project-find-file' if it is.
+    (let ((default-directory
+       (expand-file-name
+        my-writing-project
+        (expand-file-name "~/Nextcloud/escritura/historias/novela"))))
       (call-interactively #'project-find-file))
-
-    ;; 3. Activate writing mode
     (if (fboundp #'org-scribe-mode)
         (org-scribe/writing-env-mode 1)))
 
@@ -1628,7 +1497,6 @@ https://github.com/emacs-dashboard/emacs-dashboard
         (use-package dashboard
   	:ensure t
           :config
-  	;;(dashboard-setup-startup-hook)
           (setq dashboard-show-shortcuts t)
           (setq dashboard-set-navigator nil)
           (setq dashboard-set-heading-icons t)
@@ -1659,30 +1527,8 @@ https://github.com/emacs-dashboard/emacs-dashboard
                                   (agenda . 5)
                                   ;;(registers . 5)
                                   ))
-  	
-  	;; ;; get the word of the day
-  	;; (setq wotd-def
-  	;;       (shell-command-to-string "python ~/Nextcloud/config/.emacs.d/rae_wotd.py"))
-  	;; ;; Define the function to include the wotd in the dashboard
-  	;; (defun dashboard-insert-wotd (list-size)
-  	;;   (insert (propertize "Palabra del día:\n"
-  	;; 		      'face '(:foreground "green" :weight bold)))
-  	;;   (insert wotd-def))
-  	;; ;; add the section to the dashboard
-  	;; (add-to-list 'dashboard-item-generators  '(wotd . dashboard-insert-wotd))
-  	;; (add-to-list 'dashboard-items '(wotd) nil)
-
-  	;;(add-hook 'elpaca-after-init-hook #'dashboard-insert-startupify-lists)
-  	;;(add-hook 'elpaca-after-init-hook #'dashboard-initialize)
   	(dashboard-setup-startup-hook)
   	)
-        
-        ;; (with-eval-after-load 'dashboard
-        ;; 	;;(global-set-key (kbd "C-c d d") 'dashboard-open)
-        ;;   (dashboard-open))
-
-        ;; set the initial buffer to the dashboard
-        ;;(setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
         )
     )
 #+end_src

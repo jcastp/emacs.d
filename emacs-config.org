@@ -18,9 +18,6 @@ Git control version.
 https://cestlaz-nikola.github.io/posts/using-emacs-47-magit/
 
 #+begin_src emacs-lisp
-  (use-package transient
-    :ensure t)
-
   (use-package magit
     :ensure t
     :after transient
@@ -41,19 +38,6 @@ https://github.com/dgutov/diff-hl
     (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
 #+end_src
 * General config
-** Garbage collection
-Fine tune the garbage collection.
-#+begin_src emacs-lisp
-  (use-package gcmh
-   :ensure t
-   :diminish gcmh-mode
-   :custom
-   (gcmh-idle-delay 10)
-   (gcmh-high-cons-threshold (* 100 1024 1024))
-   (gc-cons-percentage 0.8)
-   :config
-   (gcmh-mode 1))
-#+end_src
 
 ** Alternative and better C-g function
 https://emacsredux.com/blog/2025/06/01/let-s-make-keyboard-quit-smarter/
@@ -104,7 +88,7 @@ https://git.sr.ht/~ashton314/emacs-bedrock/tree/main/item/init.el
 ** fringe bars
 We put some fringe space in the frames.
 #+begin_src emacs-lisp
-  (fringe-mode 0)
+  (fringe-mode 4)
 #+end_src
 
 ** Changes all yes/no questions to y/n type
@@ -154,14 +138,7 @@ But backups are good to have:
 ** utf-8 everywhere
 UTF-8 everywhere.
 #+begin_src emacs-lisp
-  ;; make sure that UTF-8 is used everywhere.
-  (set-terminal-coding-system  'utf-8)
-  (set-keyboard-coding-system  'utf-8)
-  (set-language-environment    'utf-8)
-  (set-selection-coding-system 'utf-8)
-  (setq-default buffer-file-coding-system 'utf-8)
-  (setq locale-coding-system   'utf-8)
-  (prefer-coding-system        'utf-8)
+  (set-language-environment "UTF-8")
   (set-input-method nil)
 #+end_src
 
@@ -204,12 +181,6 @@ When a file is changed in disk, the buffer reloads to reflect that change.
   (global-auto-revert-mode 1)
 #+end_src
 
-Change dired buffers when the directory is changed:
-#+begin_src emacs-lisp
-  ;; auto refresh dired when file changes
-  (add-hook 'dired-mode-hook 'auto-revert-mode)
-#+end_src
-
 ** eww configuration
 Set the userAgent for eww.
 #+begin_src emacs-lisp
@@ -223,8 +194,7 @@ All the configurations needed for dired.
      :ensure nil
      :commands (dired dired-jump)
      :hook
-     (;; (dired-mode . dired-hide-details-mode)
-      (dired-mode . hl-line-mode))
+     (dired-mode . hl-line-mode)
      :config
      (setq dired-recursive-copies 'always)
      (setq dired-recursive-deletes 'always)
@@ -233,24 +203,6 @@ All the configurations needed for dired.
      ;; directories first in the listings
      (setq dired-listing-switches "-aBhl  --group-directories-first"))
  #+end_src
-
-*** dired subtree
-Show subdirectory contents with tab.
-
-From Prot's article - https://protesilaos.com/codelog/2024-11-28-basic-emacs-configuration/
-#+begin_src emacs-lisp
-  (use-package dired-subtree
-    :ensure t
-    :after dired
-    :bind
-    ( :map dired-mode-map
-      ("<tab>" . dired-subtree-toggle)
-      ("TAB" . dired-subtree-toggle)
-      ("<backtab>" . dired-subtree-remove)
-      ("S-TAB" . dired-subtree-remove))
-    :config
-    (setq dired-subtree-use-backgrounds nil))
-#+end_src
 
 ** set firefox or librewolf as the default browser
 Setting firefox or librewolf as the default browser for opening http/s links.
@@ -288,8 +240,9 @@ Specially defined for spanish question and exclamation marks.
           (?\¿ . ?\?)))
 
   (setq electric-pair-inhibit-predicate
-        `(lambda (c)
-           (if (char-equal c ?<) t (,electric-pair-inhibit-predicate c))))
+        (lambda (c)
+          (if (char-equal c ?<) t
+            (electric-pair-default-inhibit c))))
 #+end_src
 
 ** vundo - undo with visual cues
@@ -300,87 +253,10 @@ Specially defined for spanish question and exclamation marks.
     (global-set-key (kbd "C-z") #'vundo))
 #+end_src
 
-** vlf related config
-Very large files loading.
-#+begin_src emacs-lisp
-  ;; very large files support
-  (use-package vlf
-    :ensure t
-    :config
-    (require 'vlf-setup))
-#+end_src
-
-** openwith
-Open particular files with external applications.
-#+begin_src emacs-lisp
-  (use-package openwith
-    :ensure t
-    :config
-    (when (require 'openwith nil 'noerror)
-      (setq openwith-associations
-            (list
-             ;; videos
-             (list (openwith-make-extension-regexp
-                    '("mpg" "mpeg" "mp3" "mp4"
-                      "avi" "wmv" "wav" "mov" "flv"
-                      "ogm" "ogg" "mkv"))
-                   "vlc"
-                   '(file))
-             ;; office documents
-             (list (openwith-make-extension-regexp
-                    '("doc" "docx" "xls" "xlsx" "ppt" "pptx"
-                      "odt" "ods" "odg" "odp" "fodg"
-                      "fods" "fodt"))
-                   "libreoffice"
-                   '(file))
-             ;; help documents
-             '("\\.lyx" "lyx" (file))
-             '("\\.chm" "kchmviewer" (file))
-             ;; pdf files
-             ;; (list (openwith-make-extension-regexp
-             ;;        '("pdf" "ps" "ps.gz" "dvi"))
-             ;;       "okular"
-             ;;       '(file))
-             ))
-      (openwith-mode 1)))
-#+end_src
-
-** free keys
-Shows the free keybinding. Useful to assign new keybindings to some new functions.
-#+begin_src emacs-lisp
-  (use-package free-keys
-    :ensure t
-    :defer t
-    :commands (free-keys))
-#+end_src
-
 ** Which-key
 After pressing a key combo, it shows the key bindings associated.
 #+begin_src emacs-lisp
-  ;; only use use-package for versions under 30, as version >30 have which-key as a default
-  (if (version<= "30" emacs-version)
-      (which-key-mode)
-    (progn (
-  	  (use-package which-key
-              :ensure t
-              :config
-              (which-key-mode)
-              ))))
-
-   (use-package which-key-posframe
-     :config
-     (which-key-posframe-mode))
-#+end_src
-
-** expand region
-https://github.com/magnars/expand-region.el
-
-Select relevant regions incrementally.
-#+begin_src emacs-lisp
-  (use-package expand-region
-    :ensure t
-    :config
-    (global-set-key (kbd "C-ñ") 'er/expand-region))
+  (which-key-mode)
 #+end_src
 
 ** project.el configuration
@@ -394,7 +270,6 @@ Reload this configuration file.
   (defun my/reload-config()
     "Reloads my orgmode configuration."
     (interactive)
-    ;;(load (concat user-emacs-directory "early-init.el"))
     (load (concat user-emacs-directory "init.el")))
   (global-set-key (kbd "C-c r r" ) 'my/reload-config)
 #+end_src
@@ -468,32 +343,7 @@ https://github.com/minad/vertico
   (use-package vertico
     :ensure t
     :init
-    (load "vertico-multiform.el")
     (vertico-mode))
-#+end_src
-
-*** vertico posframe
-#+begin_src emacs-lisp
-  (use-package vertico-posframe
-    :ensure t
-    :after vertico
-    :init
-    (vertico-posframe-mode 1)
-    :config
-    (setq vertico-posframe-width 120)
-    (setq vertico-posframe-height 12)
-    (setq vertico-multiform-commands
-  	'((consult-line
-             posframe
-             (vertico-posframe-poshandler . posframe-poshandler-frame-top-center)
-             (vertico-posframe-border-width . 10)
-             ;; NOTE: This is useful when emacs is used in both in X and
-             ;; terminal, for posframe do not work well in terminal, so
-             ;; vertico-buffer-mode will be used as fallback at the
-             ;; moment.
-             (vertico-posframe-fallback-mode . vertico-buffer-mode))
-            (t posframe)))
-    (vertico-multiform-mode 1))
 #+end_src
 
 ** prescient
@@ -523,16 +373,13 @@ https://github.com/minad/consult
     :demand t
     :bind (
            ;; misc commands
-           ;;("C-x b" . consult-buffer) ;; defined in perspective section
+           ("C-x b" . consult-buffer)
            ("C-x r b" . consult-bookmark)
            ("M-y" . consult-yank-from-kill-ring)
-  	 ;;("C-c d t" . consult-theme)
            ;; Go commands
            ("M-g M-g" . consult-goto-line)
-  	 ;;("C-c d o" . consult-outline)
-  	 ("M-i" . consult-imenu)
+           ("M-i" . consult-imenu)
            ("M-g i" . consult-imenu-multi)
-           ;;("M-g o" . consult-outline)
            ("M-g h" . consult-org-heading)
            ("M-g a" . consult-org-agenda)
            ("M-g m" . consult-mark)
@@ -562,9 +409,8 @@ https://github.com/oantolin/embark/
   (use-package embark
     :ensure t
     :bind
-    (("C-." . embark-act)         ;; pick some comfortable binding
-     ;;("C-;" . embark-dwim)        ;; good alternative: M-.
-     ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
+    (("C-." . embark-act)
+     ("C-h B" . embark-bindings))
 
     :init
     ;; Optionally replace the key help with a completing-read interface
@@ -603,53 +449,14 @@ https://github.com/oantolin/orderless
           completion-category-overrides '((file (styles partial-completion)))))
 #+end_src
 
-** corfu completion
-https://github.com/minad/corfu
-Vertico completes the minibuffer, while corfu completes in buffer.
-#+begin_src emacs-lisp
-  (use-package corfu
-    :ensure t
-    ;; Optional customizations
-    :custom
-    (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
-    (corfu-auto t)                 ;; Enable auto completion
-    (corfu-auto-delay 0.8)         ;; delay for the autocompletion
-    (corfu-separator ?\s)          ;; Orderless field separator
-    ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
-    ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
-    (corfu-preview-current nil)   
-    (corfu-preselect 'prompt)      ;; Preselect the prompt
-    ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
-    ;; (corfu-scroll-margin 5)        ;; Use scroll margin
+** in-buffer completion
+Removed corfu and cape. TAB completes via native =completion-at-point=
+(=tab-always-indent 'complete= is set in the minibuffer section above).
+Candidates appear in the =*Completions*= buffer, navigated with vertico.
 
-    ;; This is recommended since Dabbrev can be used globally (M-/).
-    ;; See also `corfu-exclude-modes'.
-    :config
-    (corfu-popupinfo-mode 1)
-    (setq corfu-popupinfo-delay '(0.5 . 0.2))
-    :init
-    (global-corfu-mode))
-#+end_src
-
-** TODO cape - completions at point
-https://github.com/minad/cape
 #+begin_src emacs-lisp
-  (use-package cape
-    :ensure t
-    :bind ("C-c p" . cape-prefix-map) ;; Alternative keys: M-p, M-+, ...
-    ;; Alternatively bind Cape commands individually.
-    ;; :bind (("C-c p d" . cape-dabbrev)
-    ;;        ("C-c p h" . cape-history)
-    ;;        ("C-c p f" . cape-file)
-    ;;        ...)
-    :init
-    ;; Add to the global default value of `completion-at-point-functions' which is
-    ;; used by `completion-at-point'.  The order of the functions matters, the
-    ;; first function returning a result wins.  Note that the list of buffer-local
-    ;; completion functions takes precedence over the global list.
-    (add-hook 'completion-at-point-functions #'cape-dabbrev)
-    (add-hook 'completion-at-point-functions #'cape-file)
-    (add-hook 'completion-at-point-functions #'cape-elisp-block))
+  ;; dabbrev-capf is built-in since Emacs 28 — replaces cape-dabbrev
+  (add-hook 'completion-at-point-functions #'dabbrev-capf)
 #+end_src
 
 * Navigation
@@ -690,10 +497,6 @@ Shortcuts to commands using just quick key combinations.
       (key-chord-define-global "jj" 'avy-goto-char-2)
       (key-chord-define-global "jk" 'avy-goto-char-timer)
       (key-chord-define-global "jl" 'avy-goto-line))
-      
-      ;; (key-chord-define-global "zz" 'undo-tree-visualize)
-      ;; (key-chord-define-global "ww" 'hydra-move/body)
-      ;; (key-chord-define-global "yy" 'hydra-buffer-mgmt/body)
 #+end_src
 
 ** Imenu-list
@@ -713,7 +516,6 @@ Imenu shows the outline of your file as a browsable sidebar in another window.
     ;; Auto-resize after update to nil
     (setq imenu-list-auto-resize nil)
     ;; map the keys
-    (global-unset-key (kbd "M-i"))
     (global-set-key (kbd "M-g I") #'imenu-list-smart-toggle)
     ;; Once you open imenu, focus on it
     (setq imenu-list-focus-after-activation t))
@@ -723,7 +525,7 @@ Imenu shows the outline of your file as a browsable sidebar in another window.
 To better manage more buffers in screen, as seen here: https://github.com/abo-abo/ace-window
 
 Used in the hydra snippets.
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp 
   (use-package ace-window
     :ensure t
     :config
@@ -744,64 +546,19 @@ https://github.com/abo-abo/avy
     :ensure t)
 #+end_src
 
-** perspective.el
-https://github.com/nex3/perspective-el
+** tab-bar workspaces
+Built-in since Emacs 27. Replaces =perspective=.
+
 #+begin_src emacs-lisp
-  (use-package perspective
-    :ensure t
-    :custom
-    (persp-mode-prefix-key (kbd "C-c w"))  ; pick your own prefix key here
-    :bind
-    ("C-c w w" . persp-switch)
-    ("C-c w b" . persp-ibuffer)         ; or use a nicer switcher, see below
-    ;; Redefining the buffer search to align with persp philosophy.
-    ("C-x b" . persp-switch-to-buffer*)
-    ("C-x C-b" . persp-switch-to-buffer)
-    :init
-    (persp-mode)
+  (use-package tab-bar
+    :ensure nil
     :config
-    ;; sort the persps by the creation time
-    (setq persp-sort 'created))
-#+end_src
-
-*** TODO automatic load some perspectives
-This function allows to load my defined perspectives and sessions.
-
-#+begin_src emacs-lisp
-  (with-eval-after-load 'perspective
-    ;; where I define my own perspective saved files
-    (setq my-persp-save-dir (expand-file-name  "perspectives/" my-data-dir))
-
-    ;; a function to load a perspective saved file from a given directory
-    (defun my/load-perspective ()
-      "Given a directory with perspective saved files, the user chooses one, and it automatically
-    loads it."
-      ;; 
-      (interactive)
-      (let ((file (read-file-name "Select a file: " my-persp-save-dir)))
-        (persp-state-load file)
-        ;; show a message
-        (message "You chose: %s" file)))
-
-    (define-key persp-mode-map (kbd "C-c w l") 'my/load-perspective))
-#+end_src
-
-But I want to automatically load some perspectives when I'm at home:
-#+begin_src emacs-lisp
-  (defvar my-persp-load nil
-    "Define if we want to load the personal persp.")
-
-  (if (and my-homeenvironment-p my-persp-load)
-      (progn
-        (with-eval-after-load 'org
-  	(defvar my-persp-files '(
-      				 "config-persp"
-      				 "tareas-persp"
-  				 "escritura-persp"
-      				 ))
-
-  	(dolist (my-file my-persp-files)
-  	  (persp-state-load (f-join my-persp-save-dir my-file))))))
+    (setq tab-bar-new-tab-choice t)
+    (setq tab-bar-close-button-show nil)
+    (setq tab-bar-new-button-show nil)
+    (tab-bar-mode 1)
+    :bind
+    ("C-x C-b" . ibuffer))
 #+end_src
 
 * UI improvements
@@ -918,18 +675,6 @@ This determines the style of line numbers in effect. If set to `nil', line numbe
   (global-display-line-numbers-mode 1)
 #+end_src
 
-** Highlight indent guides
-Highlight the indent guides with a pipe character, so it's easier to see where we need to align the code.
-https://github.com/DarthFennec/highlight-indent-guides
-#+begin_src emacs-lisp
-  (use-package highlight-indent-guides
-    :ensure t
-    :config
-    (setq highlight-indent-guides-method 'character)
-    (setq highlight-indent-guides-character ?\|)
-    (add-hook 'prog-mode-hook 'highlight-indent-guides-mode))
-#+end_src
-
 ** Long lines get wrapped
 Long lines get wrapped when they reach the edge. We activate it for all the buffers.
 #+begin_src emacs-lisp
@@ -964,13 +709,7 @@ Get all the fancy icons.
     :config
     (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup))
 
-  (use-package nerd-icons-corfu
-    :ensure t
-    :after corfu
-    :config
-    (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
-
-  (use-package nerd-icons-dired
+(use-package nerd-icons-dired
     :ensure t
     :hook
     (dired-mode . nerd-icons-dired-mode))
@@ -1012,43 +751,26 @@ Doom modeline.
     (setq doom-modeline-time t))
 #+end_src
 
-** Dimmer
-It darkens the buffers I'm not using.
-#+begin_src emacs-lisp
-  (use-package dimmer
-    :ensure t
-    :config
-    (dimmer-configure-which-key)
-    (dimmer-mode t)
-    (dimmer-configure-magit)
-    ;;(dimmer-configure-org)
-
-    ;; configure the dimmer
-    (setq dimmer-adjustment-mode :background)
-    (setq dimmer-fraction 0.1))
-#+end_src
-
 ** Highlighting the line when changing windows
+Using built-in =pulse.el= instead of the external =pulsar= package.
 #+begin_src emacs-lisp
-  (use-package pulsar
-    :after consult
-    :ensure t
-    :hook
-    (consult-after-jump . pulsar-recenter-top)
-    (consult-after-jump . pulsar-reveal-entry)
-    :config
-    (setq pulsar-pulse t)
-    (setq pulsar-delay 0.1)
-    (setq pulsar-iterations 10)
-    (setq pulsar-face 'pulsar-red)
-    (setq pulsar-highlight-face 'pulsar-yellow)
-    ;; integration with the `consult' package:
-    ;;(add-hook 'consult-after-jump-hook #'pulsar-recenter-top)
-    ;;(add-hook 'consult-after-jump-hook #'pulsar-reveal-entry)
-    ;; enable everywhere
-    (pulsar-global-mode 1)
-    :bind
-    ("C-x l" . pulsar-highlight-line))
+  (require 'pulse)
+
+  (defun my/pulse-line (&rest _)
+    "Briefly highlight the current line using built-in pulse.el."
+    (interactive)
+    (pulse-momentary-highlight-one-line (point)))
+
+  ;; Pulse after navigation commands
+  (dolist (cmd '(scroll-up-command scroll-down-command
+                 recenter-top-bottom other-window
+                 windmove-left windmove-right windmove-up windmove-down))
+    (advice-add cmd :after #'my/pulse-line))
+
+  ;; Pulse after consult jumps
+  (add-hook 'consult-after-jump-hook #'my/pulse-line)
+
+  (global-set-key (kbd "C-x l") #'my/pulse-line)
 #+end_src
 
 ** spacious padding
@@ -1121,27 +843,15 @@ https://github.com/daichirata/emacs-rotate
     :defer t)
 #+end_src
 
-
-** TODO popper
-#+begin_src emacs-lisp
-  (use-package popper
-    :ensure t
-    :bind (("C-¡" . popper-toggle)
-  	 ("M-¡" . popper-cycle))
-    :init
-    (setq popper-reference-buffers
-  	'("\\*Messages\\*" "\\*Warnings\\*" "\\*Compile\\*"
-            "\\*eshell\\*" eshell-mode
-            "\\*Python\\*" inferior-python-mode
-            flycheck-error-list-mode))
-    (popper-mode 1))
-#+end_src
-
 * Fonts and themes
 ** Themes
-*** leuven themes
+*** themes
 #+begin_src emacs-lisp
   (use-package leuven-theme
+    :ensure t)
+  (use-package doric-themes
+    :ensure t)
+  (use-package ef-themes
     :ensure t)
 #+end_src
 
@@ -1149,7 +859,7 @@ https://github.com/daichirata/emacs-rotate
 Protesilaos very good themes. These themes are already included in the standard emacs, so we can get rid of the use-package definition, and retain only the config.
 #+begin_src emacs-lisp
   (use-package modus-themes
-    :ensure t
+    :ensure nil
     :config
     ;; Add all your customizations prior to loading the themes
     (setq
@@ -1177,24 +887,12 @@ Protesilaos very good themes. These themes are already included in the standard 
      modus-themes-scale-headings t))
 #+end_src
 
-*** Protesilaos ef themes
-#+begin_src emacs-lisp
-  (use-package ef-themes
-    :ensure t)
-#+end_src
-
 *** poet theme
 https://github.com/kunalb/poet
 #+begin_src emacs-lisp
   (use-package poet-theme
     :ensure t
     :defer t)
-#+end_src
-
-*** doric themes
-#+begin_src emacs-lisp
-  (use-package doric-themes
-    :ensure t)
 #+end_src
 
 ** Font setup
@@ -1218,7 +916,6 @@ Establish the fonts with variables, so we don't need to change them on evey plac
 
 *** font definition
 #+begin_src emacs-lisp
-  ;;(set-face-attribute 'default nil :font "Aporetic Sans Mono")
   (set-face-attribute 'default nil :font my-default-font)
 #+end_src
 
@@ -1275,15 +972,6 @@ Use fixed font for code blocks and other non prose blocks, and configure all oth
    '(org-comment               ((t (:inherit (org-hide fixed-pitch) :height 0.8)))))
 #+end_src
 
-** fontaine
-Allows to set different fonts dinamically.
-https://protesilaos.com/emacs/fontaine
-
-#+begin_src emacs-lisp
-    (use-package fontaine
-      :ensure t)
-#+end_src
-
 * Orgmode config
 All orgmode configs
 ** some org configs for better behavior and usage
@@ -1335,18 +1023,6 @@ To create and use internal valid and unique links in org-mode, we will use the =
   (setq org-id-locations-file (expand-file-name "org-id-locations" my-data-dir))
 #+end_src
 
-** org-toc
-Table of Contents for orgmode documents. I don't use it that much, but can be useful.
-
-https://github.com/snosov1/toc-org
-
-#+begin_src emacs-lisp
-  (use-package toc-org
-    :ensure t
-    :config
-    (add-hook 'org-mode-hook 'toc-org-mode))
-#+end_src
-
 ** org-indent-mode on all the buffers
 I need to have the orgmode indented to see clearly where I am, so I enable it on every orgmode buffer.
 #+begin_src emacs-lisp
@@ -1379,21 +1055,12 @@ Change notes are stored in the node's drawer, so we can fold it conveniently.
 #+end_src
 
 ** Custom notes and timestamp
-Put a note or a timestamp when something changes. For example:
-- When the tasks is marked as DONE
-- When the schedule or deadline date is changed
-#+begin_src emacs-lisp
-  ;; Adds a timestamp to the state
-  ;;(setq org-log-done 'time)
-  ;; Adds a custom note to the state
-  ;;(setq org-log-done 'note)
-  (setq org-log-done nil)
+Put a note or a timestamp when something changes.
+=org-log-done= is set to ='time= in =emacs-config-personal.org= (required for the weekly review agenda command).
 
-  ;; When the deadline or the schedule date is moved.
-  ;; to keep track of how many times I have moved a task to the future.
-  ;;(setq org-log-redeadline (quote time))
+#+begin_src emacs-lisp
+  ;; Don't log deadline/schedule date changes.
   (setq org-log-redeadline nil)
-  ;;(setq org-log-reschedule (quote time))
   (setq org-log-reschedule nil)
 #+end_src
 
@@ -1535,49 +1202,12 @@ Some people find it noisy and distracting that the Org headlines start with a po
   (setq org-startup-indented t)
 #+end_src
 
-*** org-appear
-Show the invisible markers, only when the cursor is on them.
-/Test/ this with *these* _examples_.
-
-#+begin_src emacs-lisp
-  (use-package org-appear
-    :ensure t
-    :hook (org-mode . org-appear-mode))
-#+end_src
-
 *** Disable org-lint flycheck checker
 Flycheck auto-enables =org-lint= in org buffers, which can be noisy. Disable it.
 
 #+begin_src emacs-lisp
   (with-eval-after-load 'flycheck
     (setq flycheck-checkers (delq 'org-lint flycheck-checkers)))
-#+end_src
-
-*** org-modern
-https://github.com/minad/org-modern
-
-#+begin_src emacs-lisp
-  (use-package org-modern
-    :ensure t
-    :hook
-    (org-mode . org-modern-mode)
-    :custom
-    (org-modern-hide-stars 'leading)
-    (org-modern-table nil)
-    (org-modern-todo nil)
-    (org-modern-keyword nil)
-    (org-modern-timestamp nil)
-    ;; (org-modern-priority t)
-    (org-modern-checkbox nil)
-    (org-modern-tag t)
-    ;; (org-modern-block-name nil)
-    (org-modern-footnote nil)
-    (org-modern-internal-target nil)
-    (org-modern-radio-target nil)
-    ;; (org-modern-statistics nil)
-    ;; (org-modern-progress nil)
-    ;; The progress bar for task pending/completed is too wide for me
-    (org-modern-progress 8))
 #+end_src
 
 ** Orgmode extra packages
@@ -1627,6 +1257,14 @@ When you want to write something fast using org mode, but you don't want to crea
   	    (insert "# org-scratch buffer\n"))
             ;; When called non-interactively, the `t` targets the other window (if it exists).
             (throw 'done (select-window (display-buffer buffer t))))))))
+#+end_src
+
+** org-modern
+#+begin_src emacs-lisp
+  (use-package org-modern
+    :ensure t
+    :config
+    (with-eval-after-load 'org (global-org-modern-mode)))
 #+end_src
 
 * org-roam config
@@ -1976,67 +1614,32 @@ Elisp using `float-time' to handle org-roam's stored time format."
 * Programming
 ** General
 
-*** flycheck config
-Check language syntax on the fly.
+*** flymake config
+Built-in syntax checking. Integrates natively with eglot.
+Replaced flycheck — eglot uses flymake, so flycheck was redundant.
 
 #+begin_src emacs-lisp
-  (use-package flycheck
-    :ensure t
-    :demand t
-    :init
-    (global-flycheck-mode t))
-
-  (with-eval-after-load 'flycheck
-    ;; change the key bindings, as ther conflict with org mode
-    (define-key flycheck-mode-map flycheck-keymap-prefix nil)
-    (setq flycheck-keymap-prefix (kbd "C-c g"))
-    (define-key flycheck-mode-map flycheck-keymap-prefix
-                flycheck-command-map))
+  (use-package flymake
+    :ensure nil
+    :hook (prog-mode . flymake-mode)
+    :bind (:map flymake-mode-map
+           ("C-c g n" . flymake-goto-next-error)
+           ("C-c g p" . flymake-goto-prev-error)
+           ("C-c g l" . flymake-show-buffer-diagnostics)))
 #+end_src
 
-** tree-sitter config
-Tree-Sitter is built into Emacs 29+. We use =treesit-auto= to manage grammars
-and automatically remap major modes to their =*-ts-mode= variants.
-Note: =emacs-lisp-ts-mode= does not exist yet upstream.
-
-#+begin_src emacs-lisp
-  (use-package treesit-auto
-    :ensure t
-    :custom
-    (treesit-auto-install 'prompt)
-    :config
-    (treesit-auto-add-to-auto-mode-alist '(python))
-    (global-treesit-auto-mode))
-#+end_src
-
-ts-fold to fold code in a convenient way.
-
-#+begin_src emacs-lisp
-  (use-package treesit-fold
-    :vc (:url "https://github.com/emacs-tree-sitter/treesit-fold"
-  	    :branch "master")
-    :bind
-    ("C-<return>" . treesit-fold-toggle)
-    ("C-M-<return>" . treesit-fold-close-all)
-    :hook
-    (prog-mode . treesit-fold-mode)
-    :config
-    (setq treesit-fold-line-count-show t))
-#+end_src
 ** eglot configuration
 Configuring eglot to work with vanilla python and its tree-sitter enabled mode:
 #+begin_src emacs-lisp 
   (use-package eglot
     :ensure nil
     :config
-    ;;(add-to-list 'eglot-server-programs '(python-mode . ("pylsp")))
     (add-to-list 'eglot-server-programs '(python-ts-mode . ("pylsp")))
 
     (setq-default eglot-workspace-configuration
   		'((:pylsp . (:configurationSources ["flake8"] :plugins (:pycodestyle (:enabled nil) :mccabe (:enabled nil) :flake8 (:enabled t))))))
 
     :hook
-    ;;((python-mode . eglot-ensure))
     ((python-ts-mode . eglot-ensure)))
     #+end_src
 
@@ -2057,57 +1660,26 @@ Use python3 to run code.
   (setq python-shell-interpreter "python3")
 #+end_src
 
-*** Eglot inspect mode on python-ts-mode
-#+begin_src emacs-lisp
-  (add-hook 'python-ts-mode-hook 'treesit-inspect-mode)
-#+end_src
-
 * Miscellanea
-** gnuplot
-GNUplot for emacs, to use in plotting graphics from tables.
+
+** Window resize menu
+Using built-in =transient= instead of =hydra=.
 
 #+begin_src emacs-lisp
-  (use-package gnuplot
-    :ensure t
-    :defer t)
-#+end_src
+  (transient-define-prefix my/resize-transient ()
+    "Resize and arrange windows."
+    [["Horizontal"
+      ("f" "shrink" shrink-window-horizontally :transient t)
+      ("b" "enlarge" enlarge-window-horizontally :transient t)]
+     ["Vertical"
+      ("p" "enlarge" enlarge-window :transient t)
+      ("n" "shrink" shrink-window :transient t)]
+     ["Other"
+      ("s" "swap" ace-swap-window)
+      ("r" "rotate" rotate-layout)
+      ("q" "quit" transient-quit-one)]])
 
-** hydra
-Use of hydra for some purposes.
-
-*** hydra for resizing windows
-This serves to resize the windows
-
-#+begin_src emacs-lisp
-  (use-package hydra
-    :ensure t
-    :config
-    (global-unset-key (kbd "C-c k"))
-    (global-set-key
-     (kbd "C-c k")
-     (defhydra hydra-resize
-       (:body-pre (next-line))
-       "
-  ^Resize^
-  ^^^^^^-------------------------------------------------------
-  _f_: shrink horizontally         _s_: swap windows
-  _b_: enlarge horizontally        _r_: rotate layout
-  _p_: shrink vertical
-  _n_: enlarge vertical
-  "
-
-       ;; ("<left>" shrink-window-horizontally)
-       ;; ("<right>" enlarge-window-horizontally)
-       ;; ("<up>" enlarge-window)
-       ;; ("<down>" shrink-window)
-       ("f" shrink-window-horizontally)
-       ("b" enlarge-window-horizontally)
-       ("p" enlarge-window)
-       ("n" shrink-window)
-       ("s" ace-swap-window)
-       ("r" rotate-layout)
-
-       ("q" nil "quit"))))
+  (global-set-key (kbd "C-c k") #'my/resize-transient)
 #+end_src
 
 ** pdf-tools
@@ -2157,41 +1729,8 @@ https://www.emacswiki.org/emacs/EshellMultipleEshellBuffers
 * Testing
 Here there will be all the configs I'm testing, before committing them to the main config.
 
-** TODO hammy - time intervals
-https://github.com/alphapapa/hammy.el
-Time intervals, such as pomodoro.
-
-Define the classic pomodoro timer:
-#+begin_src emacs-lisp
-  (use-package hammy
-    :ensure t
-    :config
-    (hammy-mode)
-    (hammy-define (propertize "🍅" 'face '(:foreground "tomato"))
-      :documentation "The classic pomodoro timer."
-      :intervals
-      (list
-       (interval :name "Work"
-                 :duration "25 minutes"
-                 :before (do (announce "Starting work time.")
-  			   (notify "Starting work time."))
-                 :advance (do (announce "Break time!")
-                              (notify "Break time!")))
-       (interval :name "Break"
-                 :duration (do (if (and (not (zerop cycles))
-                                        (zerop (mod cycles 3)))
-  				 ;; If a multiple of three cycles have
-  				 ;; elapsed, the fourth work period was
-  				 ;; just completed, so take a longer break.
-  				 "30 minutes"
-                                 "5 minutes"))
-                 :before (do (announce "Starting break time.")
-  			   (notify "Starting break time."))
-                 :advance (do (announce "Break time is over!")
-                              (notify "Break time is over!"))))))
-#+end_src
 ** TODO markdown mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package markdown-mode
     :ensure t
     :mode ("README\\.md\\'" . gfm-mode)
@@ -2206,7 +1745,7 @@ https://toobnix.org/w/5vCCqXFtWJ3EK7W3HKPRUD
 
 This is the manual for it: https://kickingvegas.github.io/casual/index.html#SEC_Contents
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package casual
     :ensure t
     :config
@@ -2251,14 +1790,6 @@ This is the manual for it: https://kickingvegas.github.io/casual/index.html#SEC_
     ;;(keymap-set org-mode-map "M-m" #'casual-org-tmenu)
     ;;(keymap-set org-table-fedit-map "M-m" #'casual-org-table-fedit-tmenu)
     )
-#+end_src
-
-** TODO show-font
-
-#+begin_src emacs-lisp
-  (use-package show-font
-    :ensure t
-    :defer t)
 #+end_src
 
 * home related load and startup
@@ -2313,9 +1844,9 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
   (defvar-keymap my/key-prefix-direct-access-map
     :doc "Functions related to open my frequently used files."
     "c" (cons "personal config"
-  	     (lambda ()
-  	       (interactive)
-  	       (persp-state-load "~/Nextcloud/config/.emacs.d/perspectives/config-persp")))
+  	    (lambda ()
+  	      (interactive)
+  	      (find-file "~/.emacs.d/emacs-config.org")))
     "k" (cons "emacs keys"
   	(lambda ()
   	  (interactive)
@@ -2323,13 +1854,11 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
     "t" (cons "tasks file"
   	   (lambda ()
   	     (interactive)
-  	     (persp-state-load "~/Nextcloud/config/.emacs.d/perspectives/tareas-persp")))
-    "e" (cons "escritura persp"
+  	     (find-file "~/Nextcloud/agenda/tasks.org")))
+    "e" (cons "escritura tab"
   	      (lambda ()
   		(interactive)
-  		(persp-state-load
-  		 (expand-file-name "escritura-persp"
-  				   my-persp-save-dir)))))
+  		(find-file "~/Nextcloud/escritura/historias/novela"))))
 
   ;; general keybindings for my personal keymaps
   (defvar-keymap my/key-prefix-map
