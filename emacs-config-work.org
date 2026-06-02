@@ -404,7 +404,7 @@ I need a different custom agenda commands to see the tasks better.
      	     '("ci" "Inbox triage — process captured items"
      	       (
      		;; Tasks with no domain: they are floating and invisible in the domain view
-     		(tags-todo "-incident-detection-automation-emailsec-organization-okr"
+     		(tags-todo "-incident-detection-automation-emailsec-organization-okr-management"
      			   ((org-agenda-overriding-header "[ NEEDS DOMAIN TAG ]")
      			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
      			    (org-agenda-sorting-strategy '(ts-up))
