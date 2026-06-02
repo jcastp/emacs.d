@@ -321,11 +321,11 @@ I need a different custom agenda commands to see the tasks better.
      	     '("ca" "By domain area"
      	       (
      		;; Incidents cut across all domains — show them first
-     		(tags-todo "+incident"
-     			   ((org-agenda-overriding-header "[ INCIDENTS ]")
-     			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
-     			    (org-agenda-sorting-strategy '(priority-down ts-up))
-     			    (org-agenda-prefix-format " %i %-16:c %5e ")))
+     		;; (tags-todo "+incident"
+     		;; 	   ((org-agenda-overriding-header "[ INCIDENTS ]")
+     		;; 	    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
+     		;; 	    (org-agenda-sorting-strategy '(priority-down ts-up))
+     		;; 	    (org-agenda-prefix-format " %i %-16:c %5e ")))
 
      		(tags-todo "+detection-incident"
      			   ((org-agenda-overriding-header "[ DETECTION ]")
@@ -345,6 +345,18 @@ I need a different custom agenda commands to see the tasks better.
      			    (org-agenda-sorting-strategy '(todo-state-up priority-down effort-up))
      			    (org-agenda-prefix-format " %i %-16:c %5e ")))
 
+     		(tags-todo "+edr-incident"
+     			   ((org-agenda-overriding-header "[ EDR ]")
+     			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
+     			    (org-agenda-sorting-strategy '(todo-state-up priority-down effort-up))
+     			    (org-agenda-prefix-format " %i %-16:c %5e ")))
+
+     		(tags-todo "+ai-incident"
+     			   ((org-agenda-overriding-header "[ AI ]")
+     			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
+     			    (org-agenda-sorting-strategy '(todo-state-up priority-down effort-up))
+     			    (org-agenda-prefix-format " %i %-16:c %5e ")))
+
      		(tags-todo "+organization-incident"
      			   ((org-agenda-overriding-header "[ ORGANIZATION / MANAGEMENT ]")
      			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
@@ -352,7 +364,7 @@ I need a different custom agenda commands to see the tasks better.
      			    (org-agenda-prefix-format " %i %-16:c %5e ")))
 
      		;; Catch-all: tasks with no domain tag — they need one
-     		(tags-todo "-incident-detection-automation-emailsec-organization"
+     		(tags-todo "-incident-detection-automation-emailsec-edr-ai-organization-management"
      			   ((org-agenda-overriding-header "[ UNTAGGED — needs a domain tag ]")
      			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
      			    (org-agenda-sorting-strategy '(priority-down effort-up))
@@ -405,7 +417,7 @@ I need a different custom agenda commands to see the tasks better.
      	     '("ci" "Inbox triage — process captured items"
      	       (
      		;; Tasks with no domain: they are floating and invisible in the domain view
-     		(tags-todo "-incident-detection-automation-emailsec-organization-okr-management"
+     		(tags-todo "-incident-detection-automation-emailsec-edr-ai-organization-okr-management"
      			   ((org-agenda-overriding-header "[ NEEDS DOMAIN TAG ]")
      			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
      			    (org-agenda-sorting-strategy '(ts-up))
@@ -452,7 +464,9 @@ I need a different custom agenda commands to see the tasks better.
           (:name "Detection"      :tag "detection"        :order 30)
           (:name "Automation"     :tag "automation"       :order 31)
           (:name "Email Security" :tag "emailsec"         :order 32)
-          (:name "Organization"   :tag "organization"     :order 33)
+          (:name "EDR"            :tag "edr"              :order 33)
+          (:name "AI"             :tag "ai"               :order 34)
+          (:name "Organization"   :tag "organization"     :order 35)
           (:name "Priority C"     :priority "C"           :order 90)
           (:name "People"         :tag "people"           :order 95)
           (:name "Other"          :anything t             :order 99)))
@@ -462,6 +476,7 @@ I need a different custom agenda commands to see the tasks better.
 #+begin_src emacs-lisp :tangle yes
   (setq org-tag-alist '(
                         ("detection" . ?d) ("automation" . ?a) ("emailsec" . ?e)
+                        ("edr" . ?E) ("ai" . ?A)
                         ;; other tags
                         ("documentation" . ?D) ("procedures" . ?P)
                         ("knowledge" . ?K) ("training" . ?T)
