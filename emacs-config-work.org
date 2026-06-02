@@ -475,8 +475,8 @@ I need a different custom agenda commands to see the tasks better.
 * Work tags definition
 #+begin_src emacs-lisp :tangle yes
   (setq org-tag-alist '(
-                        ("detection" . ?d) ("automation" . ?a) ("emailsec" . ?e)
-                        ("edr" . ?E) ("ai" . ?A)
+                        ("detection" . ?d) ("automation" . ?a) ("emailsec" . ?E)
+                        ("edr" . ?e) ("ai" . ?A) ("management" . ?m)
                         ;; other tags
                         ("documentation" . ?D) ("procedures" . ?P)
                         ("knowledge" . ?K) ("training" . ?T)
