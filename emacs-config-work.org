@@ -60,6 +60,7 @@ Have some fancy icons for the categories.
      ("tasks" "~/Nextcloud/config/icons/check-square.svg" nil nil :ascent center :mask heuristic)
      ("projects" "~/Nextcloud/config/icons/list.svg" nil nil :ascent center :mask heuristic)
      ("okr" "~/Nextcloud/config/icons/target.svg" nil nil :ascent center :mask heuristic)
+     ("management" "~/Nextcloud/config/icons/users.svg" nil nil :ascent center :mask heuristic)
      ("inbox" "~/Nextcloud/config/icons/inbox.svg" nil nil :ascent center :mask heuristic)))
 #+end_src
 * Fixed width font for work environment
