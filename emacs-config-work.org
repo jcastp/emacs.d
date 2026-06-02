@@ -166,10 +166,10 @@ I need a different custom agenda commands to see the tasks better.
      	     '("d" "Daily driver"
      	       (
      		;; Incidents override everything — deal with them first
-     		(tags-todo "+incident"
-     			   ((org-agenda-overriding-header "[ INCIDENTS ]")
-     			    (org-agenda-sorting-strategy '(priority-down ts-up))
-     			    (org-agenda-prefix-format " %i %-16:c %5e ")))
+     		;; (tags-todo "+incident"
+     		;; 	   ((org-agenda-overriding-header "[ INCIDENTS ]")
+     		;; 	    (org-agenda-sorting-strategy '(priority-down ts-up))
+     		;; 	    (org-agenda-prefix-format " %i %-16:c %5e ")))
 
      		;; Priority A: explicit commitments
      		(tags-todo "+PRIORITY=\"A\"-incident"
