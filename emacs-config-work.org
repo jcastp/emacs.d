@@ -174,7 +174,7 @@ I need a different custom agenda commands to see the tasks better.
      		;; Priority A: explicit commitments
      		(tags-todo "+PRIORITY=\"A\"-incident"
      			   ((org-agenda-overriding-header "[ PRIORITY — must do today ]")
-     			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("BLOCKED" "DONE" "DELEGATED" "CANCELED")))
+     			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("WAITING" "DONE" "DELEGATED" "CANCELED")))
      			    (org-agenda-sorting-strategy '(effort-up ts-up))
      			    (org-agenda-prefix-format " %i %-16:c %5e ")))
 
@@ -195,9 +195,9 @@ I need a different custom agenda commands to see the tasks better.
      			 (org-agenda-sorting-strategy '(time-up priority-down))
      			 (org-agenda-overriding-header "[ SCHEDULE ]")))
 
-     		;; Blocked — blocked, but worth a nudge if you have time
-     		(tags-todo "/BLOCKED"
-     			   ((org-agenda-overriding-header "[ BLOCKED — check in if possible ]")
+     		;; Waiting — waiting on others, but worth a nudge if you have time
+     		(tags-todo "/WAITING"
+     			   ((org-agenda-overriding-header "[ WAITING — check in if possible ]")
      			    (org-agenda-sorting-strategy '(ts-up priority-down))
      			    (org-agenda-prefix-format " %i %-16:c ")))
      		)
@@ -216,8 +216,8 @@ I need a different custom agenda commands to see the tasks better.
      			    (org-agenda-sorting-strategy '(priority-down effort-up ts-up))
      			    (org-agenda-prefix-format " %i %-16:c %5e ")))
 
-     		(tags-todo "/BLOCKED"
-     			   ((org-agenda-overriding-header "[ BLOCKED — blocked on others ]")
+     		(tags-todo "/WAITING"
+     			   ((org-agenda-overriding-header "[ WAITING — waiting on others ]")
      			    (org-agenda-sorting-strategy '(ts-up priority-down))
      			    (org-agenda-prefix-format " %i %-16:c ")))
      		)
@@ -253,9 +253,9 @@ I need a different custom agenda commands to see the tasks better.
      			    (org-agenda-sorting-strategy '(priority-down effort-up))
      			    (org-agenda-prefix-format " %i %-16:c %5e ")))
 
-     		;; Blocked: may need escalation before week is out
-     		(tags-todo "/BLOCKED"
-     			   ((org-agenda-overriding-header "[ BLOCKED — may need escalation ]")
+     		;; Waiting: may need escalation before week is out
+     		(tags-todo "/WAITING"
+     			   ((org-agenda-overriding-header "[ WAITING — may need escalation ]")
      			    (org-agenda-sorting-strategy '(ts-up priority-down))
      			    (org-agenda-prefix-format " %i %-16:c ")))
 
@@ -297,9 +297,9 @@ I need a different custom agenda commands to see the tasks better.
      		       (org-agenda-sorting-strategy '(timestamp-down))
      		       (org-agenda-prefix-format " %i %-16:c ")))
 
-     		;; What is still blocked: decide to chase or park
-     		(tags-todo "/BLOCKED"
-     			   ((org-agenda-overriding-header "[ STILL BLOCKED — chase or park? ]")
+     		;; What is still waiting: decide to chase or park
+     		(tags-todo "/WAITING"
+     			   ((org-agenda-overriding-header "[ STILL WAITING — chase or park? ]")
      			    (org-agenda-sorting-strategy '(ts-up priority-down))
      			    (org-agenda-prefix-format " %i %-16:c ")))
 
@@ -385,8 +385,8 @@ I need a different custom agenda commands to see the tasks better.
      			    (org-agenda-sorting-strategy '(priority-down effort-up ts-up))
      			    (org-agenda-prefix-format " %i %-20:c %5e ")))
 
-     		(tags-todo "+okr/BLOCKED"
-     			   ((org-agenda-overriding-header "[ OKR — BLOCKED — escalate ]")
+     		(tags-todo "+okr/WAITING"
+     			   ((org-agenda-overriding-header "[ OKR — WAITING — escalate ]")
      			    (org-agenda-sorting-strategy '(ts-up priority-down))
      			    (org-agenda-prefix-format " %i %-20:c ")))
 
@@ -460,7 +460,7 @@ I need a different custom agenda commands to see the tasks better.
           (:name "Priority A"     :priority "A"           :order 10)
           (:name "OKR"            :tag "okr"              :order 11)
           (:name "In progress"    :todo "ONGOING"         :order 20)
-          (:name "Blocked"        :todo "BLOCKED"         :order 21)
+          (:name "Waiting"        :todo "WAITING"         :order 21)
           (:name "Detection"      :tag "detection"        :order 30)
           (:name "Automation"     :tag "automation"       :order 31)
           (:name "Email Security" :tag "emailsec"         :order 32)
@@ -491,7 +491,7 @@ I need a different custom agenda commands to see the tasks better.
   (setq org-todo-keywords
         '(
           ;; Status for tasks
-          (sequence "TODO(t)" "BLOCKED(w@/!)" "ONGOING(o@/!)" "|" "DONE(d@/!)" "DELEGATED(D@/!)" "CANCELED(c@/!)")))
+          (sequence "TODO(t)" "WAITING(w@/!)" "ONGOING(o@/!)" "|" "DONE(d@/!)" "DELEGATED(D@/!)" "CANCELED(c@/!)")))
 #+end_src
 
 * Custom work capture templates
