@@ -12,6 +12,8 @@
 # excluded files
 emacs-org-init.el
 emacs-org-init-trabajo.el
+emacs-org-init-work.el
+emacs-org-init-personal.el
 custom.el
 network-security.data
 projectile-bookmarks.eld
