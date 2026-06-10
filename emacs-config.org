@@ -373,7 +373,7 @@ https://github.com/minad/consult
     :demand t
     :bind (
            ;; misc commands
-           ("C-x b" . consult-buffer)
+           ;;("C-x b" . consult-buffer) ;; defined in perspective section
            ("C-x r b" . consult-bookmark)
            ("M-y" . consult-yank-from-kill-ring)
            ;; Go commands
@@ -546,19 +546,64 @@ https://github.com/abo-abo/avy
     :ensure t)
 #+end_src
 
-** tab-bar workspaces
-Built-in since Emacs 27. Replaces =perspective=.
+** perspective.el
+https://github.com/nex3/perspective-el
+#+begin_src emacs-lisp
+  (use-package perspective
+    :ensure t
+    :custom
+    (persp-mode-prefix-key (kbd "C-c w"))  ; pick your own prefix key here
+    :bind
+    ("C-c w w" . persp-switch)
+    ("C-c w b" . persp-ibuffer)         ; or use a nicer switcher, see below
+    ;; Redefining the buffer search to align with persp philosophy.
+    ("C-x b" . persp-switch-to-buffer*)
+    ("C-x C-b" . persp-switch-to-buffer)
+    :init
+    (persp-mode)
+    :config
+    ;; sort the persps by the creation time
+    (setq persp-sort 'created))
+#+end_src
+
+*** TODO automatic load some perspectives
+This function allows to load my defined perspectives and sessions.
 
 #+begin_src emacs-lisp
-  (use-package tab-bar
-    :ensure nil
-    :config
-    (setq tab-bar-new-tab-choice t)
-    (setq tab-bar-close-button-show nil)
-    (setq tab-bar-new-button-show nil)
-    (tab-bar-mode 1)
-    :bind
-    ("C-x C-b" . ibuffer))
+  (with-eval-after-load 'perspective
+    ;; where I define my own perspective saved files
+    (setq my-persp-save-dir (expand-file-name  "perspectives/" my-data-dir))
+
+    ;; a function to load a perspective saved file from a given directory
+    (defun my/load-perspective ()
+      "Given a directory with perspective saved files, the user chooses one, and it automatically
+    loads it."
+      ;;
+      (interactive)
+      (let ((file (read-file-name "Select a file: " my-persp-save-dir)))
+        (persp-state-load file)
+        ;; show a message
+        (message "You chose: %s" file)))
+
+    (define-key persp-mode-map (kbd "C-c w l") 'my/load-perspective))
+#+end_src
+
+But I want to automatically load some perspectives when I'm at home:
+#+begin_src emacs-lisp
+  (defvar my-persp-load nil
+    "Define if we want to load the personal persp.")
+
+  (if (and my-homeenvironment-p my-persp-load)
+      (progn
+        (with-eval-after-load 'org
+  	(defvar my-persp-files '(
+      				 "config-persp"
+      				 "tareas-persp"
+  				 "escritura-persp"
+      				 ))
+
+  	(dolist (my-file my-persp-files)
+  	  (persp-state-load (f-join my-persp-save-dir my-file))))))
 #+end_src
 
 * UI improvements
