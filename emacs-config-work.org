@@ -482,7 +482,7 @@ I need a different custom agenda commands to see the tasks better.
                         ("knowledge" . ?K) ("training" . ?T)
                         ("incident" . ?I) ("task" . ?t)
                         ;; based on my current role
-                        ("people" . ?p)))
+                        ("okr" . ?o) ("people" . ?p)))
 #+end_src
 
 * Custom status for work related environment
