@@ -13,7 +13,7 @@
 ;; use-package settings
 (setq use-package-always-ensure t)
 (setq package-native-compile t)
-(setq warning-minimum-level :emergency)
+(setq warning-minimum-level :error)
 
 ;; remove the packages warning messages
 (add-to-list 'display-buffer-alist
