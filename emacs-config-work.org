@@ -184,21 +184,15 @@ I need a different custom agenda commands to see the tasks better.
   (add-to-list 'org-agenda-custom-commands
      	     '("d" "Daily driver"
      	       (
-     		;; Incidents override everything — deal with them first
-     		;; (tags-todo "+incident"
-     		;; 	   ((org-agenda-overriding-header "[ INCIDENTS ]")
-     		;; 	    (org-agenda-sorting-strategy '(priority-down ts-up))
-     		;; 	    (org-agenda-prefix-format " %i %-16:c %5e ")))
-
      		;; Priority A: explicit commitments
-     		(tags-todo "+PRIORITY=\"A\"-incident"
+     		(tags-todo "+PRIORITY=\"A\""
      			   ((org-agenda-overriding-header "[ PRIORITY — must do today ]")
      			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("WAITING" "DONE" "DELEGATED" "CANCELED")))
      			    (org-agenda-sorting-strategy '(effort-up ts-up))
      			    (org-agenda-prefix-format " %i %-16:c %5e ")))
 
      		;; Ongoing — what you were already in the middle of
-     		(tags-todo "-incident/ONGOING"
+     		(tags-todo "/ONGOING"
      			   ((org-agenda-overriding-header "[ IN PROGRESS ]")
      			    (org-agenda-sorting-strategy '(priority-down effort-up ts-up))
      			    (org-agenda-prefix-format " %i %-16:c %5e ")))
@@ -339,43 +333,37 @@ I need a different custom agenda commands to see the tasks better.
   (add-to-list 'org-agenda-custom-commands
      	     '("ca" "By domain area"
      	       (
-     		;; Incidents cut across all domains — show them first
-     		;; (tags-todo "+incident"
-     		;; 	   ((org-agenda-overriding-header "[ INCIDENTS ]")
-     		;; 	    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
-     		;; 	    (org-agenda-sorting-strategy '(priority-down ts-up))
-     		;; 	    (org-agenda-prefix-format " %i %-16:c %5e ")))
-     		(tags-todo "+management-incident"
+     		(tags-todo "+management"
      			   ((org-agenda-overriding-header "[ MANAGEMENT ]")
      			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
      			    (org-agenda-sorting-strategy '(todo-state-up priority-down effort-up))
      			    (org-agenda-prefix-format " %i %-16:c %5e ")))
 
-     		(tags-todo "+detection-incident"
+     		(tags-todo "+detection"
      			   ((org-agenda-overriding-header "[ DETECTION ]")
      			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
      			    (org-agenda-sorting-strategy '(todo-state-up priority-down effort-up))
      			    (org-agenda-prefix-format " %i %-16:c %5e ")))
 
-     		(tags-todo "+automation-incident"
+     		(tags-todo "+automation"
      			   ((org-agenda-overriding-header "[ AUTOMATION ]")
      			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
      			    (org-agenda-sorting-strategy '(todo-state-up priority-down effort-up))
      			    (org-agenda-prefix-format " %i %-16:c %5e ")))
 
-     		(tags-todo "+emailsec-incident"
+     		(tags-todo "+emailsec"
      			   ((org-agenda-overriding-header "[ EMAIL SECURITY ]")
      			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
      			    (org-agenda-sorting-strategy '(todo-state-up priority-down effort-up))
      			    (org-agenda-prefix-format " %i %-16:c %5e ")))
 
-     		(tags-todo "+edr-incident"
+     		(tags-todo "+edr"
      			   ((org-agenda-overriding-header "[ EDR ]")
      			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
      			    (org-agenda-sorting-strategy '(todo-state-up priority-down effort-up))
      			    (org-agenda-prefix-format " %i %-16:c %5e ")))
 
-     		(tags-todo "+ai-incident"
+     		(tags-todo "+ai"
      			   ((org-agenda-overriding-header "[ AI ]")
      			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
      			    (org-agenda-sorting-strategy '(todo-state-up priority-down effort-up))
@@ -383,7 +371,7 @@ I need a different custom agenda commands to see the tasks better.
 
 
      		;; Catch-all: tasks with no domain tag — they need one
-     		(tags-todo "-incident-detection-automation-emailsec-edr-ai-management"
+     		(tags-todo "-detection-automation-emailsec-edr-ai-management"
      			   ((org-agenda-overriding-header "[ UNTAGGED — needs a domain tag ]")
      			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
      			    (org-agenda-sorting-strategy '(priority-down effort-up))
@@ -436,7 +424,7 @@ I need a different custom agenda commands to see the tasks better.
      	     '("ci" "Inbox triage — process captured items"
      	       (
      		;; Tasks with no domain: they are floating and invisible in the domain view
-     		(tags-todo "-incident-detection-automation-emailsec-edr-ai-okr-management"
+     		(tags-todo "-detection-automation-emailsec-edr-ai-okr-management"
      			   ((org-agenda-overriding-header "[ NEEDS DOMAIN TAG ]")
      			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
      			    (org-agenda-sorting-strategy '(ts-up))
@@ -473,7 +461,6 @@ I need a different custom agenda commands to see the tasks better.
   ;; Super-agenda groups for the default `C-c a a` view
   (setq org-super-agenda-groups
         '((:name "Overdue"        :deadline past          :order 1)
-          (:name "Incidents"      :tag "incident"         :order 2)
           (:name "Today"          :time-grid t
                                   :scheduled today        :order 3)
           (:name "Priority A"     :priority "A"           :order 10)
@@ -499,7 +486,7 @@ I need a different custom agenda commands to see the tasks better.
                         ;; other tags
                         ("documentation" . ?D) ("procedures" . ?P)
                         ("knowledge" . ?K) ("training" . ?T)
-                        ("incident" . ?I) ("task" . ?t)
+                        ("task" . ?t)
                         ;; based on my current role
                         ("okr" . ?o) ("people" . ?p)))
 #+end_src
@@ -532,11 +519,7 @@ As work is different from home, I need specific templates.
   (add-to-list 'org-capture-templates
                '("i" "Inbox (work)" entry
                  (file+headline my-work-file "Inbox")
-                 "** TODO %? %^g %^{EFFORT}p"))
-
-  ;; ("I" "New incident." entry
-  ;;  (file+headline my-work-file "Incidents")
-  ;;  "** TODO %?")
+                 "** TODO %? %^g"))
 
   (add-to-list 'org-capture-templates
                '("b" "Backlog entry." entry
