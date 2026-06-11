@@ -19,6 +19,8 @@ emacs-config-work.el
 emacs-config.el
 custom.el
 network-security.data
+network-security.eld
+places.eld
 projectile-bookmarks.eld
 recentf
 eww-bookmarks
