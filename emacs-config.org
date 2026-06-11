@@ -1126,12 +1126,12 @@ Put a note or a timestamp when something changes.
        :foreground "#6ae4b9" :background "#00382f" :weight bold))
     "Face for NEXT keyword - ready to work on.")
 
-  (defface my/org-todo-blocked
+  (defface my/org-todo-waiting
     '((((class color) (background light))
        :foreground "#813e00" :background "#fff0c0" :weight bold)
       (((class color) (background dark))
        :foreground "#fec43f" :background "#4a3000" :weight bold))
-    "Face for BLOCKED/HOLD keywords.")
+    "Face for WAITING/HOLD keywords.")
 
   (defface my/org-todo-canceled
     '((((class color) (background light))
@@ -1151,8 +1151,8 @@ Put a note or a timestamp when something changes.
   (setq org-todo-keyword-faces
         '(("TODO"      . my/org-todo-active)
           ("NEXT"      . my/org-todo-next)
-          ("BLOCKED"   . my/org-todo-blocked)
-          ("HOLD"      . my/org-todo-blocked)
+          ("WAITING"   . my/org-todo-waiting)
+          ("HOLD"      . my/org-todo-waiting)
           ("CANCELED" . my/org-todo-canceled)
           ("DONE"      . my/org-todo-done)))
 #+end_src

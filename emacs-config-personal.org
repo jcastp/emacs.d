@@ -261,7 +261,7 @@ These are the custom states for the tasks, and the character associated to it.
   (setq org-todo-keywords
         '(
           ;; Status for tasks
-          (sequence "TODO(t)" "ONGOING(o)" "BLOCKED(b)" "|" "DONE(d!)" "CANCELED(c@/!)")
+          (sequence "TODO(t)" "ONGOING(o)" "WAITING(w@/!)" "|" "DONE(d!)" "CANCELED(c@/!)")
           ;; Status for writing
   	(sequence "TOWRITE(h)" "WRITING(j@/!)" "REVIEW(k@/!)" "REWORK(n@/!)" "|" "FINISHED(l!)" "PURGE(ñ@/!)")))
 #+end_src
@@ -385,8 +385,8 @@ We define some agenda custom commands, to refine views, and get a clearer undest
                         (org-agenda-sorting-strategy '(effort-up ts-up))
                         (org-agenda-prefix-format " %i %-14:c %5e ")))
 
-            (tags-todo "-someday/BLOCKED"
-                       ((org-agenda-overriding-header "[ BLOCKED — nudge if possible ]")
+            (tags-todo "-someday/WAITING"
+                       ((org-agenda-overriding-header "[ WAITING — nudge if possible ]")
                         (org-agenda-sorting-strategy '(ts-up))
                         (org-agenda-prefix-format " %i %-14:c ")))
             )
@@ -420,8 +420,8 @@ We define some agenda custom commands, to refine views, and get a clearer undest
                         (org-agenda-sorting-strategy '(effort-up ts-up))
                         (org-agenda-prefix-format " %i %-14:c %5e ")))
 
-            (tags-todo "-someday/BLOCKED"
-                       ((org-agenda-overriding-header "[ BLOCKED — follow up this week? ]")
+            (tags-todo "-someday/WAITING"
+                       ((org-agenda-overriding-header "[ WAITING — follow up this week? ]")
                         (org-agenda-sorting-strategy '(ts-up))
                         (org-agenda-prefix-format " %i %-14:c ")))
             )
@@ -452,8 +452,8 @@ We define some agenda custom commands, to refine views, and get a clearer undest
                         (org-agenda-sorting-strategy '(priority-down ts-up))
                         (org-agenda-prefix-format " %i %-14:c ")))
 
-            (tags-todo "-someday/BLOCKED"
-                       ((org-agenda-overriding-header "[ BLOCKED — chase or park? ]")
+            (tags-todo "-someday/WAITING"
+                       ((org-agenda-overriding-header "[ WAITING — chase or park? ]")
                         (org-agenda-sorting-strategy '(ts-up priority-down))
                         (org-agenda-prefix-format " %i %-14:c ")))
 
@@ -605,7 +605,7 @@ We define some agenda custom commands, to refine views, and get a clearer undest
            (
             (tags-todo "+high_energy+@computer-someday"
                        ((org-agenda-overriding-header "[ HIGH ENERGY + COMPUTER — deep work ]")
-                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "CANCELED" "BLOCKED")))
+                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "CANCELED" "WAITING")))
                         (org-agenda-sorting-strategy '(priority-down effort-up))
                         (org-agenda-prefix-format " %i %-14:c %5e ")))
 
@@ -666,7 +666,7 @@ This is the config for the org-superagenda mode
   		 (before ,(org-read-date nil nil "+7d"))     :order 3)
             (:name "In progress"       :todo "ONGOING"         :order 10)
             (:name "Priority A"        :priority "A"           :order 11)
-            (:name "Blocked"           :todo "BLOCKED"         :order 12)
+            (:name "Waiting"           :todo "WAITING"         :order 12)
             (:name "Health"            :tag "health"           :order 20)
             (:name "Financial"         :tag "financial"        :order 21)
             (:name "Personal"          :tag "personal"         :order 22)
