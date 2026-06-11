@@ -50,6 +50,25 @@ Deep blue cursor, left fringe, and frame title prefix to distinguish work from p
   (setq recentf-save-file (expand-file-name "recentf-work" my-data-dir))
 #+end_src
 
+* Persist minibuffer history (work)
+Savehist is only enabled in the personal config, so the work environment had no
+persisted history.  Enable it here, with a work-specific file, and use it to
+remember the last direct report opened via =my/open-report=.
+
+#+begin_src emacs-lisp
+  (setq savehist-file (expand-file-name "savehist-work" my-data-dir))
+  (savehist-mode 1)
+  (setq history-length t
+        history-delete-duplicates t
+        savehist-save-minibuffer-history t)
+  (setq savehist-additional-variables
+        '(kill-ring
+          search-ring
+          regexp-search-ring
+          ;; remember the last direct report across sessions
+          my/last-report))
+#+end_src
+
 * icons for the agenda categories
 Have some fancy icons for the categories.
 #+begin_src emacs-lisp
@@ -553,6 +572,57 @@ As work is different from home, I need specific templates.
   			     (goto-char (org-find-olp (list my-people-file person))))))
   	       "*** TODO [%(identity my/capture-person)] %<%Y-%m-%d %a %H:%M> %? :people:%(downcase my/capture-person):\n    DEADLINE: %^t"
   	       :jump-to-captured t))
+#+end_src
+
+* Open a direct report (one-key 1:1 prep)
+1:1 notes live *per-person* in =my-people-file= (one heading per report, with
+that report's running notes and =:people:= action items underneath).  This
+command is the low-friction entry point: it prompts for a report (defaulting to
+the last one opened, remembered across sessions via savehist), jumps to their
+heading — creating it on first use — and narrows to their subtree, so before a
+1:1 you have everything about that person in one focused view.
+
+Bound to =<f6>= for a true one-key launch, and to =C-q p= via the shared keymap
+(see the "my own keymap" section in =emacs-config.org=).
+
+#+begin_src emacs-lisp
+  (defvar my/last-report nil
+    "Last direct report opened via `my/open-report'.
+  Persisted across sessions via `savehist-additional-variables'.")
+
+  (defun my/open-report (person)
+    "Open the per-person 1:1 notes for PERSON in `my-people-file'.
+  Interactively, prompt among `my/direct-reports', defaulting to the last report
+  opened (press RET to reopen it).  Create PERSON's heading if it does not exist
+  yet, then narrow to their subtree so the running 1:1 notes and open action
+  items sit together in one focused view."
+    (interactive
+     (let* ((reports (and (boundp 'my/direct-reports) my/direct-reports))
+            ;; surface the last-used report first so it is the primary choice
+            (ordered (if (and my/last-report (member my/last-report reports))
+                         (cons my/last-report (remove my/last-report reports))
+                       reports)))
+       (list (completing-read (format-prompt "Report" my/last-report)
+                              ordered nil nil nil nil my/last-report))))
+    (setq my/last-report person)
+    (find-file my-people-file)
+    (widen)
+    (let ((marker (condition-case nil
+                      (org-find-olp (list my-people-file person))
+                    (error nil))))
+      (unless marker
+        ;; first 1:1 with this person — create their heading
+        (goto-char (point-max))
+        (unless (bolp) (insert "\n"))
+        (insert (format "* %s\t:%s:\n" person (downcase person)))
+        (setq marker (org-find-olp (list my-people-file person))))
+      (goto-char marker))
+    (org-narrow-to-subtree)
+    (if (fboundp 'org-fold-show-subtree)
+        (org-fold-show-subtree)
+      (org-show-subtree)))
+
+  (keymap-global-set "<f6>" #'my/open-report)
 #+end_src
 
 * TODO org-jira integration

@@ -1904,6 +1904,8 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
     "c" #'my/centered-mode
     "d" (cons "daily agenda"
   	      (lambda () (interactive) (org-agenda nil "d")))
+    "p" (when (fboundp 'my/open-report)
+  	  (cons "open report" #'my/open-report))
     "i" #'tempel-insert
     "o" (cons "online" my/key-prefix-online-map)
     "q" (cons "direct file access" my/key-prefix-direct-access-map)
