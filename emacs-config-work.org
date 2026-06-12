@@ -681,5 +681,7 @@ This will automatically open the relevant file to start working right away:
 
 #+begin_src emacs-lisp
   (when (file-exists-p my-work-file)
-    (find-file my-work-file))
+    ;;(find-file my-work-file)
+    (persp-state-load "~/Nextcloud/config/.emacs.d/perspectives/work-persp")
+    )
 #+end_src
