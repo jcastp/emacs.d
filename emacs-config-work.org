@@ -541,7 +541,7 @@ As work is different from home, I need specific templates.
   			     (setq my/capture-person person)
   			     (find-file my-people-file)
   			     (goto-char (org-find-olp (list my-people-file person))))))
-  	       "** %<%Y-%m-%d %a %H:%M> - follow-up\n*** Notes\n%?\n*** Actions\n"
+  	       "** %<%Y-%m-%d %a %H:%M> - follow-up\n*** Notes\n%?\n*** Actions\n*** Questions\n"
   	       :jump-to-captured t))
 
   ;; And a quick action capture from within a 1:1 note:
