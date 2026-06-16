@@ -528,8 +528,8 @@ As work is different from home, I need specific templates.
 
   (add-to-list 'org-capture-templates
                '("m" "Work meeting notes" entry
-                 (file+headline my-meetings-file "Meetings")
-                 "** %T - %?\n*** Notes\n\n*** Actions\n"
+                 (file my-meetings-file)
+                 "* %T - %?\n** Notes\n\n** Actions\n"
                  :jump-to-captured t))
 
   ;; people meetings
