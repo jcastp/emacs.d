@@ -8,6 +8,8 @@
 /eln-cache/
 /elpaca/
 /straight/
+/persist/
+/tree-sitter/
 
 # excluded files
 emacs-org-init.el
@@ -24,4 +26,6 @@ places.eld
 projectile-bookmarks.eld
 recentf
 eww-bookmarks
+bookmarks.eld
+tramp
 *~undo-tree~
