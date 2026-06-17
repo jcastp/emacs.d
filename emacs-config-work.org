@@ -22,10 +22,10 @@ It is supposed to run over the generic emacs config, and overwrites that config 
   ;; this file includes, as of now:
   ;; - my reports
   ;; - my company's Jira URL
-  (defvar my-work-info-file (concat my-work-dir "company_info.el")
+  (defvar my-work-info-file (concat my-work-dir "work-info.el")
     "Varied information about my company.")
   ;; load the information for our company
-  (load my-work-info-file t)
+  (load my-work-info-file)
 #+end_src
 
 * Clear theme
