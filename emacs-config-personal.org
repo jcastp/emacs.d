@@ -82,13 +82,15 @@ Only evaluated if in my home environment, my encrypted directory is mounted, as 
   (if (and my-clear-directory-is-mounted-p my-homeenvironment-p)
       (use-package mastodon
         :ensure t
-        :defer t
         :config
         ;; account configuration
         (setq mastodon-instance-url "https://mastodon.online"
     	    mastodon-active-user "jcastp")
+        ;; use the plstore file
+        (setq mastodon-auth-use-auth-source nil)
         ;; my auth information is now in my encrypted directory
-        (setq mastodon-client--token-file (expand-file-name "personal/emacs/mastodon.plstore" my-clear-directory))))
+        (setq mastodon-client--token-file (expand-file-name "personal/emacs/mastodon.plstore" my-clear-directory))
+        ))
 #+end_src
 
 * Fonts and themes
