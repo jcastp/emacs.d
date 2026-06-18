@@ -1665,6 +1665,14 @@ Replaced flycheck — eglot uses flymake, so flycheck was redundant.
            ("C-c g l" . flymake-show-buffer-diagnostics)))
 #+end_src
 
+*** treesitter
+Simplify the treesitter config.
+These values allow for automating the treesitter grammars.
+#+begin_src emacs-lisp
+  (setq treesit-auto-install-grammar t) ; EMACS-31
+  (setq treesit-enabled-modes t)        ; EMACS-31
+#+end_src
+
 ** eglot configuration
 Configuring eglot to work with vanilla python and its tree-sitter enabled mode:
 #+begin_src emacs-lisp 
