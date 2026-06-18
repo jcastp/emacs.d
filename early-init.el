@@ -9,6 +9,14 @@
 ;; activates all ~50+ packages and their dependency chains.
 (setq max-lisp-eval-depth 5000)
 
+;; Defer garbage collection during startup (package-initialize + tangled
+;; config loading allocate heavily); restore a sane threshold once Emacs
+;; is idle and interactive.
+(setq gc-cons-threshold most-positive-fixnum)
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (setq gc-cons-threshold (* 16 1024 1024))))
+
 ;; the custom.el file location
 ;; from Prot's article - https://protesilaos.com/codelog/2024-11-28-basic-emacs-configuration/
 (setq custom-file (locate-user-emacs-file "custom.el"))
