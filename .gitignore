@@ -10,6 +10,7 @@
 /straight/
 /persist/
 /tree-sitter/
+/elfeed/
 
 # excluded files
 emacs-org-init.el
