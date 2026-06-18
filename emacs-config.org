@@ -1684,8 +1684,11 @@ These values allow for automating the treesitter grammars.
 #+end_src
 
 ** eglot configuration
-Configuring eglot to work with vanilla python and its tree-sitter enabled mode:
-#+begin_src emacs-lisp 
+Configuring eglot to work with vanilla python and its tree-sitter enabled mode.
+=eglot-server-programs= already maps =c-ts-mode=/=c++-ts-mode= to =clangd= by
+default, so C/C++ only needs the =eglot-ensure= hook below, nothing added to
+=eglot-server-programs=.
+#+begin_src emacs-lisp
   (use-package eglot
     :ensure nil
     :config
@@ -1694,8 +1697,16 @@ Configuring eglot to work with vanilla python and its tree-sitter enabled mode:
     (setq-default eglot-workspace-configuration
   		'((:pylsp . (:configurationSources ["flake8"] :plugins (:pycodestyle (:enabled nil) :mccabe (:enabled nil) :flake8 (:enabled t))))))
 
+    :bind
+    (:map eglot-mode-map
+          ("C-c f" . eglot-format-buffer))
+
     :hook
-    ((python-ts-mode . eglot-ensure)))
+    ((python-ts-mode . eglot-ensure)
+     (c-mode . eglot-ensure)
+     (c++-mode . eglot-ensure)
+     (c-ts-mode . eglot-ensure)
+     (c++-ts-mode . eglot-ensure)))
     #+end_src
 
 ** Shell scripts
@@ -1713,6 +1724,53 @@ Use python3 to run code.
 
 #+begin_src emacs-lisp
   (setq python-shell-interpreter "python3")
+#+end_src
+
+** C/C++
+Requires =clangd= on PATH (=sudo apt install clangd=) — that's what eglot
+talks to for completion, diagnostics, and formatting. flymake picks up
+eglot's diagnostics automatically, since it's already hooked to =prog-mode=
+above.
+
+*** indentation style
+=treesit-auto-install-grammar=/=treesit-enabled-modes= above don't actually
+remap =.c=/=.cpp= files to the tree-sitter modes until the cpp grammar is
+installed, so =c-mode=/=c++-mode= (legacy cc-mode) is what you'll actually
+get on a fresh machine — set both the tree-sitter and the legacy indent
+variables so indentation is correct either way.
+#+begin_src emacs-lisp
+  (setq c-ts-mode-indent-offset 4)
+  (setq c-ts-mode-indent-style 'k&r)
+  (setq c-basic-offset 4)
+  (setq c-default-style "k&r")
+#+end_src
+
+*** force tree-sitter modes for C/C++ extensions
+#+begin_src emacs-lisp
+  (dolist (ext '("\\.cpp\\'" "\\.cc\\'" "\\.cxx\\'" "\\.hpp\\'" "\\.hh\\'"))
+    (add-to-list 'auto-mode-alist (cons ext 'c++-ts-mode)))
+  ;; .h is ambiguous between C and C++; c-or-c++-ts-mode sniffs the
+  ;; buffer content instead of always assuming C.
+  (add-to-list 'auto-mode-alist '("\\.h\\'" . c-or-c++-ts-mode))
+#+end_src
+
+*** build
+Compiles the current project with =project-compile=, prompting for the
+command the first time (e.g. =make= or =cmake --build build=) and reusing it
+after that.
+#+begin_src emacs-lisp
+  (global-set-key (kbd "C-c c") #'project-compile)
+#+end_src
+
+*** dape - debugging
+Debug Adapter Protocol client, the eglot/flymake-style counterpart for
+debugging. Needs =gdb= on PATH (=sudo apt install gdb=). Run =M-x dape=,
+pick the =gdb= launch config, and give it the path to the compiled binary.
+#+begin_src emacs-lisp
+  (use-package dape
+    :ensure t
+    :config
+    (setq dape-buffer-window-arrangement 'right))
 #+end_src
 
 * Miscellanea
