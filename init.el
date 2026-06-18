@@ -72,11 +72,13 @@ This is the code that will be commited.")
 ;; check the directory exists
 ;;(file-directory-p my-clear-directory)
 
-;; check if a directory is a mount point - against "mount" command in the OS.
+;; check if a directory is a mount point - reads /proc/mounts directly,
+;; avoiding a subprocess spawn on every startup.
 (defun is-mount-point-p (path)
   "Check if the given PATH is a mount point."
-  (let ((mount-output (shell-command-to-string "mount")))
-    (string-match (regexp-quote path) mount-output)))
+  (with-temp-buffer
+    (insert-file-contents "/proc/mounts")
+    (string-match (regexp-quote path) (buffer-string))))
 
 ;; This variable will control if my encrypted dir is mounted on the clear directory
 (defvar my-clear-directory-is-mounted-p nil
