@@ -1514,7 +1514,7 @@ Staging area for code not yet promoted to the main config.
 Load it at the end of the config.
 https://github.com/emacs-dashboard/emacs-dashboard
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp :tangle yes
   (if my-homeenvironment-p
       (progn
         (use-package dashboard
@@ -1554,11 +1554,4 @@ https://github.com/emacs-dashboard/emacs-dashboard
   	)
         )
     )
-#+end_src
-
-* enlight dashboard
-#+begin_src emacs-lisp
-  (use-package enlight
-    :config
-    (setopt initial-buffer-choice #'enlight))
 #+end_src
