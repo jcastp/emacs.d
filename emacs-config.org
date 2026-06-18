@@ -1860,6 +1860,8 @@ This is the manual for it: https://kickingvegas.github.io/casual/index.html#SEC_
 
 
 ** TODO zoom
+https://github.com/cyrus-and/zoom
+
 #+begin_src emacs-lisp
   (use-package zoom
     :config
