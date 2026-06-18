@@ -1775,11 +1775,17 @@ https://www.emacswiki.org/emacs/EshellMultipleEshellBuffers
 Here there will be all the configs I'm testing, before committing them to the main config.
 
 ** TODO markdown mode
+Using the default emacs ts mode for markdown.
+
 #+begin_src emacs-lisp :tangle yes
-  (use-package markdown-mode
-    :ensure t
-    :mode ("README\\.md\\'" . gfm-mode)
-    :init (setq markdown-command '("pandoc" "--from=markdown" "--to=html5")))
+  (use-package markdown-ts-mode
+  :ensure nil
+  :defer t)
+
+  ;; (use-package markdown-mode
+  ;;   :ensure t
+  ;;   :mode ("README\\.md\\'" . gfm-mode)
+  ;;   :init (setq markdown-command '("pandoc" "--from=markdown" "--to=html5")))
 #+end_src
 
 ** TODO casual - opinionated menus for emacs
