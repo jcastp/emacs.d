@@ -2,6 +2,11 @@
 This configuration is just a patch to work with the work environment.
 It is supposed to run over the generic emacs config, and overwrites that config with the custom config for work environment.
 
+* Lexical binding added
+#+begin_src emacs-lisp
+  ;; -*- lexical-binding: t; -*-
+#+end_src
+
 * Defining my own work directory and files
 #+begin_src emacs-lisp :tangle yes
   (defvar my-work-dir "~/Nextcloud/trabajo/agenda/"

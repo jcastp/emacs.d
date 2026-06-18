@@ -1,5 +1,10 @@
 This is my personal config file, where I load all related to my personal use.
 
+* Lexical binding added
+#+begin_src emacs-lisp
+  ;; -*- lexical-binding: t; -*-
+#+end_src
+
 #+begin_src emacs-lisp
   (message "Loading personal config file")
 #+end_src
