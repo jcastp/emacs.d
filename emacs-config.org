@@ -884,11 +884,15 @@ Useful for reading books or long texts.
       (set-window-margins nil margin margin)))
 #+end_src
 
-** emacs-rotate
+** CANCELED emacs-rotate
+CLOSED: [2026-06-18 jue 10:54]
+:LOGBOOK:
+- State "CANCELED"   from              [2026-06-18 jue 10:54]
+:END:
 To rotate the layout of the windows.
 https://github.com/daichirata/emacs-rotate
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package rotate
     :ensure t
     :defer t)
@@ -1727,7 +1731,12 @@ Using built-in =transient= instead of =hydra=.
       ("n" "shrink" shrink-window :transient t)]
      ["Other"
       ("s" "swap" ace-swap-window)
-      ("r" "rotate" rotate-layout)
+      ("t" "traspose" window-layout-transpose)
+      ;;("r" "rotate" rotate-layout)
+      ("<left>" "anticlockwise" window-layout-rotate-anticlockwise)
+      ("<right>" "clockwise" window-layout-rotate-clockwise)
+      ("<up>" "flipup" window-layout-flip-topdown)
+      ("<down>" "flipdown" window-layout-flip-topdown) 
       ("q" "quit" transient-quit-one)]])
 
   (global-set-key (kbd "C-c k") #'my/resize-transient)
