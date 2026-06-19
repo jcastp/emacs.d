@@ -1677,26 +1677,14 @@ Replaced flycheck — eglot uses flymake, so flycheck was redundant.
 
 *** treesitter
 Simplify the treesitter config.
-These values allow for automating the treesitter grammars. =treesit-enabled-modes
-t= auto-remaps legacy modes (=c++-mode= → =c++-ts-mode=, etc.) whenever the
-matching grammar is available, and =treesit-auto-install-grammar 'always=
-installs a missing grammar automatically the first time such a buffer opens —
-no =y/n= prompt. (The valid values are =never=/=always=/=ask=/=ask-dir=; a plain
-=t= is *not* valid and silently falls back to prompting, which is why grammars
-weren't installing.)
 
-Installing a grammar compiles it from source, so the host also needs =git= and a
-C/C++ compiler (see the C/C++ heading below for the full OS package list).
 #+begin_src emacs-lisp
   (setq treesit-auto-install-grammar 'always) ; EMACS-31
   (setq treesit-enabled-modes t)              ; EMACS-31
 #+end_src
 
 ** eglot configuration
-Configuring eglot to work with vanilla python and its tree-sitter enabled mode.
-=eglot-server-programs= already maps =c-ts-mode=/=c++-ts-mode= to =clangd= by
-default, so C/C++ only needs the =eglot-ensure= hook below, nothing added to
-=eglot-server-programs=.
+
 #+begin_src emacs-lisp
   (use-package eglot
     :ensure nil
@@ -1751,24 +1739,8 @@ Emacs packages. On a Debian/Ubuntu host:
 | =git=           | treesit grammar build  | clones the tree-sitter-cpp / -c grammar repos              |
 | =build-essential= | treesit grammar build | =gcc=/=g++=/=make= to compile the grammar =.so= files      |
 
-=clangd= is what eglot talks to for completion, diagnostics, and formatting;
-flymake picks up eglot's diagnostics automatically, since it's hooked to
-=prog-mode= above. The grammar build (=git= + a compiler) only runs the first
-time a C/C++ buffer opens, because =treesit-auto-install-grammar 'always=
-compiles =libtree-sitter-cpp.so= / =libtree-sitter-c.so= into
-=~/.emacs.d/tree-sitter/=.
-
 *** indentation style
-Until the cpp grammar is installed you fall back to =c-mode=/=c++-mode= (legacy
-cc-mode); once =treesit-auto-install-grammar 'always= has pulled the grammar you
-get =c-ts-mode=/=c++-ts-mode=. The two use different indentation engines, so set
-*both* the tree-sitter and the legacy indent variables to keep a consistent 4-space
-=k&r= style either way.
 
-Crucially, =indent-tabs-mode= defaults to =t=, which makes both engines insert
-literal TAB characters once the indentation passes one =tab-width= — producing the
-mixed tabs/spaces you saw (a stray =\t= in front of nested lines). Force spaces in
-all four C/C++ modes so a level is always 4 spaces, never a tab.
 #+begin_src emacs-lisp
   (setq c-ts-mode-indent-offset 4)
   (setq c-ts-mode-indent-style 'k&r)
@@ -1801,9 +1773,7 @@ after that.
 #+end_src
 
 *** dape - debugging
-Debug Adapter Protocol client, the eglot/flymake-style counterpart for
-debugging. Needs =gdb= on PATH (=sudo apt install gdb=). Run =M-x dape=,
-pick the =gdb= launch config, and give it the path to the compiled binary.
+
 #+begin_src emacs-lisp
   (use-package dape
     :ensure t
