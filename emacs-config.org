@@ -1723,7 +1723,11 @@ Use python3 to run code.
   (setq python-shell-interpreter "python3")
 #+end_src
 
-** C/C++
+** CANCELED C/C++
+CLOSED: [2026-06-19 vie 09:12]
+:LOGBOOK:
+- State "CANCELED"   from              [2026-06-19 vie 09:12]
+:END:
 *** required OS packages
 Everything here drives external tools that must be on =PATH=; none of them are
 Emacs packages. On a Debian/Ubuntu host:
@@ -1741,7 +1745,7 @@ Emacs packages. On a Debian/Ubuntu host:
 
 *** indentation style
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (setq c-ts-mode-indent-offset 4)
   (setq c-ts-mode-indent-style 'k&r)
   (setq c-basic-offset 4)
@@ -1756,7 +1760,7 @@ Emacs packages. On a Debian/Ubuntu host:
 #+end_src
 
 *** force tree-sitter modes for C/C++ extensions
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (dolist (ext '("\\.cpp\\'" "\\.cc\\'" "\\.cxx\\'" "\\.hpp\\'" "\\.hh\\'"))
     (add-to-list 'auto-mode-alist (cons ext 'c++-ts-mode)))
   ;; .h is ambiguous between C and C++; c-or-c++-ts-mode sniffs the
@@ -1768,13 +1772,13 @@ Emacs packages. On a Debian/Ubuntu host:
 Compiles the current project with =project-compile=, prompting for the
 command the first time (e.g. =make= or =cmake --build build=) and reusing it
 after that.
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (global-set-key (kbd "C-c c") #'project-compile)
 #+end_src
 
 *** dape - debugging
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package dape
     :ensure t
     :config
