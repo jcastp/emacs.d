@@ -1677,10 +1677,19 @@ Replaced flycheck — eglot uses flymake, so flycheck was redundant.
 
 *** treesitter
 Simplify the treesitter config.
-These values allow for automating the treesitter grammars.
+These values allow for automating the treesitter grammars. =treesit-enabled-modes
+t= auto-remaps legacy modes (=c++-mode= → =c++-ts-mode=, etc.) whenever the
+matching grammar is available, and =treesit-auto-install-grammar 'always=
+installs a missing grammar automatically the first time such a buffer opens —
+no =y/n= prompt. (The valid values are =never=/=always=/=ask=/=ask-dir=; a plain
+=t= is *not* valid and silently falls back to prompting, which is why grammars
+weren't installing.)
+
+Installing a grammar compiles it from source, so the host also needs =git= and a
+C/C++ compiler (see the C/C++ heading below for the full OS package list).
 #+begin_src emacs-lisp
-  (setq treesit-auto-install-grammar t) ; EMACS-31
-  (setq treesit-enabled-modes t)        ; EMACS-31
+  (setq treesit-auto-install-grammar 'always) ; EMACS-31
+  (setq treesit-enabled-modes t)              ; EMACS-31
 #+end_src
 
 ** eglot configuration
@@ -1727,22 +1736,51 @@ Use python3 to run code.
 #+end_src
 
 ** C/C++
-Requires =clangd= on PATH (=sudo apt install clangd=) — that's what eglot
-talks to for completion, diagnostics, and formatting. flymake picks up
-eglot's diagnostics automatically, since it's already hooked to =prog-mode=
-above.
+*** required OS packages
+Everything here drives external tools that must be on =PATH=; none of them are
+Emacs packages. On a Debian/Ubuntu host:
+
+#+begin_src sh :tangle no
+  sudo apt install clangd gdb git build-essential
+#+end_src
+
+| package         | needed by              | why                                                        |
+|-----------------+------------------------+------------------------------------------------------------|
+| =clangd=        | eglot                  | LSP server: completion, diagnostics, =eglot-format-buffer= |
+| =gdb=           | dape                   | debug adapter backend for =M-x dape=                       |
+| =git=           | treesit grammar build  | clones the tree-sitter-cpp / -c grammar repos              |
+| =build-essential= | treesit grammar build | =gcc=/=g++=/=make= to compile the grammar =.so= files      |
+
+=clangd= is what eglot talks to for completion, diagnostics, and formatting;
+flymake picks up eglot's diagnostics automatically, since it's hooked to
+=prog-mode= above. The grammar build (=git= + a compiler) only runs the first
+time a C/C++ buffer opens, because =treesit-auto-install-grammar 'always=
+compiles =libtree-sitter-cpp.so= / =libtree-sitter-c.so= into
+=~/.emacs.d/tree-sitter/=.
 
 *** indentation style
-=treesit-auto-install-grammar=/=treesit-enabled-modes= above don't actually
-remap =.c=/=.cpp= files to the tree-sitter modes until the cpp grammar is
-installed, so =c-mode=/=c++-mode= (legacy cc-mode) is what you'll actually
-get on a fresh machine — set both the tree-sitter and the legacy indent
-variables so indentation is correct either way.
+Until the cpp grammar is installed you fall back to =c-mode=/=c++-mode= (legacy
+cc-mode); once =treesit-auto-install-grammar 'always= has pulled the grammar you
+get =c-ts-mode=/=c++-ts-mode=. The two use different indentation engines, so set
+*both* the tree-sitter and the legacy indent variables to keep a consistent 4-space
+=k&r= style either way.
+
+Crucially, =indent-tabs-mode= defaults to =t=, which makes both engines insert
+literal TAB characters once the indentation passes one =tab-width= — producing the
+mixed tabs/spaces you saw (a stray =\t= in front of nested lines). Force spaces in
+all four C/C++ modes so a level is always 4 spaces, never a tab.
 #+begin_src emacs-lisp
   (setq c-ts-mode-indent-offset 4)
   (setq c-ts-mode-indent-style 'k&r)
   (setq c-basic-offset 4)
   (setq c-default-style "k&r")
+
+  (defun my/c-indent-setup ()
+    "Indent C/C++ with spaces only, never literal tab characters."
+    (setq indent-tabs-mode nil))
+
+  (dolist (hook '(c-mode-hook c++-mode-hook c-ts-mode-hook c++-ts-mode-hook))
+    (add-hook hook #'my/c-indent-setup))
 #+end_src
 
 *** force tree-sitter modes for C/C++ extensions
