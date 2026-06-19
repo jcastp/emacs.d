@@ -1928,18 +1928,6 @@ This is the manual for it: https://kickingvegas.github.io/casual/index.html#SEC_
     )
 #+end_src
 
-
-** TODO zoom
-https://github.com/cyrus-and/zoom
-
-#+begin_src emacs-lisp
-  (use-package zoom
-    :config
-    (zoom-mode t)
-    (custom-set-variables
-     '(zoom-size '(0.618 . 0.618))))
-#+end_src
-
 * home related load and startup
 This will be loaded automatically when at home.
 
