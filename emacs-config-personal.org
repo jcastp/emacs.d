@@ -180,6 +180,22 @@ Function to change between dark and clear themes, based on past variables.
 #+begin_src emacs-lisp
   (setq fontaine-presets
       '(
+        ;;
+        (hack
+         :default-family "Hack"
+         :default-weight light
+         :default-height 105
+         :fixed-pitch-family "Hack"
+         :fixed-pitch-weight Light ; falls back to :default-weight
+         :fixed-pitch-height 105
+         :variable-pitch-family "Hack"
+         :variable-pitch-weight light
+         :variable-pitch-height 105
+         :bold-family nil ; use whatever the underlying face has
+         :bold-weight bold
+         :italic-family "Hack"
+         :italic-slant italic
+         :line-spacing 0)
         ;; daily operations, same config as normal config
         (regular
          :default-family "Aporetic Sans Mono"
@@ -261,7 +277,7 @@ Function to change between dark and clear themes, based on past variables.
          :line-spacing 1)))
 
   ;; Establish the regular preset as default
-  (fontaine-set-preset 'regular)
+  (fontaine-set-preset 'hack)
 #+end_src
 * orgmode config
 ** Custom states for the tasks
