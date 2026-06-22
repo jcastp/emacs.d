@@ -180,7 +180,7 @@ Function to change between dark and clear themes, based on past variables.
 #+begin_src emacs-lisp
   (setq fontaine-presets
       '(
-        ;;
+        ;; Hack font for normal mode
         (hack
          :default-family "Hack"
          :default-weight light
@@ -1384,6 +1384,42 @@ Create a custom keymap for the writing functions
   (keymap-global-set "<f7>" #'my/start-writing-session)
 #+end_src
 
+** TODO org-scribe config
+I want to test my org-scribe package, so I'm using this config for that.
+
+Prerrequisites:
+#+begin_src emacs-lisp
+  (use-package org-ql
+    :ensure t)
+
+  (use-package writeroom-mode
+    :ensure t)
+
+  (use-package org-context-extended
+    :vc (:url "https://codeberg.org/jcastp/org-context-extended"
+  	    :branch "main"
+  	    :rev :newest))
+
+  (use-package org-tracktable
+    :vc (:url "https://codeberg.org/jcastp/org-tracktable"
+  	    :branch "main"
+  	    :rev :newest))
+
+  (use-package hydra
+    :ensure t)
+#+end_src
+
+The code itself:
+#+begin_src emacs-lisp
+  (add-to-list 'load-path "~/Nextcloud/escritura/software/org-scribe")
+  (require 'org-scribe)
+
+  ;; Enable in org-mode
+  (add-hook 'org-mode-hook #'org-scribe-mode)
+
+  ;; Optional: set up keybindings
+  (org-scribe-setup)
+#+end_src
 * AI Assistant
 ** gptel - local LLM integration
 Use gptel to interact with a local llama-swap instance.

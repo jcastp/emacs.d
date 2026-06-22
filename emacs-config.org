@@ -341,6 +341,23 @@ Defines a set of abbreviations that permits complete words with just some charac
   (setq kill-region-dwim 'emacs-word)               ; EMACS-31: C-w with no region kills a word
 #+end_src
 
+** TODO diff file before saving
+#+begin_src emacs-lisp
+  ;; A Protesilaos life savier HACK
+  ;; Add option "d" to whenever using C-x s or C-x C-c, allowing a quick preview
+  ;; of the diff (if you choose `d') of what you're asked to save.
+  (add-to-list 'save-some-buffers-action-alist
+               (list "d"
+                     (lambda (buffer) (diff-buffer-with-file (buffer-file-name buffer)))
+                     "show diff between the buffer and its file"))
+#+end_src
+
+** TODO N lines for scrolling
+Number of lines of margin at the top and bottom of a window.
+#+begin_src emacs-lisp
+  (setq scroll-margin 5)  
+#+end_src
+
 * vertico, prescient, consult, marginalia, embark
 ** vertico
 Vertical auto completion in the minibuffer
@@ -1941,7 +1958,6 @@ This will be loaded automatically when at home.
 * Work related config load
 Load the work related config when needed:
 #+begin_src emacs-lisp
-  ;; process all elpaca queues before loading work environment
   (if my-workenvironment-p
     (progn
       ;; here comes the actions I want to be done at work environment
