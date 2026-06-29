@@ -1420,6 +1420,12 @@ The code itself:
   ;; Optional: set up keybindings
   (org-scribe-setup)
 #+end_src
+
+Update word count on save:
+#+begin_src emacs-lisp
+  (setq org-scribe-auto-wordcount t)
+#+end_src
+
 * AI Assistant
 ** gptel - local LLM integration
 Use gptel to interact with a local llama-swap instance.
