@@ -24,13 +24,17 @@ It is supposed to run over the generic emacs config, and overwrites that config 
   (defvar my-people-file (concat my-work-dir "work_people.org")
     "Employee 1:1 meeting notes")
 
-  ;; this file includes, as of now:
-  ;; - my reports
-  ;; - my company's Jira URL
   (defvar my-work-info-file (concat my-work-dir "work-info.el")
-    "Varied information about my company.")
+    "Personal identity info (user-full-name, user-mail-address) for work.")
   ;; load the information for our company
   (load my-work-info-file)
+
+  ;; this file includes, as of now:
+  ;; - my reports (`my/direct-reports')
+  ;; - my company's Jira URL (`my/jira-url')
+  (defvar my-company-info-file (concat my-work-dir "company_info.el")
+    "Varied information about my company.")
+  (load my-company-info-file)
 #+end_src
 
 * Clear theme
@@ -101,13 +105,13 @@ I work better with fixed fonts in this kind of environments
   	(hack-big
          :default-family "Hack"
          :default-weight light
-         :default-height 120
+         :default-height 140
          :fixed-pitch-family "Hack"
          :fixed-pitch-weight Light ; falls back to :default-weight
-         :fixed-pitch-height 120
+         :fixed-pitch-height 140
          :variable-pitch-family "Hack"
          :variable-pitch-weight light
-         :variable-pitch-height 120
+         :variable-pitch-height 140
          :bold-family nil ; use whatever the underlying face has
          :bold-weight bold
          :italic-family "Hack"
@@ -500,6 +504,9 @@ I need a different custom agenda commands to see the tasks better.
 
 * Work tags definition
 #+begin_src emacs-lisp :tangle yes
+  ;; tags are next to the title
+  (setq org-tags-column 0)
+
   (setq org-tag-alist '(
                         ("detection" . ?d) ("automation" . ?a) ("emailsec" . ?E)
                         ("edr" . ?e) ("ai" . ?A) ("management" . ?m)
