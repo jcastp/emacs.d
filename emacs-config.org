@@ -473,13 +473,63 @@ https://github.com/oantolin/orderless
 #+end_src
 
 ** in-buffer completion
-Removed corfu and cape. TAB completes via native =completion-at-point=
-(=tab-always-indent 'complete= is set in the minibuffer section above).
-Candidates appear in the =*Completions*= buffer, navigated with vertico.
+Corfu shows completion-at-point candidates in an in-buffer overlay
+popup instead of the =*Completions*= buffer
+(=tab-always-indent 'complete= in the minibuffer section above still
+triggers completion on TAB; corfu just changes how results are
+displayed). It reuses the =orderless= completion style already set
+above, so filtering works the same as in the minibuffer.
+
+Sources feeding the popup:
+- =dabbrev-capf= (built-in since Emacs 28) for words already present
+  in open buffers, in any language.
+- =cape-dict= for words that have never been typed anywhere, drawn
+  from the =hunspell= English and Spanish word lists (the same
+  dictionaries used for spellchecking, see the spelling section
+  above). Hunspell's =.dic= files carry affix flags
+  (e.g. =dog/S=) that cape-dict must not show as candidates, so a
+  plain, flag-stripped word list is generated once into
+  =my-data-dir= and reused on subsequent starts.
+- eglot's own capf for code, added automatically in buffers where
+  =eglot-ensure= runs (see the eglot configuration section).
+
+=dabbrev-capf= and =cape-dict= are merged with =cape-capf-super= so
+both contribute candidates to the same popup instead of the first
+one shadowing the other.
 
 #+begin_src emacs-lisp
-  ;; dabbrev-capf is built-in since Emacs 28 — replaces cape-dabbrev
-  (add-hook 'completion-at-point-functions #'dabbrev-capf)
+  (use-package corfu
+    :ensure t
+    :init
+    (global-corfu-mode)
+    :custom
+    (corfu-auto t)
+    (corfu-auto-delay 0.2)
+    (corfu-auto-prefix 2)
+    (corfu-cycle t))
+
+  (use-package cape
+    :ensure t
+    :init
+    (require 'dabbrev)
+    (defun my/cape-dict-build (dic-file out-file)
+      "Cache a plain, one-word-per-line copy of hunspell DIC-FILE at OUT-FILE."
+      (unless (file-exists-p out-file)
+        (with-temp-buffer
+          (insert-file-contents dic-file)
+          (goto-char (point-min))
+          (delete-region (point-min) (progn (forward-line 1) (point)))
+          (while (re-search-forward "/.*$" nil t)
+            (replace-match ""))
+          (write-region (point-min) (point-max) out-file)))
+      out-file)
+    (setq cape-dict-file
+          (list (my/cape-dict-build "/usr/share/hunspell/en_US.dic"
+                                     (expand-file-name "cape-dict-en_US" my-data-dir))
+                (my/cape-dict-build "/usr/share/hunspell/es_ES.dic"
+                                     (expand-file-name "cape-dict-es_ES" my-data-dir))))
+    (add-hook 'completion-at-point-functions
+              (cape-capf-super #'dabbrev-capf #'cape-dict)))
 #+end_src
 
 * Navigation
