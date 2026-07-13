@@ -504,8 +504,8 @@ one shadowing the other.
     (global-corfu-mode)
     :custom
     (corfu-auto t)
-    (corfu-auto-delay 0.2)
-    (corfu-auto-prefix 2)
+    (corfu-auto-delay 0.4)
+    (corfu-auto-prefix 3)
     (corfu-cycle t))
 
   (use-package cape
