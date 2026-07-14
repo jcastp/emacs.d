@@ -837,6 +837,7 @@ Get all the fancy icons.
     :ensure t
     :after marginalia
     :config
+    (nerd-icons-completion-marginalia-setup)
     (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup))
 
 (use-package nerd-icons-dired
