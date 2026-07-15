@@ -276,12 +276,23 @@ Reload this configuration file.
 
 ** Spelling
 https://www.gnu.org/software/emacs/manual/html_node/emacs/Spelling.html
-
-*** Flyspell mode
+*** jinx
+#+begin_src emacs-lisp
+  (use-package jinx
+  :ensure t
+  :hook (emacs-startup . global-jinx-mode)
+  :bind (("M-$" . jinx-correct)
+         ("C-M-$" . jinx-languages)))
+#+end_src
+*** CANCELED Flyspell mode
+CLOSED: [2026-07-15 mié 17:15]
+:LOGBOOK:
+- State "CANCELED"   from              [2026-07-15 mié 17:15]
+:END:
 Automatic spelling in the buffer.
 This conflicts with orgmode archive =C-c $=.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package flyspell
     :custom
     ;; Configure =hunspell= as the orthographic corrector, as it is the more modern option.
