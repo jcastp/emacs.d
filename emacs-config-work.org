@@ -502,6 +502,39 @@ I need a different custom agenda commands to see the tasks better.
           (:name "Other"          :anything t             :order 99)))
 #+end_src
 
+* Custom org-ql views
+Saved views for =org-ql-view= (=C-c q v=), covering all open (non-DONE/DELEGATED/CANCELED) tasks across =org-agenda-files=, in three flavors: flat, grouped by tag, and sorted by effort.
+
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-ql-view
+    (add-to-list 'org-ql-views
+                 (cons "Work: All open tasks"
+                       (list :buffers-files #'org-agenda-files
+                             :query '(todo "TODO" "WAITING" "ONGOING")
+                             :sort '(priority date)
+                             :super-groups nil
+                             :title "Work: All open tasks"))
+                 t)
+
+    (add-to-list 'org-ql-views
+                 (cons "Work: All open tasks (by tag)"
+                       (list :buffers-files #'org-agenda-files
+                             :query '(todo "TODO" "WAITING" "ONGOING")
+                             :sort '(priority date)
+                             :super-groups '((:auto-tags t))
+                             :title "Work: All open tasks (by tag)"))
+                 t)
+
+    (add-to-list 'org-ql-views
+                 (cons "Work: All open tasks (by effort)"
+                       (list :buffers-files #'org-agenda-files
+                             :query '(todo "TODO" "WAITING" "ONGOING")
+                             :sort '(effort)
+                             :super-groups nil
+                             :title "Work: All open tasks (by effort)"))
+                 t))
+#+end_src
+
 * Work tags definition
 #+begin_src emacs-lisp :tangle yes
   ;; tags are next to the title
