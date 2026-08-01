@@ -2113,7 +2113,7 @@ From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
   (message "finishing loading my keymap")
 #+end_src
 
-* Export config                                                          :noexport:ignore:
+* Export config :noexport:ignore:
 # ############################
 # General options
 # ############################
