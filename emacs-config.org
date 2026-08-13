@@ -2025,6 +2025,17 @@ This is the manual for it: https://kickingvegas.github.io/casual/index.html#SEC_
     )
 #+end_src
 
+** TODO speedbar
+#+begin_src emacs-lisp
+  (use-package speedbar
+    :ensure nil
+    :if (> emacs-major-version 30)
+    :commands (speedbar)
+    :config
+    (setq speedbar-prefer-window t)
+    (setq speedbar-use-images nil))
+#+end_src
+
 * home related load and startup
 This will be loaded automatically when at home.
 
