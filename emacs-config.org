@@ -365,9 +365,13 @@ Defines a set of abbreviations that permits complete words with just some charac
                      "show diff between the buffer and its file"))
 #+end_src
 
-** TODO N lines for scrolling
+** CANCELED N lines for scrolling
+CLOSED: [2026-08-09 dom 18:37]
+:LOGBOOK:
+- State "CANCELED"   from "TODO"       [2026-08-09 dom 18:37]
+:END:
 Number of lines of margin at the top and bottom of a window.
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (setq scroll-margin 5)  
 #+end_src
 
@@ -1947,7 +1951,7 @@ https://www.emacswiki.org/emacs/EshellMultipleEshellBuffers
     "Open a new instance of eshell."
     (interactive)
     (eshell 'N))
-#+end_src
+#+End_Src
 
 * Testing
 Here there will be all the configs I'm testing, before committing them to the main config.
