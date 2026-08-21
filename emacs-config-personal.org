@@ -1439,9 +1439,27 @@ Prerrequisites:
 #+end_src
 
 The code itself:
+
+*This code is test for conditional load, depending on the availability of the local directory or the git repo*:
+#+begin_src emacs-lisp :tangle yes
+  (if (f-directory-p "~/Nextcloud/escritura/software/org-scribe")
+      ;; the condition is true
+      (progn
+        (add-to-list 'load-path "~/Nextcloud/escritura/software/org-scribe")
+        (require 'org-scribe)
+        (message "org-scribe: local dir loaded"))
+    ;; the condition is false
+    (progn
+      (use-package org-scribe
+        :vc (:url "https://codeberg.org/jcastp/org-scribe"
+  		:branch "development"
+  		:rev :newest))
+      (message "org-scribe: used remote repo")))
+#+end_src
+
 #+begin_src emacs-lisp
-  (add-to-list 'load-path "~/Nextcloud/escritura/software/org-scribe")
-  (require 'org-scribe)
+  ;; (add-to-list 'load-path "~/Nextcloud/escritura/software/org-scribe")
+  ;; (require 'org-scribe)
 
   ;; Enable in org-mode
   (add-hook 'org-mode-hook #'org-scribe-mode)
