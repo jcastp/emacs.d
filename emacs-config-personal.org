@@ -1152,25 +1152,6 @@ Replaces =writeroom-mode=.
   (global-set-key (kbd "C-c 5") #'my/writing-focus-mode)
 #+end_src
 
-*** TODO guess-language
-Since I write in different languages, the dictionary applied is really important. If I write in Spanish, I want the spanish dict to be applied, and not the english one.
-
-#+begin_src emacs-lisp
-  (use-package guess-language
-    :ensure t
-    :config
-    (setq guess-language-languages '(en es))
-    (setq guess-language-min-paragraph-length 40)
-    ;; define the dicts I want to use for my languages
-    (setq guess-language-langcodes
-  	'((en . ("en_US" "English"))
-  	  (es . ("es_ES" "Spanish"))))
-    (guess-language-mode)
-    ;; activate the mode when I go to text files
-    (add-hook 'text-mode-hook (lambda () (guess-language-mode 1)))
-    (add-hook 'org-mode-hook (lambda () (guess-language-mode 1))))
-#+end_src
-
 *** Translate from english
 https://github.com/lorniu/gt.el
 Translate from english to spanish
@@ -1438,8 +1419,6 @@ Prerrequisites:
     :ensure t)
 #+end_src
 
-The code itself:
-
 *This code is test for conditional load, depending on the availability of the local directory or the git repo*:
 #+begin_src emacs-lisp :tangle yes
   (if (f-directory-p "~/Nextcloud/escritura/software/org-scribe")
@@ -1458,9 +1437,6 @@ The code itself:
 #+end_src
 
 #+begin_src emacs-lisp
-  ;; (add-to-list 'load-path "~/Nextcloud/escritura/software/org-scribe")
-  ;; (require 'org-scribe)
-
   ;; Enable in org-mode
   (add-hook 'org-mode-hook #'org-scribe-mode)
 

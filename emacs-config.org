@@ -286,31 +286,6 @@ https://www.gnu.org/software/emacs/manual/html_node/emacs/Spelling.html
          ("C-M-$" . jinx-languages)))
   (setq jinx-languages "en es")
 #+end_src
-*** CANCELED Flyspell mode
-CLOSED: [2026-07-15 mié 17:15]
-:LOGBOOK:
-- State "CANCELED"   from              [2026-07-15 mié 17:15]
-:END:
-Automatic spelling in the buffer.
-This conflicts with orgmode archive =C-c $=.
-
-#+begin_src emacs-lisp :tangle no
-  (use-package flyspell
-    :custom
-    ;; Configure =hunspell= as the orthographic corrector, as it is the more modern option.
-    ;; aspell is good enough, but it has stopped being developed.
-    (ispell-program-name "hunspell")
-    (ispell-dictionary "en_US,es_ES")
-    (ispell-personal-dictionary (expand-file-name "dict" my-data-dir))
-    (ispell-silently-savep t)
-    :config
-    ;; Also adding the "spanish" path, because somehow it doesn't work. It finds "castellano", but not "spanish".
-    (add-to-list 'ispell-hunspell-dict-paths-alist '("spanish" "/usr/share/hunspell/es_ES.aff"))
-    (ispell-set-spellchecker-params)
-    (ispell-hunspell-add-multi-dic "en_US,es_ES")
-    :hook
-    (text-mode . flyspell-mode))
-#+end_src
 
 ** Delete after selecting a text area
 This allows to delete a selected text area immediately, just as other text editors.
