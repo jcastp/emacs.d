@@ -1044,6 +1044,13 @@ https://orgmode.org/worg/exporters/beamer/tutorial.html
   (require 'ox-latex)
   (setq org-export-allow-bind-keywords t)
   (setq org-latex-listings 'minted)
+#+end_src
+
+*** babel
+#+begin_src emacs-lisp
+  ;; load the gnuplot package
+  (use-package gnuplot)
+
   (add-to-list 'org-latex-packages-alist '("" "minted"))
   (org-babel-do-load-languages 'org-babel-load-languages '(
                                                            (shell . t)
@@ -1053,16 +1060,8 @@ https://orgmode.org/worg/exporters/beamer/tutorial.html
                                                            (js . t)
                                                            (ditaa . t)
                                                            (gnuplot . t)
-  							 (plantuml . t)
-  							 (dot . t)))
-#+end_src
-
-*** ditaa location
-https://github.com/stathissideris/ditaa
-emacs can't find ditaa, so we have to specify the right location ourselves.
-
-#+begin_src emacs-lisp
-  (setq org-ditaa-jar-path "/usr/bin/ditaa")
+    							 (plantuml . t)
+    							 (dot . t)))
 #+end_src
 
 ** org-journal
