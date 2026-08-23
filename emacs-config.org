@@ -302,9 +302,9 @@ This allows to delete a selected text area immediately, just as other text edito
 
 From Prot's article - https://protesilaos.com/codelog/2024-11-28-basic-emacs-configuration/
 #+begin_src emacs-lisp
-   (use-package delsel
-     :ensure nil ; no need to install it as it is built-in
-     :hook (after-init . delete-selection-mode))
+  (use-package delsel
+    :ensure nil ; no need to install it as it is built-in
+    :hook (after-init . delete-selection-mode))
 #+end_src
 
 ** helpful package
