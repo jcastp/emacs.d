@@ -350,16 +350,6 @@ Defines a set of abbreviations that permits complete words with just some charac
                      "show diff between the buffer and its file"))
 #+end_src
 
-** CANCELED N lines for scrolling
-CLOSED: [2026-08-09 dom 18:37]
-:LOGBOOK:
-- State "CANCELED"   from "TODO"       [2026-08-09 dom 18:37]
-:END:
-Number of lines of margin at the top and bottom of a window.
-#+begin_src emacs-lisp :tangle no
-  (setq scroll-margin 5)  
-#+end_src
-
 * vertico, prescient, consult, marginalia, embark
 ** vertico
 Vertical auto completion in the minibuffer
