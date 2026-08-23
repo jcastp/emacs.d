@@ -185,7 +185,7 @@ When a file is changed in disk, the buffer reloads to reflect that change.
 ** eww configuration
 Set the userAgent for eww.
 #+begin_src emacs-lisp
-  (setq url-user-agent "Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0")
+  (setq url-user-agent "Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/145.0")
 #+end_src
 
 ** dired config
