@@ -1735,7 +1735,6 @@ Elisp using `float-time' to handle org-roam's stored time format."
 
 *** flymake config
 Built-in syntax checking. Integrates natively with eglot.
-Replaced flycheck — eglot uses flymake, so flycheck was redundant.
 
 #+begin_src emacs-lisp
   (use-package flymake
