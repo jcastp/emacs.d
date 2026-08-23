@@ -269,10 +269,19 @@ After pressing a key combo, it shows the key bindings associated.
 Reload this configuration file.
 #+begin_src emacs-lisp
   (defun my/reload-config()
-    "Reloads my orgmode configuration."
+    "Reloads my emacs configuration."
     (interactive)
-    (load (concat user-emacs-directory "init.el")))
-  (global-set-key (kbd "C-c r r" ) 'my/reload-config)
+    (let ((my-init-file (expand-file-name "init.el" user-emacs-directory)))
+      (message "This: %s" my-init-file)
+      (if (file-exists-p my-init-file)
+  	;; if
+  	(progn
+  	  (load my-init-file)
+  	  (message "Reloaded my config."))
+        ;; else
+        (message "File %s not found." my-init-file))))
+
+  (global-set-key (kbd "C-c r r" ) 'my/reload-config)  
 #+end_src
 
 ** Spelling
