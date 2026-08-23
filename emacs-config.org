@@ -687,10 +687,23 @@ Cursor doesn't blink:
 #+end_src
 
 ** Highlight the current line
-I don't need my line to be highlighted.
 #+begin_src emacs-lisp
-  ;; Don't highlight the current line
-  (global-hl-line-mode 0)
+  (global-hl-line-mode 1)
+
+  ;; Change the background color to a dark grey
+  ;; (set-face-attribute 'hl-line nil :background "#2d2d2d")
+
+  ;; Change the text color (foreground) to yellow
+  ;; (set-face-attribute 'hl-line nil :foreground "#ffff00")
+
+  ;; Add a solid underline instead of a background color
+  ;; (set-face-attribute 'hl-line nil :background nil :underline t)
+
+  ;; Add a box around the line
+  ;; (set-face-attribute 'hl-line nil :background nil :box '(:line-width 1 :color "red"))
+
+  ;; Change the font JUST for the highlighted line (rare, but possible)
+  ;; (set-face-attribute 'hl-line nil :family "Fira Code" :weight 'bold)
 #+end_src
 
 ** Font size increase/decrease
