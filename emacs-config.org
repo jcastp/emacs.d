@@ -125,7 +125,8 @@ But backups are good to have:
 #+begin_src emacs-lisp
   ;; backup in one place. flat, no tree structure
   ;; TODO change this to the variables for directories as it does not work as expected
-  (setq backup-directory-alist '(("" . "~/Nextcloud/config/.emacs.d/backups")))
+  ;; (setq backup-directory-alist '(("" . "~/Nextcloud/config/.emacs.d/backups")))
+  (setq backup-directory-alist `(("" . ,(expand-file-name "backups" my-data-dir))))
   ;; What if the file is linked? We copy the file
   (setq backup-by-copying t)
   ;; Version control
