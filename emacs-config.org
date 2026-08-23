@@ -517,9 +517,9 @@ one shadowing the other.
       out-file)
     (setq cape-dict-file
           (list (my/cape-dict-build "/usr/share/hunspell/en_US.dic"
-                                     (expand-file-name "cape-dict-en_US" my-data-dir))
+                                    (expand-file-name "cape-dict-en_US" my-data-dir))
                 (my/cape-dict-build "/usr/share/hunspell/es_ES.dic"
-                                     (expand-file-name "cape-dict-es_ES" my-data-dir))))
+                                    (expand-file-name "cape-dict-es_ES" my-data-dir))))
     (add-hook 'completion-at-point-functions
               (cape-capf-super #'dabbrev-capf #'cape-dict)))
 #+end_src
