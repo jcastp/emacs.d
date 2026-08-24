@@ -1101,6 +1101,10 @@ Use fixed font for code blocks and other non prose blocks, and configure all oth
    '(org-document-info         ((t (:foreground "dark orange"))))
    '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
    '(org-link                  ((t (:foreground "royal blue" :underline t))))
+   ;; keep comments (in code blocks and elsewhere) on the fixed-pitch font,
+   ;; instead of falling back to whatever font provides the italic glyph
+   '(font-lock-comment-face    ((t (:inherit fixed-pitch))))
+   '(font-lock-comment-delimiter-face ((t (:inherit fixed-pitch))))
    '(org-meta-line             ((t (:inherit (font-lock-comment-face fixed-pitch)))))
    '(org-property-value        ((t (:inherit fixed-pitch))) t)
    '(org-special-keyword       ((t (:inherit (font-lock-comment-face fixed-pitch)))))

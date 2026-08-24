@@ -210,17 +210,17 @@ Function to change between dark and clear themes, based on past variables.
 #+begin_src emacs-lisp
   (setq fontaine-presets
       '(
-        ;; Hack font for normal mode
+        ;; Hack font for prose, Aporetic for code blocks
         (hack
-         :default-family "Hack"
+         :default-family "Aporetic Sans Mono"
          :default-weight light
-         :default-height 105
-         :fixed-pitch-family "Hack"
+         :default-height 120
+         :fixed-pitch-family "Aporetic Sans Mono"
          :fixed-pitch-weight Light ; falls back to :default-weight
-         :fixed-pitch-height 105
+         :fixed-pitch-height 110
          :variable-pitch-family "Hack"
          :variable-pitch-weight light
-         :variable-pitch-height 105
+         :variable-pitch-height 110
          :bold-family nil ; use whatever the underlying face has
          :bold-weight bold
          :italic-family "Hack"
