@@ -126,6 +126,28 @@ Also, rotate the list of themes applied.
       ;; rotates the list
       (append (cdr list) (list (car list)))))
 
+  ;; colors used for the highlighted current line, per theme kind
+  (defvar my-hl-line-dark-background "#303030"
+    "Background color for `hl-line' when a dark theme is active.")
+  (defvar my-hl-line-dark-foreground "#f0f0f0"
+    "Foreground color for `hl-line' when a dark theme is active.")
+  (defvar my-hl-line-clear-background "#e0e0e0"
+    "Background color for `hl-line' when a clear theme is active.")
+  (defvar my-hl-line-clear-foreground "#202020"
+    "Foreground color for `hl-line' when a clear theme is active.")
+
+  (defun my/set-hl-line-face (dark-p)
+    "Set the `hl-line' face colors for a dark or clear theme, based on DARK-P."
+    (if dark-p
+        (set-face-attribute 'hl-line nil
+                             :background my-hl-line-dark-background
+                             ;; :foreground my-hl-line-dark-foreground
+  			   )
+      (set-face-attribute 'hl-line nil
+                           :background my-hl-line-clear-background
+                           ;; :foreground my-hl-line-clear-foreground
+  			 )))
+
   ;; based on the election, load the theme, and rotate the list for future use.
   (with-eval-after-load 'consult
     (if my-theme-dark-p
@@ -133,13 +155,17 @@ Also, rotate the list of themes applied.
         (progn
           (consult-theme (car my/themes-dark))
           ;; rotate the list - the applied theme goes to the back of the list
-          (setq my/themes-dark (my/rotate-list my/themes-dark)))
+          (setq my/themes-dark (my/rotate-list my/themes-dark))
+          ;; set hl-line colors for dark theme
+          (my/set-hl-line-face t))
       ;; else block
       ;; clear theme loading
       (progn
         (consult-theme (car my/themes-clear))
         ;; rotate the list - the applied theme goest to the back of the list
-        (setq my/themes-clear (my/rotate-list my/themes-clear)))))
+        (setq my/themes-clear (my/rotate-list my/themes-clear))
+        ;; set hl-line colors for clear theme
+        (my/set-hl-line-face nil))))
 #+end_src
 
 *** Toggle light and dark themes
@@ -158,7 +184,9 @@ Function to change between dark and clear themes, based on past variables.
             ;; rotate the list
             (setq my/themes-dark (my/rotate-list my/themes-dark))
             ;; mark the theme is dark now
-            (setq my-theme-dark-p t))
+            (setq my-theme-dark-p t)
+            ;; set hl-line colors for dark theme
+            (my/set-hl-line-face t))
         ;; else block (clear theme)
         (progn
           (consult-theme (car my/themes-clear))
@@ -166,7 +194,9 @@ Function to change between dark and clear themes, based on past variables.
           ;; rotate the list
           (setq my/themes-clear (my/rotate-list my/themes-clear))
           ;; mark the theme is clear now
-          (setq my-theme-dark-p nil)))))
+          (setq my-theme-dark-p nil)
+          ;; set hl-line colors for clear theme
+          (my/set-hl-line-face nil)))))
 
   (global-set-key (kbd "C-c 0") 'my/theme-changer)
 #+end_src
