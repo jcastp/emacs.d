@@ -889,13 +889,33 @@ Doom modeline.
 
 ** Highlighting the line when changing windows
 Using built-in =pulse.el= instead of the external =pulsar= package.
+
+The default =pulse-highlight-start-face= is mustard on dark themes and nearly
+white on clear ones, and every theme re-themes it, so it gets clobbered on each
+=consult-theme=.  Instead we define our own face and pass it explicitly to
+=pulse-momentary-highlight-one-line=: no theme touches it, so no re-application
+hook is needed when switching between dark and clear themes.
+
+The colour is picked for a relative luminance of ~0.18, where the contrast
+against a near-white and a near-black background is balanced (~4.6:1 both ways).
+It also stays distinct from the neutral grey of =hl-line=.  Alternatives with the
+same property: violet =#7f5fbf=, steel blue =#4a7fa5=.
 #+begin_src emacs-lisp
   (require 'pulse)
+
+  (defface my-pulse-line-face
+    '((t :background "#26837e" :extend t))
+    "Face for `my/pulse-line', readable on both dark and clear themes.")
+
+  ;; nil in Emacs 32 by default, which means a static highlight instead of a fade
+  (setq pulse-flag t)
+  (setq pulse-iterations 12)
+  (setq pulse-delay 0.03)
 
   (defun my/pulse-line (&rest _)
     "Briefly highlight the current line using built-in pulse.el."
     (interactive)
-    (pulse-momentary-highlight-one-line (point)))
+    (pulse-momentary-highlight-one-line (point) 'my-pulse-line-face))
 
   ;; Pulse after navigation commands
   (dolist (cmd '(scroll-up-command scroll-down-command
