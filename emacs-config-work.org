@@ -44,6 +44,18 @@ I use a clear theme.
   (consult-theme 'adwaita)
 #+end_src
 
+* TODO hl line colors
+#+begin_src emacs-lisp
+  (defvar my-hl-line-clear-background "#e0e0e0"
+    "Background color for `hl-line' when a clear theme is active.")
+  (defvar my-hl-line-clear-foreground "#202020"
+    "Foreground color for `hl-line' when a clear theme is active.")
+
+  (set-face-attribute 'hl-line nil
+  		    :background my-hl-line-clear-background
+  		    :foreground my-hl-line-clear-foreground)  
+#+end_src
+
 * Work environment visual indicators
 Deep blue cursor, left fringe, and frame title prefix to distinguish work from personal instances.
 
