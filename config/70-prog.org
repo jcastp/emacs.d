@@ -1,0 +1,119 @@
+#+title: Programming — tooling and languages
+#+property: header-args:emacs-lisp :tangle "70-prog.el"
+#+startup: overview
+
+Version control (magit, diff-hl), diagnostics (flymake), tree-sitter, eglot,
+and the per-language setups.  The git sections and the Programming section were
+adjacent in neither place in the old layout; they are one domain and now sit
+together.
+
+=project.el= is still configured under General config in the legacy shared file
+and moves to =00-core.org= in a later step.
+
+* Lexical binding
+#+begin_src emacs-lisp
+  ;; -*- lexical-binding: t; -*-
+#+end_src
+
+* git related config
+** magit
+Git control version.
+https://cestlaz-nikola.github.io/posts/using-emacs-47-magit/
+
+#+begin_src emacs-lisp
+  (use-package magit
+    :ensure t
+    :after transient
+    :bind
+    (:map global-map
+  	("C-x g" . magit-status)))
+  #+end_src
+  
+** diff-hl
+To show where the file has been modified.
+https://github.com/dgutov/diff-hl
+#+begin_src emacs-lisp
+  (use-package diff-hl
+    :ensure t
+    :config
+    (global-diff-hl-mode)
+    (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
+    (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
+#+end_src
+* Programming
+** General
+
+*** flymake config
+Built-in syntax checking. Integrates natively with eglot.
+
+#+begin_src emacs-lisp
+  (use-package flymake
+    :ensure nil
+    :hook (prog-mode . flymake-mode)
+    :bind (:map flymake-mode-map
+           ("C-c g n" . flymake-goto-next-error)
+           ("C-c g p" . flymake-goto-prev-error)
+           ("C-c g l" . flymake-show-buffer-diagnostics)))
+#+end_src
+
+*** treesitter
+Simplify the treesitter config.
+
+#+begin_src emacs-lisp
+  (setq treesit-auto-install-grammar 'always) ; EMACS-31
+  (setq treesit-enabled-modes t)              ; EMACS-31
+#+end_src
+
+** eglot configuration
+
+#+begin_src emacs-lisp
+  (use-package eglot
+    :ensure nil
+    :config
+    (add-to-list 'eglot-server-programs '(python-ts-mode . ("pylsp")))
+
+    (setq-default eglot-workspace-configuration
+  		'((:pylsp . (:configurationSources ["flake8"] :plugins (:pycodestyle (:enabled nil) :mccabe (:enabled nil) :flake8 (:enabled t))))))
+
+    :bind
+    (:map eglot-mode-map
+          ("C-c f" . eglot-format-buffer))
+
+    :hook
+    ((python-ts-mode . eglot-ensure)
+     (c-mode . eglot-ensure)
+     (c++-mode . eglot-ensure)
+     (c-ts-mode . eglot-ensure)
+     (c++-ts-mode . eglot-ensure)))
+    #+end_src
+
+** Shell scripts
+
+#+begin_src emacs-lisp
+  (setq-default sh-basic-offset 2)
+  (setq-default sh-indentation 2)
+#+end_src
+
+** Python
+All python related configuration
+
+*** Python v3
+Use python3 to run code.
+
+#+begin_src emacs-lisp
+  (setq python-shell-interpreter "python3")
+#+end_src
+
+* TODO markdown mode
+Using the default emacs ts mode for markdown.
+
+#+begin_src emacs-lisp :tangle yes
+  (use-package markdown-ts-mode
+  :ensure nil
+  :defer t)
+
+  ;; (use-package markdown-mode
+  ;;   :ensure t
+  ;;   :mode ("README\\.md\\'" . gfm-mode)
+  ;;   :init (setq markdown-command '("pandoc" "--from=markdown" "--to=html5")))
+#+end_src

@@ -57,6 +57,15 @@ This is the code that will be commited.")
 			    (equal (system-name) "cerbero"))
   "Names of my writing laptops.")
 
+;; Negative polarity on purpose: the machine lists are closed sets of
+;; hostnames, so a machine that is in none of them -- a new laptop, a VM --
+;; gets the full configuration rather than silently losing features.
+(defvar my-full-system-p (not my-writinglaptop-p)
+  "Non-nil unless this is one of the low-end writing laptops.
+Used to keep heavyweight packages off those machines.  Note this is about
+install footprint, not startup time: `:ensure' installs a package even
+when its `use-package' form is deferred.")
+
 (defvar my-homeenvironment-p (or
 			      (string= (getenv "WORKING") "HOME")
 			      (not (string= (getenv "WORKING") "WORK")))
@@ -92,8 +101,59 @@ This is the code that will be commited.")
   (progn
     (message "Encrypted directory not mounted")))
 
-;; load my config
-(org-babel-load-file "~/.emacs.d/emacs-config.org")
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; config module loading
+
+;; Modules are loaded in the order listed here.  The cdr is the condition
+;; under which the module loads; see `my/module-enabled-p'.
+;;
+;; The numbering is spaced so a new module can be slotted in without
+;; renumbering.  config/99-scratch.org is deliberately absent: it is the
+;; staging area and tangles nothing.
+(defvar my-config-modules
+  '(("config/00-core"            . always)
+    ("config/05-identity"        . always)
+    ("config/10-ui"              . always)
+    ("config/15-theme"           . always)
+    ("config/20-completion"      . always)
+    ("config/30-navigation"      . always)
+    ("config/40-org"             . always)
+    ("config/45-agenda"          . always)
+    ("config/46-agenda-personal" . home)
+    ("config/47-agenda-work"     . work)
+    ("config/50-org-roam"        . always)
+    ("config/55-org-export"      . home)
+    ("config/60-writing"         . home)
+    ("config/70-prog"            . always)
+    ("config/80-apps"            . always)
+    ("config/85-ai"              . (home full-system))
+    ("config/90-keymap"          . always))
+  "Config modules and the condition under which each one loads.
+Each entry is a cons of a path relative to `my-config-dir', without
+the .org extension, and a condition symbol understood by
+`my/module-enabled-p'.  The keymap module must stay last: it assembles
+entries contributed by the other modules.")
+
+(defun my/module-enabled-p (condition)
+  "Return non-nil when CONDITION holds for this machine and environment."
+  (pcase condition
+    ('always      t)
+    ('home        my-homeenvironment-p)
+    ('work        my-workenvironment-p)
+    ('full-system my-full-system-p)
+    ('clear       my-clear-directory-is-mounted-p)
+    ;; a list means every condition in it must hold
+    ((pred consp) (seq-every-p #'my/module-enabled-p condition))
+    (_            nil)))
+
+(defun my/load-config-modules ()
+  "Tangle and load every enabled module in `my-config-modules'."
+  (dolist (module my-config-modules)
+    (when (my/module-enabled-p (cdr module))
+      (org-babel-load-file
+       (expand-file-name (concat (car module) ".org") my-config-dir)))))
+
+(my/load-config-modules)
 
 (provide 'init)
 ;;; init.el ends here

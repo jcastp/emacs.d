@@ -1,0 +1,202 @@
+#+title: Completion — minibuffer and in-buffer
+#+property: header-args:emacs-lisp :tangle "20-completion.el"
+#+startup: overview
+
+Minibuffer completion (vertico, prescient, consult, marginalia, embark,
+orderless) and in-buffer completion (corfu, cape).  Loaded before the personal
+and work modules, both of which call into consult at load time.
+
+* Lexical binding
+#+begin_src emacs-lisp
+  ;; -*- lexical-binding: t; -*-
+#+end_src
+
+* vertico, prescient, consult, marginalia, embark
+** vertico
+Vertical auto completion in the minibuffer
+https://github.com/minad/vertico
+#+begin_src emacs-lisp
+  (use-package vertico
+    :ensure t
+    :init
+    (vertico-mode))
+#+end_src
+
+** prescient
+For better auto completion suggestions:
+https://github.com/raxod502/prescient.el
+#+begin_src emacs-lisp
+  (use-package prescient
+    :ensure t
+    :config
+    (prescient-persist-mode 1)
+    (setq prescient-save-file (expand-file-name "prescient-save" my-data-dir))
+    )
+
+  ;; To use prescient with vertico
+  (use-package vertico-prescient
+    :ensure t
+    :config
+    (vertico-prescient-mode 1))
+#+end_src
+
+** consult
+Completion from a list of candidates, and has enhanced commands.
+https://github.com/minad/consult
+#+begin_src emacs-lisp
+  (use-package consult
+    :ensure t
+    :demand t
+    :bind (
+           ;; misc commands
+           ;;("C-x b" . consult-buffer) ;; defined in perspective section
+           ("C-x r b" . consult-bookmark)
+           ("M-y" . consult-yank-from-kill-ring)
+           ;; Go commands
+           ("M-g M-g" . consult-goto-line)
+           ("M-i" . consult-imenu)
+           ("M-g i" . consult-imenu-multi)
+           ("M-g h" . consult-org-heading)
+           ("M-g a" . consult-org-agenda)
+           ("M-g m" . consult-mark)
+           ;; Search commands
+           ("C-s" . consult-line)
+           ("M-s f" . consult-find)
+           ("M-s L" . consult-locate)
+           ("M-s g" . consult-grep)
+           ("M-s G" . consult-git-grep)
+           ("M-s r" . consult-ripgrep)))
+#+end_src
+
+** marginalia
+Add side anotations to the completion buffer
+https://github.com/minad/marginalia/
+#+begin_src emacs-lisp
+  (use-package marginalia
+    :ensure t
+    :init
+      (marginalia-mode))
+#+end_src
+
+** embark
+This package provides a sort of right-click contextual menu for Emacs, accessed through the embark-act command (which you should bind to a convenient key), offering you relevant actions to use on a target determined by the context:
+https://github.com/oantolin/embark/
+#+begin_src emacs-lisp
+  (use-package embark
+    :ensure t
+    :bind
+    (("C-." . embark-act)
+     ("C-h B" . embark-bindings))
+
+    :init
+    ;; Optionally replace the key help with a completing-read interface
+    (setq prefix-help-command #'embark-prefix-help-command)
+
+    :config
+    ;; Hide the mode line of the Embark live/completions buffers
+    (add-to-list 'display-buffer-alist
+                 '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                   nil
+                   (window-parameters (mode-line-format . none)))))
+
+  ;; Consult users will also want the embark-consult package.
+  (use-package embark-consult
+    :ensure t
+    :after (embark consult)
+    :demand t ; only necessary if you have the hook below
+    ;; if you want to have consult previews as you move around an
+    ;; auto-updating embark collect buffer
+    :hook
+    (embark-collect-mode . consult-preview-at-point-mode))
+#+end_src
+
+** orderless
+To have completion based on parts of words, and sepparated by spaces.
+https://github.com/oantolin/orderless
+#+begin_src emacs-lisp
+  (use-package orderless
+    :ensure t
+    :init
+    ;; Configure a custom style dispatcher (see the Consult wiki)
+    ;; (setq orderless-style-dispatchers '(+orderless-dispatch)
+    ;;       orderless-component-separator #'orderless-escapable-split-on-space)
+    (setq completion-styles '(orderless basic)
+          completion-category-defaults nil
+          completion-category-overrides '((file (styles partial-completion)))))
+#+end_src
+
+** in-buffer completion
+Corfu shows completion-at-point candidates in an in-buffer overlay
+popup instead of the =*Completions*= buffer
+(=tab-always-indent 'complete= in the minibuffer section above still
+triggers completion on TAB; corfu just changes how results are
+displayed). It reuses the =orderless= completion style already set
+above, so filtering works the same as in the minibuffer.
+
+Sources feeding the popup:
+- =dabbrev-capf= (built-in since Emacs 28) for words already present
+  in open buffers, in any language.
+- =cape-dict= for words that have never been typed anywhere, drawn
+  from the =hunspell= English and Spanish word lists (the same
+  dictionaries used for spellchecking, see the spelling section
+  above). Hunspell's =.dic= files carry affix flags
+  (e.g. =dog/S=) that cape-dict must not show as candidates, so a
+  plain, flag-stripped word list is generated once into
+  =my-data-dir= and reused on subsequent starts.
+- eglot's own capf for code, added automatically in buffers where
+  =eglot-ensure= runs (see the eglot configuration section).
+
+=dabbrev-capf= and =cape-dict= are merged with =cape-capf-super= so
+both contribute candidates to the same popup instead of the first
+one shadowing the other.
+
+#+begin_src emacs-lisp
+  (use-package corfu
+    :ensure t
+    :init
+    (global-corfu-mode)
+    :custom
+    (corfu-auto t)
+    (corfu-auto-delay 0.4)
+    (corfu-auto-prefix 3)
+    (corfu-cycle t))
+
+  (use-package cape
+    :ensure t
+    :init
+    (require 'dabbrev)
+    (defun my/cape-dict-build (dic-file out-file)
+      "Cache a plain, one-word-per-line copy of hunspell DIC-FILE at OUT-FILE."
+      (unless (file-exists-p out-file)
+        (with-temp-buffer
+          (insert-file-contents dic-file)
+          (goto-char (point-min))
+          (delete-region (point-min) (progn (forward-line 1) (point)))
+          (while (re-search-forward "/.*$" nil t)
+            (replace-match ""))
+          (write-region (point-min) (point-max) out-file)))
+      out-file)
+    (setq cape-dict-file
+          (list (my/cape-dict-build "/usr/share/hunspell/en_US.dic"
+                                    (expand-file-name "cape-dict-en_US" my-data-dir))
+                (my/cape-dict-build "/usr/share/hunspell/es_ES.dic"
+                                    (expand-file-name "cape-dict-es_ES" my-data-dir))))
+    (add-hook 'completion-at-point-functions
+              (cape-capf-super #'dabbrev-capf #'cape-dict)))
+#+end_src
+
+* Minibuffer completion
+https://www.masteringemacs.org/article/understanding-minibuffer-completion
+https://git.sr.ht/~ashton314/emacs-bedrock/tree/main/item/init.el
+#+begin_src emacs-lisp
+  (setq enable-recursive-minibuffers t)  ; Use the minibuffer whilst in the minibuffer
+  (setq completion-cycle-threshold 1)    ; TAB cycles candidates
+  (setq completions-detailed t)          ; Show annotations
+  (setq tab-always-indent 'complete)     ; When I hit TAB, try to complete, otherwise, indent
+#+end_src
+
+* Keymap entries
+#+begin_src emacs-lisp
+  (my/key-define "u" "outline"     #'consult-outline)
+  (my/key-define "r" "recent file" #'consult-recent-file)
+#+end_src

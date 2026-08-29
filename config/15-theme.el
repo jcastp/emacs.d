@@ -1,0 +1,346 @@
+;; -*- lexical-binding: t; -*-
+
+(use-package leuven-theme
+  :ensure t)
+(use-package doric-themes
+  :ensure t)
+(use-package ef-themes
+  :ensure t)
+
+(use-package modus-themes
+  :ensure nil
+  :config
+  ;; Add all your customizations prior to loading the themes
+  (setq
+   modus-themes-completions nil
+   modus-themes-bold-constructs t
+   modus-themes-italic-constructs t
+   modus-themes-success-deuteranopia t
+   modus-themes-mixed-fonts t
+   modus-themes-intense-markup t
+   modus-themes-tabs-accented t
+   modus-themes-org-blocks '(tinted-background)
+   modus-themes-variable-pitch-ui nil
+   modus-themes-variable-pitch-headings nil
+
+   modus-themes-fringes nil ; {nil,'subtle,'intense}
+
+   ;; fonts for headings
+   modus-themes-headings
+   '((1 . (background overline rainbow 1.10))
+     (2 . (overline rainbow 1.05))
+     (3 . (rainbow 1.1))
+     (4 . (rainbow no-bold 1.0))
+     (t . (monochrome no-bold 1.0)))
+   ;; scales up the headings
+   modus-themes-scale-headings t))
+
+(use-package poet-theme
+  :ensure t
+  :defer t)
+
+;; variable pitch variables
+(defvar my-variable-font "Aporetic Sans")
+(defvar my-variable-font-height 140)
+
+;; fixed pitch variables
+(defvar my-fixed-font "Aporetic Sans Mono")
+(defvar my-fixed-font-height 110)
+
+;; My default font variables
+(defvar my-default-font "Aporetic Sans Mono")
+(defvar my-default-font-height 120)
+
+(set-face-attribute 'default nil :font my-default-font)
+
+(custom-theme-set-faces
+ 'user
+ `(variable-pitch
+   ;; variable font config
+   ((t (:family ,my-variable-font
+		:height ,my-variable-font-height
+         	:weight Regular))))
+
+ ;; fixed font config
+ `(fixed-pitch
+   ((t (:family ,my-fixed-font
+		:height ,my-fixed-font-height
+		:weight Medium))))
+
+ ;; default font config
+ `(default
+   ((t (:family ,my-default-font
+		:height ,my-default-font-height
+		:weight Light)))))
+
+(add-hook 'text-mode-hook 'variable-pitch-mode)
+(add-hook 'org-mode-hook 'variable-pitch-mode)
+
+(custom-theme-set-faces
+ 'user
+ '(org-block                 ((t (:inherit fixed-pitch))))
+ '(org-block-begin-line      ((t (:foreground "dim grey" :weight bold :height 1.1 :inherit fixed-pitch))))
+ '(org-document-info         ((t (:foreground "dark orange"))))
+ '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
+ '(org-link                  ((t (:foreground "royal blue" :underline t))))
+ ;; keep comments (in code blocks and elsewhere) on the fixed-pitch font,
+ ;; instead of falling back to whatever font provides the italic glyph
+ '(font-lock-comment-face    ((t (:inherit fixed-pitch))))
+ '(font-lock-comment-delimiter-face ((t (:inherit fixed-pitch))))
+ '(org-meta-line             ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+ '(org-property-value        ((t (:inherit fixed-pitch))) t)
+ '(org-special-keyword       ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+ '(org-tag                   ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.9))))
+ '(org-verbatim              ((t (:inherit (shadow fixed-pitch)))))
+ '(org-indent                ((t (:inherit (org-hide fixed-pitch)))))
+ '(org-table                 ((t (:inherit (org-hide fixed-pitch)))))
+ ;; check if this works
+ '(org-comment               ((t (:inherit (org-hide fixed-pitch) :height 0.8)))))
+
+(use-package fontaine
+  :ensure t)
+
+(when my-homeenvironment-p
+    ;; define the lists of clear and dark themes
+    (setq my/themes-dark '(ef-deuteranopia-dark
+    		       modus-vivendi-tinted))
+    (setq my/themes-clear '(leuven
+    			ef-deuteranopia-light
+    			modus-operandi))
+
+    ;; establish if we start with a dark or clear theme
+    ;; boolean variable: t is dark, nil is clear
+    (defvar my-theme-dark-p t)
+
+    ;; define a function to rotate a list. Custom, yes, I know it could be done better.
+    (defun my/rotate-list (list)
+      "Rotate the elements of LIST by one position, moving the first element to the end, and return the new list."
+p      (if (null list)
+          ;; if block
+          ;; if the list is empty, returns an empty list
+          '()
+        ;; else block
+        ;; rotates the list
+        (append (cdr list) (list (car list)))))
+
+    ;; based on the election, load the theme, and rotate the list for future use.
+    (with-eval-after-load 'consult
+      (if my-theme-dark-p
+          ;; dark theme loading
+          (progn
+            (consult-theme (car my/themes-dark))
+            ;; rotate the list - the applied theme goes to the back of the list
+            (setq my/themes-dark (my/rotate-list my/themes-dark))
+            ;; set hl-line colors for dark theme
+            (my/set-hl-line-face t))
+        ;; else block
+        ;; clear theme loading
+        (progn
+          (consult-theme (car my/themes-clear))
+          ;; rotate the list - the applied theme goest to the back of the list
+          (setq my/themes-clear (my/rotate-list my/themes-clear))
+          ;; set hl-line colors for clear theme
+          (my/set-hl-line-face nil))))
+    )
+
+(when my-homeenvironment-p
+  (with-eval-after-load 'consult
+    (defun my/theme-changer ()
+      "Changes themes between clear and dark ones."
+      (interactive)
+      ;; since we want to change from dark to clear and viceversa, we swap the logic
+      (if (not my-theme-dark-p)
+          ;; this loads the dark theme
+          (progn
+            (consult-theme (car my/themes-dark))
+            (message "The theme applied is %s" (car my/themes-dark))
+            ;; rotate the list
+            (setq my/themes-dark (my/rotate-list my/themes-dark))
+            ;; mark the theme is dark now
+            (setq my-theme-dark-p t)
+            ;; set hl-line colors for dark theme
+            (my/set-hl-line-face t))
+        ;; else block (clear theme)
+        (progn
+          (consult-theme (car my/themes-clear))
+          (message "The theme applied is %s" (car my/themes-clear))
+          ;; rotate the list
+          (setq my/themes-clear (my/rotate-list my/themes-clear))
+          ;; mark the theme is clear now
+          (setq my-theme-dark-p nil)
+          ;; set hl-line colors for clear theme
+          (my/set-hl-line-face nil)))))
+
+  (global-set-key (kbd "C-c 0") 'my/theme-changer)
+  )
+
+(when my-homeenvironment-p
+  (setq fontaine-presets
+      '(
+        ;; Hack font for prose, Aporetic for code blocks
+        (hack
+         :default-family "Aporetic Sans Mono"
+         :default-weight light
+         :default-height 120
+         :fixed-pitch-family "Aporetic Sans Mono"
+         :fixed-pitch-weight Light ; falls back to :default-weight
+         :fixed-pitch-height 110
+         :variable-pitch-family "Hack"
+         :variable-pitch-weight light
+         :variable-pitch-height 110
+         :bold-family nil ; use whatever the underlying face has
+         :bold-weight bold
+         :italic-family "Hack"
+         :italic-slant italic
+         :line-spacing 0)
+        ;; daily operations, same config as normal config
+        (regular
+         :default-family "Aporetic Sans Mono"
+         :default-weight normal
+         :default-height 120
+         :fixed-pitch-family "Aporetic Sans Mono"
+         :fixed-pitch-weight Light ; falls back to :default-weight
+         :fixed-pitch-height 110
+         :variable-pitch-family "Aporetic Sans"
+         :variable-pitch-weight Medium
+         :variable-pitch-height 140
+         :bold-family nil ; use whatever the underlying face has
+         :bold-weight bold
+         :italic-family "Aporetic Sans"
+         :italic-slant italic
+         :line-spacing 0)
+        (regular-aporetic-mono
+         :default-family "Aporetic Sans Mono"
+         :default-weight normal
+         :default-height 110
+         :fixed-pitch-family "Aporetic Sans Mono"
+         :fixed-pitch-weight Light ; falls back to :default-weight
+         :fixed-pitch-height 110
+         :variable-pitch-family "Aporetic Sans Mono"
+         :variable-pitch-weight Medium
+         :variable-pitch-height 110
+         :bold-family nil ; use whatever the underlying face has
+         :bold-weight bold
+         :italic-family "Aporetic Sans Mono"
+         :italic-slant italic
+         :line-spacing 0)
+        ;; Bigger face for variable width, so I can focus on it
+        (writing
+         :default-family "ETBembo"
+         :default-weight normal
+         :default-height 150
+         :fixed-pitch-family "Aporetic Sans Mono"
+         :fixed-pitch-weight Light ; falls back to :default-weight
+         :fixed-pitch-height 120
+         :variable-pitch-family "ETBembo"
+         :variable-pitch-weight Medium
+         :variable-pitch-height 150
+         :bold-family nil ; use whatever the underlying face has
+         :bold-weight bold
+         :italic-family "ETBembo"
+         :italic-slant italic
+         :line-spacing 1)
+        ;; Bigger face for variable width, so I can focus on it
+        (writing-big
+         :default-family "ETBembo"
+         :default-weight normal
+         :default-height 180
+         :fixed-pitch-family "Aporetic Sans Mono"
+         :fixed-pitch-weight Light ; falls back to :default-weight
+         :fixed-pitch-height 140
+         :variable-pitch-family "ETBembo"
+         :variable-pitch-weight Medium
+         :variable-pitch-height 180
+         :bold-family nil ; use whatever the underlying face has
+         :bold-weight bold
+         :italic-family "ETBembo"
+         :italic-slant italic
+         :line-spacing 1)
+        ;; change the variable width face to have a different view when editing
+        (editing
+         :default-family "Aporetic Sans Mono"
+         :default-weight normal
+         :default-height 130
+         :fixed-pitch-family "Aporetic Sans Mono"
+         :fixed-pitch-weight nil ; falls back to :default-weight
+         :fixed-pitch-height 110
+         :variable-pitch-family "Gentium"
+         :variable-pitch-weight normal
+         :variable-pitch-height 150
+         :bold-family nil ; use whatever the underlying face has
+         :bold-weight bold
+         :italic-family "Gentium"
+         :italic-slant italic
+         :line-spacing 1)))
+
+  ;; Establish the regular preset as default
+  (fontaine-set-preset 'hack)
+  )
+
+(when my-workenvironment-p
+  (with-eval-after-load 'consult
+    (consult-theme 'adwaita)
+    (my/set-hl-line-face nil :with-foreground)
+    (set-cursor-color "#00008B")
+    (set-face-background 'fringe "#00008B")
+    (setq-default frame-title-format "[WORK] %b - (%f)")
+    ))
+
+(when my-workenvironment-p
+  (setq fontaine-presets
+        '(
+	  (hack-big
+	   :default-family "Hack"
+           :default-weight light
+           :default-height 140
+           :fixed-pitch-family "Hack"
+           :fixed-pitch-weight Light ; falls back to :default-weight
+           :fixed-pitch-height 140
+           :variable-pitch-family "Hack"
+           :variable-pitch-weight light
+           :variable-pitch-height 140
+           :bold-family nil ; use whatever the underlying face has
+           :bold-weight bold
+           :italic-family "Hack"
+           :italic-slant italic
+           :line-spacing 0)
+	  ;; daily operations, same config as normal config
+	  (regular
+	   :default-family "Aporetic Sans Mono"
+	   :default-weight normal
+	   :default-height 120
+	   :fixed-pitch-family "Aporetic Sans Mono"
+	   :fixed-pitch-weight Light ; falls back to :default-weight
+	   :fixed-pitch-height 110
+	   :variable-pitch-family "Aporetic Sans"
+	   :variable-pitch-weight Medium
+	   :variable-pitch-height 140
+	   :bold-family nil ; use whatever the underlying face has
+	   :bold-weight bold
+	   :italic-family "Aporetic Sans"
+	   :italic-slant italic
+	   :line-spacing 0)
+	  ;; font for work
+	  (work
+	   :default-family "Aporetic Sans Mono"
+	   :default-weight normal
+	   :default-height 140
+	   :fixed-pitch-family "Aporetic Sans Mono"
+	   :fixed-pitch-weight Light ; falls back to :default-weight
+	   :fixed-pitch-height 120
+	   :variable-pitch-family "Aporetic Sans"
+	   :variable-pitch-weight Medium
+	   :variable-pitch-height 140
+	   :bold-family nil ; use whatever the underlying face has
+	   :bold-weight bold
+	   :italic-family "Aporetic Sans"
+	   :italic-slant italic
+	   :line-spacing 0)))
+
+  (fontaine-set-preset 'work)
+  )
+
+(let ((themes (my/key-define-submap "t" "themes and fonts")))
+  (my/key-define "f" "font preset"  #'fontaine-set-preset       themes)
+  (my/key-define "t" "theme"        #'consult-theme             themes)
+  (my/key-define "v" "fill column"  #'visual-fill-column-mode   themes))

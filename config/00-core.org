@@ -1,0 +1,354 @@
+#+title: Core — editing defaults, files and state
+#+property: header-args:emacs-lisp :tangle "00-core.el"
+#+startup: overview
+
+Editor defaults that are true everywhere: encoding, backups, movement, OS
+interaction, spelling, abbrev, save-place, and the persistent state files.
+
+It also owns the =C-q= keymap infrastructure, because the map has to exist
+before any other module can register an entry in it.
+
+* Lexical binding
+#+begin_src emacs-lisp
+  ;; -*- lexical-binding: t; -*-
+#+end_src
+
+* Personal keymap infrastructure
+=C-q= is my own prefix map.  It used to be built in one place at the end of the
+config, which meant that file had to know the names of personal-only and
+work-only commands and guard each one with =fboundp= / =boundp=.  Those guards
+failed silently: a renamed command left a dead key with no warning.
+
+Now the map is created here, empty, and each module registers its own entries
+with the two helpers below.  A module that does not load contributes nothing —
+the condition is the module's own, not a guess made from a symbol's name.
+
+Binding =C-q= this early also makes it a prefix key before any package tries to
+bind beneath it.  =org-jira= binds =C-q j b= and used to fail with "starts with
+non-prefix key C-q", because the map was only installed at the very end.
+
+From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
+
+#+begin_src emacs-lisp
+  (defvar my/key-prefix-map (make-sparse-keymap)
+    "My personal keymap, bound to `C-q'.
+Modules register their own entries with `my/key-define' and
+`my/key-define-submap'.")
+
+  (keymap-set global-map "C-q" my/key-prefix-map)
+
+  (defun my/key-define (key name def &optional map)
+    "Bind KEY to DEF, labelled NAME, in MAP.
+MAP defaults to `my/key-prefix-map'.  NAME is what which-key and
+`describe-keymap' show for the binding."
+    (keymap-set (or map my/key-prefix-map) key (cons name def)))
+
+  (defun my/key-define-submap (key name &optional map)
+    "Register a fresh sub-keymap under KEY, labelled NAME, and return it.
+MAP defaults to `my/key-prefix-map'.  The caller fills the returned
+keymap in with `my/key-define'."
+    (let ((sub (make-sparse-keymap)))
+      (keymap-set (or map my/key-prefix-map) key (cons name sub))
+      sub))
+#+end_src
+
+* Alternative and better C-g function
+https://emacsredux.com/blog/2025/06/01/let-s-make-keyboard-quit-smarter/
+
+#+begin_src emacs-lisp
+  (defun er-keyboard-quit-dwim ()
+    "Do-What-I-Mean behaviour for a general `keyboard-quit'.
+
+  The generic `keyboard-quit' does not do the expected thing when
+  the minibuffer is open.  Whereas we want it to close the
+  minibuffer, even without explicitly focusing it.
+
+  The DWIM behaviour of this command is as follows:
+
+  - When the region is active, disable it.
+  - When a minibuffer is open, but not focused, close the minibuffer.
+  - When the Completions buffer is selected, close it.
+  - In every other case use the regular `keyboard-quit'."
+    (interactive)
+    (cond
+     ((region-active-p)
+      (keyboard-quit))
+     ((derived-mode-p 'completion-list-mode)
+      (delete-completion-window))
+     ((> (minibuffer-depth) 0)
+      (abort-recursive-edit))
+     (t
+      (keyboard-quit))))
+
+  (global-set-key [remap keyboard-quit] #'er-keyboard-quit-dwim)
+#+end_src
+
+* Changes all yes/no questions to y/n type
+The questions are answered with a y or n, instead of yes or no.
+#+begin_src emacs-lisp
+  (setq use-short-answers t)  
+#+end_src
+
+* Sentences end with just one space
+#+begin_src emacs-lisp
+  (setq sentence-end-double-space nil)
+#+end_src
+
+* Ask before closing emacs
+To avoid closing everything because I slip my finger ...
+#+begin_src emacs-lisp
+  (setq confirm-kill-emacs 'y-or-n-p)
+#+end_src
+
+* Network security set to high
+Enforcing the network security.
+https://www.gnu.org/software/emacs/manual/html_node/emacs/Network-Security.html
+#+begin_src emacs-lisp
+  (setq network-security-level 'high)
+#+end_src
+
+* No lock files, but backups
+No lock files created:
+#+begin_src emacs-lisp
+  (setq create-lockfiles nil)
+#+end_src
+
+But backups are good to have:
+#+begin_src emacs-lisp
+  ;; backup in one place. flat, no tree structure
+  ;; TODO change this to the variables for directories as it does not work as expected
+  ;; (setq backup-directory-alist '(("" . "~/Nextcloud/config/.emacs.d/backups")))
+  (setq backup-directory-alist `(("" . ,(expand-file-name "backups" my-data-dir))))
+  ;; What if the file is linked? We copy the file
+  (setq backup-by-copying t)
+  ;; Version control
+  (setq delete-old-versions t
+        kept-new-versions 6
+        kept-old-versions 2
+        version-control t)
+#+end_src
+
+* utf-8 everywhere
+UTF-8 everywhere.
+#+begin_src emacs-lisp
+  (set-language-environment "UTF-8")
+  (set-input-method nil)
+#+end_src
+
+* Movement
+Some keys redefined to better adjust to the whole emacs key environment.
+#+begin_src emacs-lisp
+  (global-set-key (kbd "M-p") 'backward-paragraph)
+  (global-set-key (kbd "M-n") 'forward-paragraph)
+#+end_src
+
+* OS interaction
+These settings relate to how emacs interacts with your operating system.
+#+begin_src emacs-lisp
+  (setq
+   ;; makes killing/yanking interact with the system clipboard
+   select-enable-clipboard t
+
+   ;; This is explained here:
+   ;; https://superuser.com/questions/90257/what-is-the-difference-between-the-x-clipboards
+   ;; https://unix.stackexchange.com/questions/139191/whats-the-difference-between-primary-selection-and-clipboard-buffer
+   select-enable-primary t
+
+   ;; Save clipboard strings into kill ring before replacing them.
+   ;; When one selects something in another program to paste it into Emacs,
+   ;; but kills something in Emacs before actually pasting it,
+   ;; this selection is gone unless this variable is non-nil
+   save-interprogram-paste-before-kill t
+
+   ;; Shows all options when running apropos. For more info,
+   ;; https://www.gnu.org/software/emacs/manual/html_node/emacs/Apropos.html
+   apropos-do-all t
+
+   ;; Mouse yank commands yank at point instead of at click.
+   mouse-yank-at-point t)
+#+end_src
+
+* auto revert mode
+When a file is changed in disk, the buffer reloads to reflect that change.
+#+begin_src emacs-lisp
+  (global-auto-revert-mode 1)
+#+end_src
+
+* electric pair mode
+To automatically close parenthesis and other punctuation signs.
+Specially defined for spanish question and exclamation marks.
+#+begin_src emacs-lisp
+  (electric-pair-mode 1)
+  ;; make electric-pair-mode work on more sets of punctuation signs.
+  (setq electric-pair-pairs
+        '(
+          (?\¡ . ?\!)
+          (?\¿ . ?\?)))
+
+  (setq electric-pair-inhibit-predicate
+        (lambda (c)
+          (if (char-equal c ?<) t
+            (electric-pair-default-inhibit c))))
+#+end_src
+
+* vundo - undo with visual cues
+#+begin_src emacs-lisp
+  (use-package vundo
+    :ensure t
+    ;; `:bind' creates the autoload, so C-z works without loading vundo first.
+    :bind ("C-z" . vundo))
+#+end_src
+
+* Which-key
+After pressing a key combo, it shows the key bindings associated.
+#+begin_src emacs-lisp
+  (which-key-mode)
+#+end_src
+
+* project.el configuration
+#+begin_src emacs-lisp
+  (setq project-list-file (expand-file-name "projects" my-data-dir))
+#+end_src
+
+* Reload my configuration
+Reload this configuration file.
+#+begin_src emacs-lisp
+  (defun my/reload-config()
+    "Reloads my emacs configuration."
+    (interactive)
+    (let ((my-init-file (expand-file-name "init.el" user-emacs-directory)))
+      (message "This: %s" my-init-file)
+      (if (file-exists-p my-init-file)
+  	;; if
+  	(progn
+  	  (load my-init-file)
+  	  (message "Reloaded my config."))
+        ;; else
+        (message "File %s not found." my-init-file))))
+
+  (global-set-key (kbd "C-c r r" ) 'my/reload-config)  
+#+end_src
+
+* Spelling
+https://www.gnu.org/software/emacs/manual/html_node/emacs/Spelling.html
+** jinx
+#+begin_src emacs-lisp
+  (use-package jinx
+  :ensure t
+  :demand t
+  :hook (emacs-startup . global-jinx-mode)
+  :bind (("M-$" . jinx-correct)
+         ("C-M-$" . jinx-languages)))
+  (setq jinx-languages "en es")
+#+end_src
+
+* Delete after selecting a text area
+This allows to delete a selected text area immediately, just as other text editors.
+
+From Prot's article - https://protesilaos.com/codelog/2024-11-28-basic-emacs-configuration/
+#+begin_src emacs-lisp
+  (use-package delsel
+    :ensure nil ; no need to install it as it is built-in
+    :hook (after-init . delete-selection-mode))
+#+end_src
+
+* helpful package
+#+begin_src emacs-lisp
+  (use-package helpful
+    :ensure t
+    :bind
+    ("C-h f" . helpful-callable)
+    ("C-h v" . helpful-variable)
+    ("C-h k" . helpful-key)
+    ("C-h x" . helpful-command))
+#+end_src
+
+* Abbreviation mode
+Defines a set of abbreviations that permits complete words with just some characters.
+#+begin_src emacs-lisp
+  ;;where do we read the abbrevs from
+  (setq abbrev-file-name (expand-file-name "abbrev_defs" my-data-dir))
+  (add-hook 'text-mode-hook 'abbrev-mode)
+  (add-hook 'prog-mode-hook 'abbrev-mode)
+  ;; save abbrevs when files are saved
+  (setq save-abbrevs 'silently)
+#+end_src
+
+* save place
+#+begin_src emacs-lisp
+  (save-place-mode 1)
+#+end_src
+
+* kill without a region now kills a word
+#+begin_src emacs-lisp
+  (setq kill-region-dwim 'emacs-word)               ; EMACS-31: C-w with no region kills a word
+#+end_src
+
+* TODO diff file before saving
+#+begin_src emacs-lisp
+  ;; A Protesilaos life savier HACK
+  ;; Add option "d" to whenever using C-x s or C-x C-c, allowing a quick preview
+  ;; of the diff (if you choose `d') of what you're asked to save.
+  (add-to-list 'save-some-buffers-action-alist
+               (list "d"
+                     (lambda (buffer) (diff-buffer-with-file (buffer-file-name buffer)))
+                     "show diff between the buffer and its file"))
+#+end_src
+
+* Persistent state files
+The home and work instances must not overwrite each other's history, so the
+state files are suffixed per environment.  Previously =recentf= and =savehist=
+were configured in the personal config and re-implemented in the work config,
+which meant work silently ran with =recentf-max-saved-items= at its default of
+25, no =recentf-exclude= list, and no bookmark file of its own — bookmarks were
+landing in the committed =~/.emacs.d/bookmarks.eld=.  One definition, one
+suffix, both environments.
+
+#+begin_src emacs-lisp
+  (defvar my-state-file-suffix (if my-workenvironment-p "-work" "")
+    "Suffix distinguishing the work instance's state files from the personal ones.")
+
+  (defun my/state-file (name)
+    "Return the path of state file NAME in `my-data-dir'.
+  The name is suffixed with `my-state-file-suffix' so that the home and
+  work instances keep separate history."
+    (expand-file-name (concat name my-state-file-suffix) my-data-dir))
+#+end_src
+
+** recentf
+#+begin_src emacs-lisp
+  (setq recentf-save-file (my/state-file "recentf"))
+  (setq recentf-max-saved-items 100
+        recentf-exclude '("/tmp/" "/ssh:" "/sudo:"))
+  (recentf-mode 1)
+#+end_src
+
+** Save command history
+It is nice to have commands and their history saved so that every time you get
+back to work, you can just re-run stuff as you need it.
+
+The last entry of =savehist-additional-variables= is the one genuinely
+environment-specific part: the writing project at home, the direct report at
+work.
+#+begin_src emacs-lisp
+  (setq savehist-file (my/state-file "savehist"))
+  (setq history-length t
+        history-delete-duplicates t
+        savehist-save-minibuffer-history t)
+  (setq savehist-additional-variables
+        (append '(kill-ring
+                  search-ring
+                  regexp-search-ring)
+                (if my-workenvironment-p
+                    ;; remember the last direct report across sessions
+                    '(my/last-report)
+                  ;; remember the last writing project across sessions
+                  '(my/last-writing-project))))
+  (savehist-mode 1)
+#+end_src
+
+** Bookmarks
+#+begin_src emacs-lisp
+  (setq bookmark-default-file (my/state-file "bookmarks"))
+  (setq bookmark-save-flag 1)   ;save bookmarks after each entry
+#+end_src

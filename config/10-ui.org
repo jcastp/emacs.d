@@ -1,0 +1,387 @@
+#+title: UI — frame, faces and modeline
+#+property: header-args:emacs-lisp :tangle "10-ui.el"
+#+startup: overview
+
+Everything about how the frame looks: sizing, fringes, cursor, the current-line
+highlight, line numbers, wrapping, icons, the modeline and the centred writing
+view.
+
+The =hl-line= colours live here rather than with the themes.  They used to be
+spread across all three config files, with the work config carrying a verbatim
+copy of the clear-theme defvars; there is now one set of colours and one
+=my/set-hl-line-face=, which the theme module calls.
+
+* Lexical binding
+#+begin_src emacs-lisp
+  ;; -*- lexical-binding: t; -*-
+#+end_src
+
+* Start with a maximized frame
+#+begin_src emacs-lisp
+  (add-to-list 'default-frame-alist '(fullscreen . maximized))
+#+end_src
+
+* fringe bars
+We put some fringe space in the frames.
+#+begin_src emacs-lisp
+  (fringe-mode 4)
+#+end_src
+
+* Number of columns and rows
+Don't put the number of lines and columns in the mini line.
+
+#+begin_src emacs-lisp
+  (setq line-number-mode nil)
+  (setq column-number-mode nil)
+#+end_src
+
+* No blinking cursor
+Cursor doesn't blink:
+#+begin_src emacs-lisp
+  (blink-cursor-mode 0)
+#+end_src
+
+* Highlight the current line
+#+begin_src emacs-lisp
+  (global-hl-line-mode 1)
+
+  ;; Change the background color to a dark grey
+  ;; (set-face-attribute 'hl-line nil :background "#2d2d2d")
+
+  ;; Change the text color (foreground) to yellow
+  ;; (set-face-attribute 'hl-line nil :foreground "#ffff00")
+
+  ;; Add a solid underline instead of a background color
+  ;; (set-face-attribute 'hl-line nil :background nil :underline t)
+
+  ;; Add a box around the line
+  ;; (set-face-attribute 'hl-line nil :background nil :box '(:line-width 1 :color "red"))
+
+  ;; Change the font JUST for the highlighted line (rare, but possible)
+  ;; (set-face-attribute 'hl-line nil :family "Fira Code" :weight 'bold)
+#+end_src
+
+* Font size increase/decrease
+Increase or decrease the font size
+#+begin_src emacs-lisp
+  (global-set-key (kbd "M-+") 'text-scale-increase)
+  (global-set-key (kbd "M--") 'text-scale-decrease)
+#+end_src
+
+* full path in the title bar
+Put the complete path on the title bar, along the filename.
+#+begin_src emacs-lisp
+  (setq-default frame-title-format "%b - (%f)")
+#+end_src
+
+* Time and date
+Put time and date on the status line
+#+begin_src emacs-lisp
+  (setq display-time-day-and-date t
+        display-time-24hr-format t)
+  (display-time)
+#+end_src
+
+* Highlight matching parenthesis
+You can see the matching parenthesis
+#+begin_src emacs-lisp
+  (show-paren-mode 1)
+#+end_src
+
+* Tabs are 4 spaces
+#+begin_src emacs-lisp
+  (setq tab-width 4) ; or any other preferred value
+  ;; (defvaralias 'c-basic-offset 'tab-width)
+  (defvaralias 'cperl-indent-level 'tab-width)
+#+end_src
+
+* Fontify the header
+Fontify the whole line for headings (with a background color). Works well with Leuven theme:
+
+#+begin_src emacs-lisp
+  (setq org-fontify-whole-heading-line nil)
+#+end_src
+
+Different sizes for the different org headings.
+#+begin_src emacs-lisp
+   (custom-theme-set-faces
+    'user
+    `(org-level-4 ((t (:height 1.0))))
+    `(org-level-3 ((t (:height 1.1))))
+    `(org-level-2 ((t (:height 1.2))))
+    `(org-level-1 ((t (:height 1.3))))
+    `(org-document-title ((t (:height 1.6 :underline nil)))))
+#+end_src
+
+* Open indirect buffer
+Open a branch into a different frame, but the same buffer:
+
+TODO: Search how to check if there is another right frame open or not.
+#+begin_src emacs-lisp
+(defun my/org-tree-open-in-right-frame ()
+  "Open the current Org subtree in an indirect buffer in the right window.
+If there is only one window, create a right-side window first.
+Then, always move focus to that right window."
+  (interactive)
+  (let ((right-win (window-right (selected-window))))
+    ;; If there's no window to the right, create one
+    (unless right-win
+      (setq right-win (split-window-right)))
+    ;; Show the subtree in an indirect buffer
+    (org-tree-to-indirect-buffer)
+    ;; Move to the right window
+    (select-window right-win)))
+ 
+  (global-set-key (kbd "C-c 8" ) 'my/org-tree-open-in-right-frame)
+#+end_src
+
+Open a branch into an indirect buffer that takes over the whole frame, hiding every other window:
+#+begin_src emacs-lisp
+(defun my/org-tree-open-in-only-window ()
+  "Open the current Org subtree in an indirect buffer, focus it, and hide all other windows."
+  (interactive)
+  (org-tree-to-indirect-buffer)
+  (switch-to-buffer org-last-indirect-buffer)
+  (delete-other-windows))
+
+  (global-set-key (kbd "C-c 9" ) 'my/org-tree-open-in-only-window)
+#+end_src
+
+* No bell
+No audible bell, but visual one:
+#+begin_src emacs-lisp
+  (setq ring-bell-function 'ignore)
+  ;; (setq visible-bell t)
+#+end_src
+
+* Line numbers
+This determines the style of line numbers in effect. If set to `nil', line numbers are disabled. For relative line numbers, set this to `relative'.
+#+begin_src emacs-lisp
+  ;; Calculate width based on total lines in buffer at start
+  (setq display-line-numbers-width-start t)
+  (setq display-line-numbers-offset 0)
+  (setq display-line-numbers-type t)
+  (setq display-line-numbers-grow-only t)
+  (global-display-line-numbers-mode 1)
+#+end_src
+
+* Long lines get wrapped
+Long lines get wrapped when they reach the edge. We activate it for all the buffers.
+#+begin_src emacs-lisp
+  (global-visual-line-mode 1) ; 1 for on, 0 for off.
+#+end_src
+
+* Fill column mode
+We want to use the visual fill column mode to limit the width of the lines, even if they don't reach the right edge.
+
+When reaching the established width defined, the line will wrap, even before getting into the right border of the application.
+#+begin_src emacs-lisp
+  ;; visual fill column mode
+  (use-package visual-fill-column
+    :ensure t
+    :config
+    ;; This sets the value to all the buffers, as initially it is a per-buffer variable
+    (setq-default visual-fill-column-width 110)
+    ;; set the text in the center of the window
+    (setq-default visual-fill-column-center-text t))
+#+end_src
+
+* All the icons
+Get all the fancy icons.
+#+begin_src emacs-lisp
+  ;; From Prot's article - https://protesilaos.com/codelog/2024-11-28-basic-emacs-configuration/
+  (use-package nerd-icons
+    :ensure t)
+
+  (use-package nerd-icons-completion
+    :ensure t
+    :after marginalia
+    :config
+    (nerd-icons-completion-marginalia-setup)
+    (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup))
+
+(use-package nerd-icons-dired
+    :ensure t
+    :hook
+    (dired-mode . nerd-icons-dired-mode))
+#+end_src
+
+* doom modeline
+Doom modeline.
+#+begin_src emacs-lisp
+  (use-package doom-modeline
+    :ensure t
+    ;;:hook (after-init . doom-modeline-mode)
+    :init
+    (doom-modeline-mode 1)
+    :config
+    (setq doom-modeline-height 25)
+    (setq doom-modeline-icon t)
+    (setq doom-modeline-major-mode-icon t)
+    (setq doom-modeline-major-mode-color-icon t)
+    (setq doom-modeline-buffer-state-icon t)
+    (setq doom-modeline-buffer-modification-icon t)
+    ;; Do we need to show the minor modes?
+    (setq doom-modeline-minor-modes nil)
+    ;; word count of the buffer disabled, as it slows operations when word count grows
+    ;; (setq doom-modeline-enable-word-count t)
+    ;; Major modes in which to display word count continuously.
+    ;; Also applies to any derived modes. Respects `doom-modeline-enable-word-count'.
+    ;; If it brings the sluggish issue, disable `doom-modeline-enable-word-count' or
+    ;; remove the modes from `doom-modeline-continuous-word-count-modes'.
+    ;; (setq doom-modeline-continuous-word-count-modes '(markdown-mode gfm-mode org-mode))
+    (setq doom-modeline-env-version t)
+    (setq doom-modeline-buffer-encoding nil)
+    (setq doom-modeline-indent-info nil)
+    (setq doom-modeline-buffer-file-name-style 'auto)
+    ;; github status in the modeline
+    (setq doom-modeline-github nil)
+    ;; Whether display the `lsp' state. Non-nil to display in the mode-line.
+    (setq doom-modeline-lsp t)
+    ;; Whether display the time. It respects `display-time-mode'.
+    (setq doom-modeline-time t))
+#+end_src
+
+* Highlighting the line when changing windows
+Using built-in =pulse.el= instead of the external =pulsar= package.
+
+The default =pulse-highlight-start-face= is mustard on dark themes and nearly
+white on clear ones, and every theme re-themes it, so it gets clobbered on each
+=consult-theme=.  Instead we define our own face and pass it explicitly to
+=pulse-momentary-highlight-one-line=: no theme touches it, so no re-application
+hook is needed when switching between dark and clear themes.
+
+The colour is picked for a relative luminance of ~0.18, where the contrast
+against a near-white and a near-black background is balanced (~4.6:1 both ways).
+It also stays distinct from the neutral grey of =hl-line=.  Alternatives with the
+same property: violet =#7f5fbf=, steel blue =#4a7fa5=.
+#+begin_src emacs-lisp
+  (require 'pulse)
+
+  (defface my-pulse-line-face
+    '((t :background "#26837e" :extend t))
+    "Face for `my/pulse-line', readable on both dark and clear themes.")
+
+  ;; nil in Emacs 32 by default, which means a static highlight instead of a fade
+  (setq pulse-flag t)
+  (setq pulse-iterations 12)
+  (setq pulse-delay 0.03)
+
+  (defun my/pulse-line (&rest _)
+    "Briefly highlight the current line using built-in pulse.el."
+    (interactive)
+    (pulse-momentary-highlight-one-line (point) 'my-pulse-line-face))
+
+  ;; Pulse after navigation commands
+  (dolist (cmd '(scroll-up-command scroll-down-command
+                 recenter-top-bottom other-window
+                 windmove-left windmove-right windmove-up windmove-down))
+    (advice-add cmd :after #'my/pulse-line))
+
+  ;; Pulse after consult jumps
+  (add-hook 'consult-after-jump-hook #'my/pulse-line)
+
+  (global-set-key (kbd "C-x l") #'my/pulse-line)
+#+end_src
+
+* spacious padding
+This package provides a global minor mode to increase the spacing/padding of Emacs windows and frames. The idea is to make editing and reading feel more comfortable.
+
+https://github.com/protesilaos/spacious-padding
+#+begin_src emacs-lisp
+  (use-package spacious-padding
+    :ensure t
+    :config
+    (setq spacious-padding-widths
+  	'( :internal-border-width 15
+             :header-line-width 4
+             :mode-line-width 6
+             :tab-width 4
+             :right-divider-width 30
+             :scroll-bar-width 8))
+    (spacious-padding-mode 1))
+#+end_src
+
+* Center a buffer in screen
+Sometimes I have just a single window and this is a problem for me in a big screen. This code just centers the text in the middle.
+Useful for reading books or long texts.
+
+#+begin_src emacs-lisp
+  (defcustom my/centered-content-width 100
+    "Width of the centered content area in characters."
+    :type 'integer
+    :group 'editing-basics)
+
+  (defun my/centered-content-width-value ()
+    "Prompt the user for a value and set `my/centered-content-width` to it."
+    (interactive)
+    (setq my/centered-content-width (string-to-number (read-from-minibuffer "Value for centered width: "))))
+
+  (defvar my/centered-mode nil)
+
+  (define-minor-mode my/centered-mode
+    "Minor mode to center buffer content using margins and visual line mode."
+    :init-value nil
+    :global nil
+    :lighter " [Centered]"
+    :group 'editing-basics
+    (if my/centered-mode
+        (progn
+          (visual-line-mode 1)
+          (add-hook 'window-configuration-change-hook 
+                    #'my/centered--update-margins nil t)
+          (my/centered--update-margins))
+      (progn
+        (visual-line-mode 1)
+        (remove-hook 'window-configuration-change-hook 
+                     #'my/centered--update-margins t)
+        (set-window-margins nil 0 0))))
+
+  (defun my/centered--update-margins ()
+    "Calculate and apply margins to center 100-character content."
+    (let* ((width (frame-width))
+           (margin (max 0 (/ (- width my/centered-content-width) 2))))
+      (set-window-margins nil margin margin)))
+#+end_src
+
+* Current-line highlight colours
+=hl-line= used to be spread across all three config files: =global-hl-line-mode=
+in the shared one, the dark/clear colours and =my/set-hl-line-face= in the
+personal one, and a verbatim copy of the clear colours in the work one.  Two
+sources of truth for the same two hex values.
+
+One set of colours now, and one function.  The work environment sets the
+foreground explicitly while the personal themes look better letting the theme
+choose it, so that difference is an argument rather than a second copy.
+
+The theme module calls this; it loads after this one.
+
+#+begin_src emacs-lisp
+  (defvar my-hl-line-dark-background "#303030"
+    "Background color for `hl-line' when a dark theme is active.")
+  (defvar my-hl-line-dark-foreground "#f0f0f0"
+    "Foreground color for `hl-line' when a dark theme is active.")
+  (defvar my-hl-line-clear-background "#e0e0e0"
+    "Background color for `hl-line' when a clear theme is active.")
+  (defvar my-hl-line-clear-foreground "#202020"
+    "Foreground color for `hl-line' when a clear theme is active.")
+
+  (defun my/set-hl-line-face (dark-p &optional with-foreground)
+    "Set the `hl-line' face colors for a dark or clear theme, based on DARK-P.
+The foreground is only touched when WITH-FOREGROUND is non-nil, so that
+the personal themes keep whatever foreground the theme itself picked."
+    (set-face-attribute 'hl-line nil
+                        :background (if dark-p
+                                        my-hl-line-dark-background
+                                      my-hl-line-clear-background))
+    (when with-foreground
+      (set-face-attribute 'hl-line nil
+                          :foreground (if dark-p
+                                          my-hl-line-dark-foreground
+                                        my-hl-line-clear-foreground))))
+#+end_src
+
+* Keymap entry
+#+begin_src emacs-lisp
+  (my/key-define "c" "centered mode" #'my/centered-mode)
+#+end_src

@@ -1,0 +1,387 @@
+#+title: Agenda views — personal
+#+property: header-args:emacs-lisp :tangle "46-agenda-personal.el"
+#+startup: overview
+
+My personal agenda commands, super-agenda groups and the project
+restriction, split out of =45-agenda.org= because they are ~300 lines on their
+own.  Home only.
+
+* Lexical binding
+#+begin_src emacs-lisp
+  ;; -*- lexical-binding: t; -*-
+#+end_src
+
+** TODO Custom agenda commands
+We define some agenda custom commands, to refine views, and get a clearer undestanding of the tasks.
+
+** Sort comparator for books by DATE_FINISHED
+#+begin_src emacs-lisp
+  (defun my/org-agenda-cmp-read-date (a b)
+    "Compare agenda entries A and B by DATE_FINISHED property, descending."
+    (let ((date-a (org-entry-get (get-text-property 0 'org-hd-marker a) "DATE_FINISHED"))
+          (date-b (org-entry-get (get-text-property 0 'org-hd-marker b) "DATE_FINISHED")))
+      (cond ((and date-a date-b) (if (string< date-b date-a) 1 -1))
+            (date-a 1)
+            (date-b -1)
+            (t nil))))
+#+end_src
+
+** Agenda commands
+#+begin_src emacs-lisp
+  ;; Personal agenda span: 14 days, starting Monday
+  (setq org-agenda-span 14)
+  (setq org-agenda-start-on-weekday 1)
+
+  ;; CLOSED timestamps required for weekly review
+  (setq org-log-done 'time)
+
+  (setq org-agenda-custom-commands
+        '(
+
+          ;; ──────────────────────────────────────────────────────────────────
+          ;; d — Daily
+          ;; Every morning. Question: what needs my attention today?
+          ;; ──────────────────────────────────────────────────────────────────
+          ("d" "Daily"
+           (
+            (agenda ""
+                    ((org-agenda-span 1)
+                     (org-deadline-warning-days 3)
+                     (org-agenda-sorting-strategy '(time-up priority-down))
+                     (org-agenda-overriding-header "[ TODAY ]")))
+
+            (tags-todo "-someday/ONGOING"
+                       ((org-agenda-overriding-header "[ IN PROGRESS ]")
+                        (org-agenda-sorting-strategy '(priority-down effort-up))
+                        (org-agenda-prefix-format " %i %-14:c %5e ")))
+
+            (tags-todo "+PRIORITY=\"A\"-someday/TODO"
+                       ((org-agenda-overriding-header "[ PRIORITY A — needs attention ]")
+                        (org-agenda-sorting-strategy '(effort-up ts-up))
+                        (org-agenda-prefix-format " %i %-14:c %5e ")))
+
+            (tags-todo "-someday/WAITING"
+                       ((org-agenda-overriding-header "[ WAITING — nudge if possible ]")
+                        (org-agenda-sorting-strategy '(ts-up))
+                        (org-agenda-prefix-format " %i %-14:c ")))
+            )
+           )
+
+          ;; ──────────────────────────────────────────────────────────────────
+          ;; w — Week horizon
+          ;; Sunday evening / Monday. Question: what is coming up this week?
+          ;; ──────────────────────────────────────────────────────────────────
+          ("w" "Week horizon"
+           (
+            (agenda ""
+                    ((org-agenda-span 14)
+                     (org-agenda-time-grid nil)
+                     (org-agenda-entry-types '(:deadline))
+                     (org-agenda-overriding-header "[ DEADLINES — next 2 weeks ]")
+                     (org-agenda-sorting-strategy '(deadline-up priority-down))))
+
+            (tags-todo "-someday/ONGOING"
+                       ((org-agenda-overriding-header "[ IN PROGRESS — carryover ]")
+                        (org-agenda-sorting-strategy '(priority-down effort-up))
+                        (org-agenda-prefix-format " %i %-14:c %5e ")))
+
+            (tags-todo "+PRIORITY=\"A\"-someday/TODO"
+                       ((org-agenda-overriding-header "[ PRIORITY A — strong candidates ]")
+                        (org-agenda-sorting-strategy '(effort-up ts-up))
+                        (org-agenda-prefix-format " %i %-14:c %5e ")))
+
+            (tags-todo "+PRIORITY=\"B\"-someday/TODO"
+                       ((org-agenda-overriding-header "[ PRIORITY B — if time allows ]")
+                        (org-agenda-sorting-strategy '(effort-up ts-up))
+                        (org-agenda-prefix-format " %i %-14:c %5e ")))
+
+            (tags-todo "-someday/WAITING"
+                       ((org-agenda-overriding-header "[ WAITING — follow up this week? ]")
+                        (org-agenda-sorting-strategy '(ts-up))
+                        (org-agenda-prefix-format " %i %-14:c ")))
+            )
+           )
+
+          ;; ──────────────────────────────────────────────────────────────────
+          ;; R — Weekly review
+          ;; Friday / weekend. Question: how did my week go?
+          ;; ──────────────────────────────────────────────────────────────────
+          ("R" "Weekly review"
+           (
+            (tags "+CLOSED>=\"<-7d>\""
+                  ((org-agenda-overriding-header "[ COMPLETED THIS WEEK ]")
+                   (org-agenda-skip-function
+                    '(org-agenda-skip-entry-if 'nottodo '("DONE" "FINISHED")))
+                   (org-agenda-sorting-strategy '(timestamp-down))
+                   (org-agenda-prefix-format " %i %-14:c ")))
+
+            (tags-todo "+health-someday"
+                       ((org-agenda-overriding-header "[ HEALTH — unfinished ]")
+                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "CANCELED")))
+                        (org-agenda-sorting-strategy '(priority-down ts-up))
+                        (org-agenda-prefix-format " %i %-14:c ")))
+
+            (tags-todo "+financial-someday"
+                       ((org-agenda-overriding-header "[ FINANCIAL — unfinished ]")
+                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "CANCELED")))
+                        (org-agenda-sorting-strategy '(priority-down ts-up))
+                        (org-agenda-prefix-format " %i %-14:c ")))
+
+            (tags-todo "-someday/WAITING"
+                       ((org-agenda-overriding-header "[ WAITING — chase or park? ]")
+                        (org-agenda-sorting-strategy '(ts-up priority-down))
+                        (org-agenda-prefix-format " %i %-14:c ")))
+
+            (tags-todo "-someday/TODO"
+                       ((org-agenda-overriding-header "[ UNSCHEDULED — needs a home ]")
+                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'timestamp))
+                        (org-agenda-sorting-strategy '(priority-down effort-up))
+                        (org-agenda-prefix-format " %i %-14:c %5e ")))
+            )
+           )
+
+          ;; ──────────────────────────────────────────────────────────────────
+          ;; ca — Areas of life
+          ;; Monthly check-in. Question: how are my life areas doing?
+          ;; ──────────────────────────────────────────────────────────────────
+          ("ca" "Areas of life"
+           (
+            (tags-todo "+personal-someday"
+                       ((org-agenda-overriding-header "[ PERSONAL ]")
+                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "CANCELED")))
+                        (org-agenda-sorting-strategy '(todo-state-up priority-down effort-up))
+                        (org-agenda-prefix-format " %i %-14:c %5e ")))
+
+            (tags-todo "+health-someday"
+                       ((org-agenda-overriding-header "[ HEALTH ]")
+                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "CANCELED")))
+                        (org-agenda-sorting-strategy '(todo-state-up priority-down effort-up))
+                        (org-agenda-prefix-format " %i %-14:c %5e ")))
+
+            (tags-todo "+financial-someday"
+                       ((org-agenda-overriding-header "[ FINANCIAL ]")
+                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "CANCELED")))
+                        (org-agenda-sorting-strategy '(todo-state-up priority-down effort-up))
+                        (org-agenda-prefix-format " %i %-14:c %5e ")))
+
+            (tags-todo "-personal-health-financial-someday-books"
+                       ((org-agenda-overriding-header "[ UNTAGGED — needs an area ]")
+                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "CANCELED")))
+                        (org-agenda-sorting-strategy '(priority-down ts-up))
+                        (org-agenda-prefix-format " %i %-14:c ")))
+            )
+           )
+
+          ;; ──────────────────────────────────────────────────────────────────
+          ;; cw — Writing pipeline
+          ;; Before a writing session. Question: what writing needs attention?
+          ;; ──────────────────────────────────────────────────────────────────
+          ("cw" "Writing pipeline"
+           (
+            (tags-todo "writing/WRITING"
+                       ((org-agenda-overriding-header "[ IN PROGRESS ]")
+                        (org-agenda-sorting-strategy '(priority-down ts-up))
+                        (org-agenda-prefix-format " %i %-20:c ")))
+
+            (tags-todo "writing/TOWRITE"
+                       ((org-agenda-overriding-header "[ TO WRITE — committed ]")
+                        (org-agenda-sorting-strategy '(priority-down ts-up))
+                        (org-agenda-prefix-format " %i %-20:c ")))
+
+            (tags-todo "writing/REVIEW"
+                       ((org-agenda-overriding-header "[ NEEDS REVIEW ]")
+                        (org-agenda-sorting-strategy '(ts-up))
+                        (org-agenda-prefix-format " %i %-20:c ")))
+
+            (tags-todo "writing/REWORK"
+                       ((org-agenda-overriding-header "[ NEEDS REWORK ]")
+                        (org-agenda-sorting-strategy '(ts-up))
+                        (org-agenda-prefix-format " %i %-20:c ")))
+
+            (tags-todo "blog-writing/TODO|TOWRITE"
+                       ((org-agenda-overriding-header "[ BLOG — queue ]")
+                        (org-agenda-sorting-strategy '(priority-down ts-up))
+                        (org-agenda-prefix-format " %i %-20:c ")))
+
+            (tags "writing/FINISHED"
+                  ((org-agenda-overriding-header "[ RECENTLY FINISHED ]")
+                   (org-agenda-sorting-strategy '(timestamp-down))
+                   (org-agenda-max-entries 10)
+                   (org-agenda-prefix-format " %i %-20:c ")))
+            )
+           )
+
+          ;; ──────────────────────────────────────────────────────────────────
+          ;; cb — Books
+          ;; Anytime. Question: what am I reading, what is next?
+          ;; ──────────────────────────────────────────────────────────────────
+          ("cb" "Books"
+           (
+            (tags-todo "books/READING"
+                       ((org-agenda-overriding-header "[ READING NOW ]")
+                        (org-agenda-prefix-format " %i %-20:c ")))
+
+            (tags-todo "books/ONHOLD"
+                       ((org-agenda-overriding-header "[ ON HOLD — resume or abandon? ]")
+                        (org-agenda-prefix-format " %i %-20:c ")))
+
+            (tags-todo "books/TOREAD"
+                       ((org-agenda-overriding-header "[ TO READ ]")
+                        (org-agenda-sorting-strategy '(priority-down ts-up))
+                        (org-agenda-prefix-format " %i %-20:c ")))
+
+            (tags "books/READ"
+                  ((org-agenda-overriding-header "[ RECENTLY READ ]")
+                   (org-agenda-cmp-user-defined #'my/org-agenda-cmp-read-date)
+                   (org-agenda-sorting-strategy '(user-defined-down))
+                   (org-agenda-max-entries 20)
+                   (org-agenda-prefix-format " %i %-20:c ")))
+            )
+           )
+
+          ;; ──────────────────────────────────────────────────────────────────
+          ;; cs — Someday and goals
+          ;; Weekly review / monthly. Question: what is in my someday list?
+          ;; ──────────────────────────────────────────────────────────────────
+          ("cs" "Someday and goals"
+           (
+            (tags-todo "+objetivos"
+                       ((org-agenda-overriding-header "[ GOALS — still relevant? ]")
+                        (org-agenda-sorting-strategy '(priority-down ts-up))
+                        (org-agenda-prefix-format " %i %-14:c ")))
+
+            (tags-todo "+someday+personal"
+                       ((org-agenda-overriding-header "[ SOMEDAY — personal ]")
+                        (org-agenda-sorting-strategy '(priority-down ts-up))
+                        (org-agenda-prefix-format " %i %-14:c ")))
+
+            (tags-todo "+someday+health"
+                       ((org-agenda-overriding-header "[ SOMEDAY — health ]")
+                        (org-agenda-sorting-strategy '(priority-down ts-up))
+                        (org-agenda-prefix-format " %i %-14:c ")))
+
+            (tags-todo "+someday+financial"
+                       ((org-agenda-overriding-header "[ SOMEDAY — financial ]")
+                        (org-agenda-sorting-strategy '(priority-down ts-up))
+                        (org-agenda-prefix-format " %i %-14:c ")))
+
+            (tags-todo "+someday-personal-health-financial-objetivos"
+                       ((org-agenda-overriding-header "[ SOMEDAY — other ]")
+                        (org-agenda-sorting-strategy '(priority-down ts-up))
+                        (org-agenda-prefix-format " %i %-14:c ")))
+            )
+           )
+
+          ;; ──────────────────────────────────────────────────────────────────
+          ;; ce — Context and energy
+          ;; Free time slot. Question: what can I do given where I am + energy?
+          ;; ──────────────────────────────────────────────────────────────────
+          ("ce" "Context and energy"
+           (
+            (tags-todo "+high_energy+@computer-someday"
+                       ((org-agenda-overriding-header "[ HIGH ENERGY + COMPUTER — deep work ]")
+                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "CANCELED" "WAITING")))
+                        (org-agenda-sorting-strategy '(priority-down effort-up))
+                        (org-agenda-prefix-format " %i %-14:c %5e ")))
+
+            (tags-todo "+@home-someday-high_energy"
+                       ((org-agenda-overriding-header "[ @HOME ]")
+                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "CANCELED")))
+                        (org-agenda-sorting-strategy '(priority-down effort-up))
+                        (org-agenda-prefix-format " %i %-14:c %5e ")))
+
+            (tags-todo "+@penpaper-someday"
+                       ((org-agenda-overriding-header "[ @PEN & PAPER ]")
+                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "CANCELED")))
+                        (org-agenda-sorting-strategy '(priority-down effort-up))
+                        (org-agenda-prefix-format " %i %-14:c %5e ")))
+
+            (tags-todo "+@errands-someday"
+                       ((org-agenda-overriding-header "[ @ERRANDS ]")
+                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "CANCELED")))
+                        (org-agenda-sorting-strategy '(priority-down))
+                        (org-agenda-prefix-format " %i %-14:c ")))
+
+            (tags-todo "+@online-someday-high_energy"
+                       ((org-agenda-overriding-header "[ @ONLINE ]")
+                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "CANCELED")))
+                        (org-agenda-sorting-strategy '(priority-down effort-up))
+                        (org-agenda-prefix-format " %i %-14:c %5e ")))
+
+            (tags-todo "+calls-someday"
+                       ((org-agenda-overriding-header "[ CALLS / MESSAGES ]")
+                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "CANCELED")))
+                        (org-agenda-sorting-strategy '(priority-down))
+                        (org-agenda-prefix-format " %i %-14:c ")))
+
+            (tags-todo "+low_energy-someday"
+                       ((org-agenda-overriding-header "[ LOW ENERGY — quick wins ]")
+                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "CANCELED")))
+                        (org-agenda-sorting-strategy '(effort-up priority-down))
+                        (org-agenda-prefix-format " %i %-14:c %5e ")))
+            )
+           )
+          ))
+#+end_src
+
+* org-superagenda
+This is the config for the org-superagenda mode
+
+#+begin_src emacs-lisp
+  (use-package org-super-agenda
+    :ensure t
+    :config
+    (org-super-agenda-mode 1)
+    ;; Super-agenda groups for the default C-c a a view
+    (setq org-super-agenda-groups
+  	`((:name "Overdue"           :deadline past          :order 1)
+            (:name "Today"             :time-grid t
+                   :scheduled today        :order 2)
+            (:name "Deadline this week" :deadline
+  		 (before ,(org-read-date nil nil "+7d"))     :order 3)
+            (:name "In progress"       :todo "ONGOING"         :order 10)
+            (:name "Priority A"        :priority "A"           :order 11)
+            (:name "Waiting"           :todo "WAITING"         :order 12)
+            (:name "Health"            :tag "health"           :order 20)
+            (:name "Financial"         :tag "financial"        :order 21)
+            (:name "Personal"          :tag "personal"         :order 22)
+            (:name "Writing"           :tag "writing"          :order 30)
+            (:name "Reading"           :tag "books"            :order 31)
+            (:name "Someday"           :tag "someday"          :order 90)
+            (:discard (:anything t)))))
+#+end_src
+
+* Restrict agenda to project
+https://github.com/ballantony/emacs-writing/blob/main/DoomEmacsWriting.org
+
+Agenda restricted to the current project, to keep track of its TODOs.
+I will use it to keep track of the pending tasks of the writing projects.
+
+#+begin_src emacs-lisp
+  (defun my/agenda-restrict-to-current-project ()
+    "Show the Org agenda limited to the `.org` files of the current project.
+
+  If `project-current' cannot determine a project, fall back to the
+  current buffer’s directory."
+    (interactive)
+    ;; Determine the project root.
+    (let* ((proj   (or (project-current)
+                       ;; No project detected – use the directory of the
+                       ;; current buffer as a sensible fallback.
+                       (let ((default-directory (or (buffer-file-name)
+                                                    default-directory)))
+                         (list default-directory))))
+           (root   (car (project-roots proj)))   ; e.g. \"/home/user/foo/\"
+           ;; Gather all *.org* files under that root.
+           (org-files
+            (directory-files-recursively
+             root "\\.org\\'" nil
+             ;; Optional: ignore hidden directories like .git, .svn, etc.
+             (lambda (dir) (not (string-match-p "/\\.[^/]+\\'" dir))))))
+      ;; Temporarily bind `org-agenda-files' to that list and run the agenda.
+      (let ((org-agenda-files org-files))
+        (org-agenda))))   ;; generic agenda view
+        ;; (org-agenda nil "a"))))   ;; “a” = the default agenda view 
+
+  (global-set-key (kbd "C-c A") 'my/agenda-restrict-to-current-project)
+#+end_src

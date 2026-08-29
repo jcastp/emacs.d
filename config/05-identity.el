@@ -1,0 +1,53 @@
+;; -*- lexical-binding: t; -*-
+
+(defvar my-nextcloud-dir (expand-file-name "Nextcloud/" (getenv "HOME"))
+  "Root of my synced Nextcloud directory.")
+
+(defvar my-agenda-dir (expand-file-name "agenda/" my-nextcloud-dir)
+  "Directory holding my agenda and task files.")
+
+(defvar my-roam-dir (expand-file-name "org-roam/" my-nextcloud-dir)
+  "Directory holding my org-roam notes.  Shared by both environments.")
+
+(defvar my-escritura-dir (expand-file-name "escritura/" my-nextcloud-dir)
+  "Root of my writing directory.")
+
+(defvar my-blog-dir (expand-file-name "personal/hugo_blog/" my-nextcloud-dir)
+  "Root of my ox-hugo blog.")
+
+(when my-homeenvironment-p
+  ;; to protect my personal information, this file is not commited
+  (load (expand-file-name "Nextcloud/config/.emacs.d/personal_info.el"
+                          (getenv "HOME")))
+
+  ;; where my book list will be stored
+  (defvar my-booklist-file (expand-file-name "books.org" my-agenda-dir)
+    "My reading list."))
+
+(when my-workenvironment-p
+  (defvar my-work-dir (expand-file-name "trabajo/agenda/" my-nextcloud-dir)
+    "My own working directory")
+
+  (defvar my-work-file (concat my-work-dir "work.org")
+    "My own work file")
+
+  (defvar my-backlog-file (concat my-work-dir "work_backlog.org")
+    "My own work backlog file")
+
+  (defvar my-meetings-file (concat my-work-dir "work_meetings.org")
+    "My own work meetings file")
+
+  (defvar my-people-file (concat my-work-dir "work_people.org")
+    "Employee 1:1 meeting notes")
+
+  (defvar my-work-info-file (concat my-work-dir "work-info.el")
+    "Personal identity info (user-full-name, user-mail-address) for work.")
+  ;; load the information for our company
+  (load my-work-info-file)
+
+  ;; this file includes, as of now:
+  ;; - my reports (`my/direct-reports')
+  ;; - my company's Jira URL (`my/jira-url')
+  (defvar my-company-info-file (concat my-work-dir "company_info.el")
+    "Varied information about my company.")
+  (load my-company-info-file))

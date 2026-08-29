@@ -1,0 +1,48 @@
+#+title: Keymap — direct file access
+#+property: header-args:emacs-lisp :tangle "90-keymap.el"
+#+startup: overview
+
+The =C-q= map itself is created in =00-core.org=, and every module registers its
+own entries as it loads.  Nothing is assembled centrally any more, so this
+module is not doing the collecting it used to.
+
+What is left here is the one sub-map that belongs to no single domain: =C-q q=,
+the files I open most often, which span the config, my notes, the agenda and my
+writing.  It loads last so that its entries sit alongside everything the other
+modules registered.
+
+* Lexical binding
+#+begin_src emacs-lisp
+  ;; -*- lexical-binding: t; -*-
+#+end_src
+
+* Direct file access
+Paths come from the directory variables in =05-identity.org= rather than being
+spelled out again here.
+
+#+begin_src emacs-lisp
+  (defun my/find-file-command (path)
+    "Return an interactive command that opens PATH."
+    (lambda ()
+      (interactive)
+      (find-file path)))
+
+  (let ((files (my/key-define-submap "q" "direct file access")))
+    (my/key-define "c" "emacs config"
+                   (my/find-file-command
+                    (expand-file-name "config/" my-config-dir))
+                   files)
+    (my/key-define "k" "emacs keys"
+                   (my/find-file-command
+                    (expand-file-name "tech/org-keys.org" my-nextcloud-dir))
+                   files)
+    (my/key-define "t" "tasks file"
+                   (my/find-file-command
+                    (expand-file-name "tasks.org" my-agenda-dir))
+                   files)
+    (when my-homeenvironment-p
+      (my/key-define "e" "escritura"
+                     (my/find-file-command
+                      (expand-file-name "historias/novela" my-escritura-dir))
+                     files)))
+#+end_src

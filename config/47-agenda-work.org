@@ -1,200 +1,16 @@
-#+title: Emacs config specific to the work environment
-This configuration is just a patch to work with the work environment.
-It is supposed to run over the generic emacs config, and overwrites that config with the custom config for work environment.
+#+title: Agenda views — work
+#+property: header-args:emacs-lisp :tangle "47-agenda-work.el"
+#+startup: overview
 
-* Lexical binding added
+The work agenda commands, super-agenda groups and org-ql views, split out of
+=45-agenda.org= for the same reason as the personal ones.  Work only.
+
+=org-ql= itself is declared once, in =40-org.org=; these are just views over
+it.
+
+* Lexical binding
 #+begin_src emacs-lisp
   ;; -*- lexical-binding: t; -*-
-#+end_src
-
-* Defining my own work directory and files
-#+begin_src emacs-lisp :tangle yes
-  (defvar my-work-dir "~/Nextcloud/trabajo/agenda/"
-    "My own working directory")
-
-  (defvar my-work-file (concat my-work-dir "work.org")
-    "My own work file")
-
-  (defvar my-backlog-file (concat my-work-dir "work_backlog.org")
-    "My own work backlog file")
-
-  (defvar my-meetings-file (concat my-work-dir "work_meetings.org")
-    "My own work meetings file")
-
-  (defvar my-people-file (concat my-work-dir "work_people.org")
-    "Employee 1:1 meeting notes")
-
-  (defvar my-work-info-file (concat my-work-dir "work-info.el")
-    "Personal identity info (user-full-name, user-mail-address) for work.")
-  ;; load the information for our company
-  (load my-work-info-file)
-
-  ;; this file includes, as of now:
-  ;; - my reports (`my/direct-reports')
-  ;; - my company's Jira URL (`my/jira-url')
-  (defvar my-company-info-file (concat my-work-dir "company_info.el")
-    "Varied information about my company.")
-  (load my-company-info-file)
-#+end_src
-
-* Clear theme
-I use a clear theme.
-
-#+begin_src emacs-lisp
-  (consult-theme 'adwaita)
-#+end_src
-
-* TODO hl line colors
-#+begin_src emacs-lisp
-  (defvar my-hl-line-clear-background "#e0e0e0"
-    "Background color for `hl-line' when a clear theme is active.")
-  (defvar my-hl-line-clear-foreground "#202020"
-    "Foreground color for `hl-line' when a clear theme is active.")
-
-  (set-face-attribute 'hl-line nil
-  		    :background my-hl-line-clear-background
-  		    :foreground my-hl-line-clear-foreground)  
-#+end_src
-
-* Work environment visual indicators
-Deep blue cursor, left fringe, and frame title prefix to distinguish work from personal instances.
-
-#+begin_src emacs-lisp
-  (set-cursor-color "#00008B")
-  (set-face-background 'fringe "#00008B")
-  (setq-default frame-title-format "[WORK] %b - (%f)")
-#+end_src
-
-* recent files for work
-#+begin_src emacs-lisp
-  (recentf-mode 1)
-  (setq recentf-save-file (expand-file-name "recentf-work" my-data-dir))
-#+end_src
-
-* Persist minibuffer history (work)
-Savehist is only enabled in the personal config, so the work environment had no
-persisted history.  Enable it here, with a work-specific file, and use it to
-remember the last direct report opened via =my/open-report=.
-
-#+begin_src emacs-lisp
-  (setq savehist-file (expand-file-name "savehist-work" my-data-dir))
-  (savehist-mode 1)
-  (setq history-length t
-        history-delete-duplicates t
-        savehist-save-minibuffer-history t)
-  (setq savehist-additional-variables
-        '(kill-ring
-          search-ring
-          regexp-search-ring
-          ;; remember the last direct report across sessions
-          my/last-report))
-#+end_src
-
-* icons for the agenda categories
-Have some fancy icons for the categories.
-#+begin_src emacs-lisp
-  (customize-set-value
-   'org-agenda-category-icon-alist
-   `(
-     ("calendar" "~/Nextcloud/config/icons/calendar.svg" nil nil :ascent center :mask heuristic)
-     ("tasks" "~/Nextcloud/config/icons/check-square.svg" nil nil :ascent center :mask heuristic)
-     ("projects" "~/Nextcloud/config/icons/list.svg" nil nil :ascent center :mask heuristic)
-     ("okr" "~/Nextcloud/config/icons/target.svg" nil nil :ascent center :mask heuristic)
-     ("management" "~/Nextcloud/config/icons/users.svg" nil nil :ascent center :mask heuristic)
-     ("inbox" "~/Nextcloud/config/icons/inbox.svg" nil nil :ascent center :mask heuristic)))
-#+end_src
-* Fixed width font for work environment
-I work better with fixed fonts in this kind of environments
-
-#+begin_src emacs-lisp
-  (use-package fontaine
-    :ensure t)
-#+end_src
-
-#+begin_src emacs-lisp
-    (setq fontaine-presets
-        '(
-  	(hack-big
-         :default-family "Hack"
-         :default-weight light
-         :default-height 140
-         :fixed-pitch-family "Hack"
-         :fixed-pitch-weight Light ; falls back to :default-weight
-         :fixed-pitch-height 140
-         :variable-pitch-family "Hack"
-         :variable-pitch-weight light
-         :variable-pitch-height 140
-         :bold-family nil ; use whatever the underlying face has
-         :bold-weight bold
-         :italic-family "Hack"
-         :italic-slant italic
-         :line-spacing 0)
-  	;; daily operations, same config as normal config
-  	(regular
-  	 :default-family "Aporetic Sans Mono"
-  	 :default-weight normal
-  	 :default-height 120
-  	 :fixed-pitch-family "Aporetic Sans Mono"
-  	 :fixed-pitch-weight Light ; falls back to :default-weight
-  	 :fixed-pitch-height 110
-  	 :variable-pitch-family "Aporetic Sans"
-  	 :variable-pitch-weight Medium
-  	 :variable-pitch-height 140
-  	 :bold-family nil ; use whatever the underlying face has
-  	 :bold-weight bold
-  	 :italic-family "Aporetic Sans"
-  	 :italic-slant italic
-  	 :line-spacing 0)
-  	;; font for work
-  	(work
-  	 :default-family "Aporetic Sans Mono"
-  	 :default-weight normal
-  	 :default-height 140
-  	 :fixed-pitch-family "Aporetic Sans Mono"
-  	 :fixed-pitch-weight Light ; falls back to :default-weight
-  	 :fixed-pitch-height 120
-  	 :variable-pitch-family "Aporetic Sans"
-  	 :variable-pitch-weight Medium
-  	 :variable-pitch-height 140
-  	 :bold-family nil ; use whatever the underlying face has
-  	 :bold-weight bold
-  	 :italic-family "Aporetic Sans"
-  	 :italic-slant italic
-  	 :line-spacing 0)))
-
-  (fontaine-set-preset 'work)
-#+end_src
-
-* Adjust the window width for work
-Since at work I don't open so many windows, we can use this width to better use what I get.
-
-#+begin_src emacs-lisp
-  (setq-default visual-fill-column-width 100)
-#+end_src
-
-* Put the correct agenda files for work
-My work require a different set of agendas:
-
-#+begin_src emacs-lisp
-  ;; This needs to be changed when you change company!!!
-  (setq org-agenda-files (list
-  			my-work-file     ;; tasks file
-  			my-meetings-file ;; meetings file
-  			my-people-file   ;; people file
-  			))
-#+end_src
-
-* Refile environment
-Since this is a different environment, I also have to change this to refile things in a different way.
-
-#+begin_src emacs-lisp
-    (setq org-refile-targets '(
-                              (nil :maxlevel . 9)
-                              (org-agenda-files :maxlevel . 9)
-  			    (my-backlog-file :maxlevel . 9)))
-
-    (setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
-    (setq org-refile-use-outline-path t)                  ; Show full paths for refiling
 #+end_src
 
 * TODO custom agenda view commands
@@ -547,88 +363,6 @@ Saved views for =org-ql-view= (=C-c q v=), covering all open (non-DONE/DELEGATED
                  t))
 #+end_src
 
-* Work tags definition
-#+begin_src emacs-lisp :tangle yes
-  ;; tags are next to the title
-  (setq org-tags-column 0)
-
-  (setq org-tag-alist '(
-                        ("detection" . ?d) ("automation" . ?a) ("emailsec" . ?E)
-                        ("edr" . ?e) ("ai" . ?A) ("management" . ?m)
-                        ;; other tags
-                        ("documentation" . ?D) ("procedures" . ?P)
-                        ("knowledge" . ?K) ("training" . ?T)
-                        ("task" . ?t)
-                        ;; based on my current role
-                        ("okr" . ?o) ("people" . ?p)))
-#+end_src
-
-* Custom status for work related environment
-
-#+begin_src emacs-lisp
-  (setq org-todo-keywords
-        '(
-          ;; Status for tasks
-          (sequence "TODO(t)" "WAITING(w@/!)" "ONGOING(o@/!)" "|" "DONE(d@/!)" "DELEGATED(D@/!)" "CANCELED(c@/!)")))
-#+end_src
-
-* Custom work capture templates
-As work is different from home, I need specific templates.
-
-#+begin_src emacs-lisp
-  ;; (defvar my/direct-reports nil
-  ;;   "List of direct reports for 1:1 capture templates. Loaded from my-data-dir.")
-  ;; (defvar my/jira-url nil
-  ;;   "Jira instance URL. Loaded from my-data-dir, not committed to git.")
-
-
-  (defvar my/capture-person nil
-    "Employee name selected during org-capture, shared between target and template body.")
-
-  ;; Work owns the full template list — reset it, then add each entry.
-  (setq org-capture-templates '())
-
-  (add-to-list 'org-capture-templates
-               '("i" "Inbox (work)" entry
-                 (file+headline my-work-file "Inbox")
-                 "** TODO %? %^g"))
-
-  (add-to-list 'org-capture-templates
-               '("b" "Backlog entry." entry
-                 (file+headline my-backlog-file "Backlog")
-                 "** TODO %?\n"))
-
-  (add-to-list 'org-capture-templates
-               '("m" "Work meeting notes" entry
-                 (file my-meetings-file)
-                 "* %T - %?\n** Notes\n\n** Actions\n** Questions\n"
-                 :jump-to-captured t))
-
-  ;; people meetings
-  (add-to-list 'org-capture-templates
-  	     '("p" "1:1 meeting" entry
-  	       (function (lambda ()
-  			   (let ((person (completing-read "Employee: "
-  							  my/direct-reports)))
-  			     (setq my/capture-person person)
-  			     (find-file my-people-file)
-  			     (goto-char (org-find-olp (list my-people-file person))))))
-  	       "** %<%Y-%m-%d %a %H:%M> - follow-up\n*** Notes\n%?\n*** Actions\n*** Questions\n"
-  	       :jump-to-captured t))
-
-  ;; And a quick action capture from within a 1:1 note:
-  (add-to-list 'org-capture-templates
-  	     '("P" "People action item" entry
-  	       (function (lambda ()
-  			   (let ((person (completing-read "Employee: "
-  							  my/direct-reports)))
-  			     (setq my/capture-person person)
-  			     (find-file my-people-file)
-  			     (goto-char (org-find-olp (list my-people-file person))))))
-  	       "*** TODO [%(identity my/capture-person)] %<%Y-%m-%d %a %H:%M> %? :people:%(downcase my/capture-person):\n    DEADLINE: %^t"
-  	       :jump-to-captured t))
-#+end_src
-
 * Open a direct report (one-key 1:1 prep)
 1:1 notes live *per-person* in =my-people-file= (one heading per report, with
 that report's running notes and =:people:= action items underneath).  This
@@ -680,74 +414,6 @@ Bound to =<f6>= for a true one-key launch, and to =C-q p= via the shared keymap
   (keymap-global-set "<f6>" #'my/open-report)
 #+end_src
 
-* TODO org-jira integration
-#+begin_src emacs-lisp
-  (use-package org-jira
-    :ensure t
-    :bind (("C-q j b" . org-jira-browse-issue)
-           ("C-q j g" . org-jira-get-issues)
-           ("C-q j j" . org-jira-get-issues-from-custom-jql)
-           ("C-q j u" . org-jira-update-issue)
-           ("C-q j w" . org-jira-progress-issue)
-           ("C-q j a" . org-jira-assign-issue)
-           ("C-q j r" . org-jira-refresh-issue)
-           ("C-q j R" . org-jira-refresh-issues-in-buffer)
-           ("C-q j c" . org-jira-create-issue)
-           ("C-q j k" . org-jira-copy-current-issue-key)
-           ("C-q j s" . org-jira-create-subtask)
-           ("C-q j t" . org-jira-get-subtasks)
-           ("C-q j m" . org-jira-add-comment)
-           ("C-q j e" . org-jira-update-comment))
-    :config
-    (setq jiralib-url my/jira-url)
-    (setq jiralib-target-api-version 2)
-    (setq jiralib-token
-      	(cons "Authorization"
-                (concat "Bearer " (auth-source-pick-first-password
-      				 :host my/jira-url))))
-    
-    ;; custom Jira queries
-    (setq org-jira-custom-jqls
-    	'(
-    	  ;; detection issues
-    	  (:jql "project = SENG and component in (seng-det) AND resolution = Unresolved ORDER BY priority DESC, updated DESC"
-    		;; :limit 10
-    		:filename "detection")
-    	  ;; automation issues
-    	  (:jql "project = SENG and component in (seng-aut) AND resolution = Unresolved ORDER BY priority DESC, updated DESC"
-    		;; :limit 10
-    		:filename "automation")
-    	  ))
-    )
-#+end_src
-
-This doesn't work in the auth part.
-#+begin_src emacs-lisp :tangle no
-  (use-package jira
-    :ensure t
-    :config
-    (setq jira-base-url "https://jira.tools.3stripes.net") ;; Jira instance URL
-    ;;(setq jira-username "johndoe@acme.com") ;; Jira username (usually, an email)
-    ;; API token for Jira
-    ;; See https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/
-    ;; (setq jira-token "foobar123123")
-    (setq jira-token-is-personal-access-token t)
-    (setq jira-api-version 2) ;; Version 2 is also allowed
-    ;; (Optional) API token for JIRA TEMPO plugin
-    ;; See https://apidocs.tempo.io/
-    ;;(setq jira-tempo-token "foobar123123")
-    )
-#+end_src
-
-* org-babel languages
-Activate a minimal set of babel languages for use in work org documents.
-
-#+begin_src emacs-lisp
-  (org-babel-do-load-languages 'org-babel-load-languages
-                               '((shell . t)
-                                 (python . t)))
-#+end_src
-
 * Load the task list for work
 This will automatically open the relevant file to start working right away:
 
@@ -756,4 +422,11 @@ This will automatically open the relevant file to start working right away:
     ;;(find-file my-work-file)
     (persp-state-load "~/Nextcloud/config/.emacs.d/perspectives/work-persp")
     )
+#+end_src
+
+* Keymap entry
+Registered here rather than guarded centrally with =fboundp=: this module only
+loads at work, so the binding only exists at work.
+#+begin_src emacs-lisp
+  (my/key-define "p" "open report" #'my/open-report)
 #+end_src
