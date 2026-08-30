@@ -87,7 +87,7 @@ bindings.
 - Packages use `use-package` (`:ensure t` is the global default)
 - `custom.el` is managed by the customize system — edit with care, and note it is **gitignored**, so it is not recoverable from git
 - Spanish keyboard layout is assumed (`C-ñ` for expand-region, `¡!` `¿?` electric pairs)
-- Spelling uses `hunspell` with `en_US,es_ES`
+- Spelling is **jinx** (`00-core`), which goes through **Enchant**, not hunspell directly — Enchant picks the provider per language (hunspell/aspell are both installed). The default is English only (`jinx-languages` is `"en"`); a file that is Spanish declares it with `#+language: es` or a file-local `jinx-languages`
 - Codeberg packages are declared with `:vc` in `60-writing`: `org-scribe`, `org-context-extended`, `org-tracktable`
 
 ### Naming conventions
@@ -105,6 +105,7 @@ bindings.
 - **Work resets capture templates.** `40-org` sets `org-capture-templates` to `'()` before adding the work ones. The two environments' blocks are adjacent so this is visible.
 - **The agenda frames look parallel but are not.** Work does *not* skip DONE items (`org-agenda-skip-scheduled-if-done` is nil there) and the two category-icon alists differ. `45-agenda` documents what work lacks. Do not merge them without asking.
 - **`99-scratch.org` sets `:tangle no` at the file level.** Code there ships only if a block deliberately overrides it. Put experiments there, not in a live module.
+- **`jinx-languages` also drives in-buffer completion.** `20-completion` sets `cape-dict-file` to `my/cape-dict-files`, which picks the hunspell word list from the buffer's `jinx-languages`, so spellcheck and `cape-dict` never disagree about the language. It is called on every completion, so `C-M-$` retunes both at once. Adding a language means adding it to `my-hunspell-dictionaries` there, not just to `jinx-languages` — an unlisted language falls back to English rather than going silent.
 - **org-scribe loads eagerly** (it calls `org-scribe-setup` at startup) and requires `ox`, which is why the exporters' `with-eval-after-load 'ox` wrapper currently saves nothing at home.
 
 ## Testing changes

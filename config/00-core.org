@@ -276,14 +276,25 @@ Reload this configuration file.
 * Spelling
 https://www.gnu.org/software/emacs/manual/html_node/emacs/Spelling.html
 ** jinx
+We define the english language as the default one.
+
+To apply another dictionary to a particular file, add a local variable or an org property =#+language: es= to the file.
+
 #+begin_src emacs-lisp
   (use-package jinx
   :ensure t
   :demand t
   :hook (emacs-startup . global-jinx-mode)
   :bind (("M-$" . jinx-correct)
-         ("C-M-$" . jinx-languages)))
-  (setq jinx-languages "en es")
+         ("C-M-$" . jinx-languages))
+  :init
+  ;; One language at a time.  A buffer that needs the other one says
+  ;; so explicitly: `#+language: es' in org, a file-local
+  ;; `jinx-languages', or C-M-$ interactively.  Loading both
+  ;; dictionaries at once makes `jinx--word-valid-p' accept the
+  ;; union, which silently passes every en/es false friend
+  ;; (actual, once, red, sin, pie, solo).
+  (setq jinx-languages "en"))
 #+end_src
 
 * Delete after selecting a text area

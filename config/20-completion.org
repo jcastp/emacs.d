@@ -137,12 +137,21 @@ Sources feeding the popup:
 - =dabbrev-capf= (built-in since Emacs 28) for words already present
   in open buffers, in any language.
 - =cape-dict= for words that have never been typed anywhere, drawn
-  from the =hunspell= English and Spanish word lists (the same
-  dictionaries used for spellchecking, see the spelling section
-  above). Hunspell's =.dic= files carry affix flags
-  (e.g. =dog/S=) that cape-dict must not show as candidates, so a
-  plain, flag-stripped word list is generated once into
-  =my-data-dir= and reused on subsequent starts.
+  from the =hunspell= word list *of the buffer's language*.
+  Hunspell's =.dic= files carry affix flags (e.g. =dog/S=) that
+  cape-dict must not show as candidates, so a plain, flag-stripped
+  word list is generated once into =my-data-dir= and reused on
+  subsequent starts.
+
+  Which list is used follows =jinx-languages=, the same variable that
+  drives spellchecking (see the spelling section in =00-core=), so an
+  English file offers only English candidates and a file marked
+  =#+language: es= offers only Spanish ones. =cape-dict-file= accepts
+  a function and calls it on every completion, so switching a
+  buffer's language with =C-M-$= takes effect immediately, with no
+  cache to invalidate. Note that =dabbrev-capf= deliberately stays
+  language-agnostic: if a word is in a buffer you have open, you want
+  to complete it whatever language it belongs to.
 - eglot's own capf for code, added automatically in buffers where
   =eglot-ensure= runs (see the eglot configuration section).
 
@@ -176,11 +185,35 @@ one shadowing the other.
             (replace-match ""))
           (write-region (point-min) (point-max) out-file)))
       out-file)
-    (setq cape-dict-file
-          (list (my/cape-dict-build "/usr/share/hunspell/en_US.dic"
-                                    (expand-file-name "cape-dict-en_US" my-data-dir))
-                (my/cape-dict-build "/usr/share/hunspell/es_ES.dic"
-                                    (expand-file-name "cape-dict-es_ES" my-data-dir))))
+    (defvar my-hunspell-dictionaries
+      '(("en" . "/usr/share/hunspell/en_US.dic")
+        ("es" . "/usr/share/hunspell/es_ES.dic"))
+      "Hunspell .dic source per two-letter language code.")
+
+    (defun my/cape-dict-files ()
+      "Word lists for the current buffer's `jinx-languages'.
+  Called by `cape-dict' on every completion, so switching the
+  buffer's language with C-M-$ takes effect immediately."
+      (let ((langs (split-string (or (bound-and-true-p jinx-languages) "en")
+                                 nil t)))
+        (or (delq nil
+                  (mapcar (lambda (lang)
+                            (when-let* ((dic (alist-get (substring lang 0 2)
+                                                        my-hunspell-dictionaries
+                                                        nil nil #'equal)))
+                              (my/cape-dict-build
+                               dic
+                               (expand-file-name (concat "cape-dict-"
+                                                         (file-name-base dic))
+                                                 my-data-dir))))
+                          langs))
+            ;; Unknown language: fall back to English rather than to an
+            ;; empty list, which would make cape-dict silently dead.
+            (list (my/cape-dict-build
+                   "/usr/share/hunspell/en_US.dic"
+                   (expand-file-name "cape-dict-en_US" my-data-dir))))))
+
+    (setq cape-dict-file #'my/cape-dict-files)
     (add-hook 'completion-at-point-functions
               (cape-capf-super #'dabbrev-capf #'cape-dict)))
 #+end_src
