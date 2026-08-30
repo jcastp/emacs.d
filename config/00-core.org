@@ -52,6 +52,50 @@ keymap in with `my/key-define'."
       sub))
 #+end_src
 
+** How to add a binding
+The rule is: *the binding lives in the module that owns the command*, in that
+module's own "Keymap entries" section at the end of the file — never here.  If
+the module does not load, the key simply is not there, and nothing has to test
+for it.
+
+The examples below are illustrative only (=:tangle no=), they are not part of
+the running config.
+
+A plain binding on =C-q=.  =NAME= is the label which-key and =C-h k= show:
+#+begin_src emacs-lisp :tangle no
+  ;; C-q c → my/centered-mode, shown as "centered mode"  (10-ui.org)
+  (my/key-define "c" "centered mode" #'my/centered-mode)
+#+end_src
+
+A sub-map, so several related commands share one letter.  =my/key-define-submap=
+returns the new keymap; pass it as the fourth argument of =my/key-define=:
+#+begin_src emacs-lisp :tangle no
+  ;; C-q t f, C-q t t, C-q t v  (15-theme.org)
+  (let ((themes (my/key-define-submap "t" "themes and fonts")))
+    (my/key-define "f" "font preset" #'fontaine-set-preset themes)
+    (my/key-define "t" "theme"       #'consult-theme       themes))
+#+end_src
+
+An entry that only makes sense in one environment or on one machine: wrap it in
+the same predicate the rest of the feature uses.  No =fboundp= guard — if the
+predicate holds, the command is there:
+#+begin_src emacs-lisp :tangle no
+  (when my-workenvironment-p
+    (my/key-define "p" "open report" #'my/open-report))
+#+end_src
+
+If a sub-map has to be built earlier than where it is registered (because a
+=use-package= form fills it in), define it as a variable and hand that variable
+to =my/key-define=, which accepts a keymap as =DEF= just as well as a command:
+#+begin_src emacs-lisp :tangle no
+  (defvar my/key-prefix-writing-map (make-sparse-keymap) "Writing commands.")
+  ;; … use-package forms add entries to it …
+  (my/key-define "w" "writing" my/key-prefix-writing-map)   ; 60-writing.org
+#+end_src
+
+Free letters are worth checking against the table in =CLAUDE.md= (or just press
+=C-q= and read which-key) before claiming one.
+
 * Alternative and better C-g function
 https://emacsredux.com/blog/2025/06/01/let-s-make-keyboard-quit-smarter/
 
