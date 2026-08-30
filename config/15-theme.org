@@ -179,7 +179,7 @@ Also, rotate the list of themes applied.
     ;; define a function to rotate a list. Custom, yes, I know it could be done better.
     (defun my/rotate-list (list)
       "Rotate the elements of LIST by one position, moving the first element to the end, and return the new list."
-p      (if (null list)
+      (if (null list)
           ;; if block
           ;; if the list is empty, returns an empty list
           '()
