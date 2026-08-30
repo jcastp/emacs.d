@@ -1,0 +1,446 @@
+#+title: Org appearance — headings, drawers and metadata
+#+property: header-args:emacs-lisp :tangle "17-org-style.el"
+#+startup: overview
+
+Everything about how an org buffer *looks*: the heading ramp, drawers,
+=#+keyword= lines, tags, blocks, and the two packages that draw org text
+differently from plain font-lock (=org-modern= and =org-appear=).
+
+This used to be spread across =10-ui= (the =org-level-*= heights) and =15-theme=
+(=org-block=, =org-meta-line=, =org-tag=, =org-link=), with =org-modern= sitting
+in =40-org=.  Three files had to be read to know what a heading looked like, and
+none of them owned the subject.  They are all here now.
+
+* Why the faces are computed rather than declared
+
+The look has to survive the theme rotation.  Declaring =(:foreground "grey40")=
+would override every theme; leaving the foreground unspecified would let each
+theme impose its own heading design, which is the thing that made org buffers
+tiring to read in the first place — the *structure* changed with the palette,
+not just the colours.
+
+So the faces are computed from the *active theme* at the moment it becomes
+active: body colour, background and shadow are read out of the live faces and
+the heading ramp is built from them.  This is exactly the pattern
+=my/set-hl-line-face= in =10-ui= already uses, and =my/org-set-faces= is called
+from the same places.
+
+One consequence worth knowing: an attribute this module does not name falls
+through to the theme.  That is deliberate and load-bearing — it is how the poet
+exemption below works.
+
+* Lexical binding
+#+begin_src emacs-lisp
+  ;; -*- lexical-binding: t; -*-
+#+end_src
+
+* The three styles
+
+Three complete looks, switchable at runtime with =C-q s s=.  They differ only in
+how headings are coloured and whether blocks and top-level headings carry a rule;
+drawers and metadata are identical in all three, because metadata should recede
+whichever look is active.
+
+| style | headings                                 | rules                       |
+|-------+------------------------------------------+-----------------------------|
+| =a=     | one colour, size and weight only         | none                        |
+| =b=     | theme accent on H1/H2, body colour below | none                        |
+| =c=     | one colour                               | hairline over H1/H2, blocks |
+
+#+begin_src emacs-lisp
+  (defvar my-org-style 'c
+    "Which heading look is active: `a', `b' or `c'.
+a -- typographic: size and weight only, no hue.
+b -- restrained accent: the theme's accent on H1/H2, body colour below.
+c -- structured: hairline rules over H1/H2 and around blocks.
+Change it with `my/org-style-set' (\\[my/org-style-set]).")
+#+end_src
+
+** Sizes
+
+Heading heights are multipliers on the variable-pitch height, which the fontaine
+presets move between 110 and 180.  Because they are relative, changing preset
+rescales the whole ramp automatically and these numbers never need touching.
+
+Work is flatter: work buffers are denser (the work agenda does not skip DONE
+items) and the work font preset is already 140.
+
+#+begin_src emacs-lisp
+  (defvar my-org-heading-scale
+    (if my-workenvironment-p
+        '(1.15 1.08 1.03 1.0)
+      '(1.25 1.15 1.08 1.0))
+    "Height multipliers for org heading levels 1 through 4.")
+
+  (defvar my-org-title-scale
+    (if my-workenvironment-p 1.3 1.5)
+    "Height multiplier for `org-document-title'.")
+
+  (defvar my-org-meta-scale 0.85
+    "Height multiplier for drawers, keywords, properties and tags.
+These are machinery, not content: legible when looked for, invisible
+when not.")
+
+  (defvar my-org-deep-fade 0.3
+    "How far heading levels 5-8 are blended toward the background.
+0.0 makes them identical to levels 1-4; 1.0 makes them invisible.  The
+hue never changes -- deep headings recede, they do not become a
+different colour.")
+#+end_src
+
+** The poet exemption
+
+=poet-theme= is not in the rotation but is the writing theme, and it is built
+around a single deep-red heading colour — it is already what style =b= describes.
+Flattening it to body colour throws away the reason to load it.
+
+Under these themes the heading specs simply omit =:foreground=, so the theme's
+own colour falls through.  Size, weight, rules, drawers and metadata still apply.
+
+#+begin_src emacs-lisp
+  (defvar my-org-keep-theme-heading-colors
+    '(poet poet-dark poet-monochrome poet-dark-monochrome)
+    "Themes whose heading colours `my/org-set-faces' leaves alone.")
+#+end_src
+
+* Reading colours out of the active theme
+
+=face-attribute= is called with =nil t= throughout, meaning "resolve through
+=:inherit= rather than returning =unspecified=".  Several themes define =shadow=
+only by inheritance, and poet defines =shadow= but no =outline-1= at all, so the
+accent lookup walks a chain of candidates rather than trusting one face.
+
+=org-level-1= is deliberately *not* in that chain: this module overwrites it, so
+reading it back would make the accent drift on every re-apply.
+
+#+begin_src emacs-lisp
+  (defun my/org-style--attr (face attr)
+    "Return ATTR of FACE resolved through inheritance, or nil if unspecified."
+    (let ((v (and (facep face) (face-attribute face attr nil t))))
+      (unless (memq v '(unspecified nil)) v)))
+
+  (defun my/org-style--rgb (colour)
+    "Return COLOUR as a list of three 16-bit components, or nil.
+Hex strings are parsed directly rather than through `color-values',
+which quantises to the display's colour map -- on a TTY frame, and in
+batch, it collapses \"#101010\" to pure black and the blend below comes
+out wrong.  Named colours still go through `color-values'."
+    (if (string-match
+         "\\`#\\([0-9a-fA-F]\\{2\\}\\)\\([0-9a-fA-F]\\{2\\}\\)\\([0-9a-fA-F]\\{2\\}\\)\\'"
+         colour)
+        (mapcar (lambda (n) (* 257 (string-to-number (match-string n colour) 16)))
+                '(1 2 3))
+      (color-values colour)))
+
+  (defun my/org-style--blend (from to alpha)
+    "Blend FROM toward TO by ALPHA (0.0 = FROM, 1.0 = TO).
+Returns a hex string, or FROM unchanged if either colour cannot be read."
+    (let ((a (my/org-style--rgb from))
+          (b (my/org-style--rgb to)))
+      (if (not (and a b))
+          from
+        (apply #'format "#%04x%04x%04x"
+               (cl-mapcar (lambda (x y)
+                            (round (+ (* (- 1.0 alpha) x) (* alpha y))))
+                          a b)))))
+
+  (defun my/org-style--accent ()
+    "The active theme's primary heading colour."
+    (or (my/org-style--attr 'outline-1 :foreground)
+        (my/org-style--attr 'font-lock-function-name-face :foreground)
+        (my/org-style--attr 'link :foreground)
+        (my/org-style--attr 'default :foreground)))
+
+  (defun my/org-style--keep-colors-p ()
+    "Non-nil when the active theme's heading colours must be left alone."
+    (cl-intersection custom-enabled-themes my-org-keep-theme-heading-colors))
+#+end_src
+
+* Building the faces
+
+** Headings
+
+Levels 1-4 share one colour in every style except =b=, which lifts H1 and H2 to
+the theme accent.  Levels 5-8 use that same colour blended toward the
+background, so depth reads as *less emphasis* rather than as a different hue.
+
+Each level names =:foreground= explicitly rather than relying on =:inherit=.
+Inheritance only fills attributes still unspecified after every theme has been
+merged, so an =:inherit= would lose to any theme that sets a level's colour
+directly.
+
+#+begin_src emacs-lisp
+  (defun my/org-style--heading-specs ()
+    "Face specs for the document title and heading levels 1-8."
+    (let* ((fg     (my/org-style--attr 'default :foreground))
+           (bg     (my/org-style--attr 'default :background))
+           (accent (my/org-style--accent))
+           (dim    (or (my/org-style--attr 'shadow :foreground) fg))
+           (rule   dim)
+           (deep   (my/org-style--blend fg bg my-org-deep-fade))
+           (struct (eq my-org-style 'c))
+           (keep   (my/org-style--keep-colors-p))
+           (scale  my-org-heading-scale)
+           ;; nil means "do not name :foreground", so the theme's own shows
+           (top    (cond (keep nil)
+                         ((eq my-org-style 'b) accent)
+                         (t fg)))
+           (mid    (if keep nil fg))
+           (low    (if keep nil deep)))
+      (cl-flet ((spec (colour height weight slant over)
+                  (append (when colour (list :foreground colour :background bg))
+                          (list :height height :weight weight :slant slant
+                                :overline over :underline nil :box nil
+                                :extend (and over t)))))
+        `((org-document-title
+           ((t ,(append (when top (list :foreground top :background bg))
+                        (list :height my-org-title-scale
+                              :weight 'bold :slant 'normal :overline nil :box nil
+                              :underline (when struct (list :color rule)))))))
+          (org-level-1 ((t ,(spec top (nth 0 scale) 'bold     'normal (and struct rule)))))
+          (org-level-2 ((t ,(spec top (nth 1 scale) 'semibold 'normal (and struct rule)))))
+          (org-level-3 ((t ,(spec mid (nth 2 scale) 'semibold 'normal nil))))
+          (org-level-4 ((t ,(spec mid (nth 3 scale) 'normal   'italic nil))))
+          (org-level-5 ((t ,(spec low 1.0 'normal 'italic nil))))
+          (org-level-6 ((t ,(spec low 1.0 'normal 'italic nil))))
+          (org-level-7 ((t ,(spec low 1.0 'normal 'italic nil))))
+          (org-level-8 ((t ,(spec low 1.0 'normal 'italic nil))))))))
+#+end_src
+
+** Drawers, keywords and the rest of the machinery
+
+Identical in all three styles.  Everything here is fixed-pitch (so it reads as
+machine text rather than prose), shadowed, and smaller than the body.
+
+=org-meta-line= and =org-special-keyword= used to inherit =font-lock-comment-face=,
+which is a saturated hue in several of these themes — so the quietest content on
+the page was drawn in one of the loudest colours.  They inherit nothing now.
+
+=org-link= keeps whatever colour the theme gives links; only its underline is
+quietened.  The previous =(:foreground "royal blue")= overrode every theme in the
+rotation, including the dark ones where it barely had contrast.
+
+#+begin_src emacs-lisp
+  (defun my/org-style--meta-specs ()
+    "Face specs for drawers, metadata keywords, properties and tags."
+    (let* ((fg  (my/org-style--attr 'default :foreground))
+           (bg  (my/org-style--attr 'default :background))
+           (dim (or (my/org-style--attr 'shadow :foreground) fg))
+           (h   my-org-meta-scale))
+      `((org-drawer ((t (:inherit fixed-pitch :foreground ,dim :background ,bg
+                         :height ,h :weight normal :slant normal))))
+        (org-special-keyword ((t (:inherit fixed-pitch :foreground ,dim
+                                  :background ,bg :height ,h :weight normal))))
+        (org-property-value ((t (:inherit fixed-pitch :foreground ,dim
+                                 :background ,bg :height ,h))))
+        (org-meta-line ((t (:inherit fixed-pitch :foreground ,dim
+                            :background ,bg :height ,h :slant normal))))
+        (org-document-info ((t (:foreground ,dim :slant italic))))
+        (org-document-info-keyword ((t (:inherit fixed-pitch :foreground ,dim
+                                        :background ,bg :height ,h))))
+        (org-tag ((t (:inherit fixed-pitch :foreground ,dim :background ,bg
+                      :height ,h :weight normal))))
+        (org-ellipsis ((t (:foreground ,dim :background ,bg
+                           :underline nil :height 0.9))))
+        (org-link ((t (:inherit link :underline (:color ,dim))))))))
+#+end_src
+
+** Blocks
+
+Style =c= delimits blocks with hairlines instead of a tinted area, to match its
+headings.  The other two leave the theme's own block background alone.
+
+=org-modern-block-fringe= would be the natural way to do this, but it disables
+itself whenever =org-indent-mode= is on, and =40-org= turns that on in every org
+buffer.  The overline/underline pair is the equivalent that does work.
+
+#+begin_src emacs-lisp
+  (defun my/org-style--block-specs ()
+    "Face specs for source and example blocks."
+    (let* ((fg   (my/org-style--attr 'default :foreground))
+           (bg   (my/org-style--attr 'default :background))
+           (dim  (or (my/org-style--attr 'shadow :foreground) fg))
+           (rule dim))
+      (if (eq my-org-style 'c)
+          `((org-block ((t (:inherit fixed-pitch :background ,bg :extend t))))
+            (org-block-begin-line
+             ((t (:inherit fixed-pitch :foreground ,dim :background ,bg
+                  :height 0.9 :extend t :overline ,rule :underline nil))))
+            (org-block-end-line
+             ((t (:inherit fixed-pitch :foreground ,dim :background ,bg
+                  :height 0.9 :extend t :overline nil
+                  :underline (:color ,rule))))))
+        `((org-block ((t (:inherit fixed-pitch :extend t))))
+          (org-block-begin-line
+           ((t (:inherit fixed-pitch :foreground ,dim :height 0.9 :extend t
+                :overline nil :underline nil))))
+          (org-block-end-line
+           ((t (:inherit fixed-pitch :foreground ,dim :height 0.9 :extend t
+                :overline nil :underline nil))))))))
+#+end_src
+
+** Applying them
+
+#+begin_src emacs-lisp
+  (defun my/org-set-faces ()
+    "Recompute every org face from the currently active theme.
+Called on startup and from `my/theme-changer', beside
+`my/set-hl-line-face'."
+    (apply #'custom-theme-set-faces 'user
+           (append (my/org-style--heading-specs)
+                   (my/org-style--meta-specs)
+                   (my/org-style--block-specs))))
+#+end_src
+
+* Switching style at runtime
+
+#+begin_src emacs-lisp
+  (defun my/org-style--label (style)
+    "One-line description of STYLE."
+    (pcase style
+      ('a "a — typographic: size and weight only, no hue")
+      ('b "b — restrained accent: theme accent on H1/H2")
+      ('c "c — structured: hairline rules on H1/H2 and blocks")
+      (_  (format "%s — unknown" style))))
+
+  (defun my/org-style-set (style)
+    "Set the org heading look to STYLE and apply it immediately."
+    (interactive
+     (list (intern (completing-read "Org style: " '("a" "b" "c") nil t))))
+    (setq my-org-style style)
+    (my/org-set-faces)
+    (message "Org style %s%s"
+             (my/org-style--label style)
+             (if (my/org-style--keep-colors-p)
+                 "  (theme heading colours preserved)"
+               "")))
+
+  (defun my/org-style-cycle ()
+    "Cycle the org heading look: a → b → c → a."
+    (interactive)
+    (my/org-style-set (pcase my-org-style ('a 'b) ('b 'c) (_ 'a))))
+
+  (defun my/org-style-describe ()
+    "Report the active style and the numbers behind it."
+    (interactive)
+    (message "style %s | theme %s | %s | scale %S title %s | colours %s"
+             (my/org-style--label my-org-style)
+             (or (car custom-enabled-themes) "none")
+             (if my-workenvironment-p "work" "home")
+             my-org-heading-scale
+             my-org-title-scale
+             (if (my/org-style--keep-colors-p) "from theme" "recomputed")))
+#+end_src
+
+* org-modern
+
+Moved here from =40-org=, where it was declared with no configuration at all.
+
+Two of its defaults were doing nothing: =org-modern-hide-stars= and
+=org-modern-block-fringe= both disable themselves when =org-indent-mode= is on,
+which it always is here.  They are set to nil so the file does not imply
+otherwise.
+
+=org-modern-star= is nil because =org-ellipsis= already signals folding; with
+both, a folded heading carried two markers for one state.
+
+=org-modern-todo-faces= is the important one.  =org-modern= never consults
+=org-todo-keyword-faces=, so the faces defined in =40-org= applied in the agenda
+and were silently replaced by org-modern's generic two inside org buffers — the
+same keyword looked different depending on where it was read.
+
+#+begin_src emacs-lisp
+  (use-package org-modern
+    :ensure t
+    :config
+    (setq org-modern-star            nil   ; org-ellipsis is the fold signal
+          org-modern-hide-stars      nil   ; inert under org-indent-mode
+          org-modern-block-fringe    nil   ; likewise
+          org-modern-keyword         "‣"   ; #+title → ‣title
+          org-modern-label-border    1
+          org-modern-block-name      t
+          org-modern-tag             t
+          org-modern-todo            t
+          org-modern-timestamp       t
+          org-modern-table           t
+          org-modern-todo-faces
+          '(("TODO"      . my/org-todo-active)
+            ("ONGOING"   . my/org-todo-active)
+            ("WAITING"   . my/org-todo-waiting)
+            ("HOLD"      . my/org-todo-waiting)
+            ("DELEGATED" . my/org-todo-waiting)
+            ("CANCELED"  . my/org-todo-canceled)
+            ("DONE"      . my/org-todo-done)
+            ;; the writing sequence, home only — harmless where unused
+            ("TOWRITE"   . my/org-todo-active)
+            ("WRITING"   . my/org-todo-active)
+            ("REVIEW"    . my/org-todo-waiting)
+            ("REWORK"    . my/org-todo-waiting)
+            ("FINISHED"  . my/org-todo-done)
+            ("PURGE"     . my/org-todo-canceled)))
+    (with-eval-after-load 'org (global-org-modern-mode)))
+#+end_src
+
+* A note on the themes' own heading knobs
+
+=modus-themes-headings= and =ef-themes-headings= would otherwise fight the
+function above — modus gave H1 a background, an overline, a distinct hue *and* a
+size bump, and only on modus, so the heading design changed shape as the rotation
+moved.  Both are flattened to =((t . (regular 1.0)))= where each theme is
+declared, in =15-theme=, rather than here: that keeps one owner per package.
+
+* org-appear
+
+=org-hide-emphasis-markers= hides =/=, =*=, ~=~ and =~= — including while you are
+editing them, which means correcting emphasis is done blind.  =org-appear=
+reveals the markers of the construct at point and re-hides them on the way out.
+
+Each option is gated on the org variable it depends on, so the prerequisites are
+set explicitly here rather than left to defaults that =org-toggle-link-display=
+can flip underneath.
+
+=org-appear-delay= matters more than it looks: at 0 the markers flash in and out
+on every cursor move through a paragraph, which is exactly the kind of visual
+noise the rest of this module exists to remove.
+
+The three prerequisites — =org-hide-emphasis-markers=, =org-pretty-entities= and
+=org-link-descriptive= — are set in =40-org=, which already owned the first two.
+They are read when an org buffer is fontified, not at load, so it does not matter
+that =40-org= loads after this module.
+
+=40-org= also drops =org-fold-catch-invisible-edits= from ='show-and-error= to
+='smart= for the same reason: with the markers around point hidden by design,
+=show-and-error= refuses edits next to them.
+
+#+begin_src emacs-lisp
+  (use-package org-appear
+    :ensure t
+    :hook (org-mode . org-appear-mode)
+    :config
+    (setq org-appear-autoemphasis   t
+          org-appear-autolinks      t
+          org-appear-autosubmarkers t
+          org-appear-autoentities   t
+          org-appear-autokeywords   t
+          org-appear-inside-latex   t
+          ;; reveal on a short idle rather than instantly
+          org-appear-delay          0.2
+          org-appear-trigger        'always))
+#+end_src
+
+=org-appear-autokeywords= reveals the =#+= that =org-modern-keyword= replaced with
+=‣=, so the line shifts one character on reveal.  That is the intended trade —
+decorative when reading, literal when editing — but setting it to nil is the
+one-line reversal if the jitter is worse than the benefit.
+
+* Keymap entries
+The =C-q s= sub-map.  Not folded into =C-q t=: =my/key-define-submap= builds a
+*fresh* keymap, so registering "t" again here would discard the font and theme
+bindings =15-theme= put there.
+
+#+begin_src emacs-lisp
+  (let ((style (my/key-define-submap "s" "org styling")))
+    (my/key-define "s" "set style"   #'my/org-style-set     style)
+    (my/key-define "n" "next style"  #'my/org-style-cycle   style)
+    (my/key-define "?" "describe"    #'my/org-style-describe style))
+#+end_src

@@ -102,16 +102,11 @@ Fontify the whole line for headings (with a background color). Works well with L
   (setq org-fontify-whole-heading-line nil)
 #+end_src
 
-Different sizes for the different org headings.
-#+begin_src emacs-lisp
-   (custom-theme-set-faces
-    'user
-    `(org-level-4 ((t (:height 1.0))))
-    `(org-level-3 ((t (:height 1.1))))
-    `(org-level-2 ((t (:height 1.2))))
-    `(org-level-1 ((t (:height 1.3))))
-    `(org-document-title ((t (:height 1.6 :underline nil)))))
-#+end_src
+The heading *sizes* used to live here, as a =custom-theme-set-faces= block
+setting =org-level-1= through =4= and =org-document-title=.  They have moved to
+=17-org-style=, which owns org's appearance as a whole — the heights are only
+one part of a ramp that also decides colour, weight and rules, and splitting
+them across two modules meant neither file described the result.
 
 * Open indirect buffer
 Open a branch into a different frame, but the same buffer:

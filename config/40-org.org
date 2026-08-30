@@ -25,8 +25,12 @@ All orgmode configs
    ;; this value allows for modern themes and column fill to work well together.
    org-auto-align-tags t
    org-tags-column 0
-   ;; org fold - edit in an invisible region
-   org-fold-catch-invisible-edits 'show-and-error
+   ;; org fold - edit in an invisible region.
+   ;; 'smart rather than 'show-and-error: with `org-hide-emphasis-markers' and
+   ;; org-appear (17-org-style) the markers around point are invisible by
+   ;; design, and 'show-and-error refuses edits next to them.  'smart still
+   ;; refuses a genuinely blind edit into a folded subtree.
+   org-fold-catch-invisible-edits 'smart
    ;; C-a and C-e will move the cursor just the heading. No todo keyworks, no tags
    org-special-ctrl-a/e t
    ;; insert new heading after the current subtree
@@ -218,11 +222,16 @@ This section manages the visual look of org mode.
 https://lucidmanager.org/productivity/ricing-org-mode/
 
 #+begin_src emacs-lisp
-  ;; Improve org mode looks
-  (setq org-pretty-entities t
+  ;; Improve org mode looks.
+  ;; The three marked below are also org-appear's prerequisites (17-org-style):
+  ;; each of its options is a no-op unless the corresponding variable is t, and
+  ;; `org-link-descriptive' in particular is set explicitly because
+  ;; `org-toggle-link-display' flips it underneath you.
+  (setq org-pretty-entities t              ; org-appear autoentities/autosubmarkers
+        org-hide-emphasis-markers t        ; org-appear autoemphasis
+        org-link-descriptive t             ; org-appear autolinks
         org-startup-with-inline-images t
-        org-image-actual-width '(800)
-        org-hide-emphasis-markers t)
+        org-image-actual-width '(800))
 
   ;; Line spacing, in pixels
   (setq-default line-spacing 0)
@@ -287,14 +296,6 @@ When you want to write something fast using org mode, but you don't want to crea
   	    (insert "# org-scratch buffer\n"))
             ;; When called non-interactively, the `t` targets the other window (if it exists).
             (throw 'done (select-window (display-buffer buffer t))))))))
-#+end_src
-
-* org-modern
-#+begin_src emacs-lisp
-  (use-package org-modern
-    :ensure t
-    :config
-    (with-eval-after-load 'org (global-org-modern-mode)))
 #+end_src
 
 * Personal todo keywords, tags and captures

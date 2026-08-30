@@ -28,6 +28,7 @@ The config is split by **domain** (one module per subject), not by environment. 
 |`05-identity`       |always              |who I am + the `my-*-dir` path variables                                             |
 |`10-ui`             |always              |frame, faces, modeline, `hl-line` colours                                            |
 |`15-theme`          |always              |theme packages, light/dark rotation, all fontaine presets                            |
+|`17-org-style`      |always              |org's appearance: heading ramp, drawers, metadata, org-modern, org-appear            |
 |`20-completion`     |always              |vertico, consult, corfu, cape, orderless, embark                                     |
 |`30-navigation`     |always              |windows, perspectives, avy, imenu-list, speedbar                                     |
 |`40-org`            |always              |org core + each environment's todo keywords, tags, captures                          |
@@ -67,7 +68,11 @@ Conditions understood by `my/module-enabled-p`: `always`, `home`, `work`, `full-
 
 **To add a binding, edit the module that owns the command** — never collect it centrally. A module that does not load simply contributes nothing, so no `fboundp`/`boundp` guards are needed.
 
-Current entries: `a` AI · `b` buffers · `c` centered-mode · `d` daily agenda · `i` tempel-insert · `o` online · `p` open report (work) · `q` direct file access · `r` recent file · `t` themes/fonts · `u` outline · `w` writing
+Current entries: `a` AI · `b` buffers · `c` centered-mode · `d` daily agenda · `i` tempel-insert · `o` online · `p` open report (work) · `q` direct file access · `r` recent file · `s` org styling · `t` themes/fonts · `u` outline · `w` writing
+
+Note `my/key-define-submap` builds a **fresh** keymap, so two modules must never
+register the same letter — the second call silently discards the first module's
+bindings.
 
 ### Important directories
 

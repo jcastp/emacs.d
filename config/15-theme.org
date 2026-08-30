@@ -12,6 +12,13 @@ visible.
 
 Loads after =10-ui=, whose =my/set-hl-line-face= the theme rotation calls.
 
+The rotation also calls =my/org-set-faces= from =17-org-style=, which loads
+*after* this module.  That works because every call site sits inside
+=(with-eval-after-load 'consult ...)= and consult is =:demand t= in
+=20-completion= — so the bodies do not run until module 20, by which time 17 has
+defined the function.  Moving those calls out of the =with-eval-after-load= would
+break startup.
+
 * Lexical binding
 #+begin_src emacs-lisp
   ;; -*- lexical-binding: t; -*-
@@ -25,7 +32,10 @@ Loads after =10-ui=, whose =my/set-hl-line-face= the theme rotation calls.
   (use-package doric-themes
     :ensure t)
   (use-package ef-themes
-    :ensure t)
+    :ensure t
+    :init
+    ;; same reason as modus above: headings are 17-org-style's job
+    (setq ef-themes-headings '((t . (regular 1.0)))))
 #+end_src
 
 ** Protesilaos modus themes
@@ -49,15 +59,14 @@ Protesilaos very good themes. These themes are already included in the standard 
 
      modus-themes-fringes nil ; {nil,'subtle,'intense}
 
-     ;; fonts for headings
-     modus-themes-headings
-     '((1 . (background overline rainbow 1.10))
-       (2 . (overline rainbow 1.05))
-       (3 . (rainbow 1.1))
-       (4 . (rainbow no-bold 1.0))
-       (t . (monochrome no-bold 1.0)))
-     ;; scales up the headings
-     modus-themes-scale-headings t))
+     ;; Headings are shaped by `my/org-set-faces' in 17-org-style, not here.
+     ;; This used to give H1 a background, an overline, a distinct hue *and* a
+     ;; size bump -- four cues for one fact -- and only on the modus themes, so
+     ;; the heading design changed shape as the rotation moved between modus,
+     ;; leuven and ef.  Flattened, modus contributes its palette and nothing
+     ;; structural.
+     modus-themes-headings '((t . (regular 1.0)))
+     modus-themes-scale-headings nil))
 #+end_src
 
 ** poet theme
@@ -125,23 +134,26 @@ Assign the variable font to prose mode:
   (add-hook 'org-mode-hook 'variable-pitch-mode)
 #+end_src
 
-Use fixed font for code blocks and other non prose blocks, and configure all other aspects on how to show them on screen:
+Use fixed font for code blocks and other non prose blocks.
+
+The org-specific faces that used to live here — =org-block=, =org-meta-line=,
+=org-document-info=, =org-link=, =org-tag=, =org-property-value=,
+=org-special-keyword= — have moved to =17-org-style=.  Two of them
+(=org-document-info= as "dark orange", =org-link= as "royal blue") were absolute
+colours in the =user= theme, so they overrode every theme in the rotation; they
+are computed from the active theme now.
+
+What stays here is what is genuinely about *fonts* rather than about org: keeping
+comments and org's own structural faces on the fixed-pitch family so they do not
+fall back to whatever font happens to supply an italic glyph.
+
 #+begin_src emacs-lisp
   (custom-theme-set-faces
    'user
-   '(org-block                 ((t (:inherit fixed-pitch))))
-   '(org-block-begin-line      ((t (:foreground "dim grey" :weight bold :height 1.1 :inherit fixed-pitch))))
-   '(org-document-info         ((t (:foreground "dark orange"))))
-   '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
-   '(org-link                  ((t (:foreground "royal blue" :underline t))))
    ;; keep comments (in code blocks and elsewhere) on the fixed-pitch font,
    ;; instead of falling back to whatever font provides the italic glyph
    '(font-lock-comment-face    ((t (:inherit fixed-pitch))))
    '(font-lock-comment-delimiter-face ((t (:inherit fixed-pitch))))
-   '(org-meta-line             ((t (:inherit (font-lock-comment-face fixed-pitch)))))
-   '(org-property-value        ((t (:inherit fixed-pitch))) t)
-   '(org-special-keyword       ((t (:inherit (font-lock-comment-face fixed-pitch)))))
-   '(org-tag                   ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.9))))
    '(org-verbatim              ((t (:inherit (shadow fixed-pitch)))))
    '(org-indent                ((t (:inherit (org-hide fixed-pitch)))))
    '(org-table                 ((t (:inherit (org-hide fixed-pitch)))))
@@ -196,7 +208,9 @@ Also, rotate the list of themes applied.
             ;; rotate the list - the applied theme goes to the back of the list
             (setq my/themes-dark (my/rotate-list my/themes-dark))
             ;; set hl-line colors for dark theme
-            (my/set-hl-line-face t))
+            (my/set-hl-line-face t)
+            ;; recompute the org faces for the new palette
+            (my/org-set-faces))
         ;; else block
         ;; clear theme loading
         (progn
@@ -204,7 +218,9 @@ Also, rotate the list of themes applied.
           ;; rotate the list - the applied theme goest to the back of the list
           (setq my/themes-clear (my/rotate-list my/themes-clear))
           ;; set hl-line colors for clear theme
-          (my/set-hl-line-face nil))))
+          (my/set-hl-line-face nil)
+          ;; recompute the org faces for the new palette
+          (my/org-set-faces))))
     )
 #+end_src
 
@@ -227,7 +243,8 @@ Function to change between dark and clear themes, based on past variables.
               ;; mark the theme is dark now
               (setq my-theme-dark-p t)
               ;; set hl-line colors for dark theme
-              (my/set-hl-line-face t))
+              (my/set-hl-line-face t)
+              (my/org-set-faces))
           ;; else block (clear theme)
           (progn
             (consult-theme (car my/themes-clear))
@@ -236,8 +253,8 @@ Function to change between dark and clear themes, based on past variables.
             (setq my/themes-clear (my/rotate-list my/themes-clear))
             ;; mark the theme is clear now
             (setq my-theme-dark-p nil)
-            ;; set hl-line colors for clear theme
-            (my/set-hl-line-face nil)))))
+            (my/set-hl-line-face nil)
+            (my/org-set-faces)))))
 
     (global-set-key (kbd "C-c 0") 'my/theme-changer)
     )
@@ -359,6 +376,7 @@ The personal side already deferred the same way.
     (with-eval-after-load 'consult
       (consult-theme 'adwaita)
       (my/set-hl-line-face nil :with-foreground)
+      (my/org-set-faces)
       (set-cursor-color "#00008B")
       (set-face-background 'fringe "#00008B")
       (setq-default frame-title-format "[WORK] %b - (%f)")
