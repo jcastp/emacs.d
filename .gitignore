@@ -11,15 +11,9 @@
 /persist/
 /tree-sitter/
 /elfeed/
+/config/*.el
 
 # excluded files
-emacs-org-init.el
-emacs-org-init-trabajo.el
-emacs-org-init-work.el
-emacs-org-init-personal.el
-emacs-config-personal.el
-emacs-config-work.el
-emacs-config.el
 custom.el
 network-security.data
 network-security.eld
