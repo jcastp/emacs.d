@@ -159,8 +159,6 @@ But I want to automatically load some perspectives when I'm at home:
   	  (persp-state-load (f-join my-persp-save-dir my-file))))))
 #+end_src
 
-
-
 *** TODO automatically save the perspective on exit
 #+begin_src emacs-lisp
   ;; define the file name where we save the perspective
@@ -213,15 +211,16 @@ But I want to automatically load some perspectives when I'm at home:
          (message "Perspecti;; ve state save failed: %s"
   		(error-message-string err))))))
 
-  ;; save the perspective automatically on exit
-  (add-hook 'kill-emacs-hook #'my/persp-save-no-ask)
+  (when my-homeenvironment-p
+    ;; save the perspective automatically on exit
+    (add-hook 'kill-emacs-hook #'my/persp-save-no-ask)
 
-  ;; Save periodically when Emacs has been idle.
-  ;; This avoids saving synchronously on every tiny change.
-  (defvar my/persp-idle-save-timer nil)
-  (unless my/persp-idle-save-timer
-    (setq my/persp-idle-save-timer
-    	(run-with-idle-timer 60 t #'my/persp-save-no-ask)))
+    ;; Save periodically when Emacs has been idle.
+    ;; This avoids saving synchronously on every tiny change.
+    (defvar my/persp-idle-save-timer nil)
+    (unless my/persp-idle-save-timer
+      (setq my/persp-idle-save-timer
+  	  (run-with-idle-timer 60 t #'my/persp-save-no-ask))))
 #+end_src
 
 * Window resize menu
