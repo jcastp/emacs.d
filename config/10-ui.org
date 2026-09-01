@@ -259,8 +259,8 @@ same property: violet =#7f5fbf=, steel blue =#4a7fa5=.
 
   ;; nil in Emacs 32 by default, which means a static highlight instead of a fade
   (setq pulse-flag t)
-  (setq pulse-iterations 12)
-  (setq pulse-delay 0.03)
+  (setq pulse-iterations 20)
+  (setq pulse-delay 0.10)
 
   (defun my/pulse-line (&rest _)
     "Briefly highlight the current line using built-in pulse.el."
