@@ -159,6 +159,71 @@ But I want to automatically load some perspectives when I'm at home:
   	  (persp-state-load (f-join my-persp-save-dir my-file))))))
 #+end_src
 
+
+
+*** TODO automatically save the perspective on exit
+#+begin_src emacs-lisp
+  ;; define the file name where we save the perspective
+  (setq persp-state-default-file
+        (locate-user-emacs-file "autosaved-persp"))
+
+  (defun my/persp-save-no-ask ()
+    "Save Perspective state without asking for overwrite confirmation."
+    (when (and (bound-and-true-p persp-mode)
+               (fboundp 'persp-state-save))
+      (condition-case err
+          (let* ((target
+                  (or (and (bound-and-true-p persp-state-default-file)
+                           (expand-file-name persp-state-default-file))
+                      (locate-user-emacs-file "persp/generic.eld")))
+                 (tmp
+                  (expand-file-name
+                   (concat (make-temp-name "persp-state-") ".eld")
+                   temporary-file-directory)))
+
+            ;; Keep the official variable pointing at the real target.
+            (setq persp-state-default-file target)
+
+            (make-directory (file-name-directory target) t)
+
+            (unwind-protect
+                (progn
+                  ;; Try calling with an explicit temporary filename.
+                  ;; Fall back if this Perspective version does not accept one.
+                  (condition-case nil
+                      (persp-state-save tmp)
+                    (wrong-number-of-arguments
+                     (let ((persp-state-default-file tmp))
+                       (persp-state-save))))
+
+                  ;; Replace the old state file without asking.
+                  (condition-case nil
+                      (rename-file tmp target t)
+                    (error
+                     ;; If direct overwrite fails, try removing the old file first.
+                     (when (file-exists-p target)
+                       (ignore-errors (set-file-modes target #o600))
+                       (delete-file target))
+                     (rename-file tmp target))))
+
+              ;; Clean up the temporary file if something went wrong.
+              (when (file-exists-p tmp)
+                (delete-file tmp))))
+        (error
+         (message "Perspecti;; ve state save failed: %s"
+  		(error-message-string err))))))
+
+  ;; save the perspective automatically on exit
+  (add-hook 'kill-emacs-hook #'my/persp-save-no-ask)
+
+  ;; Save periodically when Emacs has been idle.
+  ;; This avoids saving synchronously on every tiny change.
+  (defvar my/persp-idle-save-timer nil)
+  (unless my/persp-idle-save-timer
+    (setq my/persp-idle-save-timer
+    	(run-with-idle-timer 60 t #'my/persp-save-no-ask)))
+#+end_src
+
 * Window resize menu
 Using built-in =transient= instead of =hydra=.
 
