@@ -36,6 +36,8 @@ All the configurations needed for dired.
      (setq dired-recursive-deletes 'always)
      (setq delete-by-moving-to-trash t)
      (setq dired-dwim-target t)
+     ;; Revert the directory if there is any change
+     (setq dired-auto-revert-buffer 'dired-directory-changed-p)
      ;; directories first in the listings
      (setq dired-listing-switches "-aBhl  --group-directories-first"))
  #+end_src
