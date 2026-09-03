@@ -362,6 +362,7 @@ same keyword looked different depending on where it was read.
           org-modern-tag             t
           org-modern-todo            t
           org-modern-timestamp       t
+  	org-modern-checkbox nil
           org-modern-table           t
           org-modern-todo-faces
           '(("TODO"      . my/org-todo-active)
