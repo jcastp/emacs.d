@@ -168,7 +168,17 @@ one shadowing the other.
     (corfu-auto t)
     (corfu-auto-delay 0.4)
     (corfu-auto-prefix 3)
-    (corfu-cycle t))
+    (corfu-cycle t)
+    ;; corfu-separator defaults to space, and corfu-quit-at-boundary /
+    ;; corfu-quit-no-match default to `separator', which means "stay open
+    ;; once a separator has been typed" — meant for Orderless
+    ;; multi-component filtering in the minibuffer. In a buffer that
+    ;; swallows the space you just typed as "start filtering across
+    ;; words" instead of "finish this word", so the popup follows you
+    ;; past the current word and never closes on its own. Force it to
+    ;; always quit at a word boundary instead.
+    (corfu-quit-at-boundary t)
+    (corfu-quit-no-match t))
 
   (use-package cape
     :ensure t
