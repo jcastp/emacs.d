@@ -355,8 +355,8 @@ Only mounted when at home, and clear directory is mounted.
         ("C-c r ñ" . org-journal-new-entry)
         :config
         (setq org-journal-date-prefix "#+TITLE: ")
+        (setq org-journal-file-header "#+language: es")
         (setq org-journal-file-format "%Y-%m-%d.org")
-        ;;(setq org-journal-dir "~/Nextcloud/personal/diario/")
         (setq org-journal-dir (expand-file-name "personal/diario" my-clear-directory))
         (setq org-journal-date-format "%A, %d %B %Y")
         (setq org-journal-encrypt-journal nil)))
