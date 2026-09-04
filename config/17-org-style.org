@@ -41,11 +41,11 @@ how headings are coloured and whether blocks and top-level headings carry a rule
 drawers and metadata are identical in all three, because metadata should recede
 whichever look is active.
 
-| style | headings                                 | rules                       |
-|-------+------------------------------------------+-----------------------------|
-| =a=     | one colour, size and weight only         | none                        |
-| =b=     | theme accent on H1/H2, body colour below | none                        |
-| =c=     | one colour                               | hairline over H1/H2, blocks |
+| style | name              | headings                                 | rules                       |
+|-------+-------------------+------------------------------------------+-----------------------------|
+| =a=     | typographic       | one colour, size and weight only         | none                        |
+| =b=     | restrained accent | theme accent on H1/H2, body colour below | none                        |
+| =c=     | structured        | one colour                               | hairline over H1/H2, blocks |
 
 #+begin_src emacs-lisp
   (defvar my-org-style 'c
