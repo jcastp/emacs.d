@@ -306,7 +306,10 @@ Called on startup and from `my/theme-changer', beside
   (defun my/org-style-set (style)
     "Set the org heading look to STYLE and apply it immediately."
     (interactive
-     (list (intern (completing-read "Org style: " '("a" "b" "c") nil t))))
+     (let* ((choices (mapcar (lambda (s) (cons (my/org-style--label s) s))
+                             '(a b c)))
+            (choice (completing-read "Org style: " (mapcar #'car choices) nil t)))
+       (list (cdr (assoc choice choices)))))
     (setq my-org-style style)
     (my/org-set-faces)
     (message "Org style %s%s"
