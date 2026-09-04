@@ -26,3 +26,5 @@ bookmarks.eld
 tramp
 *~undo-tree~
 /config/*.el
+autosaved-persp
+history
