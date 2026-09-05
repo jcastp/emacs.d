@@ -267,10 +267,10 @@ Function to change between dark and clear themes, based on past variables.
         '(
           ;; Hack font for prose, Aporetic for code blocks
           (hack
-           :default-family "Aporetic Sans Mono"
+           :default-family "Hack"
            :default-weight light
            :default-height 120
-           :fixed-pitch-family "Aporetic Sans Mono"
+           :fixed-pitch-family "Hack"
            :fixed-pitch-weight Light ; falls back to :default-weight
            :fixed-pitch-height 110
            :variable-pitch-family "Hack"
