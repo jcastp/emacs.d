@@ -328,6 +328,30 @@ Prerrequisites:
       (message "org-scribe: used remote repo")))
 #+end_src
 
+Configure org-scribe:
+#+begin_src emacs-lisp
+  ;; Default themes
+  (setq org-scribe-env-normal-theme 'modus-vivendi-tinted)   ; nil = leave your theme alone
+  (setq org-scribe-env-work-theme 'poet)     ; nil = leave your theme alone
+  (setq org-scribe-editing-theme 'leuven)  ; Editing mode (leuven ships with Emacs)
+
+  ;; fonts for writing
+  (setq org-scribe-env-normal-font 'hack)      ; Normal editing
+  (setq org-scribe-env-work-font 'writing-big) ; Distraction-free mode
+  (setq org-scribe-editing-fontaine-preset 'editing)  ; Editing mode
+
+  ;; Default widths
+  (setq org-scribe-env-work-width 75)                  ; Comfortable reading width
+  (setq org-scribe-env-normal-width 90)                ; Normal editing width
+  (setq org-scribe-editing-fill-column-width 90)          ; Editing mode width
+
+  ;; === EDITING MODE PANELS ===
+  (setq org-scribe-editing-left-width-percent 0.25)       ; Outline: 25%
+  (setq org-scribe-editing-right-width-percent 0.25)      ; Notes: 25%
+  					; Manuscript: 50% (automatic)
+  (setq org-scribe-editing-right-panel 'notes)            ; What the right pane shows
+ #+end_src
+
 #+begin_src emacs-lisp
   ;; Enable in org-mode
   (add-hook 'org-mode-hook #'org-scribe-mode)
