@@ -350,9 +350,6 @@ Configure org-scribe:
   (setq org-scribe-editing-right-width-percent 0.25)      ; Notes: 25%
   					; Manuscript: 50% (automatic)
   (setq org-scribe-editing-right-panel 'notes)            ; What the right pane shows
-
-  ;; Don't autocount words on save - too slow
-  (setq org-scribe-auto-wordcount nil)
  #+end_src
 
 #+begin_src emacs-lisp
@@ -365,7 +362,8 @@ Configure org-scribe:
 
 Update word count on save:
 #+begin_src emacs-lisp
-  (setq org-scribe-auto-wordcount t)
+  ;; Disabled due to be too slow on big files
+  (setq org-scribe-auto-wordcount nil)
 #+end_src
 
 * org-journal
