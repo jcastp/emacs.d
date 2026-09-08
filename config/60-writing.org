@@ -257,8 +257,8 @@ sessions through savehist (see =my/last-writing-project= in the savehist config)
     (let ((default-directory (file-name-as-directory
                               (expand-file-name project my-writing-root))))
       (call-interactively #'project-find-file))
-    (when (fboundp 'org-scribe/writing-env-mode)
-      (org-scribe/writing-env-mode 1)))
+    (when (fboundp 'org-scribe-writing-env-mode)
+      (org-scribe-writing-env-mode 1)))
 #+end_src
 
 * writing keybindings
@@ -269,15 +269,15 @@ Create a custom keymap for the writing functions
     ;; open a writing session
     "o" #'my/start-writing-session
     ;; writing mode
-    "a" #'org-scribe/writing-env-mode
-    "f" #'org-scribe/writing-env-mode-focus
-    "e" #'org-scribe/editing-mode
-    "w" #'org-scribe/ews-org-count-words
+    "a" #'org-scribe-writing-env-mode
+    "f" #'org-scribe-writing-env-mode-focus
+    "e" #'org-scribe-editing-mode
+    "w" #'org-scribe-ews-org-count-words
     "c" #'org-context-count-words
     ;; writing exercises
     "r" #'my-writing/create-writing-exercise
     "q" #'my-writing/create-empty-writing-file
-    "s" #'org-scribe/sinonimo
+    "s" #'org-scribe-sinonimo
     ;; hydra keybinding
     "k" #'hydra-org-scribe/body)
 
@@ -350,6 +350,9 @@ Configure org-scribe:
   (setq org-scribe-editing-right-width-percent 0.25)      ; Notes: 25%
   					; Manuscript: 50% (automatic)
   (setq org-scribe-editing-right-panel 'notes)            ; What the right pane shows
+
+  ;; Don't autocount words on save - too slow
+  (setq org-scribe-auto-wordcount nil)
  #+end_src
 
 #+begin_src emacs-lisp
