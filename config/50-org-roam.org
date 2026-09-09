@@ -3,11 +3,14 @@
 #+startup: overview
 
 org-roam, its UI, the agenda restriction, the random-node openers and the
-utility functions -- and the personal capture templates, which used to sit ~350
-lines away in another file from the base templates they extend.
+utility functions -- and the capture templates for both environments.
 
-Shared by both environments against the same database; the directory comes from
-=my-roam-dir= in =05-identity.org=.
+Personal and work are two fully independent stores: separate directories,
+separate databases, no shared nodes and no links between them.  Each
+environment's capture templates are self-contained -- neither can see or file
+into the other's list.  The active store's directory comes from =my-roam-dir=
+in =05-identity.org=, which resolves to =my-personal-roam-dir= or
+=my-work-roam-dir= depending on environment.
 
 * Lexical binding
 #+begin_src emacs-lisp
@@ -75,30 +78,69 @@ to the sqlite backend.
 Open fleeting notes with a keybinding:
 #+begin_src emacs-lisp
   (defun my/org-roam-fleeting-notes ()
-    "Open my org-roam file with my fleeting notes"
+    "Open the fleeting-notes file of the active org-roam store."
     (interactive)
-    (find-file (expand-file-name "personal/fleeting_notes.org" my-roam-dir)))
+    (find-file (expand-file-name (if my-workenvironment-p
+                                     "fleeting_notes.org"
+                                   "personal/fleeting_notes.org")
+                                 my-roam-dir)))
   (global-set-key (kbd "C-c n F") 'my/org-roam-fleeting-notes)
 #+end_src
 
-Base org-roam capture templates. Personal-only templates (book notes, writing)
-are added via =add-to-list= in =emacs-config-personal.org=.
-#+begin_src emacs-lisp
-  (setq org-roam-capture-templates
-        '(
-          ;; personal note — lands in personal/
-          ("p" "personal note" plain
-           "* TODO ${title}\n%?"
-           :if-new (file+head "personal/%<%Y%m%d%H%M%S>-${slug}.org"
-                              "#+title: ${title}\n")
-           :unnarrowed t)
+** Capture templates
 
-          ;; work concept note — lands in work/
-          ("k" "work concept" plain
-           "* ${title}\n%?"
-           :if-new (file+head "work/%<%Y%m%d%H%M%S>-${slug}.org"
-                              "#+title: ${title}\n#+filetags: work\n")
-           :unnarrowed t)))
+Each environment owns its complete capture set.  There is no shared base list
+and no =add-to-list=: what you read here is exactly what is offered, and the
+two sides are free to drift.  Home files into =personal/= inside the personal
+store; work files at the root of the work store, which is itself the
+partition.
+
+#+begin_src emacs-lisp
+  ;; ---- home: the complete personal capture set -------------------------
+  (when my-homeenvironment-p
+    (setq org-roam-capture-templates
+          `(("p" "personal note" plain
+             "* TODO ${title}\n%?"
+             :if-new (file+head "personal/%<%Y%m%d%H%M%S>-${slug}.org"
+                                "#+title: ${title}\n")
+             :unnarrowed t)
+
+            ("b" "book notes" plain
+             (file ,(expand-file-name "roamtemplates/BookNoteTemplate.org" my-config-dir))
+             :if-new (file+head "personal/%<%Y%m%d%H%M%S>-${slug}.org"
+                                "#+title: ${title}\n#+filetags: book")
+             :unnarrowed t)
+
+            ("w" "writing idea" plain
+             (file ,(expand-file-name "roamtemplates/WritingIdea.org" my-config-dir))
+             :if-new (file+head "personal/%<%Y%m%d%H%M%S>-${slug}.org"
+                                "#+title: ${title}\n#+filetags: writing")
+             :unnarrowed t)
+
+            ("c" "writing character" plain
+             (file ,(expand-file-name "roamtemplates/CharacterIdea.org" my-config-dir))
+             :if-new (file+head "personal/%<%Y%m%d%H%M%S>-${slug}.org"
+                                "#+title: ${title}\n#+filetags: writing character")
+             :unnarrowed t)))
+
+    (setq org-roam-dailies-capture-templates
+          '(("d" "default" entry "* %?"
+             :if-new (file+head "%<%Y-%m-%d>.org"
+                                "#+title: %<%Y-%m-%d>\n#+filetags: daily\n")))))
+
+  ;; ---- work: the complete work capture set -----------------------------
+  (when my-workenvironment-p
+    (setq org-roam-capture-templates
+          '(("k" "work concept" plain
+             "* ${title}\n%?"
+             :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                                "#+title: ${title}\n#+filetags: work\n")
+             :unnarrowed t)))
+
+    (setq org-roam-dailies-capture-templates
+          '(("d" "default" entry "* %?"
+             :if-new (file+head "%<%Y-%m-%d>.org"
+                                "#+title: %<%Y-%m-%d>\n#+filetags: daily work\n")))))
 #+end_src
 
 Org-roam window configuration:
@@ -134,12 +176,6 @@ Search by title and tags:
     :hook (org-roam . org-roam-ui-mode))
 
   (setq org-roam-dailies-directory "daily/")
-
-  (setq org-roam-dailies-capture-templates
-        '(("d" "default" entry
-           "* %?"
-           :if-new (file+head "%<%Y-%m-%d>.org"
-                              "#+title: %<%Y-%m-%d>\n#+filetags: daily\n"))))
 #+end_src
 
 * Restrict agenda to org-roam
@@ -369,37 +405,4 @@ Elisp using `float-time' to handle org-roam's stored time format."
       (message "Connect '%s' to '%s'"
                (org-roam-node-title node1)
                (org-roam-node-title node2))))
-#+end_src
-
-* Personal capture templates
-
-** Personal org-roam capture templates
-Personal-only capture templates, added on top of the base templates defined in
-=emacs-config.org=.
-#+begin_src emacs-lisp
-  (when my-homeenvironment-p
-    (add-to-list 'org-roam-capture-templates
-                 '("b" "book notes" plain
-                   (file "~/.emacs.d/roamtemplates/BookNoteTemplate.org")
-                   :if-new (file+head "personal/%<%Y%m%d%H%M%S>-${slug}.org"
-                                      "#+title: ${title}\n#+filetags: book")
-                   :unnarrowed t)
-                 t)
-
-    (add-to-list 'org-roam-capture-templates
-                 '("w" "writing idea" plain
-                   (file "~/.emacs.d/roamtemplates/WritingIdea.org")
-                   :if-new (file+head "personal/%<%Y%m%d%H%M%S>-${slug}.org"
-                                      "#+title: ${title}\n#+filetags: writing")
-                   :unnarrowed t)
-                 t)
-
-    (add-to-list 'org-roam-capture-templates
-                 '("c" "writing character" plain
-                   (file "~/.emacs.d/roamtemplates/CharacterIdea.org")
-                   :if-new (file+head "personal/%<%Y%m%d%H%M%S>-${slug}.org"
-                                      "#+title: ${title}\n#+filetags: writing character")
-                   :unnarrowed t)
-                 t)
-    )
 #+end_src

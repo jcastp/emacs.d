@@ -26,8 +26,23 @@ strings at every use site.  Consumers are rewired to these as each module moves.
   (defvar my-agenda-dir (expand-file-name "agenda/" my-nextcloud-dir)
     "Directory holding my agenda and task files.")
 
-  (defvar my-roam-dir (expand-file-name "org-roam/" my-nextcloud-dir)
-    "Directory holding my org-roam notes.  Shared by both environments.")
+  (defvar my-work-dir (expand-file-name "trabajo/agenda/" my-nextcloud-dir)
+    "Root of my work directory.  Defined unconditionally because
+  `my-work-roam-dir' is built from it in both environments; the work
+  identity variables that load uncommitted secrets stay gated below.")
+
+  (defvar my-personal-roam-dir (expand-file-name "org-roam/" my-nextcloud-dir)
+    "Directory holding my personal org-roam notes.")
+
+  (defvar my-work-roam-dir (expand-file-name "roam/" my-work-dir)
+    "Directory holding my work org-roam notes.")
+
+  (defvar my-roam-dir (if my-workenvironment-p
+                          my-work-roam-dir
+                        my-personal-roam-dir)
+    "The org-roam store active in this environment.
+  The two stores are fully independent: separate directories, separate
+  databases, no shared nodes and no links between them.")
 
   (defvar my-escritura-dir (expand-file-name "escritura/" my-nextcloud-dir)
     "Root of my writing directory.")
@@ -54,9 +69,6 @@ It contains the variables =user-full-name= and =user-mail-address=.
 * Work identity and directories
 #+begin_src emacs-lisp
   (when my-workenvironment-p
-    (defvar my-work-dir (expand-file-name "trabajo/agenda/" my-nextcloud-dir)
-      "My own working directory")
-
     (defvar my-work-file (concat my-work-dir "work.org")
       "My own work file")
 

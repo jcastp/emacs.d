@@ -68,7 +68,10 @@ To create and use internal valid and unique links in org-mode, we will use the =
   (setq org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
   ;; file to store the local =org-id= locations
   ;; This way is synced to all my computers
-  (setq org-id-locations-file (expand-file-name "org-id-locations" my-data-dir))
+  ;; Per-environment, like recentf/savehist/bookmarks: a shared ID cache would
+  ;; let the work Emacs resolve a personal `id:' link from a path cached by a
+  ;; home session, defeating the org-roam store split.
+  (setq org-id-locations-file (my/state-file "org-id-locations"))
 #+end_src
 
 * org-indent-mode on all the buffers

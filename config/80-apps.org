@@ -139,6 +139,22 @@ Group buffers by project area. The catch-all "Other" group at the end catches an
                 (ibuffer-auto-mode 1)
                 (ibuffer-switch-to-saved-filter-groups "personal")))
     )
+
+  (when my-workenvironment-p
+    (setq ibuffer-saved-filter-groups
+          '(("work"
+             ("Emacs config" (filename . "/.emacs.d/"))
+             ;; Must precede "Work agenda": the roam store is a subdirectory of
+             ;; it, and ibuffer takes the first matching group.
+             ("Org-roam"     (filename . "/Nextcloud/trabajo/agenda/roam/"))
+             ("Work agenda"  (filename . "/Nextcloud/trabajo/agenda/"))
+             ("Special"      (or (name . "^\\*")
+                                 (mode  . special-mode))))))
+
+    (add-hook 'ibuffer-mode-hook
+              (lambda ()
+                (ibuffer-auto-mode 1)
+                (ibuffer-switch-to-saved-filter-groups "work"))))
 #+end_src
 
 * Mastodon
