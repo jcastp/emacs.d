@@ -360,6 +360,17 @@ Saved views for =org-ql-view= (=C-c q v=), covering all open (non-DONE/DELEGATED
                              :sort '(effort)
                              :super-groups nil
                              :title "Work: All open tasks (by effort)"))
+                 t)
+
+    (add-to-list 'org-ql-views
+                 (cons "Work: Decisions — needs attention"
+                       (list :buffers-files (list my-decisions-file)
+                             :query '(or (ancestors (heading "Inbox"))
+                                         (property "STATUS" "proposed")
+                                         (scheduled :to today))
+                             :sort '(date)
+                             :super-groups nil
+                             :title "Work: Decisions — needs attention"))
                  t))
 #+end_src
 

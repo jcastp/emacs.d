@@ -460,6 +460,37 @@ As work is different from home, I need specific templates.
     			     (goto-char (org-find-olp (list my-people-file person))))))
     	       "*** TODO [%(identity my/capture-person)] %<%Y-%m-%d %a %H:%M> %? :people:%(downcase my/capture-person):\n    DEADLINE: %^t"
     	       :jump-to-captured t))
+
+    ;; Tier 1 -- fast capture. Two prompts, usable mid-meeting.
+    (add-to-list 'org-capture-templates
+                 `("D" "Decision (fast)" entry
+                   (file+headline my-decisions-file "Inbox")
+                   ,(concat "** %?\n"
+                            ":PROPERTIES:\n"
+                            ":DECIDED:  %U\n"
+                            ":STATUS:   accepted\n"
+                            ":SOURCE:   %^{Where|meeting|teams|email|1:1|solo}\n"
+                            ":END:\n")
+                   :empty-lines-after 1))
+
+    ;; Tier 2 -- full record. Used when promoting at review, or straight away
+    ;; for a decision that is clearly hard to reverse.
+    (add-to-list 'org-capture-templates
+                 `("R" "Decision (full record)" entry
+                   (file+headline my-decisions-file "Decisions")
+                   ,(concat "** %^{Decision}\n"
+                            ":PROPERTIES:\n"
+                            ":DECIDED:  %U\n"
+                            ":STATUS:   accepted\n"
+                            ":DECIDERS: %^{Deciders}\n"
+                            ":INFORMED: %^{Informed}\n"
+                            ":SOURCE:   %^{Where|meeting|teams|email|1:1|solo}\n"
+                            ":REVERSIBILITY: %^{Reversibility|easy|hard}\n"
+                            ":END:\n"
+                            "In the context of %^{Context}, facing %^{Concern}, "
+                            "we decided for %\\1 and neglected %^{Rejected}, "
+                            "accepting %^{Downside}.\n%?\n")
+                   :empty-lines-after 1))
     )
 #+end_src
 

@@ -81,6 +81,11 @@ It contains the variables =user-full-name= and =user-mail-address=.
     (defvar my-people-file (concat my-work-dir "work_people.org")
       "Employee 1:1 meeting notes")
 
+    (defvar my-decisions-file (concat my-work-dir "work_decisions.org")
+      "Decision log: one entry per decision, enriched at the weekly review.
+Deliberately not in `org-agenda-files' -- it is a record, not a task list,
+and adding it would push every entry through the `ci' triage view.")
+
     (defvar my-work-info-file (concat my-work-dir "work-info.el")
       "Personal identity info (user-full-name, user-mail-address) for work.")
     ;; load the information for our company

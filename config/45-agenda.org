@@ -162,7 +162,8 @@ Since this is a different environment, I also have to change this to refile thin
       (setq org-refile-targets '(
                                 (nil :maxlevel . 9)
                                 (org-agenda-files :maxlevel . 9)
-    			    (my-backlog-file :maxlevel . 9)))
+    			    (my-backlog-file :maxlevel . 9)
+    			    (my-decisions-file :maxlevel . 2)))
 
       (setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
       (setq org-refile-use-outline-path t)                  ; Show full paths for refiling
