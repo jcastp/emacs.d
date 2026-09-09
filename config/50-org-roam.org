@@ -311,6 +311,43 @@ Extracted from https://d12frosted.io/posts/2021-01-16-task-management-with-roam-
     (add-hook 'before-save-hook #'vulpea-project-update-tag))
 #+end_src
 
+** Roam TODOs in the work agenda
+=org-agenda-files= is a static list, so a TODO living in a roam note is invisible
+to every agenda view.  The block above solves half of that: it keeps a =roamtag=
+tag on any note in the store that has a live TODO, and =vulpea-project-files= can
+list those notes straight from the database.  This is the other half -- the list
+is recomputed just before the agenda is built, folding the dynamic set of roam
+notes with TODOs into the static set of work files.
+
+Work only.  At home the roam store is a reading and writing corpus whose TODOs
+are not agenda material, and the personal agenda stays exactly as it was.
+
+#+begin_src emacs-lisp
+  (when my-workenvironment-p
+
+    (defvar my/agenda-files-base org-agenda-files
+      "Agenda files that are always present, whatever the roam store holds.
+  Captured from `org-agenda-files' as 45-agenda.org left it -- that module
+  loads before this one.  This has to be a variable of its own: appending to
+  `org-agenda-files' itself would make the list monotonic, so a note whose
+  last TODO is done would stay in the agenda for the rest of the session
+  instead of dropping out along with its tag.")
+
+    (defun my/agenda-files-update (&rest _)
+      "Fold roam notes that contain a live TODO into `org-agenda-files'.
+  Truenames on both sides: the roam database stores paths resolved, so
+  without this a file reachable by two paths would be scanned twice and
+  each of its headings would show up twice in the agenda."
+      (setq org-agenda-files
+            (seq-uniq
+             (append (mapcar #'file-truename my/agenda-files-base)
+                     (when (fboundp 'vulpea-project-files)
+                       (mapcar #'file-truename (vulpea-project-files)))))))
+
+    (advice-add 'org-agenda    :before #'my/agenda-files-update)
+    (advice-add 'org-todo-list :before #'my/agenda-files-update))
+#+end_src
+
 Just show the TODOs from org-roam, not from the general agenda:
 #+begin_src emacs-lisp
   (defun my/agenda-restrict-to-roam ()
