@@ -374,6 +374,48 @@ Saved views for =org-ql-view= (=C-c q v=), covering all open (non-DONE/DELEGATED
                  t))
 #+end_src
 
+* Active decisions by tag
+Work-only. The saved views above are static; this is not — it prompts for one
+or more tags (see "Categorising decisions" in =manual.org=, e.g. =wiz=,
+=sensor=, =defend=) and shows only the decisions that carry *all* of them and
+are not =superseded=, i.e. the ones still in force. Complements "Work:
+Decisions — needs attention" (which is about triage, not product/area
+filtering) and the plain =C-c / m= tag search (which does not know about
+=STATUS=).
+
+#+begin_src emacs-lisp
+  (when my-workenvironment-p
+
+    (defun my/decisions--available-tags ()
+      "Return every tag used in `my-decisions-file', read fresh from the buffer."
+      (let (tags)
+        (with-current-buffer (find-file-noselect my-decisions-file)
+          (org-map-entries
+           (lambda () (setq tags (append (org-get-tags) tags)))))
+        (seq-uniq tags)))
+
+    (defun my/decisions-by-tag (tags)
+      "Show active (non-superseded) decisions carrying every tag in TAGS.
+Interactively, prompt for one or more tags -- completion offers every tag
+actually used in `my-decisions-file' -- then run an `org-ql-search'
+restricted to that file: entries must carry ALL of TAGS and must not have
+a STATUS property of \"superseded\". A decision still in `Inbox' (no
+STATUS yet beyond the fast-capture default of \"accepted\") is treated as
+active and included."
+      (interactive
+       (list (completing-read-multiple "Tags (comma-separated): "
+                                        (my/decisions--available-tags)
+                                        nil t)))
+      (org-ql-search
+        (list my-decisions-file)
+        `(and (tags-all ,@tags)
+              (not (property "STATUS" "superseded")))
+        :title (format "Active decisions: %s" (string-join tags "+"))
+        :sort '(date)))
+
+    (global-set-key (kbd "C-c q t") #'my/decisions-by-tag))
+#+end_src
+
 * Open a direct report (one-key 1:1 prep)
 1:1 notes live *per-person* in =my-people-file= (one heading per report, with
 that report's running notes and =:people:= action items underneath).  This
