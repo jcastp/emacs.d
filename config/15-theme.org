@@ -374,7 +374,7 @@ The personal side already deferred the same way.
 #+begin_src emacs-lisp
   (when my-workenvironment-p
     (with-eval-after-load 'consult
-      (consult-theme 'adwaita)
+      (consult-theme 'modus-operandi-deuteranopia)
       (my/set-hl-line-face nil :with-foreground)
       (my/org-set-faces)
       (set-cursor-color "#00008B")
