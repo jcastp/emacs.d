@@ -426,10 +426,10 @@ As work is different from home, I need specific templates.
                    (file+headline my-work-file "Inbox")
                    "** TODO %? %^g"))
 
-    (add-to-list 'org-capture-templates
-                 '("b" "Backlog entry." entry
-                   (file+headline my-backlog-file "Backlog")
-                   "** TODO %?\n"))
+    ;; (add-to-list 'org-capture-templates
+    ;;              '("b" "Backlog entry." entry
+    ;;                (file+headline my-backlog-file "Backlog")
+    ;;                "** TODO %?\n"))
 
     (add-to-list 'org-capture-templates
                  '("m" "Work meeting notes" entry
