@@ -429,7 +429,7 @@ that =40-org= loads after this module.
           org-appear-inside-latex   t
           ;; reveal on a short idle rather than instantly
           org-appear-delay          0.2
-          org-appear-trigger        'always))
+          org-appear-trigger        'on-change))
 #+end_src
 
 =org-appear-autokeywords= reveals the =#+= that =org-modern-keyword= replaced with
