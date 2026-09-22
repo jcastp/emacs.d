@@ -20,16 +20,13 @@ in =05-identity.org=, which resolves to =my-personal-roam-dir= or
 * org-roam config
 * org-roam general configuration
 
-This is a fix for a Debian installation that doesn't allow connecting directly
-to the sqlite backend.
+org-roam talks to its database through emacsql, which uses Emacs's built-in
+SQLite when Emacs was compiled with it, and falls back to the =sqlite3= package
+otherwise.  A self-built Emacs lacks it when =libsqlite3-dev= was missing at
+build time.  That, not the distribution, is what used to break on Debian, so the
+test is for the capability itself (and costs no =lsb_release= subprocess).
 #+begin_src emacs-lisp
-  (defun which-linux-distribution ()
-    "from lsb_release"
-    (interactive)
-    (when (eq system-type 'gnu/linux)
-      (shell-command-to-string "lsb_release -sd")))
-
-  (when (string-prefix-p "Debian" (which-linux-distribution))
+  (unless (sqlite-available-p)
     (use-package sqlite3
       :ensure t))
 #+end_src
@@ -38,6 +35,10 @@ to the sqlite backend.
   ;; main org-roam config
   (use-package org-roam
     :ensure t
+    ;; Loaded at startup on purpose (~110 ms): the database sync and roam link
+    ;; completion in org buffers are wanted from the start, and the helpers
+    ;; below call functions that org-roam does not autoload.
+    :demand t
     :init
     (setq org-roam-v2-ack t)
     ;; `directory-file-name' keeps this slash-free, exactly as the old
@@ -189,133 +190,130 @@ Search by title and tags:
 Functions to isolate the org-roam TODOs from the general agenda.
 Extracted from https://d12frosted.io/posts/2021-01-16-task-management-with-roam-vol5.html
 #+begin_src emacs-lisp
-  (if (not (require 'org-roam nil t))
-      (message "org-roam not found")
+  (setq my/roamtag "roamtag")
 
-    (setq my/roamtag "roamtag")
+  (defun vulpea-buffer-prop-set (name value)
+    "Set a file property called NAME to VALUE in buffer file.
+    If the property is already set, replace its value."
+    (setq name (downcase name))
+    (org-with-point-at 1
+      (let ((case-fold-search t))
+        (if (re-search-forward (concat "^#\\+" name ":\\(.*\\)")
+                               (point-max) t)
+            (replace-match (concat "#+" name ": " value) 'fixedcase)
+          (while (and (not (eobp))
+                      (looking-at "^[#:]"))
+            (if (save-excursion (end-of-line) (eobp))
+                (progn
+                  (end-of-line)
+                  (insert "\n"))
+              (forward-line)
+              (beginning-of-line)))
+          (insert "#+" name ": " value "\n")))))
 
-    (defun vulpea-buffer-prop-set (name value)
-      "Set a file property called NAME to VALUE in buffer file.
-      If the property is already set, replace its value."
-      (setq name (downcase name))
-      (org-with-point-at 1
-        (let ((case-fold-search t))
-          (if (re-search-forward (concat "^#\\+" name ":\\(.*\\)")
-                                 (point-max) t)
-              (replace-match (concat "#+" name ": " value) 'fixedcase)
-            (while (and (not (eobp))
-                        (looking-at "^[#:]"))
-              (if (save-excursion (end-of-line) (eobp))
-                  (progn
-                    (end-of-line)
-                    (insert "\n"))
-                (forward-line)
-                (beginning-of-line)))
-            (insert "#+" name ": " value "\n")))))
+  (defun vulpea-buffer-prop-set-list (name values &optional separators)
+    "Set a file property called NAME to VALUES in current buffer.
+    VALUES are quoted and combined into single string using
+    `combine-and-quote-strings'.
+    If SEPARATORS is non-nil, it should be a regular expression
+    matching text that separates, but is not part of, the substrings.
+    If nil it defaults to `split-string-default-separators', normally
+    \"[ \f\t\n\r\v]+\", and OMIT-NULLS is forced to t.
+    If the property is already set, replace its value."
+    (vulpea-buffer-prop-set
+     name (combine-and-quote-strings values separators)))
 
-    (defun vulpea-buffer-prop-set-list (name values &optional separators)
-      "Set a file property called NAME to VALUES in current buffer.
-      VALUES are quoted and combined into single string using
-      `combine-and-quote-strings'.
-      If SEPARATORS is non-nil, it should be a regular expression
-      matching text that separates, but is not part of, the substrings.
-      If nil it defaults to `split-string-default-separators', normally
-      \"[ \f\t\n\r\v]+\", and OMIT-NULLS is forced to t.
-      If the property is already set, replace its value."
-      (vulpea-buffer-prop-set
-       name (combine-and-quote-strings values separators)))
+  (defun vulpea-buffer-tags-set (&rest tags)
+    "Set TAGS in current buffer.
+      If filetags value is already set, replace it."
+    (vulpea-buffer-prop-set "filetags" (string-join tags " ")))
 
-    (defun vulpea-buffer-tags-set (&rest tags)
-      "Set TAGS in current buffer.
-        If filetags value is already set, replace it."
-      (vulpea-buffer-prop-set "filetags" (string-join tags " ")))
+  (defun vulpea-buffer-prop-get (name)
+    "Get a buffer property called NAME as a string."
+    (org-with-point-at 1
+      (when (re-search-forward (concat "^#\\+" name ": \\(.*\\)")
+                               (point-max) t)
+        (buffer-substring-no-properties
+         (match-beginning 1)
+         (match-end 1)))))
 
-    (defun vulpea-buffer-prop-get (name)
-      "Get a buffer property called NAME as a string."
-      (org-with-point-at 1
-        (when (re-search-forward (concat "^#\\+" name ": \\(.*\\)")
-                                 (point-max) t)
-          (buffer-substring-no-properties
-           (match-beginning 1)
-           (match-end 1)))))
+  (defun vulpea-buffer-prop-get-list (name &optional separators)
+    "Get a buffer property NAME as a list using SEPARATORS.
+        If SEPARATORS is non-nil, it should be a regular expression
+        matching text that separates, but is not part of, the substrings.
+        If nil it defaults to `split-string-default-separators', normally
+        \"[ \f\t\n\r\v]+\", and OMIT-NULLS is forced to t."
+    (let ((value (vulpea-buffer-prop-get name)))
+      (when (and value (not (string-empty-p value)))
+        (split-string-and-unquote value separators))))
 
-    (defun vulpea-buffer-prop-get-list (name &optional separators)
-      "Get a buffer property NAME as a list using SEPARATORS.
-          If SEPARATORS is non-nil, it should be a regular expression
-          matching text that separates, but is not part of, the substrings.
-          If nil it defaults to `split-string-default-separators', normally
-          \"[ \f\t\n\r\v]+\", and OMIT-NULLS is forced to t."
-      (let ((value (vulpea-buffer-prop-get name)))
-        (when (and value (not (string-empty-p value)))
-          (split-string-and-unquote value separators))))
+  (defun vulpea-buffer-tags-get ()
+    "Return filetags value in current buffer."
+    (vulpea-buffer-prop-get-list "filetags" " "))
 
-    (defun vulpea-buffer-tags-get ()
-      "Return filetags value in current buffer."
-      (vulpea-buffer-prop-get-list "filetags" " "))
+  (defun vulpea-buffer-tags-add (tag)
+    "Add a TAG to filetags in current buffer."
+    (let* ((tags (vulpea-buffer-tags-get))
+           (tags (append tags (list tag))))
+      (apply #'vulpea-buffer-tags-set tags)))
 
-    (defun vulpea-buffer-tags-add (tag)
-      "Add a TAG to filetags in current buffer."
-      (let* ((tags (vulpea-buffer-tags-get))
-             (tags (append tags (list tag))))
-        (apply #'vulpea-buffer-tags-set tags)))
+  (defun vulpea-project-p ()
+    "Return non-nil if current buffer has any todo entry.
 
-    (defun vulpea-project-p ()
-      "Return non-nil if current buffer has any todo entry.
+            TODO entries marked as done are ignored, meaning the this
+            function returns nil if current buffer contains only completed
+            tasks."
+    (seq-find
+     (lambda (type)
+       (eq type 'todo))
+     (org-element-map
+         (org-element-parse-buffer 'headline)
+         'headline
+       (lambda (h)
+         (org-element-property :todo-type h)))))
 
-              TODO entries marked as done are ignored, meaning the this
-              function returns nil if current buffer contains only completed
-              tasks."
-      (seq-find
-       (lambda (type)
-         (eq type 'todo))
-       (org-element-map
-           (org-element-parse-buffer 'headline)
-           'headline
-         (lambda (h)
-           (org-element-property :todo-type h)))))
+  (defvar vulpea--updating-tag nil
+    "Re-entry guard for `vulpea-project-update-tag'.")
 
-    (defvar vulpea--updating-tag nil
-      "Re-entry guard for `vulpea-project-update-tag'.")
+  (defun vulpea-project-update-tag ()
+    "Update PROJECT tag in the current buffer."
+    (unless vulpea--updating-tag
+      (let ((vulpea--updating-tag t))
+        (when (and (not (active-minibuffer-window))
+                   (vulpea-buffer-p))
+          (save-excursion
+            (goto-char (point-min))
+            (let* ((tags (vulpea-buffer-tags-get))
+                   (original-tags tags))
+              (if (vulpea-project-p)
+                  (setq tags (cons "roamtag" tags))
+                (setq tags (remove "roamtag" tags)))
+              (setq tags (seq-uniq tags))
+              (when (or (seq-difference tags original-tags)
+                        (seq-difference original-tags tags))
+                (apply #'vulpea-buffer-tags-set tags))))))))
 
-    (defun vulpea-project-update-tag ()
-      "Update PROJECT tag in the current buffer."
-      (unless vulpea--updating-tag
-        (let ((vulpea--updating-tag t))
-          (when (and (not (active-minibuffer-window))
-                     (vulpea-buffer-p))
-            (save-excursion
-              (goto-char (point-min))
-              (let* ((tags (vulpea-buffer-tags-get))
-                     (original-tags tags))
-                (if (vulpea-project-p)
-                    (setq tags (cons "roamtag" tags))
-                  (setq tags (remove "roamtag" tags)))
-                (setq tags (seq-uniq tags))
-                (when (or (seq-difference tags original-tags)
-                          (seq-difference original-tags tags))
-                  (apply #'vulpea-buffer-tags-set tags))))))))
+  (defun vulpea-buffer-p ()
+    "Return non-nil if the currently visited buffer is a note."
+    (and buffer-file-name
+         (string-prefix-p
+          (expand-file-name (file-name-as-directory org-roam-directory))
+          (file-name-directory buffer-file-name))))
 
-    (defun vulpea-buffer-p ()
-      "Return non-nil if the currently visited buffer is a note."
-      (and buffer-file-name
-           (string-prefix-p
-            (expand-file-name (file-name-as-directory org-roam-directory))
-            (file-name-directory buffer-file-name))))
+  (defun vulpea-project-files ()
+    "Return a list of note files containing 'roamtag' tag."
+    (seq-uniq
+     (seq-map
+      #'car
+      (org-roam-db-query
+       [:select [nodes:file]
+                :from tags
+                :left-join nodes
+                :on (= tags:node-id nodes:id)
+                :where (like tag (quote "%\"roamtag\"%"))]))))
 
-    (defun vulpea-project-files ()
-      "Return a list of note files containing 'roamtag' tag."
-      (seq-uniq
-       (seq-map
-        #'car
-        (org-roam-db-query
-         [:select [nodes:file]
-                  :from tags
-                  :left-join nodes
-                  :on (= tags:node-id nodes:id)
-                  :where (like tag (quote "%\"roamtag\"%"))]))))
-
-    (add-hook 'find-file-hook #'vulpea-project-update-tag)
-    (add-hook 'before-save-hook #'vulpea-project-update-tag))
+  (add-hook 'find-file-hook #'vulpea-project-update-tag)
+  (add-hook 'before-save-hook #'vulpea-project-update-tag)
 #+end_src
 
 ** Roam TODOs in the work agenda
