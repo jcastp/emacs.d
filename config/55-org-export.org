@@ -30,9 +30,7 @@ after the personal templates set earlier with `setq'.
 
 * Lexical binding
 #+begin_src emacs-lisp
-  (with-eval-after-load 'ox
   ;; -*- lexical-binding: t; -*-
-  ) ; with-eval-after-load ox
 #+end_src
 
 * Orgmode export config
