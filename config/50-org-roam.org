@@ -404,20 +404,36 @@ Opens a random org-roam node with the roamtag tag (maps to a TODO entry):
 
 #+begin_src emacs-lisp
   (defun my/org-roam-orphans ()
-    "List notes with no backlinks (orphaned nodes) and visit the selected one."
+    "List file-level notes with no links in or out and visit the selected one.
+Only file-level nodes are considered (`nodes:level' 0): almost every
+sub-heading with its own ID lacks a direct backlink, so including them
+would flood the list with headings that live inside well-connected
+files.  A note is orphaned only if nothing links to it AND it links to
+nothing else; self-links (a note linking to its own ID) do not count
+as a connection either way."
     (interactive)
-    (let ((orphans (org-roam-db-query
-                    [:select [nodes:title nodes:file nodes:id]
-                     :from nodes
-                     :left-join links :on (= links:dest nodes:id)
-                     :where (is links:dest nil)])))
-      (if (not orphans)
+    (let* ((rows (org-roam-db-query
+                  [:select [nodes:title nodes:file nodes:id]
+                   :from nodes
+                   :where (= nodes:level 0)
+                   :and (not (in nodes:id
+                                 [:select links:dest :from links
+                                  :where (<> links:source links:dest)]))
+                   :and (not (in nodes:id
+                                 [:select links:source :from links
+                                  :where (<> links:source links:dest)]))]))
+           (candidates (mapcar (lambda (row)
+                                 (cons (format "%s (%s)" (nth 0 row)
+                                               (file-name-nondirectory (nth 1 row)))
+                                       row))
+                               rows)))
+      (if (not candidates)
           (message "No orphaned notes found")
         (let* ((choice (completing-read
-                        (format "Orphaned notes (%d): " (length orphans))
-                        (mapcar #'car orphans) nil t))
-               (entry (cl-find choice orphans :key #'car :test #'string=)))
-          (find-file (cadr entry))))))
+                        (format "Orphaned notes (%d): " (length candidates))
+                        (mapcar #'car candidates) nil t))
+               (entry (cdr (assoc choice candidates))))
+          (find-file (nth 1 entry))))))
 
   (defun my/org-roam-stale-notes ()
     "List notes not modified in the last 90 days and visit the selected one.
