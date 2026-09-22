@@ -95,16 +95,6 @@ You can see the matching parenthesis
   (defvaralias 'cperl-indent-level 'tab-width)
 #+end_src
 
-* Fontify the header
-Fontify the whole line for headings (with a background color). Works well with Leuven theme:
-
-#+begin_src emacs-lisp
-  (setq org-fontify-whole-heading-line nil)
-#+end_src
-
-The heading sizes are in =17-org-style=, as part of the ramp that also decides
-colour, weight and rules.
-
 * Open indirect buffer
 Open a branch into a different frame, but the same buffer:
 
@@ -172,8 +162,9 @@ When reaching the established width defined, the line will wrap, even before get
   (use-package visual-fill-column
     :ensure t
     :config
-    ;; This sets the value to all the buffers, as initially it is a per-buffer variable
-    (setq-default visual-fill-column-width 110)
+    ;; This sets the value to all the buffers, as initially it is a per-buffer variable.
+    ;; Narrower at work, where I rarely have many windows open.
+    (setq-default visual-fill-column-width (if my-workenvironment-p 100 110))
     ;; set the text in the center of the window
     (setq-default visual-fill-column-center-text t))
 #+end_src

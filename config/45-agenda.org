@@ -135,14 +135,6 @@ Have some fancy icons for the categories.
                 (my/agenda-icon "management" "users.svg")
                 (my/agenda-icon "inbox"      "inbox.svg"))))
 #+end_src
-** Adjust the window width for work
-Since at work I don't open so many windows, we can use this width to better use what I get.
-
-#+begin_src emacs-lisp
-  (when my-workenvironment-p
-    (setq-default visual-fill-column-width 100)
-    )
-#+end_src
 
 ** Put the correct agenda files for work
 My work require a different set of agendas:

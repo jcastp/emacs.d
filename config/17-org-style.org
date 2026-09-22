@@ -412,6 +412,17 @@ size bump, and only on modus, so the heading design changed shape as the rotatio
 moved.  Both are flattened to =((t . (regular 1.0)))= where each theme is
 declared, in =15-theme=, rather than here: that keeps one owner per package.
 
+* Heading line extent
+
+Headings are fontified up to the end of their text only.  This is org's default
+(nil), set explicitly to record the choice.  Setting it to t fontifies through
+the newline, so a heading's =:background=, and style =c='s overline (whose
+face sets =:extend=), run to the window edge instead of stopping at the text.
+
+#+begin_src emacs-lisp
+  (setq org-fontify-whole-heading-line nil)
+#+end_src
+
 * org-appear
 
 =org-hide-emphasis-markers= hides =/=, =*=, ~=~ and =~= — including while you are
