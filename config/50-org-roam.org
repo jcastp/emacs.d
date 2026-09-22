@@ -364,38 +364,33 @@ Just show the TODOs from org-roam, not from the general agenda:
 #+end_src
 
 * org-roam random node opening
-Opens a random org-roam node:
-#+begin_src emacs-lisp
-  (defun my/random-roam-node ()
-    "Opens a random org-roam node."
-    (interactive)
-    (let ((todo-nodes
-           (org-roam-db-query
-            [:select [nodes:file]
-                     :from tags
-                     :left-join nodes
-                     :on (= tags:node-id nodes:id)
-                     ])))
-      (find-file (car (nth (random (length todo-nodes)) todo-nodes)))))
+=C-c n R= opens a random note.  It is org-roam's own =org-roam-node-random=,
+restricted to file-level nodes: every note is equally likely, and the headings
+that carry an ID (=org-id= adds one whenever a link to a heading is stored) are
+left out, so it always opens a whole note.  With a prefix argument it opens in
+another window.
 
-  (global-set-key (kbd "C-c n R") 'my/random-roam-node)
-#+end_src
+=C-c n T= opens a random note that still has a live TODO, which is what the
+=roamtag= tag marks (see "Restrict agenda to org-roam" above).  The list comes
+from =vulpea-project-files=, one entry per note.
 
-Opens a random org-roam node with the roamtag tag (maps to a TODO entry):
 #+begin_src emacs-lisp
+  (defun my/random-roam-node (&optional other-window)
+    "Open a random org-roam note, each file-level note equally likely.
+With prefix argument OTHER-WINDOW, open it in another window."
+    (interactive "P")
+    (org-roam-node-random other-window
+                          (lambda (node) (zerop (org-roam-node-level node)))))
+
   (defun my/random-roam-todo-node ()
-    "Opens a random org-roam node with the roamtag tag."
+    "Open a random org-roam note that has a live TODO (tagged `roamtag')."
     (interactive)
-    (let ((todo-nodes
-           (org-roam-db-query
-            [:select [nodes:file]
-                     :from tags
-                     :left-join nodes
-                     :on (= tags:node-id nodes:id)
-                     :where (like tag (quote "%\"roamtag\"%"))])))
-      (find-file (car (nth (random (length todo-nodes)) todo-nodes)))))
+    (if-let* ((files (vulpea-project-files)))
+        (find-file (seq-random-elt files))
+      (user-error "No org-roam note has a live TODO")))
 
-  (global-set-key (kbd "C-c n T") 'my/random-roam-todo-node)
+  (global-set-key (kbd "C-c n R") #'my/random-roam-node)
+  (global-set-key (kbd "C-c n T") #'my/random-roam-todo-node)
 #+end_src
 
 * org-roam utility functions
