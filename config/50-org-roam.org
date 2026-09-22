@@ -179,9 +179,11 @@ Search by title and tags:
   (use-package simple-httpd
     :ensure t
     :defer t)
+  ;; Loaded on first use: C-c n u (`org-roam-ui-open', autoloaded) starts
+  ;; the server.  Nothing starts it at startup.
   (use-package org-roam-ui
     :ensure t
-    :hook (org-roam . org-roam-ui-mode))
+    :defer t)
 
   (setq org-roam-dailies-directory "daily/")
 #+end_src
