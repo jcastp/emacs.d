@@ -39,7 +39,7 @@ The config is split by **domain** (one module per subject), not by environment. 
 |`55-org-export`     |home                |every exporter, behind `with-eval-after-load 'ox`                                    |
 |`60-writing`        |home                |org-scribe, tempel, writeroom, story files, org-journal                              |
 |`70-prog`           |always              |magit, diff-hl, flymake, eglot, treesit, languages                                   |
-|`80-apps`           |always              |eww, dired, elfeed, nov, calibre, pdf, eshell, mastodon, dashboard, jira             |
+|`80-apps`           |always              |eww, dired, elfeed, nov, calibre, pdf, eshell, mastodon, dashboard                   |
 |`85-ai`             |`(home full-system)`|gptel                                                                                |
 |`90-keymap`         |always              |the `C-q q` direct-file-access sub-map                                               |
 |`98-scratch`        |*not loaded*        |staging area; tangles nothing                                                        |

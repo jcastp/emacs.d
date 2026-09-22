@@ -20,8 +20,8 @@ load contributes nothing, so no entry needs an =fboundp= / =boundp= guard (such
 guards fail silently: a renamed command leaves a dead key with no warning).
 
 Binding =C-q= this early also makes it a prefix key before any package tries to
-bind beneath it.  =org-jira= binds =C-q j b= in its =:bind=, which fails with
-"starts with non-prefix key C-q" if the map does not exist yet.
+bind beneath it: a =use-package= =:bind= on a =C-q …= key fails with "starts
+with non-prefix key C-q" if the map does not exist yet.
 
 From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
 

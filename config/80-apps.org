@@ -4,7 +4,7 @@
 
 The things that are programs in their own right rather than editor
 behaviour: the browser and dired, the ebook and feed readers, the PDF viewer,
-eshell, mastodon, the dashboard, and Jira at work.  None of it is needed at
+eshell, mastodon and the dashboard.  None of it is needed at
 startup, so anything here that still loads eagerly is a candidate for deferral.
 
 * Lexical binding
@@ -368,69 +368,6 @@ https://github.com/emacs-dashboard/emacs-dashboard
   	(dashboard-setup-startup-hook)
   	)
         )
-    )
-#+end_src
-
-* Jira (work)
-
-** TODO org-jira integration
-#+begin_src emacs-lisp
-  (when my-workenvironment-p
-    (use-package org-jira
-      :ensure t
-      :bind (("C-q j b" . org-jira-browse-issue)
-             ("C-q j g" . org-jira-get-issues)
-             ("C-q j j" . org-jira-get-issues-from-custom-jql)
-             ("C-q j u" . org-jira-update-issue)
-             ("C-q j w" . org-jira-progress-issue)
-             ("C-q j a" . org-jira-assign-issue)
-             ("C-q j r" . org-jira-refresh-issue)
-             ("C-q j R" . org-jira-refresh-issues-in-buffer)
-             ("C-q j c" . org-jira-create-issue)
-             ("C-q j k" . org-jira-copy-current-issue-key)
-             ("C-q j s" . org-jira-create-subtask)
-             ("C-q j t" . org-jira-get-subtasks)
-             ("C-q j m" . org-jira-add-comment)
-             ("C-q j e" . org-jira-update-comment))
-      :config
-      (setq jiralib-url my/jira-url)
-      (setq jiralib-target-api-version 2)
-      (setq jiralib-token
-        	(cons "Authorization"
-                  (concat "Bearer " (auth-source-pick-first-password
-        				 :host my/jira-url))))
-    
-      ;; custom Jira queries
-      (setq org-jira-custom-jqls
-      	'(
-      	  ;; detection issues
-      	  (:jql "project = SENG and component in (seng-det) AND resolution = Unresolved ORDER BY priority DESC, updated DESC"
-      		;; :limit 10
-      		:filename "detection")
-      	  ;; automation issues
-      	  (:jql "project = SENG and component in (seng-aut) AND resolution = Unresolved ORDER BY priority DESC, updated DESC"
-      		;; :limit 10
-      		:filename "automation")
-      	  ))
-      )
-    )
-#+end_src
-
-This doesn't work in the auth part.
-#+begin_src emacs-lisp :tangle no
-  (use-package jira
-    :ensure t
-    :config
-    (setq jira-base-url "https://jira.tools.3stripes.net") ;; Jira instance URL
-    ;;(setq jira-username "johndoe@acme.com") ;; Jira username (usually, an email)
-    ;; API token for Jira
-    ;; See https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/
-    ;; (setq jira-token "foobar123123")
-    (setq jira-token-is-personal-access-token t)
-    (setq jira-api-version 2) ;; Version 2 is also allowed
-    ;; (Optional) API token for JIRA TEMPO plugin
-    ;; See https://apidocs.tempo.io/
-    ;;(setq jira-tempo-token "foobar123123")
     )
 #+end_src
 

@@ -412,8 +412,6 @@ As work is different from home, I need specific templates.
   (when my-workenvironment-p
     ;; (defvar my/direct-reports nil
     ;;   "List of direct reports for 1:1 capture templates. Loaded from my-data-dir.")
-    ;; (defvar my/jira-url nil
-    ;;   "Jira instance URL. Loaded from my-data-dir, not committed to git.")
 
     (defvar my/capture-person nil
       "Employee name selected during org-capture, shared between target and template body.")

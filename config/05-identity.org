@@ -95,7 +95,6 @@ and adding it would push every entry through the `ci' triage view.")
 
     ;; this file includes, as of now:
     ;; - my reports (`my/direct-reports')
-    ;; - my company's Jira URL (`my/jira-url')
     (defvar my-company-info-file (concat my-work-dir "company_info.el")
       "Varied information about my company.")
     (load my-company-info-file))
