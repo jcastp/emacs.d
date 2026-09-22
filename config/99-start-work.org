@@ -1,0 +1,23 @@
+#+title: Scratch — staging area
+#+startup: overview
+
+The functions and commands to start my work.
+
+* Load the task list for work
+This will automatically open the relevant file to start working right away:
+
+#+begin_src emacs-lisp
+  (defun my/work-initial-setup()
+    (interactive)
+    "Opens my initial view of work."
+    (org-roam-dailies-find-today)
+    (split-window-right)
+    (find-file my-work-file))
+
+  (when (file-exists-p my-work-file)
+    ;;(find-file my-work-file)
+    ;;(persp-state-load "~/Nextcloud/config/.emacs.d/perspectives/work-persp")
+    (my/work-initial-setup)
+    )
+#+end_src
+

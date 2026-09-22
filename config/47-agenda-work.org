@@ -467,16 +467,6 @@ Bound to =<f6>= for a true one-key launch, and to =C-q p= via the shared keymap
   (keymap-global-set "<f6>" #'my/open-report)
 #+end_src
 
-* Load the task list for work
-This will automatically open the relevant file to start working right away:
-
-#+begin_src emacs-lisp
-  (when (file-exists-p my-work-file)
-    ;;(find-file my-work-file)
-    (persp-state-load "~/Nextcloud/config/.emacs.d/perspectives/work-persp")
-    )
-#+end_src
-
 * Keymap entry
 Registered here rather than guarded centrally with =fboundp=: this module only
 loads at work, so the binding only exists at work.
