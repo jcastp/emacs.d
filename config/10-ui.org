@@ -355,8 +355,8 @@ right colours.  Whether the theme is dark is read from the =default= background
 it just installed, rather than tracked in a variable.  The hook is registered
 here, before =15-theme= loads the startup theme.
 
-Two themes are skipped: =user= (customizations, which =17-org-style= writes
-into) and =fontaine= (fonts only).  Neither changes the palette.
+Two themes are skipped: =user= (Customize's own settings) and =fontaine= (fonts
+only).  Neither changes the palette.
 
 #+begin_src emacs-lisp
   (defvar my-hl-line-dark-background "#303030"

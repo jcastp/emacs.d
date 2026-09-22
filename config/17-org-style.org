@@ -284,7 +284,7 @@ buffer.  The overline/underline pair is the equivalent that does work.
   (defun my/org-set-faces ()
     "Recompute every org face from the currently active theme.
 Runs from `enable-theme-functions' and from the style commands below."
-    (apply #'custom-theme-set-faces 'user
+    (apply #'my/set-face-specs
            (append (my/org-style--heading-specs)
                    (my/org-style--meta-specs)
                    (my/org-style--block-specs))))
@@ -294,7 +294,12 @@ The faces follow every theme change through =enable-theme-functions=, the same
 hook =10-ui= uses for =hl-line=, so every path is covered: =C-c 0=, =C-q t t=,
 org-scribe's mode switches (which is what makes the poet exemption actually
 apply) and a plain =load-theme=.  =my/theme-palette-p= (in =10-ui=) skips the
-=user= theme, which is where these faces are written, and =fontaine=.
+=user= and =fontaine= themes, which change no colours.
+
+The faces are set as /override specs/ through =my/set-face-specs= (=00-core=),
+not in the =user= theme, so Customize never saves a snapshot of them into
+=custom.el=.  An attribute a spec leaves out still comes from the theme, which
+is what the poet exemption relies on.
 
 =15-theme= has already loaded the startup theme by the time this module loads,
 before the hook existed, so the faces are computed once here for it.

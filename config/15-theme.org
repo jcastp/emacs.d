@@ -101,8 +101,7 @@ comments and org's own structural faces on the fixed-pitch family so they do not
 fall back to whatever font happens to supply an italic glyph.
 
 #+begin_src emacs-lisp
-  (custom-theme-set-faces
-   'user
+  (my/set-face-specs
    ;; keep comments (in code blocks and elsewhere) on the fixed-pitch font,
    ;; instead of falling back to whatever font provides the italic glyph
    '(font-lock-comment-face    ((t (:inherit fixed-pitch))))

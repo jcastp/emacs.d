@@ -87,6 +87,7 @@ bindings.
 - The editing target is `config/*.org` — **never edit `config/*.el`**, they are tangled output and gitignored
 - Packages use `use-package` (`:ensure t` is the global default)
 - `custom.el` is managed by the customize system — edit with care, and note it is **gitignored**, so it is not recoverable from git
+- Set faces with `my/set-face-specs` (`00-core`), **never** `custom-set-faces` / `custom-theme-set-faces 'user`: those mark the face as saved, and Customize then writes a snapshot of its current value into `custom.el`. Faces that follow the theme (`hl-line`, the org faces) are recomputed from `enable-theme-functions`
 - Spanish keyboard layout is assumed (`C-ñ` for expand-region, `¡!` `¿?` electric pairs)
 - Spelling is **jinx** (`00-core`), which goes through **Enchant**, not hunspell directly — Enchant picks the provider per language (hunspell/aspell are both installed). The default is English only (`jinx-languages` is `"en"`); a file that is Spanish declares it with `#+language: es` or a file-local `jinx-languages`
 - Codeberg packages are declared with `:vc` in `60-writing`: `org-scribe`, `org-context-extended`, `org-tracktable`

@@ -96,6 +96,27 @@ to =my/key-define=, which accepts a keymap as =DEF= just as well as a command:
 Free letters are worth checking against the table in =CLAUDE.md= (or just press
 =C-q= and read which-key) before claiming one.
 
+* Face specs that Customize does not save
+=custom-theme-set-faces 'user= (and =custom-set-faces=, which calls it) marks
+every face it touches as /saved/, so the next time Customize writes =custom.el=
+(any package install does) it copies the current values in.  For faces that are
+computed from the active theme that is a stale snapshot, loaded at startup
+before anything else.
+
+=my/set-face-specs= takes the same =(FACE SPEC)= entries but stores each one as
+the face's /override spec/.  Emacs applies that on top of every enabled theme,
+so attributes it does not name still come from the theme.  Customize never
+saves it.
+
+#+begin_src emacs-lisp
+  (defun my/set-face-specs (&rest entries)
+    "Set each (FACE SPEC) in ENTRIES as FACE's override spec.
+Same entry format as `custom-theme-set-faces', but nothing is written to
+`custom-file'.  The spec merges over the enabled themes."
+    (pcase-dolist (`(,face ,spec) entries)
+      (face-spec-set face spec)))
+#+end_src
+
 * Alternative and better C-g function
 https://emacsredux.com/blog/2025/06/01/let-s-make-keyboard-quit-smarter/
 

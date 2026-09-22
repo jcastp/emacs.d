@@ -84,7 +84,7 @@ Used in the hydra snippets.
     (setq aw-scope 'frame)
     (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
     ;; make the characters bigger, so it is easy to see
-    (custom-set-faces
+    (my/set-face-specs
      '(aw-leading-char-face
        ((t (:inherit ace-jump-face-foreground :height 5.0))))))
 #+end_src
