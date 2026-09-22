@@ -10,14 +10,9 @@ presets replaced the personal ones rather than extending them.  One declaration
 now, and the two preset tables sit next to each other where the difference is
 visible.
 
-Loads after =10-ui=, whose =my/set-hl-line-face= the theme rotation calls.
-
-The rotation also calls =my/org-set-faces= from =17-org-style=, which loads
-*after* this module.  That works because every call site sits inside
-=(with-eval-after-load 'consult ...)= and consult is =:demand t= in
-=20-completion= — so the bodies do not run until module 20, by which time 17 has
-defined the function.  Moving those calls out of the =with-eval-after-load= would
-break startup.
+Nothing here recolours =hl-line= or the org faces.  =10-ui= and =17-org-style=
+each follow =enable-theme-functions=, so any theme enabled here, or anywhere
+else, recolours them without being asked.
 
 * Lexical binding
 #+begin_src emacs-lisp
@@ -142,9 +137,9 @@ Also, rotate the list of themes applied.
     			ef-deuteranopia-light
     			modus-operandi))
 
-    ;; establish if we start with a dark or clear theme
-    ;; boolean variable: t is dark, nil is clear
-    (defvar my-theme-dark-p t)
+    ;; t starts on the dark rotation, nil on the clear one
+    (defvar my-theme-start-dark-p t
+      "Whether startup applies the first dark theme or the first clear one.")
 
     ;; define a function to rotate a list. Custom, yes, I know it could be done better.
     (defun my/rotate-list (list)
@@ -157,28 +152,14 @@ Also, rotate the list of themes applied.
         ;; rotates the list
         (append (cdr list) (list (car list)))))
 
-    ;; based on the election, load the theme, and rotate the list for future use.
-    (with-eval-after-load 'consult
-      (if my-theme-dark-p
-          ;; dark theme loading
-          (progn
-            (consult-theme (car my/themes-dark))
-            ;; rotate the list - the applied theme goes to the back of the list
-            (setq my/themes-dark (my/rotate-list my/themes-dark))
-            ;; set hl-line colors for dark theme
-            (my/set-hl-line-face t)
-            ;; recompute the org faces for the new palette
-            (my/org-set-faces))
-        ;; else block
-        ;; clear theme loading
+    ;; load the first theme of the chosen rotation, and send it to the back
+    ;; of its list so that C-c 0 moves on to the next one
+    (if my-theme-start-dark-p
         (progn
-          (consult-theme (car my/themes-clear))
-          ;; rotate the list - the applied theme goest to the back of the list
-          (setq my/themes-clear (my/rotate-list my/themes-clear))
-          ;; set hl-line colors for clear theme
-          (my/set-hl-line-face nil)
-          ;; recompute the org faces for the new palette
-          (my/org-set-faces))))
+          (load-theme (car my/themes-dark) t)
+          (setq my/themes-dark (my/rotate-list my/themes-dark)))
+      (load-theme (car my/themes-clear) t)
+      (setq my/themes-clear (my/rotate-list my/themes-clear)))
     )
 #+end_src
 
@@ -186,33 +167,23 @@ Also, rotate the list of themes applied.
 Function to change between dark and clear themes, based on past variables.
 #+begin_src emacs-lisp
   (when my-homeenvironment-p
-    (with-eval-after-load 'consult
-      (defun my/theme-changer ()
-        "Changes themes between clear and dark ones."
-        (interactive)
-        ;; since we want to change from dark to clear and viceversa, we swap the logic
-        (if (not my-theme-dark-p)
-            ;; this loads the dark theme
-            (progn
-              (consult-theme (car my/themes-dark))
-              (message "The theme applied is %s" (car my/themes-dark))
-              ;; rotate the list
-              (setq my/themes-dark (my/rotate-list my/themes-dark))
-              ;; mark the theme is dark now
-              (setq my-theme-dark-p t)
-              ;; set hl-line colors for dark theme
-              (my/set-hl-line-face t)
-              (my/org-set-faces))
-          ;; else block (clear theme)
+    (defun my/theme-changer ()
+      "Changes themes between clear and dark ones."
+      (interactive)
+      ;; since we want to change from dark to clear and viceversa, we swap the logic
+      (if (not (my/theme-dark-p))
+          ;; this loads the dark theme
           (progn
-            (consult-theme (car my/themes-clear))
-            (message "The theme applied is %s" (car my/themes-clear))
+            (consult-theme (car my/themes-dark))
+            (message "The theme applied is %s" (car my/themes-dark))
             ;; rotate the list
-            (setq my/themes-clear (my/rotate-list my/themes-clear))
-            ;; mark the theme is clear now
-            (setq my-theme-dark-p nil)
-            (my/set-hl-line-face nil)
-            (my/org-set-faces)))))
+            (setq my/themes-dark (my/rotate-list my/themes-dark)))
+        ;; else block (clear theme)
+        (progn
+          (consult-theme (car my/themes-clear))
+          (message "The theme applied is %s" (car my/themes-clear))
+          ;; rotate the list
+          (setq my/themes-clear (my/rotate-list my/themes-clear)))))
 
     (global-set-key (kbd "C-c 0") 'my/theme-changer)
     )
@@ -325,20 +296,16 @@ Function to change between dark and clear themes, based on past variables.
 #+end_src
 
 * Work theme and presets
-The work theme is applied inside =with-eval-after-load 'consult= because
-=consult-theme= lives in the completion module, which loads after this one.
-The personal side already deferred the same way.
+The =hl-line= foreground and the org faces follow from =enable-theme-functions=,
+like at home.  The cursor, the fringe and the title are set by hand after the
+theme, so they only survive until the next theme change.
 
 #+begin_src emacs-lisp
   (when my-workenvironment-p
-    (with-eval-after-load 'consult
-      (consult-theme 'modus-operandi-deuteranopia)
-      (my/set-hl-line-face nil :with-foreground)
-      (my/org-set-faces)
-      (set-cursor-color "#00008B")
-      (set-face-background 'fringe "#00008B")
-      (setq-default frame-title-format "[WORK] %b - (%f)")
-      ))
+    (load-theme 'modus-operandi-deuteranopia t)
+    (set-cursor-color "#00008B")
+    (set-face-background 'fringe "#00008B")
+    (setq-default frame-title-format "[WORK] %b - (%f)"))
 #+end_src
 
 #+begin_src emacs-lisp

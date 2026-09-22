@@ -9,7 +9,7 @@ view.
 The =hl-line= colours live here rather than with the themes.  They used to be
 spread across all three config files, with the work config carrying a verbatim
 copy of the clear-theme defvars; there is now one set of colours and one
-=my/set-hl-line-face=, which the theme module calls.
+=my/set-hl-line-face=, applied whenever a theme is enabled.
 
 * Lexical binding
 #+begin_src emacs-lisp
@@ -349,7 +349,14 @@ One set of colours now, and one function.  The work environment sets the
 foreground explicitly while the personal themes look better letting the theme
 choose it, so that difference is an argument rather than a second copy.
 
-The theme module calls this; it loads after this one.
+It is applied from =enable-theme-functions=, so every way of enabling a theme
+(=C-c 0=, =C-q t t=, org-scribe's mode switches, a plain =load-theme=) gets the
+right colours.  Whether the theme is dark is read from the =default= background
+it just installed, rather than tracked in a variable.  The hook is registered
+here, before =15-theme= loads the startup theme.
+
+Two themes are skipped: =user= (customizations, which =17-org-style= writes
+into) and =fontaine= (fonts only).  Neither changes the palette.
 
 #+begin_src emacs-lisp
   (defvar my-hl-line-dark-background "#303030"
@@ -374,6 +381,29 @@ the personal themes keep whatever foreground the theme itself picked."
                           :foreground (if dark-p
                                           my-hl-line-dark-foreground
                                         my-hl-line-clear-foreground))))
+
+  (defun my/theme-dark-p ()
+    "Non-nil when the active theme has a dark background.
+Falls back to the frame's `background-mode' when the background cannot be
+read, as on a TTY or in batch."
+    (require 'color)
+    (let ((rgb (color-name-to-rgb (face-background 'default nil t))))
+      (if rgb
+          (color-dark-p rgb)
+        (eq (frame-parameter nil 'background-mode) 'dark))))
+
+  (defun my/theme-palette-p (theme)
+    "Non-nil when enabling THEME can change the palette.
+`user' and `fontaine' hold customizations and fonts, not colours."
+    (not (memq theme '(user fontaine))))
+
+  (defun my/hl-line-after-theme (theme)
+    "Recolour `hl-line' for THEME.  Runs from `enable-theme-functions'.
+Work sets the foreground as well; the personal themes keep their own."
+    (when (my/theme-palette-p theme)
+      (my/set-hl-line-face (my/theme-dark-p) my-workenvironment-p)))
+
+  (add-hook 'enable-theme-functions #'my/hl-line-after-theme)
 #+end_src
 
 * Keymap entry

@@ -21,9 +21,8 @@ not just the colours.
 
 So the faces are computed from the *active theme* at the moment it becomes
 active: body colour, background and shadow are read out of the live faces and
-the heading ramp is built from them.  This is exactly the pattern
-=my/set-hl-line-face= in =10-ui= already uses, and =my/org-set-faces= is called
-from the same places.
+the heading ramp is built from them.  =hl-line= in =10-ui= works the same way,
+and both are driven by the same hook.
 
 One consequence worth knowing: an attribute this module does not name falls
 through to the theme.  That is deliberate and load-bearing — it is how the poet
@@ -284,12 +283,32 @@ buffer.  The overline/underline pair is the equivalent that does work.
 #+begin_src emacs-lisp
   (defun my/org-set-faces ()
     "Recompute every org face from the currently active theme.
-Called on startup and from `my/theme-changer', beside
-`my/set-hl-line-face'."
+Runs from `enable-theme-functions' and from the style commands below."
     (apply #'custom-theme-set-faces 'user
            (append (my/org-style--heading-specs)
                    (my/org-style--meta-specs)
                    (my/org-style--block-specs))))
+#+end_src
+
+The faces follow every theme change through =enable-theme-functions=, the same
+hook =10-ui= uses for =hl-line=, so every path is covered: =C-c 0=, =C-q t t=,
+org-scribe's mode switches (which is what makes the poet exemption actually
+apply) and a plain =load-theme=.  =my/theme-palette-p= (in =10-ui=) skips the
+=user= theme, which is where these faces are written, and =fontaine=.
+
+=15-theme= has already loaded the startup theme by the time this module loads,
+before the hook existed, so the faces are computed once here for it.
+
+#+begin_src emacs-lisp
+  (defun my/org-style-after-theme (theme)
+    "Recompute the org faces for THEME.  Runs from `enable-theme-functions'."
+    (when (my/theme-palette-p theme)
+      (my/org-set-faces)))
+
+  (add-hook 'enable-theme-functions #'my/org-style-after-theme)
+
+  ;; the startup theme was enabled before the hook above existed
+  (my/org-set-faces)
 #+end_src
 
 * Switching style at runtime
