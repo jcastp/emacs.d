@@ -202,26 +202,28 @@ Some keys redefined to better adjust to the whole emacs key environment.
 #+end_src
 
 * Fill/unfill toggle
-=M-q= alternates between filling and unfilling instead of only filling.
+=M-q= fills, and pressed again straight away it unfills what it just filled.
+Repeated presses keep alternating; any other command in between resets it, so
+the next =M-q= (on this paragraph or another one) fills again.  That is decided
+by =last-command=, not by a per-buffer flag, which would otherwise carry the
+state over from one paragraph to the next.
+
 =fill-paragraph= and =unfill-paragraph= already act on the region when one is
 active, and on the paragraph at point otherwise, so this wrapper just calls
 one of the two through =call-interactively= to inherit that behaviour.
 #+begin_src emacs-lisp
-  (defvar-local my/fill-or-unfill--filled-last nil
-    "Whether `my/fill-or-unfill' last filled (t) or unfilled (nil) this buffer.
-Starts nil so the first call in a buffer fills, matching the default
-`fill-paragraph' behaviour it replaces.")
-
   (defun my/fill-or-unfill ()
-    "Alternate `fill-paragraph' and `unfill-paragraph'.
-Each call undoes what the previous call in this buffer did.  Acts on
-the active region when there is one, otherwise the paragraph at
-point."
+    "Fill the paragraph or region; press again straight away to unfill it.
+Consecutive presses alternate between `fill-paragraph' and
+`unfill-paragraph'.  Acts on the active region when there is one,
+otherwise the paragraph at point."
     (interactive)
-    (call-interactively (if my/fill-or-unfill--filled-last
-                            #'unfill-paragraph
-                          #'fill-paragraph))
-    (setq my/fill-or-unfill--filled-last (not my/fill-or-unfill--filled-last)))
+    (if (eq last-command 'my/fill-or-unfill)
+        (progn
+          (call-interactively #'unfill-paragraph)
+          ;; not `my/fill-or-unfill', so that a third press fills again
+          (setq this-command 'my/fill-or-unfill--unfilled))
+      (call-interactively #'fill-paragraph)))
 
   (global-set-key (kbd "M-q") #'my/fill-or-unfill)
 #+end_src

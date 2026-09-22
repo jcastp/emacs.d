@@ -68,8 +68,9 @@ brackets, e.g. [40-org], so you know where to look.
 
 ** Editing behaviour
 /[00-core]/
-- *Fill toggle*: =M-q= alternates between filling and unfilling the paragraph
-  (or the region). Press it again to undo what the last press did.
+- *Fill toggle*: =M-q= fills the paragraph (or the region). Press it again
+  straight away to unfill it; consecutive presses keep alternating. After any
+  other command, the next =M-q= fills again.
 - *Kill a word*: =C-w= with no active region kills the word at point.
 - *Typing replaces a selection* (=delete-selection-mode=).
 - *Paragraph movement*: =M-n= / =M-p= go forward and back by paragraph.
