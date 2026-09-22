@@ -261,9 +261,9 @@ I need a different custom agenda commands to see the tasks better.
 #+end_src
 
 * org-super-agenda config
-#+begin_src emacs-lisp
-  (org-super-agenda-mode 1)
+The package itself is declared, and its mode enabled, in =45-agenda=.
 
+#+begin_src emacs-lisp
   ;; Super-agenda groups for the default `C-c a a` view
   (setq org-super-agenda-groups
         '((:name "Overdue"        :deadline past          :order 1)

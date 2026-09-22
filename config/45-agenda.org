@@ -24,6 +24,19 @@ see =46-agenda-personal.org= and =47-agenda-work.org=.
   ;; -*- lexical-binding: t; -*-
 #+end_src
 
+* org-super-agenda (both environments)
+Declared here because both =46-agenda-personal= and =47-agenda-work= use it,
+and each of those only loads in its own environment.  Where the groups come
+from differs: home binds them inside its "a" command only, while work sets them
+globally (in =47=).
+
+#+begin_src emacs-lisp
+  (use-package org-super-agenda
+    :ensure t
+    :config
+    (org-super-agenda-mode 1))
+#+end_src
+
 * Personal agenda frame
 
 ** org-agenda config
