@@ -88,7 +88,9 @@ You can see the matching parenthesis
 
 * Tabs are 4 spaces
 #+begin_src emacs-lisp
-  (setq tab-width 4) ; or any other preferred value
+  ;; `tab-width' is buffer-local: plain `setq' would only change the buffer
+  ;; that happens to be current while the config loads
+  (setq-default tab-width 4)
   ;; (defvaralias 'c-basic-offset 'tab-width)
   (defvaralias 'cperl-indent-level 'tab-width)
 #+end_src
@@ -318,20 +320,31 @@ Useful for reading books or long texts.
     (if my/centered-mode
         (progn
           (visual-line-mode 1)
-          (add-hook 'window-configuration-change-hook 
+          (add-hook 'window-configuration-change-hook
                     #'my/centered--update-margins nil t)
-          (my/centered--update-margins))
+          (dolist (w (get-buffer-window-list nil nil t))
+            (my/centered--update-margins w)))
       (progn
         (visual-line-mode 1)
-        (remove-hook 'window-configuration-change-hook 
+        (remove-hook 'window-configuration-change-hook
                      #'my/centered--update-margins t)
-        (set-window-margins nil 0 0))))
+        ;; every window showing the buffer, not just the selected one
+        (dolist (w (get-buffer-window-list nil nil t))
+          (set-window-margins w 0 0)))))
 
-  (defun my/centered--update-margins ()
-    "Calculate and apply margins to center 100-character content."
-    (let* ((width (frame-width))
+  (defun my/centered--update-margins (&optional window)
+    "Centre `my/centered-content-width' columns of text in WINDOW.
+WINDOW defaults to the selected one, which is the window being updated
+when this runs from the buffer-local `window-configuration-change-hook'.
+The margins are sized from the window's own text area (its body width plus
+the margins it already has), not the frame's width, so a split frame
+centres each window on its own."
+    (let* ((window (or window (selected-window)))
+           (margins (window-margins window))
+           (width (+ (window-body-width window)
+                     (or (car margins) 0) (or (cdr margins) 0)))
            (margin (max 0 (/ (- width my/centered-content-width) 2))))
-      (set-window-margins nil margin margin)))
+      (set-window-margins window margin margin)))
 #+end_src
 
 * Current-line highlight colours

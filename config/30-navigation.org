@@ -209,8 +209,8 @@ Using built-in =transient= instead of =hydra=.
       ;;("r" "rotate" rotate-layout)
       ("<left>" "anticlockwise" window-layout-rotate-anticlockwise)
       ("<right>" "clockwise" window-layout-rotate-clockwise)
-      ("<up>" "flipup" window-layout-flip-topdown)
-      ("<down>" "flipdown" window-layout-flip-topdown) 
+      ("<up>" "flip top/bottom" window-layout-flip-topdown)
+      ("<down>" "flip left/right" window-layout-flip-leftright)
       ("q" "quit" transient-quit-one)]])
 
   (global-set-key (kbd "C-c k") #'my/resize-transient)
