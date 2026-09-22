@@ -135,7 +135,14 @@ partition.
              "* ${title}\n%?"
              :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
                                 "#+title: ${title}\n#+filetags: work\n")
-             :unnarrowed t)))
+             :unnarrowed t)
+
+            ("m" "work meeting" plain
+             "* %T - ${title}\n%?\n** Notes\n\n** Actions\n** Questions\n"
+             :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                                "#+title: ${title} - %<%Y%m%d>\n#+filetags: work meeting\n")
+             :unnarrowed t
+             :jump-to-captured t)))
 
     (setq org-roam-dailies-capture-templates
           '(("d" "default" entry "* %?"
