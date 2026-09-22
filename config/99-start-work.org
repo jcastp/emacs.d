@@ -1,15 +1,21 @@
 #+title: Start work — startup view
+#+property: header-args:emacs-lisp :tangle "99-start-work.el"
 #+startup: overview
 
 The functions and commands to start my work.
+
+* Lexical binding
+#+begin_src emacs-lisp
+  ;; -*- lexical-binding: t; -*-
+#+end_src
 
 * Load the task list for work
 This will automatically open the relevant file to start working right away:
 
 #+begin_src emacs-lisp
-  (defun my/work-initial-setup()
+  (defun my/work-initial-setup ()
+    "Open my initial view of work: today's roam daily beside `my-work-file'."
     (interactive)
-    "Opens my initial view of work."
     (org-roam-dailies-find-today)
     (split-window-right)
     (find-file my-work-file))

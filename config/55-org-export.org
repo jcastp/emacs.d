@@ -3,7 +3,7 @@
 #+startup: overview
 
 Every org exporter in one place: the headline-ignore setup, HTML/htmlize,
-markdown, the LaTeX and memoir classes, beamer, babel export settings, ox-hugo
+markdown, the LaTeX and memoir classes, beamer, minted, ox-hugo
 (with its blog capture template) and ox-epub.
 
 Every block here is wrapped in =(with-eval-after-load 'ox ...)=, so the
@@ -264,23 +264,12 @@ https://orgmode.org/worg/exporters/beamer/tutorial.html
   ) ; with-eval-after-load ox
 #+end_src
 
-** babel
+** minted
+Source blocks in LaTeX export use =minted=.  The babel languages themselves are
+set in =40-org=, since running a block does not need the exporters.
 #+begin_src emacs-lisp
   (with-eval-after-load 'ox
-  ;; load the gnuplot package
-  (use-package gnuplot)
-
   (add-to-list 'org-latex-packages-alist '("" "minted"))
-  (org-babel-do-load-languages 'org-babel-load-languages '(
-                                                           (shell . t)
-                                                           (python . t)
-                                                           (C . t)
-                                                           (ruby . t)
-                                                           (js . t)
-                                                           (ditaa . t)
-                                                           (gnuplot . t)
-    							 (plantuml . t)
-    							 (dot . t)))
   ) ; with-eval-after-load ox
 #+end_src
 

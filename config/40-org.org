@@ -73,15 +73,6 @@ To create and use internal valid and unique links in org-mode, we will use the =
   (setq org-id-locations-file (my/state-file "org-id-locations"))
 #+end_src
 
-* org-indent-mode on all the buffers
-I need to have the orgmode indented to see clearly where I am, so I enable it on every orgmode buffer.
-#+begin_src emacs-lisp
-  (add-hook 'org-mode-hook
-            (lambda ()
-              (org-indent-mode t))
-            t)
-#+end_src
-
 * Leave an empty line before headings
 #+begin_src emacs-lisp
   (setq org-blank-before-new-entry '(
@@ -244,18 +235,13 @@ https://lucidmanager.org/productivity/ricing-org-mode/
 #+end_src
 
 ** Org with spaces instead of the asterisks
+This turns =org-indent-mode= on in every org buffer (a file can still opt out
+with =#+startup: noindent=).
+
 Some people find it noisy and distracting that the Org headlines start with a potentially large number of stars, and that text below the headlines is not indented. While this is no problem when writing a book-like document where the outline headings are really section headings, in a more list-oriented outline, indented structure is a lot cleaner.
 
 #+begin_src emacs-lisp
   (setq org-startup-indented t)
-#+end_src
-
-** Disable org-lint flycheck checker
-Flycheck auto-enables =org-lint= in org buffers, which can be noisy. Disable it.
-
-#+begin_src emacs-lisp
-  (with-eval-after-load 'flycheck
-    (setq flycheck-checkers (delq 'org-lint flycheck-checkers)))
 #+end_src
 
 * Orgmode extra packages
@@ -282,23 +268,15 @@ When you want to write something fast using org mode, but you don't want to crea
 
 #+begin_src emacs-lisp
   (defun my/scratch-org-buffer ()
-    "Create a new scratch buffer -- \*hello-world\*"
+    "Create a new org scratch buffer and select it in another window.
+Each call makes a fresh one: *org-scratch*, *org-scratch*<2>, ..."
     (interactive)
-    (let ((n 0)
-          bufname buffer)
-      (catch 'done
-        (while t
-          (setq bufname (concat "*org-scratch"
-  			      (if (= n 0) "" (int-to-string n))
-  			      "*"))
-          (setq n (1+ n))
-          (when (not (get-buffer bufname))
-            (setq buffer (get-buffer-create bufname))
-            (with-current-buffer buffer
-              (org-mode)
-  	    (insert "# org-scratch buffer\n"))
-            ;; When called non-interactively, the `t` targets the other window (if it exists).
-            (throw 'done (select-window (display-buffer buffer t))))))))
+    (let ((buffer (generate-new-buffer "*org-scratch*")))
+      (with-current-buffer buffer
+        (org-mode)
+        (insert "# org-scratch buffer\n"))
+      ;; the `t' prefers another window, when there is one
+      (select-window (display-buffer buffer t))))
 #+end_src
 
 * Personal todo keywords, tags and captures
@@ -379,9 +357,6 @@ Here I will add template captures for doing several things:
 ** Work tags definition
 #+begin_src emacs-lisp :tangle yes
   (when my-workenvironment-p
-    ;; tags are next to the title
-    (setq org-tags-column 0)
-
     (setq org-tag-alist '(
                           ("detection" . ?d) ("automation" . ?a) ("emailsec" . ?E)
                           ("edr" . ?e) ("ai" . ?A) ("management" . ?m)
@@ -493,14 +468,27 @@ As work is different from home, I need specific templates.
 #+end_src
 
 * org-babel languages
-Activate a minimal set of babel languages for use in work org documents.
+One call for both environments: shell and python everywhere, plus the rest at
+home.  Babel is needed for =C-c C-c= on a source block, not only for export, so
+it is set here rather than with the exporters.  =ob-gnuplot= needs the
+=gnuplot= package when a block runs.
 
 #+begin_src emacs-lisp
-  (when my-workenvironment-p
-    (org-babel-do-load-languages 'org-babel-load-languages
-                                 '((shell . t)
-                                   (python . t)))
-    )
+  (when my-homeenvironment-p
+    (use-package gnuplot))
+
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   (append '((shell . t)
+             (python . t))
+           (when my-homeenvironment-p
+             '((C . t)
+               (ruby . t)
+               (js . t)
+               (ditaa . t)
+               (gnuplot . t)
+               (plantuml . t)
+               (dot . t)))))
 #+end_src
 
 * Keymap entries
