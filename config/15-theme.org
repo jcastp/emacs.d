@@ -79,54 +79,12 @@ https://github.com/kunalb/poet
 
 * Font setup
 Look at this https://idiocy.org/emacs-fonts-and-fontsets.html
-** fonts as variables
-Establish the fonts with variables, so we don't need to change them on evey place (like in fontaine modes)
-
-#+begin_src emacs-lisp
-  ;; variable pitch variables
-  (defvar my-variable-font "Aporetic Sans")
-  (defvar my-variable-font-height 140)
-
-  ;; fixed pitch variables
-  (defvar my-fixed-font "Aporetic Sans Mono")
-  (defvar my-fixed-font-height 110)
-
-  ;; My default font variables
-  (defvar my-default-font "Aporetic Sans Mono")
-  (defvar my-default-font-height 120)
-#+end_src
-
-** font definition
-#+begin_src emacs-lisp
-  (set-face-attribute 'default nil :font my-default-font)
-#+end_src
-
-Obtained from: https://zzamboni.org/post/beautifying-org-mode-in-emacs/
-Font attributes to be used, different for prose mode and code mode.
-
-Fonts we will be using for both modes:
-#+begin_src emacs-lisp
-  (custom-theme-set-faces
-   'user
-   `(variable-pitch
-     ;; variable font config
-     ((t (:family ,my-variable-font
-  		:height ,my-variable-font-height
-           	:weight Regular))))
-
-   ;; fixed font config
-   `(fixed-pitch
-     ((t (:family ,my-fixed-font
-  		:height ,my-fixed-font-height
-  		:weight Medium))))
-
-   ;; default font config
-   `(default
-     ((t (:family ,my-default-font
-  		:height ,my-default-font-height
-  		:weight Light)))))
-
-#+end_src
+** fonts
+The fonts belong to the fontaine presets below: =default=, =fixed-pitch= and
+=variable-pitch= are set only there.  They used to be set in the =user= theme
+as well, and the =user= theme outranks fontaine's every time a theme is
+enabled -- so the startup rotation, =C-c 0= and org-scribe's mode switches all
+silently reset the preset to Aporetic.
 
 Assign the variable font to prose mode:
 #+begin_src emacs-lisp
