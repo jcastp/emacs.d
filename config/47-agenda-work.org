@@ -390,8 +390,8 @@ the last one opened, remembered across sessions via savehist), jumps to their
 heading — creating it on first use — and narrows to their subtree, so before a
 1:1 you have everything about that person in one focused view.
 
-Bound to =<f6>= for a true one-key launch, and to =C-q p= via the shared keymap
-(see the "my own keymap" section in =emacs-config.org=).
+Bound to =<f6>= for a true one-key launch, and to =C-q p= (registered at the end
+of this module).
 
 #+begin_src emacs-lisp
   (defvar my/last-report nil

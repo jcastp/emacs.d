@@ -6,10 +6,8 @@ Everything about how the frame looks: sizing, fringes, cursor, the current-line
 highlight, line numbers, wrapping, icons, the modeline and the centred writing
 view.
 
-The =hl-line= colours live here rather than with the themes.  They used to be
-spread across all three config files, with the work config carrying a verbatim
-copy of the clear-theme defvars; there is now one set of colours and one
-=my/set-hl-line-face=, applied whenever a theme is enabled.
+The =hl-line= colours live here rather than with the themes: one set of colours
+and one =my/set-hl-line-face=, applied whenever a theme is enabled.
 
 * Lexical binding
 #+begin_src emacs-lisp
@@ -102,11 +100,8 @@ Fontify the whole line for headings (with a background color). Works well with L
   (setq org-fontify-whole-heading-line nil)
 #+end_src
 
-The heading *sizes* used to live here, as a =custom-theme-set-faces= block
-setting =org-level-1= through =4= and =org-document-title=.  They have moved to
-=17-org-style=, which owns org's appearance as a whole — the heights are only
-one part of a ramp that also decides colour, weight and rules, and splitting
-them across two modules meant neither file described the result.
+The heading sizes are in =17-org-style=, as part of the ramp that also decides
+colour, weight and rules.
 
 * Open indirect buffer
 Open a branch into a different frame, but the same buffer:
@@ -340,12 +335,7 @@ Useful for reading books or long texts.
 #+end_src
 
 * Current-line highlight colours
-=hl-line= used to be spread across all three config files: =global-hl-line-mode=
-in the shared one, the dark/clear colours and =my/set-hl-line-face= in the
-personal one, and a verbatim copy of the clear colours in the work one.  Two
-sources of truth for the same two hex values.
-
-One set of colours now, and one function.  The work environment sets the
+One set of colours and one function.  The work environment sets the
 foreground explicitly while the personal themes look better letting the theme
 choose it, so that difference is an argument rather than a second copy.
 

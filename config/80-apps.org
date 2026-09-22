@@ -4,13 +4,8 @@
 
 The things that are programs in their own right rather than editor
 behaviour: the browser and dired, the ebook and feed readers, the PDF viewer,
-eshell, mastodon, the dashboard, and Jira at work.
-
-This is what used to be spread between "General config", two "Miscellanea"
-headings and the tail of the personal file.  There is no Miscellanea any more.
-
-Everything here is a candidate for deferral in step 7 of the plan -- none of it
-ins needed at startup.
+eshell, mastodon, the dashboard, and Jira at work.  None of it is needed at
+startup, so anything here that still loads eagerly is a candidate for deferral.
 
 * Lexical binding
 #+begin_src emacs-lisp
@@ -222,8 +217,7 @@ https://tech.toryanderson.com/2022/11/23/viewing-epub-in-emacs/
       :ensure t)
 
     ;; `:mode' registers the auto-mode entry without loading nov, which is what
-    ;; makes the deferral safe: the old `add-to-list' lived in `:config' and
-    ;; would never have run if the package were deferred.
+    ;; makes the deferral safe: an `add-to-list' in `:config' would never run.
     (use-package nov
       :ensure t
       :mode ("\\.epub\\'" . nov-mode)
@@ -442,9 +436,9 @@ This doesn't work in the auth part.
 
 * Keymap entries
 The =C-q o= sub-map.  Each entry is registered under the same condition that
-installs the application itself, so the old =(when (fboundp #'elfeed) ...)=
-guesses are gone: elfeed and mastodon are home-only, and mastodon additionally
-needs the encrypted directory mounted, exactly as their blocks above require.
+installs the application itself: elfeed and mastodon are home-only, and
+mastodon also needs the encrypted directory mounted, exactly as their blocks
+above require.
 #+begin_src emacs-lisp
   (let ((online (my/key-define-submap "o" "online")))
     (my/key-define "e" "eww" #'eww online)

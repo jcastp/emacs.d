@@ -31,11 +31,11 @@ The config is split by **domain** (one module per subject), not by environment. 
 |`17-org-style`      |always              |org's appearance: heading ramp, drawers, metadata, org-modern, org-appear            |
 |`20-completion`     |always              |vertico, consult, corfu, cape, orderless, embark                                     |
 |`30-navigation`     |always              |windows, perspectives, avy, imenu-list, speedbar                                     |
-|`40-org`            |always              |org core + each environment's todo keywords, tags, captures                          |
+|`40-org`            |always              |org core + each environment's todo keywords, tags, captures (`55`/`80` add two more) |
 |`45-agenda`         |always              |both environments' agenda frames                                                     |
 |`46-agenda-personal`|home                |personal agenda commands                                                             |
 |`47-agenda-work`    |work                |work agenda commands, org-ql views, 1:1 tooling                                      |
-|`50-org-roam`       |always              |roam, its UI, capture templates (shared DB, both environments)                       |
+|`50-org-roam`       |always              |roam, its UI, capture templates; separate store + DB per environment                 |
 |`55-org-export`     |home                |every exporter, behind `with-eval-after-load 'ox`                                    |
 |`60-writing`        |home                |org-scribe, tempel, writeroom, story files, org-journal                              |
 |`70-prog`           |always              |magit, diff-hl, flymake, eglot, treesit, languages                                   |
@@ -116,12 +116,15 @@ bindings.
 There is no test suite. To verify changes:
 
 - **Inside Emacs**: `C-c r r` (`my/reload-config`)
-- **Headless, both environments** — the work path needs a larger frame, because `99-start-work` splits the window at startup (the startup `persp-state-load` it used to run is now commented out):
+- **Headless, both environments** — the work path needs a larger frame, because `99-start-work` splits the window at startup. **Clear `kill-emacs-hook` before exiting**: otherwise a test run saves its own recentf, savehist and perspective state over your real ones (`autosaved-persp` is not in git). At work, also neuter the roam autosync, which otherwise writes to the Nextcloud-synced work `org-roam.db`:
   ```sh
   rm -f config/*.el
-  WORKING=HOME emacs --batch --debug-init -l ./early-init.el -l ./init.el --eval '(kill-emacs)'
+  WORKING=HOME emacs --batch --debug-init -l ./early-init.el -l ./init.el \
+      --eval '(progn (setq kill-emacs-hook nil) (kill-emacs))'
   WORKING=WORK emacs --batch --eval '(ignore-errors (set-frame-size (selected-frame) 220 70))' \
-      -l ./early-init.el -l ./init.el --eval '(kill-emacs)'
+      -l ./early-init.el -l ./init.el \
+      --eval '(progn (fset (quote org-roam-db-autosync-mode) (function ignore)) (setq kill-emacs-hook nil) (kill-emacs))'
   ```
+- **Faces and fonts need a GUI frame.** In `--batch` there are no colours and fontaine does nothing, so face snapshots are meaningless there. Use a throwaway daemon with an invisible frame instead: `emacs -Q --daemon=NAME`, then `emacsclient -s NAME --eval` a form that runs `(make-frame '((visibility . nil) (window-system . x)))`, selects it, loads `early-init.el` and `init.el`, snapshots, and exits with `kill-emacs-hook` cleared.
 - **Verify a refactor preserved behaviour**: snapshot runtime values (`org-capture-templates`, `org-agenda-files`, `fontaine-presets`, the resolved `hl-line` face, …) in both environments before and after, and diff. A structural change should come back byte-identical; anything else is a finding to explain, not to wave through.
 - **Simulate a writing laptop**: `emacs --batch --eval '(setq my-writinglaptop-p t)' -l ./early-init.el -l ./init.el ...` — `defvar` will not override a value that is already set.

@@ -3,12 +3,7 @@
 #+startup: overview
 
 Version control (magit, diff-hl), diagnostics (flymake), tree-sitter, eglot,
-and the per-language setups.  The git sections and the Programming section were
-adjacent in neither place in the old layout; they are one domain and now sit
-together.
-
-=project.el= is still configured under General config in the legacy shared file
-and moves to =00-core.org= in a later step.
+and the per-language setups.  =project.el= is configured in =00-core=.
 
 * Lexical binding
 #+begin_src emacs-lisp

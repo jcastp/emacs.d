@@ -4,11 +4,8 @@
 
 Theme packages, the light/dark rotation, and every fontaine preset.
 
-fontaine used to be declared twice -- once in the personal config, once in the
-work config -- with each setting =fontaine-presets= wholesale, so the work
-presets replaced the personal ones rather than extending them.  One declaration
-now, and the two preset tables sit next to each other where the difference is
-visible.
+fontaine is declared once.  Each environment sets =fontaine-presets= wholesale,
+and the two tables sit next to each other so the difference is visible.
 
 Nothing here recolours =hl-line= or the org faces.  =10-ui= and =17-org-style=
 each follow =enable-theme-functions=, so any theme enabled here, or anywhere
@@ -54,12 +51,9 @@ Protesilaos very good themes. These themes are already included in the standard 
 
      modus-themes-fringes nil ; {nil,'subtle,'intense}
 
-     ;; Headings are shaped by `my/org-set-faces' in 17-org-style, not here.
-     ;; This used to give H1 a background, an overline, a distinct hue *and* a
-     ;; size bump -- four cues for one fact -- and only on the modus themes, so
-     ;; the heading design changed shape as the rotation moved between modus,
-     ;; leuven and ef.  Flattened, modus contributes its palette and nothing
-     ;; structural.
+     ;; Headings are shaped by `my/org-set-faces' in 17-org-style, not here:
+     ;; flattened, modus contributes its palette and nothing structural, so
+     ;; the heading design does not change shape across the theme rotation.
      modus-themes-headings '((t . (regular 1.0)))
      modus-themes-scale-headings nil))
 #+end_src
@@ -76,10 +70,9 @@ https://github.com/kunalb/poet
 Look at this https://idiocy.org/emacs-fonts-and-fontsets.html
 ** fonts
 The fonts belong to the fontaine presets below: =default=, =fixed-pitch= and
-=variable-pitch= are set only there.  They used to be set in the =user= theme
-as well, and the =user= theme outranks fontaine's every time a theme is
-enabled -- so the startup rotation, =C-c 0= and org-scribe's mode switches all
-silently reset the preset to Aporetic.
+=variable-pitch= are set only there.  Do not set them in the =user= theme as
+well: it outranks fontaine's every time a theme is enabled, so every theme
+change would silently reset the preset.
 
 Assign the variable font to prose mode:
 #+begin_src emacs-lisp
@@ -89,14 +82,8 @@ Assign the variable font to prose mode:
 
 Use fixed font for code blocks and other non prose blocks.
 
-The org-specific faces that used to live here — =org-block=, =org-meta-line=,
-=org-document-info=, =org-link=, =org-tag=, =org-property-value=,
-=org-special-keyword= — have moved to =17-org-style=.  Two of them
-(=org-document-info= as "dark orange", =org-link= as "royal blue") were absolute
-colours in the =user= theme, so they overrode every theme in the rotation; they
-are computed from the active theme now.
-
-What stays here is what is genuinely about *fonts* rather than about org: keeping
+The org faces' colours and sizes are in =17-org-style=.  What is here is only
+about *fonts*: keeping
 comments and org's own structural faces on the fixed-pitch family so they do not
 fall back to whatever font happens to supply an italic glyph.
 

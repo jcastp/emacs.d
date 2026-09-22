@@ -6,9 +6,8 @@ Org itself: behaviour, ids, indentation, logging, clocking, babel, visuals and
 the scratch buffer, followed by the three things each environment defines for
 itself -- todo keywords, tags and capture templates.
 
-Those three used to be the reason org configuration was split across files at
-all.  They are small, and they read better as adjacent gated blocks than as
-three files.
+Those three are small, and they read better as adjacent gated blocks than as
+separate files.
 
 The agenda is large enough to live on its own; see =45-agenda.org=.
 
@@ -107,7 +106,8 @@ Change notes are stored in the node's drawer, so we can fold it conveniently.
 
 * Custom notes and timestamp
 Put a note or a timestamp when something changes.
-=org-log-done= is set to ='time= in =emacs-config-personal.org= (required for the weekly review agenda command).
+=org-log-done= is set to ='time= in =46-agenda-personal= and =47-agenda-work=
+(the weekly review views need the CLOSED timestamps).
 
 #+begin_src emacs-lisp
   ;; Don't log deadline/schedule date changes.

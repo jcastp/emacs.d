@@ -16,8 +16,8 @@ agenda directory.
 #+end_src
 
 * Where my files live
-Directories that were previously spelled out as literal =~/Nextcloud/...=
-strings at every use site.  Consumers are rewired to these as each module moves.
+Every module builds its paths from these rather than spelling out
+=~/Nextcloud/...=.
 
 #+begin_src emacs-lisp
   (defvar my-nextcloud-dir (expand-file-name "Nextcloud/" (getenv "HOME"))

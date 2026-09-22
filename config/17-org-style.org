@@ -4,12 +4,8 @@
 
 Everything about how an org buffer *looks*: the heading ramp, drawers,
 =#+keyword= lines, tags, blocks, and the two packages that draw org text
-differently from plain font-lock (=org-modern= and =org-appear=).
-
-This used to be spread across =10-ui= (the =org-level-*= heights) and =15-theme=
-(=org-block=, =org-meta-line=, =org-tag=, =org-link=), with =org-modern= sitting
-in =40-org=.  Three files had to be read to know what a heading looked like, and
-none of them owned the subject.  They are all here now.
+differently from plain font-lock (=org-modern= and =org-appear=).  To know what
+a heading looks like, this is the only file to read.
 
 * Why the faces are computed rather than declared
 
@@ -211,13 +207,14 @@ directly.
 Identical in all three styles.  Everything here is fixed-pitch (so it reads as
 machine text rather than prose), shadowed, and smaller than the body.
 
-=org-meta-line= and =org-special-keyword= used to inherit =font-lock-comment-face=,
-which is a saturated hue in several of these themes — so the quietest content on
-the page was drawn in one of the loudest colours.  They inherit nothing now.
+=org-meta-line= and =org-special-keyword= inherit nothing.  Org's default is
+=font-lock-comment-face=, which is a saturated hue in several of these themes,
+so the quietest content on the page would be drawn in one of the loudest
+colours.
 
 =org-link= keeps whatever colour the theme gives links; only its underline is
-quietened.  The previous =(:foreground "royal blue")= overrode every theme in the
-rotation, including the dark ones where it barely had contrast.
+quietened.  A fixed colour would override every theme in the rotation, and lose
+contrast on some of them.
 
 #+begin_src emacs-lisp
   (defun my/org-style--meta-specs ()
@@ -360,8 +357,6 @@ before the hook existed, so the faces are computed once here for it.
 #+end_src
 
 * org-modern
-
-Moved here from =40-org=, where it was declared with no configuration at all.
 
 Two of its defaults were doing nothing: =org-modern-hide-stars= and
 =org-modern-block-fringe= both disable themselves when =org-indent-mode= is on,

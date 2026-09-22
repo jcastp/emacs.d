@@ -2,9 +2,8 @@
 #+property: header-args:emacs-lisp :tangle "30-navigation.el"
 #+startup: overview
 
-Buffer naming (uniquify), keyboard chords, imenu-list, ace-window, avy and
-perspective.el.  The window resize menu and speedbar still live in the legacy
-shared config and join this module in a later step.
+Buffer naming (uniquify), keyboard chords, imenu-list, ace-window, avy,
+perspective.el, the window resize menu and speedbar.
 
 * Lexical binding
 #+begin_src emacs-lisp
@@ -192,9 +191,8 @@ message, so a failed save never gets in the way of quitting Emacs."
 Using built-in =transient= instead of =hydra=.
 
 #+begin_src emacs-lisp
-  ;; `transient' is bundled with Emacs but not autoloaded for this macro.
-  ;; This block used to work only because org-roam loaded it first; now that
-  ;; org-roam is its own module, the dependency has to be explicit.
+  ;; `transient' is bundled with Emacs, but `transient-define-prefix' is not
+  ;; autoloaded, and org-roam (which pulls it in) loads after this module.
   (require 'transient)
 
   (transient-define-prefix my/resize-transient ()

@@ -3,8 +3,7 @@
 #+startup: overview
 
 Minibuffer completion (vertico, prescient, consult, marginalia, embark,
-orderless) and in-buffer completion (corfu, cape).  Loaded before the personal
-and work modules, both of which call into consult at load time.
+orderless) and in-buffer completion (corfu, cape).
 
 * Lexical binding
 #+begin_src emacs-lisp

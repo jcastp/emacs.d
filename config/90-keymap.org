@@ -3,10 +3,9 @@
 #+startup: overview
 
 The =C-q= map itself is created in =00-core.org=, and every module registers its
-own entries as it loads.  Nothing is assembled centrally any more, so this
-module is not doing the collecting it used to.
+own entries as it loads.
 
-What is left here is the one sub-map that belongs to no single domain: =C-q q=,
+This module holds only the one sub-map that belongs to no single domain: =C-q q=,
 the files I open most often, which span the config, my notes, the agenda and my
 writing.  It loads last so that its entries sit alongside everything the other
 modules registered.

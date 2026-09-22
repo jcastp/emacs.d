@@ -5,12 +5,11 @@
 The writing environment: org-scribe, tempel, writeroom, translation, story
 files, scene breaks, the word-count tooling and the =C-q w= sub-map.
 
-org-journal comes along because it is journalling rather than agenda or export,
-and it is gated on the encrypted directory being mounted -- that guard is inside
-the block, unchanged.
+org-journal lives here too, because it is journalling rather than agenda or
+export.  It is gated on the encrypted directory being mounted; that guard is
+inside its block.
 
-Home only.  This module must load before =90-keymap=, which picks up
-=my/key-prefix-writing-map= if it is bound.
+Home only.
 
 * Lexical binding
 #+begin_src emacs-lisp

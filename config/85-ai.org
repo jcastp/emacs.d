@@ -2,11 +2,8 @@
 #+property: header-args:emacs-lisp :tangle "85-ai.el"
 #+startup: overview
 
-gptel against a local llama-swap instance, plus the =C-q a= sub-map it
-contributes to the keymap module.  Home-only, as before.
-
-This module must load before =90-keymap=, which picks up
-=my/key-prefix-ai-map= if it is bound.
+gptel against a local llama-swap instance, plus its =C-q a= sub-map.  Loads at
+home, and only on full systems (not the writing laptops).
 
 * Lexical binding
 #+begin_src emacs-lisp

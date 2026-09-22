@@ -14,18 +14,14 @@ before any other module can register an entry in it.
 #+end_src
 
 * Personal keymap infrastructure
-=C-q= is my own prefix map.  It used to be built in one place at the end of the
-config, which meant that file had to know the names of personal-only and
-work-only commands and guard each one with =fboundp= / =boundp=.  Those guards
-failed silently: a renamed command left a dead key with no warning.
-
-Now the map is created here, empty, and each module registers its own entries
-with the two helpers below.  A module that does not load contributes nothing —
-the condition is the module's own, not a guess made from a symbol's name.
+=C-q= is my own prefix map.  It is created here, empty, and each module
+registers its own entries with the two helpers below.  A module that does not
+load contributes nothing, so no entry needs an =fboundp= / =boundp= guard (such
+guards fail silently: a renamed command leaves a dead key with no warning).
 
 Binding =C-q= this early also makes it a prefix key before any package tries to
-bind beneath it.  =org-jira= binds =C-q j b= and used to fail with "starts with
-non-prefix key C-q", because the map was only installed at the very end.
+bind beneath it.  =org-jira= binds =C-q j b= in its =:bind=, which fails with
+"starts with non-prefix key C-q" if the map does not exist yet.
 
 From https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/
 
@@ -396,12 +392,8 @@ Defines a set of abbreviations that permits complete words with just some charac
 
 * Persistent state files
 The home and work instances must not overwrite each other's history, so the
-state files are suffixed per environment.  Previously =recentf= and =savehist=
-were configured in the personal config and re-implemented in the work config,
-which meant work silently ran with =recentf-max-saved-items= at its default of
-25, no =recentf-exclude= list, and no bookmark file of its own — bookmarks were
-landing in the committed =~/.emacs.d/bookmarks.eld=.  One definition, one
-suffix, both environments.
+state files are suffixed per environment: one definition, one suffix, both
+environments.
 
 #+begin_src emacs-lisp
   (defvar my-state-file-suffix (if my-workenvironment-p "-work" "")
