@@ -36,6 +36,12 @@ https://github.com/raxod502/prescient.el
   ;; To use prescient with vertico
   (use-package vertico-prescient
     :ensure t
+    :custom
+    ;; Sorting only.  With filtering on (the default), every vertico session
+    ;; swaps `completion-styles' for prescient's own, so the orderless setup
+    ;; below never applies in the minibuffer.  Must be set before the mode is
+    ;; enabled.
+    (vertico-prescient-enable-filtering nil)
     :config
     (vertico-prescient-mode 1))
 #+end_src
