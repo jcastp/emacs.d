@@ -186,6 +186,31 @@ Some keys redefined to better adjust to the whole emacs key environment.
   (global-set-key (kbd "M-n") 'forward-paragraph)
 #+end_src
 
+* Fill/unfill toggle
+=M-q= alternates between filling and unfilling instead of only filling.
+=fill-paragraph= and =unfill-paragraph= already act on the region when one is
+active, and on the paragraph at point otherwise, so this wrapper just calls
+one of the two through =call-interactively= to inherit that behaviour.
+#+begin_src emacs-lisp
+  (defvar-local my/fill-or-unfill--filled-last nil
+    "Whether `my/fill-or-unfill' last filled (t) or unfilled (nil) this buffer.
+Starts nil so the first call in a buffer fills, matching the default
+`fill-paragraph' behaviour it replaces.")
+
+  (defun my/fill-or-unfill ()
+    "Alternate `fill-paragraph' and `unfill-paragraph'.
+Each call undoes what the previous call in this buffer did.  Acts on
+the active region when there is one, otherwise the paragraph at
+point."
+    (interactive)
+    (call-interactively (if my/fill-or-unfill--filled-last
+                            #'unfill-paragraph
+                          #'fill-paragraph))
+    (setq my/fill-or-unfill--filled-last (not my/fill-or-unfill--filled-last)))
+
+  (global-set-key (kbd "M-q") #'my/fill-or-unfill)
+#+end_src
+
 * OS interaction
 These settings relate to how emacs interacts with your operating system.
 #+begin_src emacs-lisp
