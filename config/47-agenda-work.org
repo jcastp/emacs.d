@@ -39,7 +39,7 @@ I need a different custom agenda commands to see the tasks better.
      		;; Priority A: explicit commitments
      		(tags-todo "+PRIORITY=\"A\""
      			   ((org-agenda-overriding-header "[ PRIORITY — must do today ]")
-     			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("WAITING" "DONE" "DELEGATED" "CANCELED")))
+     			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("WAITING")))
      			    (org-agenda-sorting-strategy '(effort-up ts-up))
      			    (org-agenda-prefix-format " %i %-16:c %5e ")))
 
@@ -108,7 +108,6 @@ I need a different custom agenda commands to see the tasks better.
      		;; Strategic: OKR-linked tasks that need attention
      		(tags-todo "+okr"
      			   ((org-agenda-overriding-header "[ OKR — strategic tasks ]")
-     			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
      			    (org-agenda-sorting-strategy '(todo-state-up priority-down effort-up))
      			    (org-agenda-prefix-format " %i %-16:c %5e ")))
 
@@ -183,33 +182,26 @@ I need a different custom agenda commands to see the tasks better.
                '("ca" "By domain area"
                  (
                   (tags-todo "+management"
-                             ((org-agenda-overriding-header "[ MANAGEMENT ]")
-                              (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))))
+                             ((org-agenda-overriding-header "[ MANAGEMENT ]")))
 
                   (tags-todo "+detection"
-                             ((org-agenda-overriding-header "[ DETECTION ]")
-                              (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))))
+                             ((org-agenda-overriding-header "[ DETECTION ]")))
 
                   (tags-todo "+automation"
-                             ((org-agenda-overriding-header "[ AUTOMATION ]")
-                              (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))))
+                             ((org-agenda-overriding-header "[ AUTOMATION ]")))
 
                   (tags-todo "+emailsec"
-                             ((org-agenda-overriding-header "[ EMAIL SECURITY ]")
-                              (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))))
+                             ((org-agenda-overriding-header "[ EMAIL SECURITY ]")))
 
                   (tags-todo "+edr"
-                             ((org-agenda-overriding-header "[ EDR ]")
-                              (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))))
+                             ((org-agenda-overriding-header "[ EDR ]")))
 
                   (tags-todo "+ai"
-                             ((org-agenda-overriding-header "[ AI ]")
-                              (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))))
+                             ((org-agenda-overriding-header "[ AI ]")))
 
                   ;; Catch-all: tasks with no domain tag — they need one
                   (tags-todo "-detection-automation-emailsec-edr-ai-management"
                              ((org-agenda-overriding-header "[ UNTAGGED — needs a domain tag ]")
-                              (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
                               (org-agenda-sorting-strategy '(priority-down effort-up))))
                   )
                  ((org-agenda-sorting-strategy '(todo-state-up priority-down effort-up))
@@ -257,13 +249,11 @@ I need a different custom agenda commands to see the tasks better.
                   ;; Tasks with no domain: they are floating and invisible in the domain view
                   (tags-todo "-detection-automation-emailsec-edr-ai-okr-management"
                              ((org-agenda-overriding-header "[ NEEDS DOMAIN TAG ]")
-                              (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
                               (org-agenda-sorting-strategy '(ts-up))))
 
                   ;; Tasks without effort: cannot be scheduled
                   (tags-todo "EFFORT=\"\""
                              ((org-agenda-overriding-header "[ NEEDS EFFORT ESTIMATE ]")
-                              (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
                               (org-agenda-sorting-strategy '(priority-down ts-up))))
                   )
                  ((org-agenda-prefix-format " %i %-16:c "))))
