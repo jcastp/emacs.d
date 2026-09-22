@@ -108,7 +108,7 @@ when its `use-package' form is deferred.")
 ;; under which the module loads; see `my/module-enabled-p'.
 ;;
 ;; The numbering is spaced so a new module can be slotted in without
-;; renumbering.  config/99-scratch.org is deliberately absent: it is the
+;; renumbering.  config/98-scratch.org is deliberately absent: it is the
 ;; staging area and tangles nothing.
 (defvar my-config-modules
   '(("config/00-core"            . always)
@@ -129,12 +129,13 @@ when its `use-package' form is deferred.")
     ("config/80-apps"            . always)
     ("config/85-ai"              . (home full-system))
     ("config/90-keymap"          . always)
-    ("config/99-start-work"     . work))
+    ("config/99-start-work"      . work))
   "Config modules and the condition under which each one loads.
 Each entry is a cons of a path relative to `my-config-dir', without
 the .org extension, and a condition symbol understood by
-`my/module-enabled-p'.  The keymap module must stay last: it assembles
-entries contributed by the other modules.")
+`my/module-enabled-p'.  The keymap module must come after every module
+that registers `C-q' entries; only startup side effects, such as
+99-start-work, may follow it.")
 
 (defun my/module-enabled-p (condition)
   "Return non-nil when CONDITION holds for this machine and environment."

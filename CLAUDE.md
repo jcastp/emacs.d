@@ -42,7 +42,8 @@ The config is split by **domain** (one module per subject), not by environment. 
 |`80-apps`           |always              |eww, dired, elfeed, nov, calibre, pdf, eshell, mastodon, dashboard, jira             |
 |`85-ai`             |`(home full-system)`|gptel                                                                                |
 |`90-keymap`         |always              |the `C-q q` direct-file-access sub-map                                               |
-|`99-scratch`        |*not loaded*        |staging area; tangles nothing                                                        |
+|`98-scratch`        |*not loaded*        |staging area; tangles nothing                                                        |
+|`99-start-work`     |work                |startup side effects: opens today's roam daily + `my-work-file` side by side         |
 
 Conditions understood by `my/module-enabled-p`: `always`, `home`, `work`, `full-system`, `clear` (encrypted dir mounted), or a **list**, meaning all of them must hold.
 
@@ -104,7 +105,8 @@ bindings.
 - **`:ensure` installs even when deferred.** Deferring saves startup time, not disk. Use `my-full-system-p` to keep heavy packages off the writing laptops.
 - **Work resets capture templates.** `40-org` sets `org-capture-templates` to `'()` before adding the work ones. The two environments' blocks are adjacent so this is visible.
 - **The agenda frames look parallel but are not.** Work does *not* skip DONE items (`org-agenda-skip-scheduled-if-done` is nil there) and the two category-icon alists differ. `45-agenda` documents what work lacks. Do not merge them without asking.
-- **`99-scratch.org` sets `:tangle no` at the file level.** Code there ships only if a block deliberately overrides it. Put experiments there, not in a live module.
+- **`98-scratch.org` sets `:tangle no` at the file level.** Code there ships only if a block deliberately overrides it. Put experiments there, not in a live module.
+- **`99-start-work` loads after `90-keymap`**, so it must not register `C-q` keys. It acts on the frame at startup (finds files, splits the window), so keep it last and keep it to side effects.
 - **`jinx-languages` also drives in-buffer completion.** `20-completion` sets `cape-dict-file` to `my/cape-dict-files`, which picks the hunspell word list from the buffer's `jinx-languages`, so spellcheck and `cape-dict` never disagree about the language. It is called on every completion, so `C-M-$` retunes both at once. Adding a language means adding it to `my-hunspell-dictionaries` there, not just to `jinx-languages` — an unlisted language falls back to English rather than going silent.
 - **org-scribe loads eagerly** (it calls `org-scribe-setup` at startup) and requires `ox`, which is why the exporters' `with-eval-after-load 'ox` wrapper currently saves nothing at home.
 
@@ -113,7 +115,7 @@ bindings.
 There is no test suite. To verify changes:
 
 - **Inside Emacs**: `C-c r r` (`my/reload-config`)
-- **Headless, both environments** — the work path needs a larger frame or `persp-state-load` aborts:
+- **Headless, both environments** — the work path needs a larger frame, because `99-start-work` splits the window at startup (the startup `persp-state-load` it used to run is now commented out):
   ```sh
   rm -f config/*.el
   WORKING=HOME emacs --batch --debug-init -l ./early-init.el -l ./init.el --eval '(kill-emacs)'

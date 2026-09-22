@@ -1,4 +1,4 @@
-#+title: Scratch — staging area
+#+title: Start work — startup view
 #+startup: overview
 
 The functions and commands to start my work.
