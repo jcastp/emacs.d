@@ -118,8 +118,9 @@ https://github.com/nex3/perspective-el
     (setq persp-sort 'created))
 #+end_src
 
-*** TODO automatic load some perspectives
-This function allows to load my defined perspectives and sessions.
+*** Load a saved perspective
+=C-c w l= picks one of the saved perspective files in =perspectives/= under
+=my-data-dir= and loads it.
 
 #+begin_src emacs-lisp
   (with-eval-after-load 'perspective
@@ -138,24 +139,6 @@ This function allows to load my defined perspectives and sessions.
         (message "You chose: %s" file)))
 
     (define-key persp-mode-map (kbd "C-c w l") 'my/load-perspective))
-#+end_src
-
-But I want to automatically load some perspectives when I'm at home:
-#+begin_src emacs-lisp
-  (defvar my-persp-load nil
-    "Define if we want to load the personal persp.")
-
-  (if (and my-homeenvironment-p my-persp-load)
-      (progn
-        (with-eval-after-load 'org
-  	(defvar my-persp-files '(
-      				 "config-persp"
-      				 "tareas-persp"
-  				 "escritura-persp"
-      				 ))
-
-  	(dolist (my-file my-persp-files)
-  	  (persp-state-load (f-join my-persp-save-dir my-file))))))
 #+end_src
 
 *** TODO automatically save the perspective on exit

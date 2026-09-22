@@ -22,7 +22,6 @@ This will automatically open the relevant file to start working right away:
 
   (when (file-exists-p my-work-file)
     ;;(find-file my-work-file)
-    ;;(persp-state-load "~/Nextcloud/config/.emacs.d/perspectives/work-persp")
     (my/work-initial-setup)
     )
 #+end_src
