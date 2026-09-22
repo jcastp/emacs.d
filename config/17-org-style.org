@@ -378,8 +378,9 @@ same keyword looked different depending on where it was read.
             ;; the writing sequence, home only — harmless where unused
             ("TOWRITE"   . my/org-todo-active)
             ("WRITING"   . my/org-todo-active)
-            ("REVIEW"    . my/org-todo-waiting)
-            ("REWORK"    . my/org-todo-waiting)
+            ("TOREVIEW"    . my/org-todo-waiting)
+            ("REDO"        . my/org-todo-waiting)
+            ("RESTRUCTURE" . my/org-todo-waiting)
             ("FINISHED"  . my/org-todo-done)
             ("PURGE"     . my/org-todo-canceled)))
     (with-eval-after-load 'org (global-org-modern-mode)))
