@@ -112,67 +112,52 @@ Only evaluated in the home environment.
 
 * Themes
 ** Establish the default theme
-Define some variables with the dark and clear themes, and a variable to control if the current theme is dark or clear.
-Also, rotate the list of themes applied.
+Two rotations, dark and clear.  =my/theme-next= takes the first theme of one and
+moves it to the back, so repeated calls walk through the whole list.  Startup
+takes the next dark theme (or the next clear one, if =my-theme-start-dark-p= is
+nil), and =C-c 0= takes the next theme of the /other/ rotation.
+
+The lists are declared with =defvar= but set with =setq=, so =C-c r r= (reload)
+resets both rotations rather than resuming them.
 #+begin_src emacs-lisp
   (when my-homeenvironment-p
-    ;; define the lists of clear and dark themes
+    (defvar my/themes-dark nil "Dark themes, in rotation order.")
+    (defvar my/themes-clear nil "Clear themes, in rotation order.")
     (setq my/themes-dark '(ef-deuteranopia-dark
-    		       modus-vivendi-tinted))
+                           modus-vivendi-tinted))
     (setq my/themes-clear '(leuven
-    			ef-deuteranopia-light
-    			modus-operandi))
+                            ef-deuteranopia-light
+                            modus-operandi))
 
     ;; t starts on the dark rotation, nil on the clear one
     (defvar my-theme-start-dark-p t
       "Whether startup applies the first dark theme or the first clear one.")
 
-    ;; define a function to rotate a list. Custom, yes, I know it could be done better.
-    (defun my/rotate-list (list)
-      "Rotate the elements of LIST by one position, moving the first element to the end, and return the new list."
-      (if (null list)
-          ;; if block
-          ;; if the list is empty, returns an empty list
-          '()
-        ;; else block
-        ;; rotates the list
-        (append (cdr list) (list (car list)))))
+    (defun my/theme-next (rotation)
+      "Return the first theme of the list in ROTATION, moving it to the back."
+      (let ((theme (car (symbol-value rotation))))
+        (set rotation (append (cdr (symbol-value rotation)) (list theme)))
+        theme))
 
-    ;; load the first theme of the chosen rotation, and send it to the back
-    ;; of its list so that C-c 0 moves on to the next one
-    (if my-theme-start-dark-p
-        (progn
-          (load-theme (car my/themes-dark) t)
-          (setq my/themes-dark (my/rotate-list my/themes-dark)))
-      (load-theme (car my/themes-clear) t)
-      (setq my/themes-clear (my/rotate-list my/themes-clear)))
-    )
+    (load-theme (my/theme-next (if my-theme-start-dark-p
+                                   'my/themes-dark
+                                 'my/themes-clear))
+                t))
 #+end_src
 
 ** Toggle light and dark themes
-Function to change between dark and clear themes, based on past variables.
 #+begin_src emacs-lisp
   (when my-homeenvironment-p
     (defun my/theme-changer ()
-      "Changes themes between clear and dark ones."
+      "Switch between dark and clear, taking the next theme of the other rotation."
       (interactive)
-      ;; since we want to change from dark to clear and viceversa, we swap the logic
-      (if (not (my/theme-dark-p))
-          ;; this loads the dark theme
-          (progn
-            (consult-theme (car my/themes-dark))
-            (message "The theme applied is %s" (car my/themes-dark))
-            ;; rotate the list
-            (setq my/themes-dark (my/rotate-list my/themes-dark)))
-        ;; else block (clear theme)
-        (progn
-          (consult-theme (car my/themes-clear))
-          (message "The theme applied is %s" (car my/themes-clear))
-          ;; rotate the list
-          (setq my/themes-clear (my/rotate-list my/themes-clear)))))
+      (let ((theme (my/theme-next (if (my/theme-dark-p)
+                                      'my/themes-clear
+                                    'my/themes-dark))))
+        (consult-theme theme)
+        (message "The theme applied is %s" theme)))
 
-    (global-set-key (kbd "C-c 0") 'my/theme-changer)
-    )
+    (global-set-key (kbd "C-c 0") 'my/theme-changer))
 #+end_src
   
 
