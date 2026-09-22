@@ -57,6 +57,8 @@ Have some fancy icons for the categories.
      `(
        ("calendar" "~/Nextcloud/config/icons/calendar.svg" nil nil :ascent center :mask heuristic)
        ("tasks" "~/Nextcloud/config/icons/check-square.svg" nil nil :ascent center :mask heuristic)
+       ;; the Inbox capture template sets CATEGORY: task (singular)
+       ("task" "~/Nextcloud/config/icons/check-square.svg" nil nil :ascent center :mask heuristic)
        ("projects" "~/Nextcloud/config/icons/list.svg" nil nil :ascent center :mask heuristic)
        ("financial" "~/Nextcloud/config/icons/dollar-sign.svg" nil nil :ascent center :mask heuristic)
        ("birthdays" "~/Nextcloud/config/icons/heart.svg" nil nil :ascent center :mask heuristic)
