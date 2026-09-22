@@ -5,8 +5,10 @@
 ;;; Code:
 (setq package-enable-at-startup nil)
 
-;; Raise the recursion limit for package-initialize, which recursively
-;; activates all ~50+ packages and their dependency chains.
+;; A safety margin for package installation, which resolves dependency chains
+;; recursively.  An ordinary startup does not need it: both environments boot
+;; at the default of 1600 with every package installed (checked 2026-09-22), so
+;; this only matters for a fresh install.
 (setq max-lisp-eval-depth 5000)
 
 ;; Defer garbage collection during startup (package-initialize + tangled

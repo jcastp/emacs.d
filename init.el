@@ -13,9 +13,11 @@
 ;; use-package settings
 (setq use-package-always-ensure t)
 (setq package-native-compile t)
-(setq warning-minimum-level :error)
 
-;; remove the packages warning messages
+;; Never pop up *Warnings* or *Compile-Log*.  Warnings are still logged in
+;; *Warnings* (`warning-minimum-log-level' is untouched), so M-x
+;; switch-to-buffer *Warnings* shows them; this rule alone keeps the buffer
+;; from appearing, which is why `warning-minimum-level' is left at its default.
 (add-to-list 'display-buffer-alist
              '("\\`\\*\\(Warnings\\|Compile-Log\\)\\*\\'"
                (display-buffer-no-window)

@@ -191,6 +191,9 @@ But backups are good to have:
 UTF-8 everywhere.
 #+begin_src emacs-lisp
   (set-language-environment "UTF-8")
+  ;; Not a no-op: the UTF-8 language environment sets `default-input-method'
+  ;; to "rfc1345", and this clears it again, so C-\ asks which input method
+  ;; to use instead of switching straight to rfc1345.
   (set-input-method nil)
 #+end_src
 
@@ -266,6 +269,8 @@ Specially defined for spanish question and exclamation marks.
 #+begin_src emacs-lisp
   (electric-pair-mode 1)
   ;; make electric-pair-mode work on more sets of punctuation signs.
+  ;; `setq' rather than `add-to-list' on purpose: this replaces the default
+  ;; extra pairs (the curly quotes), so only ¡! and ¿? are added.
   (setq electric-pair-pairs
         '(
           (?\¡ . ?\!)
@@ -299,20 +304,13 @@ After pressing a key combo, it shows the key bindings associated.
 * Reload my configuration
 Reload this configuration file.
 #+begin_src emacs-lisp
-  (defun my/reload-config()
-    "Reloads my emacs configuration."
+  (defun my/reload-config ()
+    "Reload my Emacs configuration from init.el."
     (interactive)
-    (let ((my-init-file (expand-file-name "init.el" user-emacs-directory)))
-      (message "This: %s" my-init-file)
-      (if (file-exists-p my-init-file)
-  	;; if
-  	(progn
-  	  (load my-init-file)
-  	  (message "Reloaded my config."))
-        ;; else
-        (message "File %s not found." my-init-file))))
+    (load (expand-file-name "init.el" user-emacs-directory))
+    (message "Reloaded my config."))
 
-  (global-set-key (kbd "C-c r r" ) 'my/reload-config)  
+  (global-set-key (kbd "C-c r r") #'my/reload-config)
 #+end_src
 
 * Spelling
