@@ -161,55 +161,20 @@ But I want to automatically load some perspectives when I'm at home:
 
 *** TODO automatically save the perspective on exit
 #+begin_src emacs-lisp
-  ;; define the file name where we save the perspective
+  ;; Per machine on purpose: ~/.emacs.d is local, whereas `my-data-dir' is
+  ;; synced by Nextcloud and would let every machine overwrite the others'
+  ;; window layout.
   (setq persp-state-default-file
         (locate-user-emacs-file "autosaved-persp"))
 
   (defun my/persp-save-no-ask ()
-    "Save Perspective state without asking for overwrite confirmation."
-    (when (and (bound-and-true-p persp-mode)
-               (fboundp 'persp-state-save))
-      (condition-case err
-          (let* ((target
-                  (or (and (bound-and-true-p persp-state-default-file)
-                           (expand-file-name persp-state-default-file))
-                      (locate-user-emacs-file "persp/generic.eld")))
-                 (tmp
-                  (expand-file-name
-                   (concat (make-temp-name "persp-state-") ".eld")
-                   temporary-file-directory)))
-
-            ;; Keep the official variable pointing at the real target.
-            (setq persp-state-default-file target)
-
-            (make-directory (file-name-directory target) t)
-
-            (unwind-protect
-                (progn
-                  ;; Try calling with an explicit temporary filename.
-                  ;; Fall back if this Perspective version does not accept one.
-                  (condition-case nil
-                      (persp-state-save tmp)
-                    (wrong-number-of-arguments
-                     (let ((persp-state-default-file tmp))
-                       (persp-state-save))))
-
-                  ;; Replace the old state file without asking.
-                  (condition-case nil
-                      (rename-file tmp target t)
-                    (error
-                     ;; If direct overwrite fails, try removing the old file first.
-                     (when (file-exists-p target)
-                       (ignore-errors (set-file-modes target #o600))
-                       (delete-file target))
-                     (rename-file tmp target))))
-
-              ;; Clean up the temporary file if something went wrong.
-              (when (file-exists-p tmp)
-                (delete-file tmp))))
-        (error
-         (message "Perspecti;; ve state save failed: %s"
-  		(error-message-string err))))))
+    "Save the perspective state to `persp-state-default-file', silently.
+`persp-state-save' only asks before overwriting a file that is not the
+default one, so a non-interactive call never prompts.  Errors become a
+message, so a failed save never gets in the way of quitting Emacs."
+    (when (bound-and-true-p persp-mode)
+      (with-demoted-errors "Perspective state save failed: %S"
+        (persp-state-save))))
 
   (when my-homeenvironment-p
     ;; save the perspective automatically on exit
