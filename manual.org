@@ -1,0 +1,935 @@
+#+title: Emacs manual — personal environment
+#+author: Javier Castilla
+#+startup: overview
+#+options: toc:2 num:t
+
+This manual covers what this configuration adds on top of stock Emacs in the
+*personal* environment (=WORKING= unset or =HOME=). Work-only features are left
+out.
+
+Each chapter first explains how a system works day to day, then gives its keys.
+[[*Appendix A — Key reference][Appendix A]] collects every custom binding in one place.
+
+The source of truth is always =config/*.org=. When this manual and the config
+disagree, the config wins. The module that owns each feature is named in
+brackets, e.g. [40-org], so you know where to look.
+
+* Orientation
+
+** Conventions used here
+- =C-q= is the *personal prefix*. Press it and wait: which-key lists
+  everything under it. =C-q= no longer quotes characters
+  (=quoted-insert=); use =M-x quoted-insert= when you need it.
+- =C-c <letter>= bindings are the usual user-reserved space. Most org, roam and
+  agenda commands live there.
+- Keys written as =ññ= or =jj= are *key chords*: two keys pressed together (or
+  the same key twice) quickly.
+- The Spanish keyboard layout is assumed: =ñ= and =¡¿= appear in bindings.
+
+** What happens at startup
+/[init.el, 10-ui, 15-theme, 30-navigation, 80-apps]/
+1. The frame opens maximised, with no menu, tool or scroll bars.
+2. A dark theme is applied (the first of the dark rotation, see
+   [[*Themes, fonts and org styles][Themes]]) and the =hack= font preset is set.
+3. The *dashboard* shows the banner, 5 recent files, 5 bookmarks, 5 projects
+   and 5 agenda items.
+4. The org-roam database starts syncing about a second after you stop typing,
+   so that work stays off the startup path.
+5. If the encrypted directory (=~/Nextcloud_claro/gocryptfs_claro=) is
+   mounted, the journal and Mastodon become available. If not, you get the
+   message /Encrypted directory not mounted/ and those two features are
+   skipped.
+
+** The =C-q= map at a glance
+| Key   | What                          | Chapter       |
+|-------+-------------------------------+---------------|
+| =C-q a= | AI (gptel) sub-map            | [[*AI assistant (gptel)][AI assistant]]  |
+| =C-q b= | buffers: =o= org scratch        | [[*Scratch buffers, indirect buffers and links][Org]]           |
+| =C-q c= | centred mode                  | [[*Focus and layout][Focus]]         |
+| =C-q d= | daily agenda                  | [[*The agenda views][Agenda]]        |
+| =C-q i= | insert tempel template        | [[*Tempel templates][Tempel]]        |
+| =C-q o= | online: eww, elfeed, mastodon | [[*Reading, feeds and the web][Reading]]       |
+| =C-q q= | open a favourite file         | below         |
+| =C-q r= | recent file                   | [[*Moving around][Moving around]] |
+| =C-q s= | org styling                   | [[*Themes, fonts and org styles][Themes]]        |
+| =C-q t= | themes and fonts              | [[*Themes, fonts and org styles][Themes]]        |
+| =C-q u= | outline of this buffer        | [[*Moving around][Moving around]] |
+| =C-q w= | writing sub-map               | [[*The writing keys][Writing]]       |
+
+=C-q q= opens files directly [90-keymap]:
+| Key     | Opens                                  |
+|---------+----------------------------------------|
+| =C-q q c= | the =config/= directory of this repo     |
+| =C-q q k= | =~/Nextcloud/tech/org-keys.org=          |
+| =C-q q t= | =~/Nextcloud/agenda/tasks.org=           |
+| =C-q q e= | =~/Nextcloud/escritura/historias/novela= |
+
+* Everyday editing
+
+** Editing behaviour
+/[00-core]/
+- *Fill toggle*: =M-q= alternates between filling and unfilling the paragraph
+  (or the region). Press it again to undo what the last press did.
+- *Kill a word*: =C-w= with no active region kills the word at point.
+- *Typing replaces a selection* (=delete-selection-mode=).
+- *Paragraph movement*: =M-n= / =M-p= go forward and back by paragraph.
+- *Electric pairs*: =(=, ="= and friends close themselves, and so do =¡…!= and
+  =¿…?=. =<= is deliberately *not* paired, so tempel's =<= trigger works.
+- *Visual undo*: =C-z= opens =vundo=, an undo tree you can walk through.
+- *Smarter =C-g=*: it closes a minibuffer even when focus is elsewhere, and
+  closes the =*Completions*= window.
+- *Diff before saving*: when =C-x s= or =C-x C-c= asks about unsaved buffers,
+  answer =d= to see a diff of what would be saved.
+- *Abbrevs* are on in text and code buffers, and are saved silently to
+  =abbrev_defs= in the data directory.
+- Short answers (=y= / =n=) everywhere, and quitting Emacs asks first.
+- Files reload automatically when they change on disk. Your place in each file
+  is remembered.
+- =C-c r r= reloads the whole configuration.
+
+** Spelling and language
+/[00-core, 20-completion]/
+Spelling is *jinx*, which checks as you type.
+
+| Key   | Command                                |
+|-------+----------------------------------------|
+| =M-$=   | correct the misspelling at point       |
+| =C-M-$= | change this buffer's spelling language |
+
+The default language is *English only*. A Spanish file says so with
+=#+language: es= near the top (or a file-local =jinx-languages=). One language
+at a time is deliberate: loading both would silently accept every en/es false
+friend (/actual/, /once/, /sin/ ...).
+
+In-buffer completion follows the same language: the dictionary words offered
+in the completion popup come from that language's hunspell list. So =C-M-$=
+switches both the spellchecker and the completion words at once. Words from
+your open buffers are offered whatever their language.
+
+** Completion
+/[20-completion]/
+*Minibuffer*: vertico shows candidates vertically, sorted by prescient (it
+learns what you pick). orderless lets you type space-separated fragments in any
+order. marginalia adds annotations, with icons.
+
+*In the buffer*: corfu pops up after 3 characters (0.4 s). It offers words from
+open buffers plus dictionary words, and closes as soon as you type a space.
+=TAB= indents first and completes when there is nothing left to indent.
+
+*Embark*: =C-.= on anything (a candidate, a file name, a URL) opens a menu of
+actions for it. =C-h B= lists the current bindings through embark.
+
+*Consult commands*:
+| Key     | Command                           |
+|---------+-----------------------------------|
+| =C-s=     | search lines in this buffer       |
+| =M-y=     | pick from the kill ring           |
+| =M-g M-g= | go to line (with preview)         |
+| =M-i=     | imenu of this buffer              |
+| =M-g i=   | imenu across buffers              |
+| =M-g h=   | jump to an org heading            |
+| =M-g a=   | jump to an agenda heading         |
+| =M-g m=   | jump to a mark                    |
+| =M-s f=   | find file by name                 |
+| =M-s L=   | locate                            |
+| =M-s g=   | grep                              |
+| =M-s G=   | git grep                          |
+| =M-s r=   | ripgrep                           |
+| =C-x r b= | bookmarks                         |
+| =C-q u=   | outline (headings) of this buffer |
+| =C-q r=   | recent files                      |
+
+** Help
+/[00-core]/
+=helpful= replaces the standard help: =C-h f= (function), =C-h v= (variable),
+=C-h k= (key) and =C-h x= (command) show source, references and more.
+
+* Moving around
+
+** Jumping
+/[30-navigation]/
+| Key        | Does                                         |
+|------------+----------------------------------------------|
+| =jj= (chord) | avy: jump to a 2-character sequence          |
+| =jk= (chord) | avy: jump after a typing pause               |
+| =jl= (chord) | avy: jump to a line                          |
+| =hh= (chord) | ace-window: pick a window                    |
+| =M-o=        | ace-window                                   |
+| =M-g I=      | toggle the imenu-list outline sidebar (left) |
+| =C-x l=      | flash the current line                       |
+
+The current line also flashes after scrolling, recentering, switching window and
+consult jumps, so you can see where you landed.
+
+** Windows
+/[30-navigation, 10-ui]/
+=C-c k= opens a sticky resize menu: =f= / =b= shrink/enlarge horizontally,
+=p= / =n= vertically, =s= swap, =t= transpose, arrows rotate/flip, =q= quit.
+
+** Perspectives (workspaces)
+/[30-navigation]/
+perspective.el gives each workspace its own buffer list. The prefix is =C-c w=.
+
+| Key     | Does                                    |
+|---------+-----------------------------------------|
+| =C-c w w= | switch to (or create) a perspective     |
+| =C-c w b= | ibuffer for this perspective            |
+| =C-c w l= | load a saved perspective file           |
+| =C-x b=   | switch buffer, all perspectives         |
+| =C-x C-b= | switch buffer, current perspective only |
+
+The perspective state is saved automatically on exit and after 60 s idle, to
+=~/.emacs.d/autosaved-persp=. Saved perspective files live in
+=perspectives/= in the data directory.
+
+ibuffer groups buffers into /Emacs config/, /Agenda/, /Writing/, /Org-roam/,
+/Blog/ and /Special/.
+
+* Themes, fonts and org styles
+
+** Themes
+/[15-theme]/
+There are two rotations:
+- dark: =ef-deuteranopia-dark=, =modus-vivendi-tinted=
+- light: =leuven=, =ef-deuteranopia-light=, =modus-operandi=
+
+=C-c 0= flips between dark and light. Each flip takes the /next/ theme of that
+rotation, so pressing it repeatedly walks through all of them. =C-q t t= picks
+any theme by name.
+
+Every theme change also recomputes the current-line colour and the org faces
+(below), so the org look stays consistent across themes.
+
+** Font presets
+/[15-theme]/
+=C-q t f= switches fontaine preset:
+| Preset                | Use                                                  |
+|-----------------------+------------------------------------------------------|
+| =hack=                  | default at startup; Hack everywhere                  |
+| =regular=               | Aporetic Sans (prose) + Aporetic Sans Mono (code)    |
+| =regular-aporetic-mono= | Aporetic Sans Mono everywhere                        |
+| =writing=               | ETBembo 150, extra line spacing                      |
+| =writing-big=           | ETBembo 180 (org-scribe's distraction-free mode)     |
+| =editing=               | Gentium prose, mono code (org-scribe's editing mode) |
+
+Prose buffers (text and org) use the variable-pitch font. Code blocks, tables,
+tags, drawers and comments stay fixed-pitch. =M-+= / =M--= scale the text.
+
+** Org heading styles
+/[17-org-style]/
+Org headings are drawn from the active theme's own colours in one of three
+looks:
+| Style | Name              | Headings                                 | Rules                          |
+|-------+-------------------+------------------------------------------+--------------------------------|
+| =a=     | typographic       | one colour, size and weight only         | none                           |
+| =b=     | restrained accent | theme accent on H1/H2, body colour below | none                           |
+| =c=     | structured        | one colour                               | hairline over H1/H2 and blocks |
+
+Style =c= is the default.
+
+| Key     | Does                                |
+|---------+-------------------------------------|
+| =C-q s s= | choose a style                      |
+| =C-q s n= | next style (a → b → c)              |
+| =C-q s ?= | describe the active style and theme |
+
+Drawers, =#+keywords=, properties and tags are always smaller, fixed-pitch and
+dimmed: they are machinery, not content. Heading levels 5–8 fade toward the
+background instead of changing colour. The *poet* themes (org-scribe's
+writing theme) keep their own heading colour.
+
+** Other visual details
+/[10-ui, 17-org-style]/
+- Long lines wrap visually everywhere. =C-q t v= toggles visual-fill-column
+  (110 characters, centred).
+- Line numbers are on everywhere (except in writing focus mode).
+- The modeline is doom-modeline, with time and date (and battery on laptops).
+- org-modern draws keywords, tags, timestamps, tables and block names more
+  cleanly. =#+title= appears as =‣title=.
+- org-appear shows hidden emphasis markers, link targets and entities
+  (=*bold*=, =\alpha=) when the cursor reaches them, after 0.2 s, and hides them
+  again when you leave.
+
+* Org mode
+
+** Defaults worth knowing
+/[40-org]/
+- Every org buffer is indented (=org-indent-mode=): text sits under its heading
+  and only the last star of each heading shows.
+- New headings get a blank line before them and go /after/ the current subtree.
+- =C-a= / =C-e= on a heading skip the stars, keyword and tags.
+- Editing inside a folded region is refused only when it would be blind (=smart=).
+- Folded headings end in =…=.
+- State-change notes go into a =:LOGBOOK:= drawer. Rescheduling and changing a
+  deadline are *not* logged. Finishing a task records a =CLOSED:= timestamp,
+  which the weekly review needs.
+- Inline images show at startup, up to 800 px wide.
+- Babel blocks run without asking for confirmation.
+
+** Structure templates
+/[40-org]/
+=C-c C-,= then a letter inserts a block:
+| Key | Block           | Key | Block          |
+|-----+-----------------+-----+----------------|
+| =a=   | export ascii    | =h=   | export html    |
+| =c=   | comment         | =l=   | export latex   |
+| =C=   | center          | =n=   | comment note   |
+| =d=   | comment summary | =q=   | quote          |
+| =e=   | example         | =s=   | src            |
+| =E=   | export          | =S=   | src emacs-lisp |
+|     |                 | =v=   | verse          |
+
+For richer snippets, see [[*Tempel templates][Tempel templates]].
+
+** =TODO= keywords
+/[40-org]/
+Two sequences, each selected with =C-c C-t= and a letter:
+
+*Tasks*
+| Keyword  | Key | Logs                        |
+|----------+-----+-----------------------------|
+| TODO     | =t=   |                             |
+| ONGOING  | =o=   |                             |
+| WAITING  | =w=   | note on entry, time on exit |
+| DONE     | =d=   | time                        |
+| CANCELED | =c=   | note on entry, time on exit |
+
+*Writing* (the same set org-scribe and the =<escrit= template use)
+| Keyword     | Key | Logs        |
+|-------------+-----+-------------|
+| TOWRITE     | =h=   |             |
+| TOREVIEW    | =j=   | note / time |
+| REDO        | =k=   | note / time |
+| RESTRUCTURE | =n=   | note / time |
+| FINISHED    | =l=   | time        |
+| PURGE       | =ñ=   | note / time |
+
+=books.org= defines its own sequence in the file header:
+=TOREAD(r) READING(R) ONHOLD(H) | READ(D!) DROPPED(X@/!)=.
+
+Keywords are coloured by meaning (active red, waiting amber, done green,
+cancelled struck through). In the agenda, ONGOING and the writing keywords use
+the default keyword face; only org buffers colour them.
+
+** Tags
+/[40-org]/
+=C-c C-q= (or =C-c C-c= on a heading) sets tags. Each has a fast-selection key:
+| Group     | Tags (key)                                                          |
+|-----------+---------------------------------------------------------------------|
+| Areas     | personal (=p=), health (=H=), financial (=f=)                             |
+| Contexts  | @home (=h=), @errands (=E=), @computer (=c=), @online (=o=), @penpaper (=P=)  |
+| Interests | emacs (=e=), writing (=w=), reading (=r=), calls (=C=), blog (=b=), books (=B=) |
+| Energy    | low_energy (=l=), high_energy (=g=)                                       |
+
+The agenda views are built on these tags. An area tag puts a task in the
+/Areas of life/ view, and context plus energy tags drive the /Context and energy/
+view. Everything in =someday.org= carries =someday= through its =#+FILETAGS=,
+which is how the everyday views leave it out.
+
+** Capture
+/[40-org, 55-org-export, 80-apps]/
+=C-c c= opens the capture menu:
+| Key | Template     | Goes to                                                                      |
+|-----+--------------+------------------------------------------------------------------------------|
+| =t=   | Inbox task   | =agenda/tasks.org= → /Inbox/ (category =task=)                                     |
+| =p=   | New project  | =tasks.org= → /Tasks/, asks for tags, counts child TODOs recursively             |
+| =h=   | Compost heap | =escritura/retazos/compost_heap.org=, as a list item                           |
+| =w=   | Writing idea | =retazos/ideas.org= → /Ideas/, with Personajes / Ambientación / Eventos sections |
+| =P=   | Personaje    | =retazos/personajes.org=                                                       |
+| =b=   | Book to read | =agenda/books.org= → /Libros/, asks for title, author, genre, format, pages      |
+| =B=   | Blog draft   | the hugo blog's =all-posts.org= → /drafts/                                       |
+
+=C-c C= captures a =TODO= into the /current/ org file, under its top-level
+/Notes/ heading. This is useful for keeping notes and snippets per project. If
+the file has no /Notes/ heading, capture creates one at the end.
+
+** Refile
+/[45-agenda]/
+=C-c C-w= refiles the entry at point. You pick the target in one step from a
+list of full paths (=file/heading/subheading=), up to 9 levels deep. The
+targets are the agenda files (=tasks.org=, =someday.org=, =books.org=),
+=referencias.org= and =escritura/retazos/ideas.org=.
+
+** Clocking
+/[40-org]/
+| Key         | Does                                                                                           |
+|-------------+------------------------------------------------------------------------------------------------|
+| =C-c C-x i=   | toggle: clock in here, clock out if this is the running task, or switch the clock to this task |
+| =C-c C-x C-i= | clock in                                                                                       |
+| =C-c C-x C-o= | clock out                                                                                      |
+
+=tasks.org= and =someday.org= define =Effort_ALL= values, so =C-c C-x e= offers a
+fixed list of estimates.
+
+** Scratch buffers, indirect buffers and links
+/[40-org, 10-ui]/
+| Key     | Does                                                         |
+|---------+--------------------------------------------------------------|
+| =C-q b o= | new =*org-scratch*= buffer (numbered if one exists)            |
+| =C-c 8=   | open the subtree at point in an indirect buffer on the right |
+| =C-c 9=   | open the subtree at point in an indirect buffer, alone       |
+| =C-c l=   | store a link to here                                         |
+| =C-c b=   | switch between org buffers                                   |
+
+Links to org headings use =id:= links. Storing a link from a heading without a
+=CUSTOM_ID= creates a UUID =:ID:= for it. The ID cache is =org-id-locations= in the
+data directory.
+
+** org-ql
+/[40-org]/
+| Key     | Does                               |
+|---------+------------------------------------|
+| =C-c q f= | find a heading in the agenda files |
+| =C-c q s= | search with an org-ql query        |
+| =C-c q v= | open a saved org-ql view           |
+
+* Agenda and task management
+
+** The files
+/[45-agenda]/
+The agenda reads =~/Nextcloud/agenda/tasks.org=, =someday.org= and =books.org=.
+=tasks.org= is organized as /Inbox/, /Tasks/, /Writing/ and /Calendar/.
+
+The flow the configuration is built for:
+1. *Capture* anything into the /Inbox/ with =C-c c t=.
+2. *Refile* it (=C-c C-w=) into /Tasks/, /Writing/, a project, =someday.org= or
+   =referencias.org=.
+3. *Tag* it with an area and, where it helps, a context and an energy level.
+4. *Review* it through the views below.
+
+** Look
+/[45-agenda]/
+- The default span is 14 days starting on Monday.
+- A time grid runs from 8:00 to 20:00, with a =⭠ now= marker.
+- Categories get SVG icons from =~/Nextcloud/config/icons/= (calendar, tasks,
+  projects, financial, birthdays, revision, habits, care).
+- DONE items are hidden from scheduled, deadline and timestamp entries.
+- Habits (=org-habit=) are enabled: give a task a =STYLE: habit= property and a
+  repeater.
+
+** The agenda views
+/[46-agenda-personal]/
+=C-c a= opens the dispatcher. =C-q d= goes straight to /Daily/.
+
+Each view is designed to answer one question at a set time:
+| Key | View               | When                     | Question                                       |
+|-----+--------------------+--------------------------+------------------------------------------------|
+| =d=   | Daily              | every morning            | what needs my attention today?                 |
+| =w=   | Week horizon       | Sunday evening / Monday  | what is coming up this week?                   |
+| =R=   | Weekly review      | Friday / weekend         | how did my week go?                            |
+| =ca=  | Areas of life      | monthly                  | how are my life areas doing?                   |
+| =cw=  | Writing pipeline   | before a writing session | what writing needs attention?                  |
+| =cb=  | Books              | anytime                  | what am I reading, what is next?               |
+| =cs=  | Someday and goals  | weekly / monthly         | what is in my someday list?                    |
+| =ce=  | Context and energy | a free slot              | what can I do, given where I am and my energy? |
+
+What each view shows, block by block:
+- *Daily*: today's agenda (deadlines warn 3 days ahead) · ONGOING ·
+  priority-A TODOs · WAITING.
+- *Week horizon*: deadlines for the next 2 weeks · ONGOING carry-over ·
+  priority A · priority B · WAITING.
+- *Weekly review*: what was completed in the last 7 days (DONE and FINISHED) ·
+  unfinished health · unfinished financial · WAITING /chase or park?/ ·
+  unscheduled TODOs /needs a home/.
+- *Areas of life*: personal · health · financial · anything with /no/ area tag.
+- *Writing pipeline* (=writing= tag): TOWRITE · TOREVIEW · REDO ·
+  RESTRUCTURE · the blog queue · the last 10 FINISHED.
+- *Books* (=books= tag): READING · ONHOLD · TOREAD · the last 20 READ, newest
+  first by =DATE_FINISHED=.
+- *Someday and goals*: =objetivos= · someday by area · other someday.
+- *Context and energy*: high energy + @computer · @home · @penpaper ·
+  @errands · @online · calls · low energy /quick wins/.
+
+All views except /Someday/ exclude =someday= items. In the plain agenda
+(=C-c a a=), org-super-agenda groups entries into Overdue, Today, Deadline this
+week, In progress, Priority A, Waiting, Health, Financial, Personal, Writing,
+Reading and Someday. Entries that match none of these appear at the end under
+/Other items/, so nothing scheduled or due is hidden. The grouping applies to
+this view only; every other agenda view is plain org.
+
+** Restricted agendas
+/[46-agenda-personal, 50-org-roam]/
+| Key     | Does                                                              |
+|---------+-------------------------------------------------------------------|
+| =C-c A=   | agenda over every =.org= file in the current project (e.g. a novel) |
+| =C-c n a= | agenda over the org-roam directory only                           |
+
+=C-c A= is how you track a writing project's pending TODOs without adding it to
+the main agenda.
+
+** The reading list
+/[80-apps, 46-agenda-personal]/
+1. =C-c c b= captures a book into =books.org= as =TOREAD=, with =:AUTHOR:=,
+   =:GENRE:=, =:FORMAT:=, =:PAGES:= and =:DATE_ADDED:= filled in. =:DATE_STARTED:=,
+   =:DATE_FINISHED:=, =:RATING:= and =:ROAM_LINK:= are left for later.
+2. Move it through =READING= / =ONHOLD= to =READ= or =DROPPED=.
+3. Fill =:DATE_FINISHED:= when you finish. The /Books/ view sorts by it.
+4. For real notes, create a roam book note (=C-c n c b=) and put a link to it in
+   =:ROAM_LINK:=.
+
+=books.org= has a column view (=C-c C-x C-c=) showing title, author, genre,
+pages, dates and rating.
+
+* Org-roam — the knowledge base
+
+** Layout
+/[05-identity, 50-org-roam]/
+The personal store is =~/Nextcloud/org-roam/=:
+- =personal/= holds the notes, one file per note, named
+  =YYYYMMDDHHMMSS-slug.org=.
+- =personal/fleeting_notes.org= is the fleeting-notes inbox.
+- =daily/= holds the dailies, one =YYYY-MM-DD.org= per day, tagged =daily=.
+- =org-roam.db= is the database.
+
+The work store is a completely separate directory and database. No links cross
+between the two.
+
+** Keys
+/[50-org-roam]/
+| Key     | Does                                                           |
+|---------+----------------------------------------------------------------|
+| =C-c n f= | find (or create) a note                                        |
+| =C-c n i= | insert a link to a note (creating it if needed)                |
+| =C-c n c= | capture a new note with a template                             |
+| =C-c n l= | toggle the backlinks buffer (right side, a third of the width) |
+| =C-c n t= | add a roam tag                                                 |
+| =C-c n r= | add a ref (URL, citation) to the note                          |
+| =C-c n u= | open org-roam-ui (graph in the browser)                        |
+| =C-c n F= | open the fleeting-notes file                                   |
+| =C-c n R= | open a random note                                             |
+| =C-c n T= | open a random note that has a live TODO                        |
+| =C-c n a= | agenda restricted to the roam directory                        |
+| =C-c n d= | the dailies map (below)                                        |
+
+The node picker shows the title and, in the tag face, the note's tags, so you
+can match on either. Roam completion is on everywhere: typing inside a =[[…=
+link completes note titles.
+
+** Capture templates
+/[50-org-roam, roamtemplates/]/
+=C-c n c= (or creating a note from =C-c n f= / =C-c n i=) offers:
+| Key | Template          | File tags         | Body                                                                           |
+|-----+-------------------+-------------------+--------------------------------------------------------------------------------|
+| =p=   | personal note     |                   | a =TODO= heading with the title                                                  |
+| =b=   | book notes        | =book=              | Source (asks author, year) · Summary · Personajes · Temas · Conceptos · Frases |
+| =w=   | writing idea      | =writing=           | Idea · Concepto · Problema · Aspectos · Particularidades                       |
+| =c=   | writing character | =writing character= | Idea · Concepto · Personajes asociados                                         |
+
+The book, idea and character bodies come from =roamtemplates/*.org= in this
+repo. Edit those files to change the structure.
+
+** Dailies
+/[50-org-roam]/
+Under =C-c n d=:
+| Key   | Does                       | Key | Does                   |
+|-------+----------------------------+-----+------------------------|
+| =d=     | go to today                | =n=   | capture into today     |
+| =y=     | go to yesterday            | =U=   | capture into today     |
+| =t=     | go to tomorrow             | =Y=   | capture into yesterday |
+| =c=     | go to a date               | =I=   | capture into tomorrow  |
+| =f= / =b= | next / previous daily      | =v=   | capture into a date    |
+| =.=     | open the dailies directory |     |                        |
+
+** The =roamtag= tag
+Whenever a roam note is opened or saved, it is checked for live TODOs (not
+DONE). If it has one, =roamtag= is added to its =#+filetags=; if not, the tag is
+removed. You never set it by hand. It is what =C-c n T= picks from.
+
+At home, roam TODOs are deliberately *not* merged into the main agenda. Use
+=C-c n a= to see them.
+
+** Maintenance commands (=M-x=)
+- =my/org-roam-orphans= lists top-level notes with no links in or out and
+  opens the one you pick.
+- =my/org-roam-stale-notes= lists notes not modified in 90 days.
+- =my/org-roam-creative-prompt= picks two random notes and asks you to connect
+  them.
+
+* Writing
+
+** Where things live
+| Path under =~/Nextcloud/escritura/= | Holds                                             |
+|-----------------------------------+---------------------------------------------------|
+| =historias/novela/=                 | writing projects, one subdirectory each (=C-q q e=) |
+| =historias/ejercicios/=             | exercises created by =C-q w r= / =C-q w q=            |
+| =retazos/compost_heap.org=          | the compost heap (=C-c c h=)                        |
+| =retazos/ideas.org=                 | writing ideas (=C-c c w=), also a refile target     |
+| =retazos/personajes.org=            | characters (=C-c c P=)                              |
+| =software/org-scribe=               | org-scribe, loaded from here when present         |
+| =software/writing_companion=        | the prompt generator used by =C-q w r=              |
+
+** Starting a writing session
+/[60-writing]/
+Press =F7= (or =C-q w o=):
+1. Pick a project among the subdirectories of =historias/novela/=. The last
+   project you used is the default, so =RET= reopens it. This choice is
+   remembered across sessions.
+2. Pick a file in that project.
+3. org-scribe's distraction-free mode switches on.
+
+** The writing keys
+/[60-writing]/
+| Key     | Does                                                                   |
+|---------+------------------------------------------------------------------------|
+| =F7=      | start a writing session                                                |
+| =F8 F8=   | org-scribe's hydra menu                                                |
+| =C-q w o= | start a writing session                                                |
+| =C-q w a= | org-scribe distraction-free mode                                       |
+| =C-q w f= | org-scribe focus mode (distraction-free + narrowed to this section)    |
+| =C-q w e= | org-scribe editing mode (three panels)                                 |
+| =C-q w w= | count words and store =:WORDCOUNT:= on headings                          |
+| =C-q w c= | context-aware word count (org-context-extended)                        |
+| =C-q w r= | new exercise file, seeded with a generated prompt                      |
+| =C-q w q= | new empty exercise file                                                |
+| =C-q w s= | synonyms of the word at point (sidebar)                                |
+| =C-q w k= | org-scribe's hydra menu                                                |
+| =C-c W=   | capture a note to this project's notes file (org-scribe)               |
+| =C-c 5=   | simple focus toggle: centered text, more line spacing, no line numbers |
+
+** org-scribe in this configuration
+/[60-writing]/
+org-scribe is your writing toolkit. It is loaded from
+=~/Nextcloud/escritura/software/org-scribe= if that directory exists, otherwise
+from Codeberg (=development= branch). It is active in every org buffer.
+
+How this config sets it up:
+| Mode                     | Theme                | Font preset | Width |
+|--------------------------+----------------------+-------------+-------|
+| normal                   | =modus-vivendi-tinted= | =hack=        |    90 |
+| distraction-free / focus | =poet=                 | =writing-big= |    75 |
+| editing                  | =leuven=               | =editing=     |    90 |
+
+The editing mode gives the outline 25 % on the left, *notes* 25 % on the right
+and the manuscript 50 % in the centre. Automatic word counting on save is
+*off*, because it is too slow on big files, so run =C-q w w= (hydra =a=) at the
+end of a session.
+
+The hydra (=F8 F8=) groups everything into columns:
+- *Insert*: =s= scene, =c= chapter, =o= open project file.
+- *Workspace*: =m= write, =f= focus, =e= edit, =v= navigate (treemacs + outline),
+  =0= back to normal.
+- *Tag scene*: =p= PoV, =h= characters, =l= locations, =g= plot threads, =j= jump to
+  the PoV character.
+- *Tools*: =w= count, =a= update all counts, =d= dictionary (RAE), =y= synonyms,
+  =x= thesaurus.
+- *Search*: =1= by PoV, =2= character, =3= plot, =4= location, =5= TODOs, =6= edit
+  markers.
+
+For everything else (creating novel and short-story projects, entity capture,
+timelines, compilation, the planner) see org-scribe's own manual:
+- [[file:~/Nextcloud/escritura/software/org-scribe/manual/00-feature-index.org][Feature index]]
+- [[file:~/Nextcloud/escritura/software/org-scribe/manual/getting-started-00-index.org][Getting started (18 lessons)]]
+- [[file:~/Nextcloud/escritura/software/org-scribe/manual/getting-started-13-daily-workflow.org][Daily workflow]]
+  and [[file:~/Nextcloud/escritura/software/org-scribe/manual/getting-started-14-revision-workflow.org][revision workflow]]
+
+** Capturing ideas
+There are two kinds of places for ideas:
+- *Quick org captures* go into shared files under =retazos/=: =C-c c h= (compost
+  heap, anything interesting), =C-c c w= (writing idea, a TODO with characters,
+  setting and events sections) and =C-c c P= (a character).
+- *Roam notes* are standalone notes that can link to and from everything else:
+  =C-c n c w= (writing idea) and =C-c n c c= (character).
+
+Inside a project, org-scribe's =C-c W= and its entity captures (hydra /Manage/)
+file into the project itself.
+
+** Writing exercises
+/[60-writing]/
+=C-q w r= asks for a title and creates
+=historias/ejercicios/YYYYMMDD-title.org=. The file starts with front matter
+(title, author, email and the scene-break macro), followed by a prompt from
+=writing_companion.py -s all prompt=. =C-q w q= does the same without the
+prompt.
+
+** Scene breaks
+/[60-writing]/
+Declare the macro once at the top of the file. Exercise files already have it:
+: #+MACRO: scene-break SCENE-BREAK
+Then write ={{{scene-break}}}= (or expand the =<fin= template) wherever a scene
+changes. On export it becomes:
+| Backend         | Output                   |
+|-----------------+--------------------------|
+| markdown, ascii | =***=                      |
+| HTML            | three line breaks        |
+| LaTeX / PDF     | three blank lines' space |
+| anything else   | three blank lines        |
+
+** Tempel templates
+/[60-writing, templates]/
+Type =<= plus the template name and complete (=C-M-i= / =M-TAB=), or press =C-q i=
+to pick from a list. Inside an expanded template, =M-n= / =M-p= (or =M-}= / =M-{=)
+move between fields and =M-RET= finishes. The templates are in
+=templates= at the repo root.
+
+*In org files*:
+| Name      | Inserts                                                                                                                            |
+|-----------+------------------------------------------------------------------------------------------------------------------------------------|
+| =title=     | =#+title=, author, email, =#+language: es=                                                                                             |
+| =export=    | a full =:ignore:= export-settings heading (general, LaTeX =memoir_draft=, ODT, HTML, EPUB options)                                     |
+| =escrit=    | a story-file header: per-file TODO and tags, a word-count column, a /stats/ section with an org-ql TODO table and a word-count table |
+| =escena=    | scene properties drawer in Spanish (PoV, Personajes, Trama, …, WORDCOUNT)                                                          |
+| =scene=     | the same drawer in English                                                                                                         |
+| =pers=      | a full character sheet in Spanish (appearance, goals, paradoxes, Big Five …)                                                       |
+| =fin=       | ={{{scene-break}}}=                                                                                                                  |
+| =fin2=      | the old LaTeX/HTML scene break                                                                                                     |
+| =edit=      | a comment block =*EDIT*: <plot/scene/character/prose> -=                                                                             |
+| =note=      | a comment block =*NOTE*:=                                                                                                            |
+| =summary=   | a comment block =*SUMMARY*:=                                                                                                         |
+| =5how=      | the five Ws (quién, qué, cuándo, dónde, por qué, cómo) in a comment                                                                |
+| =lisp=, =kql= | an emacs-lisp / sql source block                                                                                                   |
+| =begin=     | any =#+begin_…= / =#+end_…= block                                                                                                      |
+
+*Anywhere*: =today= (today's date). *In text*: =box= / =abox= (unicode / ascii box
+around a word) and =cut= (a "cut here" section).
+
+** Focus and layout
+/[10-ui, 60-writing]/
+- =C-q c= centres the text of the current buffer with margins (100 columns;
+  change it with =M-x my/centered-content-width-value=).
+- =C-c 5= is a lightweight focus mode built on that: centred text, 4 px line
+  spacing and no line numbers.
+- org-scribe's modes (=C-q w a=, =f=, =e=) are the full version, with theme, font
+  and writeroom.
+- treemacs: =C-x t t= toggles the tree, =M-0= selects its window,
+  =C-x t C-t= finds the current file in it.
+
+** Language help
+/[60-writing]/
+- Synonyms: =C-q w s= (org-scribe; Spanish and English).
+- Dictionary: hydra =d= (RAE).
+- Translation: =M-x gt-translate= translates the word at point or the region
+  between English and Spanish (Bing).
+
+** The journal
+/[60-writing]/
+Available only when the encrypted directory is mounted. =C-c r ñ= starts a new
+entry in =personal/diario/= inside the encrypted directory. There is one file per
+day (=YYYY-MM-DD.org=), headed with the date in full, and the file is marked
+=#+language: es= so jinx checks it in Spanish.
+
+* Export and publishing
+
+** Exporting
+/[55-org-export]/
+=C-c C-e= opens the export dispatcher. Available backends: HTML, Markdown,
+Org, LaTeX/PDF, Beamer, EPUB, Pandoc (every format pandoc supports) and Hugo.
+
+- A heading tagged =:ignore:= is dropped from the export but *its content is
+  kept*. This is how chapter and scene headings disappear from a manuscript.
+- A heading tagged =:noexport:= is dropped with its content.
+- Smart quotes are on, HTML exports have no "validate" link, and code in LaTeX
+  uses =minted=.
+- The =<export= tempel template inserts a complete settings heading.
+
+** LaTeX classes
+/[55-org-export]/
+Set with =#+LATEX_CLASS:=:
+| Class                | What                                                            |
+|----------------------+-----------------------------------------------------------------|
+| =memoir=               | A4 book, parts and chapters, Spanish, final                     |
+| =memoir_draft=         | the same, draft mode                                            |
+| =memoir_chapter=       | chapters as the top level (no parts), final                     |
+| =memoir_chapter_draft= | chapters as the top level, draft                                |
+| =reporting=            | memoir with plain page style, Spanish                           |
+| =ews=                  | the Emacs Writing Studio book layout (EB Garamond, 9.25×7.5 in) |
+
+The Spanish classes define three commands you can use in =#+LATEX:= lines or
+export snippets: =\fin= (a scene break), =\edit{…}= (an inline todo note) and
+=\adendo{…}= (a small margin note). PDFs are built with pdflatex + bibtex, and
+the temporary files are cleaned afterwards.
+
+** The blog
+/[55-org-export]/
+The blog is ox-hugo, rooted at =~/Nextcloud/personal/hugo_blog/=.
+1. =C-c c B= asks for a post title and adds a =TODO= under /drafts/ in
+   =content-org/all-posts.org=, with =EXPORT_FILE_NAME= (the slug) and
+   =EXPORT_DATE= filled in.
+2. Write it. Blog tasks tagged =blog= show up in the /Writing pipeline/ view.
+3. Export with =C-c C-e H= (ox-hugo).
+
+** Babel languages
+Once export has loaded, these run in source blocks: shell, python, C, ruby,
+js, ditaa, gnuplot, plantuml and dot.
+
+* Other tools
+
+** AI assistant (gptel)
+/[85-ai]/
+gptel talks to a *local* llama-swap server at =localhost:8080=. It is not on the
+writing laptops. Chats open in org-mode, and the default model is =llama3.2=.
+
+| Key     | Does                                    |
+|---------+-----------------------------------------|
+| =C-q a a= | open a chat buffer                      |
+| =C-q a s= | send the region (or buffer up to point) |
+| =C-q a m= | menu: model, directive, options         |
+| =C-q a r= | rewrite the region in place             |
+| =C-q a x= | abort the request                       |
+
+The directives (pick them in =C-q a m=) are /default/, /writing/ (honest prose
+advice that keeps your voice), /coding/, /spanish/ (answers in Spanish) and
+/proofreading/ (real errors only, no style changes).
+
+** Reading, feeds and the web
+/[80-apps]/
+| Key / command | Does                                                     |
+|---------------+----------------------------------------------------------|
+| =C-q o e=       | eww                                                      |
+| =C-q o f=       | elfeed, updating the feeds straight away                 |
+| =C-q o m=       | Mastodon (only with the encrypted directory mounted)     |
+| open an =.epub= | nov.el, 100 columns, remembers your place                |
+| open a =.pdf=   | pdf-tools, remembers your place (not on writing laptops) |
+| =M-x calibredb= | the Calibre library in =/home/calibre_libros/=             |
+
+elfeed shows the last month by default. Feeds are defined in
+=elfeed/elfeed.org= in the data directory. External links open in LibreWolf if
+it is installed, otherwise Firefox.
+
+** Files and shells
+/[80-apps, 30-navigation]/
+- *dired*: directories are listed first, deletions go to the trash, copying
+  and deleting are recursive, and with two dired windows the other one is the
+  default target. A preview of the file at point appears after 0.3 s
+  (archives and epubs excepted).
+- *eshell*: =ññ= (chord) opens eshell and =ñl= opens a new one. Inside, =z= jumps
+  to frequent directories and mistyped commands get suggestions.
+
+** Programming
+/[70-prog]/
+| Key               | Does                           |
+|-------------------+--------------------------------|
+| =C-x g=             | magit status                   |
+| =C-c g n= / =C-c g p= | next / previous flymake error  |
+| =C-c g l=           | list this buffer's diagnostics |
+| =C-c f=             | format the buffer (eglot)      |
+
+Changed lines are marked in the fringe (diff-hl). Eglot starts automatically for
+Python (=pylsp= with flake8) and C/C++. Tree-sitter grammars install themselves.
+
+* Where state lives
+Nothing personal is committed to this repo. State lives in the *data
+directory*, =~/Nextcloud/config/.emacs.d/=, and syncs between machines:
+- =backups/=: numbered backups of every file you save (6 new, 2 old kept)
+- =recentf=, =savehist= (including the kill ring, searches and the last writing
+  project), =bookmarks=, =org-id-locations=
+- =abbrev_defs=, =prescient-save=, =projects=, =nov-places=
+- =elfeed/= (database and =elfeed.org=), =perspectives/=
+- =cape-dict-*= (plain word lists, generated once from hunspell)
+- =personal_info.el= (your name and email; loaded at startup)
+
+The encrypted directory holds the journal and the Mastodon token.
+
+* Appendix A — Key reference
+
+** Global
+| Key       | Command                          |
+|-----------+----------------------------------|
+| =C-c r r=   | reload the configuration         |
+| =C-c 0=     | toggle dark/light theme          |
+| =C-c 5=     | simple writing focus             |
+| =C-c 8=     | subtree → indirect buffer, right |
+| =C-c 9=     | subtree → indirect buffer, alone |
+| =C-c k=     | window resize menu               |
+| =C-z=       | vundo                            |
+| =M-q=       | fill / unfill                    |
+| =M-n= / =M-p= | next / previous paragraph        |
+| =M-+= / =M--= | text bigger / smaller            |
+| =M-$=       | correct word                     |
+| =C-M-$=     | spelling language                |
+| =C-.=       | embark act                       |
+| =C-h B=     | embark bindings                  |
+| =M-o=       | ace-window                       |
+| =C-x l=     | pulse line                       |
+| =C-x g=     | magit                            |
+| =F7=        | start writing session            |
+| =F8 F8=     | org-scribe hydra                 |
+
+** Chords
+| Chord | Command         |
+|-------+-----------------|
+| =jj=    | avy 2-char jump |
+| =jk=    | avy timer jump  |
+| =jl=    | avy line jump   |
+| =hh=    | ace-window      |
+| =ññ=    | eshell          |
+| =ñl=    | new eshell      |
+
+** Org and agenda
+| Key         | Command                             |
+|-------------+-------------------------------------|
+| =C-c a=       | agenda dispatcher                   |
+| =C-c A=       | agenda for current project          |
+| =C-c c=       | capture                             |
+| =C-c C=       | capture TODO into this file's /Notes/ |
+| =C-c l=       | store link                          |
+| =C-c b=       | switch org buffer                   |
+| =C-c C-x i=   | clock toggle                        |
+| =C-c C-x C-i= | clock in                            |
+| =C-c C-x C-o= | clock out                           |
+| =C-c q f=     | org-ql find                         |
+| =C-c q s=     | org-ql search                       |
+| =C-c q v=     | org-ql view                         |
+| =C-c r ñ=     | new journal entry                   |
+
+** Org-roam (=C-c n=)
+| Key | Command          |
+|-----+------------------|
+| =f=   | find note        |
+| =i=   | insert link      |
+| =c=   | capture          |
+| =l=   | backlinks buffer |
+| =t=   | add tag          |
+| =r=   | add ref          |
+| =u=   | roam UI          |
+| =F=   | fleeting notes   |
+| =R=   | random note      |
+| =T=   | random TODO note |
+| =a=   | roam agenda      |
+| =d= … | dailies map      |
+
+** Personal prefix (=C-q=)
+| Key | Command            | Key | Command                 |
+|-----+--------------------+-----+-------------------------|
+| =a a= | gptel chat         | =s s= | set org style           |
+| =a s= | gptel send         | =s n= | next org style          |
+| =a m= | gptel menu         | =s ?= | describe org style      |
+| =a r= | gptel rewrite      | =t f= | font preset             |
+| =a x= | gptel abort        | =t t= | theme                   |
+| =b o= | org scratch        | =t v= | visual fill column      |
+| =c=   | centred mode       | =u=   | outline                 |
+| =d=   | daily agenda       | =w o= | writing session         |
+| =i=   | tempel insert      | =w a= | distraction-free        |
+| =o e= | eww                | =w f= | focus                   |
+| =o f= | elfeed             | =w e= | editing mode            |
+| =o m= | mastodon           | =w w= | word count → properties |
+| =q c= | config dir         | =w c= | context word count      |
+| =q k= | org-keys.org       | =w r= | exercise with prompt    |
+| =q t= | tasks.org          | =w q= | empty exercise          |
+| =q e= | novel projects dir | =w s= | synonyms                |
+| =r=   | recent file        | =w k= | org-scribe hydra        |
+
+** Navigation and search
+| Key     | Command                   |
+|---------+---------------------------|
+| =C-s=     | consult-line              |
+| =M-y=     | kill ring                 |
+| =M-i=     | imenu                     |
+| =M-g i=   | imenu, all buffers        |
+| =M-g I=   | imenu-list sidebar        |
+| =M-g h=   | org heading               |
+| =M-g a=   | agenda heading            |
+| =M-g m=   | mark                      |
+| =M-g M-g= | goto line                 |
+| =M-s f=   | find file                 |
+| =M-s g=   | grep                      |
+| =M-s G=   | git grep                  |
+| =M-s r=   | ripgrep                   |
+| =M-s L=   | locate                    |
+| =C-x b=   | buffer (all perspectives) |
+| =C-x C-b= | buffer (this perspective) |
+| =C-x r b= | bookmark                  |
+| =C-c w w= | switch perspective        |
+| =C-c w b= | perspective ibuffer       |
+| =C-c w l= | load perspective          |
+| =C-x t t= | treemacs                  |
+| =M-0=     | treemacs window           |
