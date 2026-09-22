@@ -103,7 +103,7 @@ https://github.com/minad/tempel
     :bind
     ;;("C-c d i" . tempel-insert)
     :config
-    (setq tempel-path "~/.emacs.d/templates"))
+    (setq tempel-path (expand-file-name "templates" my-config-dir)))
 #+end_src
 
 ** TODO treemacs
@@ -179,8 +179,14 @@ Sometimes I want to create a story prompt on the fly. These functions allow for 
 This code depends on a custom script that generates writing prompts based on a list of keywords and some templates.
 
 #+begin_src emacs-lisp
-  (defvar my-writing-stories-directory "~/Nextcloud/escritura/historias/ejercicios"
+  (defvar my-writing-stories-directory
+    (expand-file-name "historias/ejercicios" my-escritura-dir)
     "Directory where org files created by `my-writing--new-file' will be stored.")
+
+  (defvar my-writing-companion-script
+    (expand-file-name "software/writing_companion/writing_companion.py"
+                      my-escritura-dir)
+    "The script that generates writing prompts.")
 
   (defun my-writing--new-file (title &optional with-prompt)
     "Create and open a new writing file named after TITLE.
@@ -195,7 +201,8 @@ This code depends on a custom script that generates writing prompts based on a l
                                  title user-full-name user-mail-address))
            (prompt (when with-prompt
                      (shell-command-to-string
-                      "python  ~/Nextcloud/escritura/software/writing_companion/writing_companion.py -s all prompt"))))
+                      (format "python %s -s all prompt"
+                              (shell-quote-argument my-writing-companion-script))))))
       (with-temp-file file-path
         (insert front-matter)
         (when prompt (insert "\n\n" prompt)))
@@ -221,7 +228,7 @@ sessions through savehist (see =my/last-writing-project= in the savehist config)
 
 #+begin_src emacs-lisp
   (defvar my-writing-root
-    (expand-file-name "~/Nextcloud/escritura/historias/novela")
+    (expand-file-name "historias/novela" my-escritura-dir)
     "Root directory holding my writing projects, one subdirectory per project.")
 
   (defvar my/last-writing-project nil
@@ -313,10 +320,14 @@ Prerrequisites:
 
 *This code is test for conditional load, depending on the availability of the local directory or the git repo*:
 #+begin_src emacs-lisp :tangle yes
-  (if (f-directory-p "~/Nextcloud/escritura/software/org-scribe")
+  (defvar my-org-scribe-local-dir
+    (expand-file-name "software/org-scribe" my-escritura-dir)
+    "My working copy of org-scribe, used instead of the Codeberg one when present.")
+
+  (if (file-directory-p my-org-scribe-local-dir)
       ;; the condition is true
       (progn
-        (add-to-list 'load-path "~/Nextcloud/escritura/software/org-scribe")
+        (add-to-list 'load-path my-org-scribe-local-dir)
         (require 'org-scribe)
         (message "org-scribe: local dir loaded"))
     ;; the condition is false

@@ -49,23 +49,28 @@ see =46-agenda-personal.org= and =47-agenda-work.org=.
     )
 #+end_src
 
-Have some fancy icons for the categories.
+Have some fancy icons for the categories.  =my/agenda-icon= builds one entry
+from a category and an SVG in =my-agenda-icons-dir=; the work frame below uses
+it too.
 #+begin_src emacs-lisp
+  (defun my/agenda-icon (category file)
+    "An `org-agenda-category-icon-alist' entry showing FILE for CATEGORY.
+FILE is relative to `my-agenda-icons-dir'."
+    (list category (expand-file-name file my-agenda-icons-dir)
+          nil nil :ascent 'center :mask 'heuristic))
+
   (when my-homeenvironment-p
-    (customize-set-value
-     'org-agenda-category-icon-alist
-     `(
-       ("calendar" "~/Nextcloud/config/icons/calendar.svg" nil nil :ascent center :mask heuristic)
-       ("tasks" "~/Nextcloud/config/icons/check-square.svg" nil nil :ascent center :mask heuristic)
-       ;; the Inbox capture template sets CATEGORY: task (singular)
-       ("task" "~/Nextcloud/config/icons/check-square.svg" nil nil :ascent center :mask heuristic)
-       ("projects" "~/Nextcloud/config/icons/list.svg" nil nil :ascent center :mask heuristic)
-       ("financial" "~/Nextcloud/config/icons/dollar-sign.svg" nil nil :ascent center :mask heuristic)
-       ("birthdays" "~/Nextcloud/config/icons/heart.svg" nil nil :ascent center :mask heuristic)
-       ("revision" "~/Nextcloud/config/icons/shuffle.svg" nil nil :ascent center :mask heuristic)
-       ("habits" "~/Nextcloud/config/icons/refresh-ccw.svg" nil nil :ascent center :mask heuristic)
-       ("care" "~/Nextcloud/config/icons/heart.svg" nil nil :ascent center :mask heuristic)))
-    )
+    (setq org-agenda-category-icon-alist
+          (list (my/agenda-icon "calendar"  "calendar.svg")
+                (my/agenda-icon "tasks"     "check-square.svg")
+                ;; the Inbox capture template sets CATEGORY: task (singular)
+                (my/agenda-icon "task"      "check-square.svg")
+                (my/agenda-icon "projects"  "list.svg")
+                (my/agenda-icon "financial" "dollar-sign.svg")
+                (my/agenda-icon "birthdays" "heart.svg")
+                (my/agenda-icon "revision"  "shuffle.svg")
+                (my/agenda-icon "habits"    "refresh-ccw.svg")
+                (my/agenda-icon "care"      "heart.svg"))))
 #+end_src
 
 ** Agenda files
@@ -73,9 +78,9 @@ We define the agenda files in this variable. This comes from my gtd workflow, ex
 #+begin_src emacs-lisp
   (when my-homeenvironment-p
     (setq org-agenda-files (list
-                             "~/Nextcloud/agenda/tasks.org"
-    			 "~/Nextcloud/agenda/someday.org"
-    			 my-booklist-file))
+                            (expand-file-name "tasks.org" my-agenda-dir)
+                            (expand-file-name "someday.org" my-agenda-dir)
+                            my-booklist-file))
     )
 #+end_src
 
@@ -95,11 +100,11 @@ This lets you choose refiling targets in heading depth of 9, and lets you get al
 #+begin_src emacs-lisp
   (when my-homeenvironment-p
     ;; all the targets
-    (setq org-refile-targets '(
+    (setq org-refile-targets `(
                                (org-agenda-files :maxlevel . 9)
                                ("referencias.org" :maxlevel . 9)
                                ("someday.org" :maxlevel . 9) ;; this is called someday.org now
-                               ("~/Nextcloud/escritura/retazos/ideas.org" :maxlevel . 9)))
+                               (,(expand-file-name "retazos/ideas.org" my-escritura-dir) :maxlevel . 9)))
 
     (setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
     ;;(setq org-refile-use-outline-path t)                  ; Show full paths for refiling
@@ -122,16 +127,13 @@ Enable org-habits.
 Have some fancy icons for the categories.
 #+begin_src emacs-lisp
   (when my-workenvironment-p
-    (customize-set-value
-     'org-agenda-category-icon-alist
-     `(
-       ("calendar" "~/Nextcloud/config/icons/calendar.svg" nil nil :ascent center :mask heuristic)
-       ("tasks" "~/Nextcloud/config/icons/check-square.svg" nil nil :ascent center :mask heuristic)
-       ("projects" "~/Nextcloud/config/icons/list.svg" nil nil :ascent center :mask heuristic)
-       ("okr" "~/Nextcloud/config/icons/target.svg" nil nil :ascent center :mask heuristic)
-       ("management" "~/Nextcloud/config/icons/users.svg" nil nil :ascent center :mask heuristic)
-       ("inbox" "~/Nextcloud/config/icons/inbox.svg" nil nil :ascent center :mask heuristic)))
-    )
+    (setq org-agenda-category-icon-alist
+          (list (my/agenda-icon "calendar"   "calendar.svg")
+                (my/agenda-icon "tasks"      "check-square.svg")
+                (my/agenda-icon "projects"   "list.svg")
+                (my/agenda-icon "okr"        "target.svg")
+                (my/agenda-icon "management" "users.svg")
+                (my/agenda-icon "inbox"      "inbox.svg"))))
 #+end_src
 ** Adjust the window width for work
 Since at work I don't open so many windows, we can use this width to better use what I get.

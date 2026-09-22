@@ -41,8 +41,8 @@ spelled out again here.
                     (expand-file-name "tasks.org" my-agenda-dir))
                    files)
     (when my-homeenvironment-p
+      ;; the writing projects root, from 60-writing (home only, like this entry)
       (my/key-define "e" "escritura"
-                     (my/find-file-command
-                      (expand-file-name "historias/novela" my-escritura-dir))
+                     (my/find-file-command my-writing-root)
                      files)))
 #+end_src

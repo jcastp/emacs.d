@@ -320,8 +320,8 @@ https://ox-hugo.scripter.co/
                  "\n")))
 
   (add-to-list 'org-capture-templates
-               '("B" "Blog draft" entry
-                 (file+olp "~/Nextcloud/personal/hugo_blog/content-org/all-posts.org"
+               `("B" "Blog draft" entry
+                 (file+olp ,(expand-file-name "content-org/all-posts.org" my-blog-dir)
                            "drafts")
                  (function my/blog-capture-template)
                  :jump-to-captured t

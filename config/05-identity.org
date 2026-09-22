@@ -49,6 +49,9 @@ strings at every use site.  Consumers are rewired to these as each module moves.
 
   (defvar my-blog-dir (expand-file-name "personal/hugo_blog/" my-nextcloud-dir)
     "Root of my ox-hugo blog.")
+
+  (defvar my-agenda-icons-dir (expand-file-name "config/icons/" my-nextcloud-dir)
+    "SVG icons shown next to agenda categories.")
 #+end_src
 
 * Personal identity
@@ -58,8 +61,7 @@ It contains the variables =user-full-name= and =user-mail-address=.
 #+begin_src emacs-lisp
   (when my-homeenvironment-p
     ;; to protect my personal information, this file is not commited
-    (load (expand-file-name "Nextcloud/config/.emacs.d/personal_info.el"
-                            (getenv "HOME")))
+    (load (expand-file-name "personal_info.el" my-data-dir))
 
     ;; where my book list will be stored
     (defvar my-booklist-file (expand-file-name "books.org" my-agenda-dir)

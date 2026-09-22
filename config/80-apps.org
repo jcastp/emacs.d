@@ -151,12 +151,14 @@ Group buffers by project area. The catch-all "Other" group at the end catches an
 #+begin_src emacs-lisp
   (when my-homeenvironment-p
     (setq ibuffer-saved-filter-groups
-          '(("personal"
+          `(("personal"
+             ;; both ~/.emacs.d and the data dir under Nextcloud/config
              ("Emacs config" (filename . "/.emacs.d/"))
-             ("Agenda"       (filename . "/Nextcloud/agenda/"))
-             ("Writing"      (filename . "/Nextcloud/escritura/"))
-             ("Org-roam"     (filename . "/Nextcloud/org-roam/"))
-             ("Blog"         (filename . "/Nextcloud/personal/"))
+             ("Agenda"       (filename . ,(regexp-quote my-agenda-dir)))
+             ("Writing"      (filename . ,(regexp-quote my-escritura-dir)))
+             ("Org-roam"     (filename . ,(regexp-quote my-personal-roam-dir)))
+             ("Blog"         (filename . ,(regexp-quote
+                                           (expand-file-name "personal/" my-nextcloud-dir))))
              ("Special"      (or (name . "^\\*")
                                  (mode  . special-mode))))))
 
@@ -168,12 +170,12 @@ Group buffers by project area. The catch-all "Other" group at the end catches an
 
   (when my-workenvironment-p
     (setq ibuffer-saved-filter-groups
-          '(("work"
+          `(("work"
              ("Emacs config" (filename . "/.emacs.d/"))
              ;; Must precede "Work agenda": the roam store is a subdirectory of
              ;; it, and ibuffer takes the first matching group.
-             ("Org-roam"     (filename . "/Nextcloud/trabajo/agenda/roam/"))
-             ("Work agenda"  (filename . "/Nextcloud/trabajo/agenda/"))
+             ("Org-roam"     (filename . ,(regexp-quote my-work-roam-dir)))
+             ("Work agenda"  (filename . ,(regexp-quote my-work-dir)))
              ("Special"      (or (name . "^\\*")
                                  (mode  . special-mode))))))
 
@@ -354,7 +356,8 @@ https://github.com/emacs-dashboard/emacs-dashboard
           ;; - "path/to/your/image.gif", "path/to/your/image.png" or "path/to/your/text.txt" which displays whatever gif/image/text you would prefer
           ;; - a cons of '("path/to/your/image.png" . "path/to/your/text.txt")
           ;;(setq dashboard-startup-banner 'logo)
-          (setq dashboard-startup-banner "~/Nextcloud/personal/steamboat_bender.png")
+          (setq dashboard-startup-banner
+                (expand-file-name "personal/steamboat_bender.png" my-nextcloud-dir))
 
   	;; set the projects backend to projects.el
   	(setq dashboard-projects-backend 'project-el)
