@@ -31,7 +31,7 @@ The config is split by **domain** (one module per subject), not by environment. 
 |`17-org-style`      |always              |org's appearance: heading ramp, drawers, metadata, org-modern, org-appear            |
 |`20-completion`     |always              |vertico, consult, corfu, cape, orderless, embark                                     |
 |`30-navigation`     |always              |windows, perspectives, avy, imenu-list, speedbar                                     |
-|`40-org`            |always              |org core + each environment's todo keywords, tags, captures (`55`/`80` add two more) |
+|`40-org`            |always              |org core + each environment's todo keywords, tags, all capture templates             |
 |`45-agenda`         |always              |both environments' agenda frames                                                     |
 |`46-agenda-personal`|home                |personal agenda commands                                                             |
 |`47-agenda-work`    |work                |work agenda commands, org-ql views, 1:1 tooling                                      |

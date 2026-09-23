@@ -348,8 +348,59 @@ Here I will add template captures for doing several things:
                                  ("P" "Personaje" entry
                                   (file ,(expand-file-name "retazos/personajes.org" my-escritura-dir))
                                   "* %i%?"
-                                  :empty-lines-after 1)))
+                                  :empty-lines-after 1)
+
+    			     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                                 ;; Blog and reading
+
+                                 ;; A new ox-hugo blog post, as a subtree under "drafts"
+                                 ("B" "Blog draft" entry
+                                  (file+olp ,(expand-file-name "content-org/all-posts.org" my-blog-dir)
+                                            "drafts")
+                                  (function my/blog-capture-template)
+                                  :jump-to-captured t
+                                  :empty-lines-before 1)
+
+                                 ;; A book for the reading list.  A plain org file rather than
+                                 ;; org-books, which is unmaintained and whose URL fetching broke.
+                                 ("b" "Book to read" entry
+                                  (file+headline my-booklist-file "Libros")
+                                  "* TOREAD %^{TITLE} :books:
+  :PROPERTIES:
+  :AUTHOR: %^{Author}
+  :GENRE: %^{Genre|ficción|no-ficción|técnico|ensayo|poesia}
+  :FORMAT: %^{Format|fisico|ebook|audiolibro}
+  :PAGES: %^{Pages}
+  :DATE_ADDED: %<%Y-%m-%d>
+  :DATE_STARTED:
+  :DATE_FINISHED:
+  :RATING:
+  :ROAM_LINK:
+  :END:
+  %?"
+                                  :empty-lines 1)))
     )
+#+end_src
+
+** Blog draft template
+The body of the "B" capture: asks for the post title and derives the ox-hugo
+export file name from it.
+#+begin_src emacs-lisp
+  (when my-homeenvironment-p
+    (defun my/blog-capture-template ()
+      "Return an ox-hugo subtree capture template for a new blog draft."
+      (let* ((title (read-from-minibuffer "Post title: "))
+             (slug  (replace-regexp-in-string
+                     "[^a-z0-9]+" "-"
+                     (downcase (string-trim title)))))
+        (mapconcat #'identity
+                   `(,(concat "** TODO " title)
+                     ":PROPERTIES:"
+                     ,(concat ":EXPORT_FILE_NAME: " slug)
+                     ,(concat ":EXPORT_DATE: " (format-time-string "%Y-%m-%d"))
+                     ":END:"
+                     "%?\n")
+                   "\n"))))
 #+end_src
 
 * Work todo keywords, tags and captures
@@ -391,6 +442,13 @@ As work is different from home, I need specific templates.
     (defvar my/capture-person nil
       "Employee name selected during org-capture, shared between target and template body.")
 
+    (defun my/capture-goto-person ()
+      "Capture target: ask for a direct report and go to their heading in `my-people-file'."
+      (let ((person (completing-read "Employee: " my/direct-reports)))
+        (setq my/capture-person person)
+        (find-file my-people-file)
+        (goto-char (org-find-olp (list my-people-file person)))))
+
     ;; Work owns the full template list — reset it, then add each entry.
     (setq org-capture-templates '())
 
@@ -413,24 +471,14 @@ As work is different from home, I need specific templates.
     ;; people meetings
     (add-to-list 'org-capture-templates
     	     '("p" "1:1 meeting" entry
-    	       (function (lambda ()
-    			   (let ((person (completing-read "Employee: "
-    							  my/direct-reports)))
-    			     (setq my/capture-person person)
-    			     (find-file my-people-file)
-    			     (goto-char (org-find-olp (list my-people-file person))))))
+    	       (function my/capture-goto-person)
     	       "** %<%Y-%m-%d %a %H:%M> - follow-up\n*** Notes\n%?\n*** Actions\n*** Questions\n"
     	       :jump-to-captured t))
 
     ;; And a quick action capture from within a 1:1 note:
     (add-to-list 'org-capture-templates
     	     '("P" "People action item" entry
-    	       (function (lambda ()
-    			   (let ((person (completing-read "Employee: "
-    							  my/direct-reports)))
-    			     (setq my/capture-person person)
-    			     (find-file my-people-file)
-    			     (goto-char (org-find-olp (list my-people-file person))))))
+    	       (function my/capture-goto-person)
     	       "*** TODO [%(identity my/capture-person)] %<%Y-%m-%d %a %H:%M> %? :people:%(downcase my/capture-person):\n    DEADLINE: %^t"
     	       :jump-to-captured t))
 

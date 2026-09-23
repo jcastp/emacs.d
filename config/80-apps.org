@@ -255,35 +255,6 @@ https://github.com/chenyanming/calibredb.el
     )
 #+end_src
 
-** reading list
-Here I will configure my personal method for a reading list.
-I used org-books, but the package seems to not be maintained, and the URL fetching seems to be broken, so I will rely on my own personal list.
-
-#+begin_src emacs-lisp
-  (when my-homeenvironment-p
-        (add-to-list 'org-capture-templates
-                     '("b"
-        		 "Book to read"
-        		 entry
-        		 (file+headline my-booklist-file "Libros")
-        		 "* TOREAD %^{TITLE} :books:
-  :PROPERTIES:
-  :AUTHOR: %^{Author}
-  :GENRE: %^{Genre|ficción|no-ficción|técnico|ensayo|poesia}
-  :FORMAT: %^{Format|fisico|ebook|audiolibro}
-  :PAGES: %^{Pages}
-  :DATE_ADDED: %<%Y-%m-%d>
-  :DATE_STARTED:
-  :DATE_FINISHED:
-  :RATING:
-  :ROAM_LINK:
-  :END:
-  %?"
-        		 :empty-lines 1)
-                     t)
-    )
-#+end_src
-
 ** elfeed suite
 
 RSS read in emacs.

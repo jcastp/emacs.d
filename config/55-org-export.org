@@ -3,8 +3,9 @@
 #+startup: overview
 
 Every org exporter in one place: the headline-ignore setup, HTML/htmlize,
-markdown, the LaTeX and memoir classes, beamer, minted, ox-hugo
-(with its blog capture template) and ox-epub.
+markdown, the LaTeX and memoir classes, beamer, minted, ox-hugo and ox-epub.
+The blog-draft capture template that feeds ox-hugo lives with the other
+capture templates in =40-org.org=.
 
 Every block here is wrapped in =(with-eval-after-load 'ox ...)=, so the
 exporters are configured when org's export machinery first loads rather than at
@@ -13,12 +14,6 @@ startup.
 The wrapper deliberately does *not* re-indent the wrapped code: the LaTeX class
 definitions contain multi-line string literals, and indenting them would change
 the preambles they emit.
-
-The ox-hugo *capture template* is left outside the wrapper on purpose: it
-registers a capture key rather than an exporter, and deferring it would make
-that capture disappear until the first export of the session.  It appends with
-=add-to-list ... t=, so it lands after the personal templates that =40-org= sets
-with =setq=.
 
 Home only: the work environment has no exporters configured.
 
@@ -283,33 +278,6 @@ https://ox-hugo.scripter.co/
     :ensure t   ;Auto-install the package from Melpa
     :after ox)
   ) ; with-eval-after-load ox
-#+end_src
-
-** Hugo blog capture template
-#+begin_src emacs-lisp
-  (defun my/blog-capture-template ()
-    "Return an ox-hugo subtree capture template for a new blog draft."
-    (let* ((title (read-from-minibuffer "Post title: "))
-           (slug  (replace-regexp-in-string
-                   "[^a-z0-9]+" "-"
-                   (downcase (string-trim title)))))
-      (mapconcat #'identity
-                 `(,(concat "** TODO " title)
-                   ":PROPERTIES:"
-                   ,(concat ":EXPORT_FILE_NAME: " slug)
-                   ,(concat ":EXPORT_DATE: " (format-time-string "%Y-%m-%d"))
-                   ":END:"
-                   "%?\n")
-                 "\n")))
-
-  (add-to-list 'org-capture-templates
-               `("B" "Blog draft" entry
-                 (file+olp ,(expand-file-name "content-org/all-posts.org" my-blog-dir)
-                           "drafts")
-                 (function my/blog-capture-template)
-                 :jump-to-captured t
-                 :empty-lines-before 1)
-               t)
 #+end_src
 
 * TODO epub exporter
