@@ -36,7 +36,7 @@ The config is split by **domain** (one module per subject), not by environment. 
 |`46-agenda-personal`|home                |personal agenda commands                                                             |
 |`47-agenda-work`    |work                |work agenda commands, org-ql views, 1:1 tooling                                      |
 |`50-org-roam`       |always              |roam, its UI, capture templates; separate store + DB per environment                 |
-|`55-org-export`     |home                |every exporter, behind `with-eval-after-load 'ox`                                    |
+|`55-org-export`     |home                |every exporter; loads `ox` itself, independent of org-scribe                         |
 |`60-writing`        |home                |org-scribe, tempel, writeroom, story files, org-journal                              |
 |`70-prog`           |always              |magit, diff-hl, flymake, eglot, treesit, languages                                   |
 |`80-apps`           |always              |eww, dired, elfeed, nov, calibre, pdf, eshell, mastodon, dashboard                   |
@@ -109,7 +109,7 @@ bindings.
 - **`98-scratch.org` sets `:tangle no` at the file level.** Code there ships only if a block deliberately overrides it. Put experiments there, not in a live module.
 - **`99-start-work` loads after `90-keymap`**, so it must not register `C-q` keys. It acts on the frame at startup (finds files, splits the window), so keep it last and keep it to side effects.
 - **`jinx-languages` also drives in-buffer completion.** `20-completion` sets `cape-dict-file` to `my/cape-dict-files`, which picks the hunspell word list from the buffer's `jinx-languages`, so spellcheck and `cape-dict` never disagree about the language. It is called on every completion, so `C-M-$` retunes both at once. Adding a language means adding it to `my-hunspell-dictionaries` there, not just to `jinx-languages` — an unlisted language falls back to English rather than going silent.
-- **org-scribe loads eagerly** (it calls `org-scribe-setup` at startup) and requires `ox`, which is why the exporters' `with-eval-after-load 'ox` wrapper currently saves nothing at home.
+- **org-scribe loads eagerly** (it calls `org-scribe-setup` at startup) and requires `ox`, which is why `55-org-export` does not bother deferring its exporters: a `with-eval-after-load 'ox` wrapper would save nothing at home. `55` does not *depend* on that — it loads `ox` itself and runs before `60` — so dropping org-scribe keeps the exporters working, and only then is deferral worth adding.
 
 ## Testing changes
 
