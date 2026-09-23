@@ -321,14 +321,10 @@ I will use it to keep track of the pending tasks of the writing projects.
   If `project-current' cannot determine a project, fall back to the
   current buffer’s directory."
     (interactive)
-    ;; Determine the project root.
-    (let* ((proj   (or (project-current)
-                       ;; No project detected – use the directory of the
-                       ;; current buffer as a sensible fallback.
-                       (let ((default-directory (or (buffer-file-name)
-                                                    default-directory)))
-                         (list default-directory))))
-           (root   (car (project-roots proj)))   ; e.g. \"/home/user/foo/\"
+    ;; Determine the project root, falling back to the buffer's directory.
+    (let* ((root   (if-let* ((proj (project-current)))
+                       (project-root proj)
+                     default-directory))
            ;; Gather all *.org* files under that root.
            (org-files
             (directory-files-recursively
