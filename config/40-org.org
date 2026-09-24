@@ -341,6 +341,12 @@ Here I will add template captures for doing several things:
                                   "%i"
                                   :empty-lines-after 1)
 
+    			     ;; A thought to process later into a roam note (also C-c n n)
+    			     ("f" "Fleeting thought" entry
+                                  (file ,(expand-file-name "personal/fleeting_notes.org" my-personal-roam-dir))
+                                  "* %?\n%U"
+                                  :empty-lines-before 1)
+
     			     ;; A possible writing idea
                                  ("w" "Writing idea." entry
                                   (file+headline ,(expand-file-name "retazos/ideas.org" my-escritura-dir) "Ideas")

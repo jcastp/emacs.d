@@ -88,6 +88,18 @@ Open fleeting notes with a keybinding:
   (global-set-key (kbd "C-c n F") 'my/org-roam-fleeting-notes)
 #+end_src
 
+=C-c n n= captures a thought into the fleeting-notes inbox without leaving the
+current buffer.  It uses the =f= template in =40-org.org=, which only the home
+capture list has.
+#+begin_src emacs-lisp
+  (when my-homeenvironment-p
+    (defun my/org-roam-capture-fleeting ()
+      "Capture a thought into the fleeting-notes inbox."
+      (interactive)
+      (org-capture nil "f"))
+    (global-set-key (kbd "C-c n n") #'my/org-roam-capture-fleeting))
+#+end_src
+
 ** Capture templates
 
 Each environment owns its complete capture set.  There is no shared base list
@@ -100,11 +112,17 @@ partition.
   ;; ---- home: the complete personal capture set -------------------------
   (when my-homeenvironment-p
     (setq org-roam-capture-templates
-          `(("p" "personal note" plain
-             "* TODO ${title}\n%?"
+          `(("p" "permanent note" plain "%?"
              :if-new (file+head "personal/%<%Y%m%d%H%M%S>-${slug}.org"
                                 "#+title: ${title}\n")
              :unnarrowed t)
+
+            ;; For `C-c n i' on a new title: creates the note and returns
+            ;; straight to where you were, leaving a link behind.
+            ("s" "seed (develop later)" plain "%?"
+             :if-new (file+head "personal/%<%Y%m%d%H%M%S>-${slug}.org"
+                                "#+title: ${title}\n#+filetags: :seed:\n")
+             :immediate-finish t)
 
             ("b" "book notes" plain
              (file ,(expand-file-name "roamtemplates/BookNoteTemplate.org" my-config-dir))
@@ -124,8 +142,13 @@ partition.
                                 "#+title: ${title}\n#+filetags: writing character")
              :unnarrowed t)))
 
+    ;; Dailies are a reading log: `r' records something read, watched or
+    ;; heard, `d' is a free entry.
     (setq org-roam-dailies-capture-templates
-          '(("d" "default" entry "* %?"
+          '(("d" "entry" entry "* %<%H:%M> %?"
+             :if-new (file+head "%<%Y-%m-%d>.org"
+                                "#+title: %<%Y-%m-%d>\n#+filetags: daily\n"))
+            ("r" "read" entry "* %<%H:%M> %^{What}  :read:\n%?"
              :if-new (file+head "%<%Y-%m-%d>.org"
                                 "#+title: %<%Y-%m-%d>\n#+filetags: daily\n")))))
 
@@ -149,6 +172,18 @@ partition.
           '(("d" "default" entry "* %?"
              :if-new (file+head "%<%Y-%m-%d>.org"
                                 "#+title: %<%Y-%m-%d>\n#+filetags: daily\n")))))
+
+  (setq org-roam-dailies-directory "daily/")
+#+end_src
+
+=C-c n d r= captures a reading-log entry into today in one key.  The dailies
+map is one keymap shared by both environments, and work has no =r= template,
+so the binding is home only.
+#+begin_src emacs-lisp
+  (when my-homeenvironment-p
+    (with-eval-after-load 'org-roam-dailies
+      (define-key org-roam-dailies-map (kbd "r")
+                  (lambda () (interactive) (org-roam-dailies-capture-today nil "r")))))
 #+end_src
 
 Org-roam window configuration:
@@ -184,8 +219,6 @@ Search by title and tags:
   (use-package org-roam-ui
     :ensure t
     :defer t)
-
-  (setq org-roam-dailies-directory "daily/")
 #+end_src
 
 * Restrict agenda to org-roam
@@ -226,9 +259,10 @@ Extracted from https://d12frosted.io/posts/2021-01-16-task-management-with-roam-
      name (combine-and-quote-strings values separators)))
 
   (defun vulpea-buffer-tags-set (&rest tags)
-    "Set TAGS in current buffer.
-      If filetags value is already set, replace it."
-    (vulpea-buffer-prop-set "filetags" (string-join tags " ")))
+    "Set TAGS in current buffer, as `:a:b:' -- the form `org-roam-tag-add' uses.
+  If filetags value is already set, replace it."
+    (vulpea-buffer-prop-set "filetags"
+                            (if tags (concat ":" (string-join tags ":") ":") "")))
 
   (defun vulpea-buffer-prop-get (name)
     "Get a buffer property called NAME as a string."
@@ -250,14 +284,11 @@ Extracted from https://d12frosted.io/posts/2021-01-16-task-management-with-roam-
         (split-string-and-unquote value separators))))
 
   (defun vulpea-buffer-tags-get ()
-    "Return filetags value in current buffer."
-    (vulpea-buffer-prop-get-list "filetags" " "))
-
-  (defun vulpea-buffer-tags-add (tag)
-    "Add a TAG to filetags in current buffer."
-    (let* ((tags (vulpea-buffer-tags-get))
-           (tags (append tags (list tag))))
-      (apply #'vulpea-buffer-tags-set tags)))
+    "Return filetags value in current buffer.
+  Tags may be written `:a:b:' or `a b', or a mix of both: splitting on
+  spaces alone read `roamtag :a:b:' as two tags, so a `roamtag' inside the
+  `:a:b:' part was never seen, never removed, and got a second copy."
+    (vulpea-buffer-prop-get-list "filetags" "[ \t:]+"))
 
   (defun vulpea-project-p ()
     "Return non-nil if current buffer has any todo entry.
@@ -316,6 +347,69 @@ Extracted from https://d12frosted.io/posts/2021-01-16-task-management-with-roam-
 
   (add-hook 'find-file-hook #'vulpea-project-update-tag)
   (add-hook 'before-save-hook #'vulpea-project-update-tag)
+#+end_src
+
+Both hooks stay: at work, =find-file-hook= is what catches a TODO added to a
+note elsewhere (another machine, the phone), so it reaches the agenda.
+
+* Seeds: notes waiting to be developed
+A note with no content beyond its title is a /seed/: a placeholder made with
+=C-c n i= (template =s=) while writing something else.  It carries the =seed=
+filetag, kept the same way as =roamtag=: added when the note is empty, removed
+the moment it gets a body.  You never set it by hand.  =C-c n S= opens a random
+seed; =C-c n f= and typing =seed= lists them.
+
+Only on =before-save-hook=, so opening a note never modifies it.  Dailies are
+excluded.  Home only: the work store has no seeds.
+
+#+begin_src emacs-lisp
+  (when my-homeenvironment-p
+    (defun my/org-roam-seed-p ()
+      "Non-nil if this note has nothing but keywords, properties and its title heading."
+      (let ((heading (concat "* " (or (vulpea-buffer-prop-get "title") ""))))
+        (seq-every-p
+         (lambda (line)
+           (or (string-match-p "\\`[ \t]*\\([:#].*\\)?\\'" line)
+               (string= (string-trim-right line) heading)))
+         (split-string (buffer-substring-no-properties (point-min) (point-max))
+                       "\n"))))
+
+    (defun my/org-roam-update-seed-tag ()
+      "Add the `seed' filetag to an empty note, remove it once the note has a body."
+      (when (and (not (active-minibuffer-window))
+                 (vulpea-buffer-p)
+                 (not (string-prefix-p
+                       (expand-file-name org-roam-dailies-directory org-roam-directory)
+                       (file-name-directory buffer-file-name))))
+        (save-excursion
+          (let* ((tags (vulpea-buffer-tags-get))
+                 (new (if (my/org-roam-seed-p)
+                          (seq-uniq (append tags '("seed")))
+                        (remove "seed" tags))))
+            (unless (equal tags new)
+              (apply #'vulpea-buffer-tags-set new))))))
+
+    (add-hook 'before-save-hook #'my/org-roam-update-seed-tag)
+
+    (defun my/org-roam-tagged-files (tag)
+      "Return the files of the org-roam notes tagged TAG."
+      (seq-uniq
+       (mapcar #'car
+               (org-roam-db-query
+                [:select [nodes:file] :from tags
+                 :left-join nodes :on (= tags:node-id nodes:id)
+                 :where (= tags:tag $s1)]
+                tag))))
+
+    (defun my/org-roam-random-seed ()
+      "Open a random note tagged `seed' -- one waiting to be developed."
+      (interactive)
+      (if-let* ((files (my/org-roam-tagged-files "seed")))
+          (progn (find-file (seq-random-elt files))
+                 (message "%d seeds left" (length files)))
+        (user-error "No seeds left")))
+
+    (global-set-key (kbd "C-c n S") #'my/org-roam-random-seed))
 #+end_src
 
 ** Roam TODOs in the work agenda
@@ -463,12 +557,24 @@ Elisp using `float-time' to handle org-roam's stored time format."
           (find-file (cadr entry))))))
 
   (defun my/org-roam-creative-prompt ()
-    "Generate a random creative connection between two notes."
+    "Open two random notes side by side and ask how they connect.
+Only distinct, file-level, non-daily notes.  The window layout is not
+cleared first: at work that is the side-by-side view `99-start-work' opens."
     (interactive)
-    (let* ((nodes (org-roam-node-list))
-           (node1 (nth (random (length nodes)) nodes))
-           (node2 (nth (random (length nodes)) nodes)))
-      (message "Connect '%s' to '%s'"
-               (org-roam-node-title node1)
-               (org-roam-node-title node2))))
+    (let* ((daily (expand-file-name org-roam-dailies-directory org-roam-directory))
+           (nodes (seq-filter
+                   (lambda (n) (and (zerop (org-roam-node-level n))
+                                    (not (string-prefix-p daily (org-roam-node-file n)))))
+                   (org-roam-node-list)))
+           (a (seq-random-elt nodes))
+           (b (seq-random-elt (remove a nodes))))
+      (org-roam-node-visit a)
+      (org-roam-node-visit b t)
+      (message "How does '%s' connect to '%s'?"
+               (org-roam-node-title a) (org-roam-node-title b))))
+
+  ;; The weekly review is a home routine; the command stays available at work
+  ;; through M-x.
+  (when my-homeenvironment-p
+    (global-set-key (kbd "C-c n P") #'my/org-roam-creative-prompt))
 #+end_src

@@ -4,8 +4,10 @@ Author: %^{Author}
 Title: ${title}
 Year: %^{Year}
 
-* ${title} Summary
+* Summary
 %?
+
+* Notas
 
 * Personajes
 
