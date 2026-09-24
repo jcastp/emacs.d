@@ -157,6 +157,9 @@ Remap the org-clock-in to a better key binding.
    ,* When there is already a running clock and `point' is at the item which is being clocked stop the corresponding clock.
    ,* When there is already a running clock but `point' is not at the item which is being clocked, stop the clock and restart it for item at `point'."
     (interactive)
+    ;; org-clock is loaded lazily, on the first clock-in; the variables
+    ;; below are void until then.
+    (require 'org-clock)
     (let ((interrupting (and (not org-clock-resolving-clocks-due-to-idleness)
                              (org-clocking-p))))
       (if interrupting
