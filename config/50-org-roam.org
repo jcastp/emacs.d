@@ -139,7 +139,7 @@ partition.
             ("c" "writing character" plain
              (file ,(expand-file-name "roamtemplates/CharacterIdea.org" my-config-dir))
              :if-new (file+head "personal/%<%Y%m%d%H%M%S>-${slug}.org"
-                                "#+title: ${title}\n#+filetags: writing character")
+                                "#+title: ${title}\n#+filetags: :writing:personaje:")
              :unnarrowed t)))
 
     ;; Dailies are a reading log: `r' records something read, watched or
