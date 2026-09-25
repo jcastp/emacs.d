@@ -100,10 +100,18 @@ Put a note or a timestamp when something changes.
 =org-log-done= is set to ='time= in =46-agenda-personal= and =47-agenda-work=
 (the weekly review views need the CLOSED timestamps).
 
+At work, date changes /are/ logged: the Friday review asks "slipped twice?",
+and only a LOGBOOK entry per reschedule can answer it.  With
+=org-log-into-drawer= set they go quietly into the drawer.
+
 #+begin_src emacs-lisp
-  ;; Don't log deadline/schedule date changes.
+  ;; Don't log deadline/schedule date changes...
   (setq org-log-redeadline nil)
   (setq org-log-reschedule nil)
+  ;; ...except at work, where slipped commitments must be countable.
+  (when my-workenvironment-p
+    (setq org-log-redeadline 'time)
+    (setq org-log-reschedule 'time))
 #+end_src
 
 * TODO Custom faces for org-todo-keywords
@@ -415,17 +423,29 @@ export file name from it.
 * Work todo keywords, tags and captures
 
 ** Work tags definition
+The goal (=g_*=) and objective (=o_*=) tags are not listed here: they come from
+=my/work-goal-tags= (changed every January) and =my/work-objective-tags=
+(changed every quarter start), both set in =company_info.el= in the work
+directory, next to the direct-reports list.  Each gets its own row in the
+fast tag selection; keys are assigned automatically.
+
 #+begin_src emacs-lisp :tangle yes
   (when my-workenvironment-p
-    (setq org-tag-alist '(
-                          ("detection" . ?d) ("automation" . ?a) ("emailsec" . ?E)
-                          ("edr" . ?e) ("ai" . ?A) ("management" . ?m)
-                          ;; other tags
-                          ("documentation" . ?D) ("procedures" . ?P)
-                          ("knowledge" . ?K) ("training" . ?T)
-                          ("task" . ?t)
-                          ;; based on my current role
-                          ("okr" . ?o) ("people" . ?p)))
+    (setq org-tag-alist
+          `(
+            ("detection" . ?d) ("automation" . ?a) ("emailsec" . ?E)
+            ("edr" . ?e) ("ai" . ?A) ("management" . ?m)
+            ;; other tags
+            ("documentation" . ?D) ("procedures" . ?P)
+            ("knowledge" . ?K) ("training" . ?T)
+            ("task" . ?t)
+            ;; based on my current role
+            ("okr" . ?o) ("people" . ?p)
+            ;; this year's goals, then this quarter's objectives
+            (:newline)
+            ,@(mapcar #'list (bound-and-true-p my/work-goal-tags))
+            (:newline)
+            ,@(mapcar #'list (bound-and-true-p my/work-objective-tags))))
     )
 #+end_src
 
@@ -458,6 +478,16 @@ As work is different from home, I need specific templates.
         (find-file my-people-file)
         (goto-char (org-find-olp (list my-people-file person)))))
 
+    (defun my/capture-optional-deadline ()
+      "Ask whether a real deadline was agreed; return a DEADLINE line or \"\".
+    A deadline is only for a date with a real consequence (design notes/
+    system.org), so a 1:1 commitment gets one only when it was agreed."
+      (if (y-or-n-p "Was a real deadline agreed? ")
+          (concat "\n    DEADLINE: "
+                  (with-temp-buffer
+                    (org-insert-time-stamp (org-read-date nil t))))
+        ""))
+
     ;; Work owns the full template list — reset it, then add each entry.
     (setq org-capture-templates '())
 
@@ -471,11 +501,13 @@ As work is different from home, I need specific templates.
     ;;                (file+headline my-backlog-file "Backlog")
     ;;                "** TODO %?\n"))
 
-    (add-to-list 'org-capture-templates
-                 '("m" "Work meeting notes" entry
-                   (file my-meetings-file)
-                   "* %T - %?\n** Notes\n\n** Actions\n** Questions\n"
-                   :jump-to-captured t))
+    ;; Disabled: work_meetings.org is history only.  New meetings are roam
+    ;; nodes: C-c n c, then m (see 50-org-roam).
+    ;; (add-to-list 'org-capture-templates
+    ;;              '("m" "Work meeting notes" entry
+    ;;                (file my-meetings-file)
+    ;;                "* %T - %?\n** Notes\n\n** Actions\n** Questions\n"
+    ;;                :jump-to-captured t))
 
     ;; people meetings
     (add-to-list 'org-capture-templates
@@ -488,7 +520,7 @@ As work is different from home, I need specific templates.
     (add-to-list 'org-capture-templates
     	     '("P" "People action item" entry
     	       (function my/capture-goto-person)
-    	       "*** TODO [%(identity my/capture-person)] %<%Y-%m-%d %a %H:%M> %? :people:%(downcase my/capture-person):\n    DEADLINE: %^t"
+    	       "*** TODO [%(identity my/capture-person)] %<%Y-%m-%d %a %H:%M> %? :people:%(downcase my/capture-person):%(my/capture-optional-deadline)"
     	       :jump-to-captured t))
 
     ;; Tier 1 -- fast capture. Two prompts, usable mid-meeting.
