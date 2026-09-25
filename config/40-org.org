@@ -188,6 +188,26 @@ Remap the org-clock-in to a better key binding.
   (global-set-key (kbd "C-c C-x i") 'my/org-set-clock)
 #+end_src
 
+At work the clock is a measurement (see "Measuring time" in the work
+=manual.org=), so a running clock has to survive an Emacs restart, and a
+clock left running through a long absence has to be caught.
+
+- =org-clock-persist= saves the running clock and the clock history on exit;
+  on the next start Org asks whether to resume it.
+- =org-clock-idle-time= is 60, not the usual 10–15: with no =x11idle= helper
+  installed (and Emacs likely in a VM), Org can only see Emacs's own idle
+  time, so a Teams call or browser work counts as "idle".  60 minutes still
+  catches a clock left running over lunch or overnight without prompting in
+  every meeting.
+
+#+begin_src emacs-lisp
+  (when my-workenvironment-p
+    (setq org-clock-persist t
+          org-clock-idle-time 60)
+    (with-eval-after-load 'org
+      (org-clock-persistence-insinuate)))
+#+end_src
+
 * Capture to this buffer
 Inspired by https://github.com/ballantony/emacs-writing/blob/main/DoomEmacsWriting.org
 

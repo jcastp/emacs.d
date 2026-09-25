@@ -134,23 +134,29 @@ why horizons are Mondays and why the week is capped at ~15h.
     (concat "+PRIORITY=\"A\"" (my/agenda--not-objectives) (or todo "")))
 
   ;; ── the week's load ─────────────────────────────────────────────────
-  (defun my/week-load ()
-    "Return (HOURS COUNT UNESTIMATED) for open tasks scheduled up to Sunday.
-  Slipped items (scheduled before this Monday, still open) count on purpose:
-  a slipped commitment still costs this week.  Rituals (repeaters) don't."
-    (let ((sunday (my/agenda--week-end))
-          (minutes 0) (count 0) (unestimated 0))
+  (defun my/scheduled-load (from to)
+    "Return (HOURS COUNT UNESTIMATED) for open tasks scheduled in [FROM, TO].
+  FROM and TO are absolute days; FROM nil means no lower bound.  Rituals
+  (repeaters) are left out: their time is not focus time."
+    (let ((minutes 0) (count 0) (unestimated 0))
       (org-map-entries
        (lambda ()
          (let ((d (my/agenda--date "SCHEDULED"))
                (effort (org-entry-get nil "Effort")))
-           (when (and d (<= d sunday) (not (my/agenda--repeater-p)))
+           (when (and d (or (null from) (>= d from)) (<= d to)
+                      (not (my/agenda--repeater-p)))
              (setq count (1+ count))
              (if (and effort (org-duration-p effort))
                  (setq minutes (+ minutes (org-duration-to-minutes effort)))
                (setq unestimated (1+ unestimated))))))
        "/TODO|ONGOING|WAITING" 'agenda)
       (list (/ minutes 60.0) count unestimated)))
+
+  (defun my/week-load ()
+    "Return (HOURS COUNT UNESTIMATED) for open tasks scheduled up to Sunday.
+  Slipped items (scheduled before this Monday, still open) count on purpose:
+  a slipped commitment still costs this week."
+    (my/scheduled-load nil (my/agenda--week-end)))
 
   (defun my/week-load-header ()
     "Header for the THIS WEEK block, with the load against capacity."
@@ -164,6 +170,52 @@ why horizons are Mondays and why the week is capped at ~15h.
     "Echo this week's committed load against `my/work-week-capacity-hours'."
     (interactive)
     (message "%s" (my/week-load-header)))
+
+  ;; ── looking ahead (N): next week and next month ─────────────────────
+  (defun my/agenda--next-week-start () (+ (my/agenda--week-start) 7))
+  (defun my/agenda--next-week-end () (+ (my/agenda--week-start) 13))
+
+  (defun my/agenda--next-month-bounds ()
+    "(FIRST LAST) absolute days of the calendar month after this one."
+    (let* ((first (1+ (my/agenda--month-end)))
+           (d (calendar-gregorian-from-absolute first))
+           (m (car d)) (y (nth 2 d)))
+      (list first (calendar-absolute-from-gregorian
+                   (list m (calendar-last-day-of-month m y) y)))))
+
+  (defun my/agenda--mondays-between (from to)
+    "Number of Mondays in [FROM, TO]: the weeks that start in that period."
+    (seq-count (lambda (d) (= 1 (calendar-day-of-week
+                                  (calendar-gregorian-from-absolute d))))
+               (number-sequence from to)))
+
+  (defun my/agenda--day-label (abs)
+    (format-time-string "%a %d %b" (org-time-from-absolute abs)))
+
+  (defun my/agenda--date-label (prop)
+    "The entry's PROP date as \"Mon 05 Oct\", padded; for agenda prefixes."
+    (let ((d (my/agenda--date prop)))
+      (format "%-11s" (if d (my/agenda--day-label d) ""))))
+
+  (defun my/agenda--load-header (label from to capacity)
+    "Header \"[ LABEL: N items, Xh of ~CAPACITYh … ]\" for scheduled work in [FROM, TO]."
+    (pcase-let ((`(,hours ,count ,unestimated) (my/scheduled-load from to)))
+      (format "[ %s: %d items, %.1fh of ~%dh%s%s ]"
+              label count hours capacity
+              (if (> unestimated 0) (format ", %d without Effort" unestimated) "")
+              (if (> hours capacity) " — OVER CAPACITY" ""))))
+
+  (defun my/next-week-header ()
+    (let ((from (my/agenda--next-week-start)) (to (my/agenda--next-week-end)))
+      (my/agenda--load-header
+       (format "NEXT WEEK — %s to %s" (my/agenda--day-label from) (my/agenda--day-label to))
+       from to my/work-week-capacity-hours)))
+
+  (defun my/next-month-header ()
+    (pcase-let ((`(,from ,to) (my/agenda--next-month-bounds)))
+      (my/agenda--load-header
+       (format "NEXT MONTH — %s" (format-time-string "%B %Y" (org-time-from-absolute from)))
+       from to (* my/work-week-capacity-hours (my/agenda--mondays-between from to)))))
 
   ;; ── inbox triage (ci) ───────────────────────────────────────────────
   (defun my/agenda-skip-unless-due-within (days)
@@ -214,6 +266,21 @@ why horizons are Mondays and why the week is capped at ~15h.
               (append org-agenda-custom-commands (list cmd))))))
 
   (advice-add 'org-agenda :before #'my/agenda-install-okr-command)
+
+  ;; ── time view (h): every file that can hold a clock line ───────────
+  (defun my/work-clock-files ()
+    "The permanent work agenda files plus every roam note.
+  `org-agenda-files' only includes a roam note while it has an open TODO, so
+  a meeting note with no (or only finished) actions would drop out of time
+  reports.  The h view uses this list instead."
+    (let ((base (or (bound-and-true-p my/agenda-files-base)
+                    (seq-filter #'identity
+                                (list (bound-and-true-p my-work-file)
+                                      (bound-and-true-p my-people-file)))))
+          (roam (and (bound-and-true-p org-roam-directory)
+                     (file-directory-p org-roam-directory)
+                     (directory-files-recursively org-roam-directory "\\.org\\'"))))
+      (delete-dups (mapcar #'file-truename (append base roam)))))
 
   ;; super-agenda: an item belongs to "OKR" if it carries a current objective
   (defun my/agenda-item-objective-p (item)
@@ -413,6 +480,69 @@ why horizons are Mondays and why the week is capped at ~15h.
             )
            ;; shared by every block above unless it sets its own
            ((org-agenda-prefix-format " %i %-16:c ")))
+
+          ;; ──────────────────────────────────────────────────────────────────
+          ;; h — Hours: where did this week's time go?
+          ;; Friday, or any time. Timeline of clocked blocks + clock report,
+          ;; over all work files including every roam note (meetings!).
+          ;; Not "t": that key is Org's built-in global TODO list.
+          ;; ──────────────────────────────────────────────────────────────────
+          ("h" "Hours — clocked time this week"
+           ((agenda ""
+                    ((org-agenda-overriding-header "[ HOURS — clocked time, Monday to Sunday ]")
+                     (org-agenda-files (my/work-clock-files))
+                     (org-agenda-span 'week)
+                     (org-agenda-start-on-weekday 1)
+                     (org-agenda-entry-types '())
+                     (org-agenda-show-log '(clock))
+                     (org-agenda-log-mode-items '(clock))
+                     (org-agenda-time-grid nil)
+                     (org-agenda-clockreport-mode t)
+                     (org-agenda-clockreport-parameter-plist
+                      '(:link t :maxlevel 3 :fileskip0 t :properties ("Effort")))
+                     (org-super-agenda-groups nil)))))
+
+          ;; ──────────────────────────────────────────────────────────────────
+          ;; N — Next: is next week / next month already planned?
+          ;; Any time, and at Monday planning or the monthly review.  Shows what
+          ;; is scheduled there (with its load against capacity) and what is
+          ;; due there.  Not "n": that key is a built-in agenda command.
+          ;; ──────────────────────────────────────────────────────────────────
+          ("N" "Next — next week and next month"
+           (
+            (tags-todo "/TODO|ONGOING|WAITING"
+                       ((org-agenda-overriding-header (my/next-week-header))
+                        (org-agenda-skip-function
+                         '(my/agenda-skip-unless-dated "SCHEDULED" (my/agenda--next-week-start)
+                                                       (my/agenda--next-week-end) t))
+                        (org-agenda-sorting-strategy '(scheduled-up priority-down))
+                        (org-agenda-prefix-format " %i %-16:c %(my/agenda--date-label \"SCHEDULED\") %5e ")))
+
+            (tags-todo "/TODO|ONGOING|WAITING"
+                       ((org-agenda-overriding-header "[ DUE NEXT WEEK ]")
+                        (org-agenda-skip-function
+                         '(my/agenda-skip-unless-dated "DEADLINE" (my/agenda--next-week-start)
+                                                       (my/agenda--next-week-end)))
+                        (org-agenda-sorting-strategy '(deadline-up priority-down))
+                        (org-agenda-prefix-format " %i %-16:c %(my/agenda--date-label \"DEADLINE\") %5e ")))
+
+            (tags-todo "/TODO|ONGOING|WAITING"
+                       ((org-agenda-overriding-header (my/next-month-header))
+                        (org-agenda-skip-function
+                         '(my/agenda-skip-unless-dated "SCHEDULED" (car (my/agenda--next-month-bounds))
+                                                       (cadr (my/agenda--next-month-bounds)) t))
+                        (org-agenda-sorting-strategy '(scheduled-up priority-down))
+                        (org-agenda-prefix-format " %i %-16:c %(my/agenda--date-label \"SCHEDULED\") %5e ")))
+
+            (tags-todo "/TODO|ONGOING|WAITING"
+                       ((org-agenda-overriding-header "[ DUE NEXT MONTH ]")
+                        (org-agenda-skip-function
+                         '(my/agenda-skip-unless-dated "DEADLINE" (car (my/agenda--next-month-bounds))
+                                                       (cadr (my/agenda--next-month-bounds))))
+                        (org-agenda-sorting-strategy '(deadline-up priority-down))
+                        (org-agenda-prefix-format " %i %-16:c %(my/agenda--date-label \"DEADLINE\") %5e ")))
+            )
+           ((org-agenda-prefix-format " %i %-16:c %5e ")))
 
           ;; ──────────────────────────────────────────────────────────────────
           ;; ca — By domain
