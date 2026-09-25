@@ -158,20 +158,20 @@ partition.
           '(("k" "work concept" plain
              "* ${title}\n%?"
              :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                                "#+title: ${title}\n")
+                                "#+title: ${title}\n#+category: note\n")
              :unnarrowed t)
 
             ("m" "work meeting" plain
              "* %T - ${title}\n%?\n** Notes\n\n** Actions\n** Questions\n"
              :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                                "#+title: ${title} - %<%Y%m%d>\n#+filetags: meeting\n")
+                                "#+title: ${title} - %<%Y%m%d>\n#+filetags: meeting\n#+category: meeting\n")
              :unnarrowed t
              :jump-to-captured t)))
 
     (setq org-roam-dailies-capture-templates
           '(("d" "default" entry "* %?"
              :if-new (file+head "%<%Y-%m-%d>.org"
-                                "#+title: %<%Y-%m-%d>\n#+filetags: daily\n")))))
+                                "#+title: %<%Y-%m-%d>\n#+filetags: daily\n#+category: daily\n")))))
 
   (setq org-roam-dailies-directory "daily/")
 #+end_src
@@ -459,6 +459,16 @@ are not agenda material, and the personal agenda stays exactly as it was.
     (advice-add 'org-agenda    :before #'my/agenda-files-update)
     (advice-add 'org-todo-list :before #'my/agenda-files-update))
 #+end_src
+
+*** A short agenda category for roam notes
+Without a =#+CATEGORY:=, an agenda line's category is the file name, and a
+roam file name (=20260924143310-review_cloud_security_program_workstreams=)
+is an internal ID that pushes the whole view out of alignment.  So every
+work roam note carries a =#+category:= line, written by its capture
+template above: =note= (template =k=), =meeting= (=m=) and =daily= (the
+dailies).  The column then reads like the rest of the agenda (=inbox=,
+=tasks=, =projects=, =people=, =calendar=).  A note created some other way
+needs the line added by hand.
 
 Just show the TODOs from org-roam, not from the general agenda:
 #+begin_src emacs-lisp

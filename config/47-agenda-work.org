@@ -23,6 +23,15 @@ I need a different custom agenda commands to see the tasks better.
 
   ;; Require CLOSED timestamp on done tasks (needed for weekly review)
   (setq org-log-done 'time)
+
+  ;; Category column capped at 12 characters in every view: a longer
+  ;; category is cut instead of pushing the line out of alignment.  The
+  ;; custom views below use the same %-12.12:c.
+  (setq org-agenda-prefix-format
+        '((agenda . " %i %-12.12:c%?-12t% s")
+          (todo   . " %i %-12.12:c")
+          (tags   . " %i %-12.12:c")
+          (search . " %i %-12.12:c")))
 #+end_src
 
 ** Helpers for the planning (W) and review (R) views
@@ -252,7 +261,7 @@ why horizons are Mondays and why the week is capped at ~15h.
            '((tags-todo (my/agenda-match-goal-not-quarter "/TODO|ONGOING|WAITING")
                         ((org-agenda-overriding-header "[ GOAL WORK, NOT THIS QUARTER — parked ]")
                          (org-agenda-sorting-strategy '(priority-down effort-up))))))
-          '((org-agenda-prefix-format " %i %-16:c %5e "))))
+          '((org-agenda-prefix-format " %i %-12.12:c %5e "))))
 
   (defun my/agenda-install-okr-command (&rest _)
     "Rebuild the co entry of `org-agenda-custom-commands' from the objectives.
@@ -313,7 +322,7 @@ why horizons are Mondays and why the week is capped at ~15h.
                         (org-agenda-tags-todo-honor-ignore-options t)
                         (org-agenda-todo-ignore-scheduled 'future)
                         (org-agenda-sorting-strategy '(priority-down effort-up ts-up))
-                        (org-agenda-prefix-format " %i %-16:c %5e ")))
+                        (org-agenda-prefix-format " %i %-12.12:c %5e ")))
 
             ;; Time-bound: scheduled for today, past due, active timestamps
             (agenda ""
@@ -340,14 +349,14 @@ why horizons are Mondays and why the week is capped at ~15h.
                         (org-agenda-tags-todo-honor-ignore-options t)
                         (org-agenda-todo-ignore-scheduled 'future)
                         (org-agenda-sorting-strategy '(priority-down effort-up ts-up))
-                        (org-agenda-prefix-format " %i %-16:c %5e ")))
+                        (org-agenda-prefix-format " %i %-12.12:c %5e ")))
 
             (tags-todo "/WAITING"
                        ((org-agenda-overriding-header "[ WAITING — waiting on others ]")
                         (org-agenda-tags-todo-honor-ignore-options t)
                         (org-agenda-todo-ignore-scheduled 'future)
                         (org-agenda-sorting-strategy '(ts-up priority-down))
-                        (org-agenda-prefix-format " %i %-16:c ")))
+                        (org-agenda-prefix-format " %i %-12.12:c ")))
             )
            )
 
@@ -373,7 +382,7 @@ why horizons are Mondays and why the week is capped at ~15h.
                         (org-agenda-skip-function
                          '(my/agenda-skip-unless-dated "SCHEDULED" nil (my/agenda--week-end) t))
                         (org-agenda-sorting-strategy '(priority-down effort-down))
-                        (org-agenda-prefix-format " %i %-16:c %5e ")))
+                        (org-agenda-prefix-format " %i %-12.12:c %5e ")))
 
             ;; Where this week's items come from: the rest of the month
             (tags-todo "/TODO|ONGOING|WAITING"
@@ -382,21 +391,21 @@ why horizons are Mondays and why the week is capped at ~15h.
                          '(my/agenda-skip-unless-dated "SCHEDULED" (1+ (my/agenda--week-end))
                                                        (my/agenda--month-end) t))
                         (org-agenda-sorting-strategy '(scheduled-up priority-down))
-                        (org-agenda-prefix-format " %i %-16:c %5e ")))
+                        (org-agenda-prefix-format " %i %-12.12:c %5e ")))
 
             ;; This quarter's OKR work that has no horizon yet: place it
             (tags-todo (my/agenda-match-objectives "/TODO|ONGOING|WAITING")
                        ((org-agenda-overriding-header "[ THIS QUARTER'S OKR WORK — no horizon yet ]")
                         (org-agenda-skip-function '(my/agenda-skip-if-scheduled))
                         (org-agenda-sorting-strategy '(priority-down effort-up))
-                        (org-agenda-prefix-format " %i %-16:c %5e ")))
+                        (org-agenda-prefix-format " %i %-12.12:c %5e ")))
 
             ;; [#A] without an objective = mandatory; also needs a horizon
             (tags-todo (my/agenda-match-mandatory-a "/TODO|ONGOING|WAITING")
                        ((org-agenda-overriding-header "[ MANDATORY [#A] — no horizon yet ]")
                         (org-agenda-skip-function '(my/agenda-skip-if-scheduled))
                         (org-agenda-sorting-strategy '(effort-up ts-up))
-                        (org-agenda-prefix-format " %i %-16:c %5e ")))
+                        (org-agenda-prefix-format " %i %-12.12:c %5e ")))
 
             ;; In flight: what was already ongoing going into this week
             (tags-todo "/ONGOING"
@@ -404,7 +413,7 @@ why horizons are Mondays and why the week is capped at ~15h.
                         (org-agenda-tags-todo-honor-ignore-options t)
                         (org-agenda-todo-ignore-scheduled 'future)
                         (org-agenda-sorting-strategy '(priority-down effort-up))
-                        (org-agenda-prefix-format " %i %-16:c %5e ")))
+                        (org-agenda-prefix-format " %i %-12.12:c %5e ")))
 
             ;; Waiting: may need escalation before week is out
             (tags-todo "/WAITING"
@@ -412,7 +421,7 @@ why horizons are Mondays and why the week is capped at ~15h.
                         (org-agenda-tags-todo-honor-ignore-options t)
                         (org-agenda-todo-ignore-scheduled 'future)
                         (org-agenda-sorting-strategy '(ts-up priority-down))
-                        (org-agenda-prefix-format " %i %-16:c ")))
+                        (org-agenda-prefix-format " %i %-12.12:c ")))
 
             ;; Goal work outside this quarter's OKRs: important, not now.
             ;; Only look here to confirm it's parked, not to fill the week.
@@ -421,7 +430,7 @@ why horizons are Mondays and why the week is capped at ~15h.
                         (org-agenda-tags-todo-honor-ignore-options t)
                         (org-agenda-todo-ignore-scheduled 'future)
                         (org-agenda-sorting-strategy '(priority-down effort-up))
-                        (org-agenda-prefix-format " %i %-16:c %5e ")))
+                        (org-agenda-prefix-format " %i %-12.12:c %5e ")))
             )
            )
 
@@ -453,7 +462,7 @@ why horizons are Mondays and why the week is capped at ~15h.
                         (org-agenda-skip-function
                          '(my/agenda-skip-unless-dated "SCHEDULED" nil (1- (my/agenda--week-start))))
                         (org-agenda-sorting-strategy '(scheduled-up priority-down))
-                        (org-agenda-prefix-format " %i %-16:c %5e ")))
+                        (org-agenda-prefix-format " %i %-12.12:c %5e ")))
 
             ;; Deadlines that passed: real ones get dealt with, dead ones deleted
             (tags-todo "/TODO|ONGOING|WAITING"
@@ -479,7 +488,7 @@ why horizons are Mondays and why the week is capped at ~15h.
             ;; purpose, and the pool is reviewed monthly, not every Friday.
             )
            ;; shared by every block above unless it sets its own
-           ((org-agenda-prefix-format " %i %-16:c ")))
+           ((org-agenda-prefix-format " %i %-12.12:c ")))
 
           ;; ──────────────────────────────────────────────────────────────────
           ;; h — Hours: where did this week's time go?
@@ -499,7 +508,7 @@ why horizons are Mondays and why the week is capped at ~15h.
                      (org-agenda-time-grid nil)
                      (org-agenda-clockreport-mode t)
                      (org-agenda-clockreport-parameter-plist
-                      '(:link t :maxlevel 3 :fileskip0 t :properties ("Effort")))
+                      '(:link t :maxlevel 3 :fileskip0 t :hidefiles t :properties ("Effort")))
                      (org-super-agenda-groups nil)))))
 
           ;; ──────────────────────────────────────────────────────────────────
@@ -516,7 +525,7 @@ why horizons are Mondays and why the week is capped at ~15h.
                          '(my/agenda-skip-unless-dated "SCHEDULED" (my/agenda--next-week-start)
                                                        (my/agenda--next-week-end) t))
                         (org-agenda-sorting-strategy '(scheduled-up priority-down))
-                        (org-agenda-prefix-format " %i %-16:c %(my/agenda--date-label \"SCHEDULED\") %5e ")))
+                        (org-agenda-prefix-format " %i %-12.12:c %(my/agenda--date-label \"SCHEDULED\") %5e ")))
 
             (tags-todo "/TODO|ONGOING|WAITING"
                        ((org-agenda-overriding-header "[ DUE NEXT WEEK ]")
@@ -524,7 +533,7 @@ why horizons are Mondays and why the week is capped at ~15h.
                          '(my/agenda-skip-unless-dated "DEADLINE" (my/agenda--next-week-start)
                                                        (my/agenda--next-week-end)))
                         (org-agenda-sorting-strategy '(deadline-up priority-down))
-                        (org-agenda-prefix-format " %i %-16:c %(my/agenda--date-label \"DEADLINE\") %5e ")))
+                        (org-agenda-prefix-format " %i %-12.12:c %(my/agenda--date-label \"DEADLINE\") %5e ")))
 
             (tags-todo "/TODO|ONGOING|WAITING"
                        ((org-agenda-overriding-header (my/next-month-header))
@@ -532,7 +541,7 @@ why horizons are Mondays and why the week is capped at ~15h.
                          '(my/agenda-skip-unless-dated "SCHEDULED" (car (my/agenda--next-month-bounds))
                                                        (cadr (my/agenda--next-month-bounds)) t))
                         (org-agenda-sorting-strategy '(scheduled-up priority-down))
-                        (org-agenda-prefix-format " %i %-16:c %(my/agenda--date-label \"SCHEDULED\") %5e ")))
+                        (org-agenda-prefix-format " %i %-12.12:c %(my/agenda--date-label \"SCHEDULED\") %5e ")))
 
             (tags-todo "/TODO|ONGOING|WAITING"
                        ((org-agenda-overriding-header "[ DUE NEXT MONTH ]")
@@ -540,9 +549,9 @@ why horizons are Mondays and why the week is capped at ~15h.
                          '(my/agenda-skip-unless-dated "DEADLINE" (car (my/agenda--next-month-bounds))
                                                        (cadr (my/agenda--next-month-bounds))))
                         (org-agenda-sorting-strategy '(deadline-up priority-down))
-                        (org-agenda-prefix-format " %i %-16:c %(my/agenda--date-label \"DEADLINE\") %5e ")))
+                        (org-agenda-prefix-format " %i %-12.12:c %(my/agenda--date-label \"DEADLINE\") %5e ")))
             )
-           ((org-agenda-prefix-format " %i %-16:c %5e ")))
+           ((org-agenda-prefix-format " %i %-12.12:c %5e ")))
 
           ;; ──────────────────────────────────────────────────────────────────
           ;; ca — By domain
@@ -574,7 +583,7 @@ why horizons are Mondays and why the week is capped at ~15h.
                         (org-agenda-sorting-strategy '(priority-down effort-up))))
             )
            ((org-agenda-sorting-strategy '(todo-state-up priority-down effort-up))
-            (org-agenda-prefix-format " %i %-16:c %5e ")))
+            (org-agenda-prefix-format " %i %-12.12:c %5e ")))
 
           ;; ──────────────────────────────────────────────────────────────────
           ;; co — OKR alignment
@@ -610,7 +619,7 @@ why horizons are Mondays and why the week is capped at ~15h.
                         (org-agenda-skip-function '(my/agenda-skip-unless-due-within 14))
                         (org-agenda-sorting-strategy '(priority-down ts-up))))
             )
-           ((org-agenda-prefix-format " %i %-16:c ")))
+           ((org-agenda-prefix-format " %i %-12.12:c ")))
 
           ;; people tasks
           ("p" "People - direct reports"
@@ -619,7 +628,7 @@ why horizons are Mondays and why the week is capped at ~15h.
             (tags-todo "+people"
                        ((org-agenda-overriding-header "[ OPEN PEOPLE ACTIONS ]")
                         (org-agenda-sorting-strategy '(priority-down ts-up))
-                        (org-agenda-prefix-format " %i %-12:c ")))
+                        (org-agenda-prefix-format " %i %-12.12:c ")))
             )
            )))
 #+end_src
