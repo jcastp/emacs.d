@@ -587,7 +587,7 @@ In this order, stopping when time runs out:
 Dailies are never processed away: they are the record of what you took in.
 
 ** Using it when writing
-- Start from a hub or a concept (=C-c n f= /personajes/, /miedo/, /trama/…) and
+- Start from a hub or a concept (=C-c n f= /personajes/, /miedo/, /trama/ ...) and
   follow its backlinks (=C-c n l=).
 - The node picker matches tags as well as titles: type =writing= or =emoción=
   after part of a title to narrow the list.
@@ -629,23 +629,36 @@ narrower ones such as =personaje=, =trama=, =worldbuilding=, =emoción=,
 
 ** Keys
 /[50-org-roam]/
-| Key     | Does                                                           |
-|---------+----------------------------------------------------------------|
-| =C-c n f= | find (or create) a note                                        |
-| =C-c n i= | insert a link to a note (creating it if needed)                |
-| =C-c n c= | capture a new note with a template                             |
-| =C-c n n= | capture a thought into the inbox                               |
-| =C-c n F= | open the inbox                                                 |
-| =C-c n l= | toggle the backlinks buffer (right side, a third of the width) |
-| =C-c n t= | add a roam tag                                                 |
-| =C-c n r= | add a ref (URL, citation) to the note                          |
-| =C-c n S= | open a random seed                                             |
-| =C-c n P= | open two random notes side by side: how do they connect?       |
-| =C-c n R= | open a random note                                             |
-| =C-c n T= | open a random note that has a live TODO                        |
-| =C-c n a= | agenda restricted to the roam directory                        |
-| =C-c n u= | open org-roam-ui (graph in the browser)                        |
-| =C-c n d= | the dailies map (below)                                        |
+| Key       | Does                                                           |
+|-----------+----------------------------------------------------------------|
+| =C-c n f=   | find (or create) a note                                        |
+| =C-c n i=   | insert a link to a note (creating it if needed)                |
+| =C-c n c=   | capture a new note with a template                             |
+| =C-c n n=   | capture a thought into the inbox                               |
+| =C-c n F=   | open the inbox                                                 |
+| =C-c n l=   | toggle the backlinks buffer (right side, a third of the width) |
+| =C-c n t=   | add a roam tag                                                 |
+| =C-c n r=   | add a ref (URL, citation) to the note                          |
+| =C-c n S=   | open a random seed                                             |
+| =C-c n P=   | open two random notes side by side: how do they connect?       |
+| =C-c n R=   | open a random note                                             |
+| =C-c n T=   | open a random note that has a live TODO                        |
+| =C-c n a=   | agenda restricted to the roam directory                        |
+| =C-c n u=   | open org-roam-ui (graph in the browser)                        |
+|-----------+----------------------------------------------------------------|
+| =C-c n d d= | go to today                                                    |
+| =C-c n d y= | go to yesterday                                                |
+| =C-c n d t= | go to tomorrow                                                 |
+| =C-c n d c= | go to a date                                                   |
+| =C-c n d f= | go to the next daily                                           |
+| =C-c n d b= | go to the previous daily                                       |
+| =C-c n d .= | open the dailies directory                                     |
+| =C-c n d r= | reading-log entry into today                                   |
+| =C-c n d n= | capture into today (template =d= or =r=)                           |
+| =C-c n d U= | capture into today                                             |
+| =C-c n d Y= | capture into yesterday                                         |
+| =C-c n d I= | capture into tomorrow                                          |
+| =C-c n d v= | capture into a date                                            |
 
 The node picker shows the title and, in the tag face, the note's tags, so you
 can match on either. Roam completion is on everywhere: typing inside a =[[…=
@@ -667,18 +680,10 @@ repo. Edit those files to change the structure.
 
 ** Dailies
 /[50-org-roam]/
-Under =C-c n d=:
-| Key   | Does                       | Key | Does                         |
-|-------+----------------------------+-----+------------------------------|
-| =d=     | go to today                | =r=   | reading-log entry into today |
-| =y=     | go to yesterday            | =n=   | capture into today (=d= or =r=)  |
-| =t=     | go to tomorrow             | =U=   | capture into today           |
-| =c=     | go to a date               | =Y=   | capture into yesterday       |
-| =f= / =b= | next / previous daily      | =I=   | capture into tomorrow        |
-| =.=     | open the dailies directory | =v=   | capture into a date          |
-
-Two templates: =d= is a free entry and =r= a reading-log entry. Both are stamped
-with the time.
+One file per day in =daily/=, used as a reading log (see [[*Capturing][Capturing]]). There are
+two templates: =d= is a free entry and =r= a reading-log entry tagged =:read:=.
+Both are stamped with the time. The keys live under =C-c n d= and are listed
+in [[*Keys][Keys]].
 
 ** Maintenance commands (=M-x=)
 - =my/org-roam-orphans= lists top-level notes with no links in or out and
@@ -1018,23 +1023,36 @@ The encrypted directory holds the journal and the Mastodon token.
 | =C-c r ñ=     | new journal entry                   |
 
 ** Org-roam (=C-c n=)
-| Key   | Command          |
-|-------+------------------|
-| =f=   | find note        |
-| =i=   | insert link      |
-| =c=   | capture          |
-| =n=   | capture to inbox |
-| =l=   | backlinks buffer |
-| =t=   | add tag          |
-| =r=   | add ref          |
-| =u=   | roam UI          |
-| =F=   | open inbox       |
-| =S=   | random seed      |
-| =P=   | creative pair    |
-| =R=   | random note      |
-| =T=   | random TODO note |
-| =a=   | roam agenda      |
-| =d= … | dailies map      |
+| Key   | Command                |
+|-------+------------------------|
+| =f=   | find note              |
+| =i=   | insert link            |
+| =c=   | capture                |
+| =n=   | capture to inbox       |
+| =l=   | backlinks buffer       |
+| =t=   | add tag                |
+| =r=   | add ref                |
+| =u=   | roam UI                |
+| =F=   | open inbox             |
+| =S=   | random seed            |
+| =P=   | creative pair          |
+| =R=   | random note            |
+| =T=   | random TODO note       |
+| =a=   | roam agenda            |
+|-------+------------------------|
+| =d d= | today                  |
+| =d y= | yesterday              |
+| =d t= | tomorrow               |
+| =d c= | daily for a date       |
+| =d f= | next daily             |
+| =d b= | previous daily         |
+| =d .= | dailies directory      |
+| =d r= | reading-log entry      |
+| =d n= | capture into today     |
+| =d U= | capture into today     |
+| =d Y= | capture into yesterday |
+| =d I= | capture into tomorrow  |
+| =d v= | capture into a date    |
 
 ** Personal prefix (=C-q=)
 | Key | Command            | Key | Command                 |
