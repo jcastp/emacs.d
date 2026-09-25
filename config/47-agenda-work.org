@@ -33,7 +33,7 @@ touched for a week", and matches built from this quarter's objective tags.
 The objective and goal matches are built from =my/work-objective-tags= and
 =my/work-goal-tags= (set in =company_info.el=) /each time a view runs/, so a
 task still carrying a retired objective tag drops out of "this quarter"
-automatically once the variable changes.  See =design notes/system.org= for
+automatically once the variable changes.  See the work =manual.org= ("The system") for
 why horizons are Mondays and why the week is capped at ~15h.
 
 #+begin_src emacs-lisp

@@ -480,8 +480,8 @@ As work is different from home, I need specific templates.
 
     (defun my/capture-optional-deadline ()
       "Ask whether a real deadline was agreed; return a DEADLINE line or \"\".
-    A deadline is only for a date with a real consequence (design notes/
-    system.org), so a 1:1 commitment gets one only when it was agreed."
+    A deadline is only for a date with a real consequence (see the work
+    manual.org), so a 1:1 commitment gets one only when it was agreed."
       (if (y-or-n-p "Was a real deadline agreed? ")
           (concat "\n    DEADLINE: "
                   (with-temp-buffer
