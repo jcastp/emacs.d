@@ -1,0 +1,87 @@
+#+title: Books — the reading list
+#+property: header-args:emacs-lisp :tangle "48-books.el"
+#+startup: overview
+
+The reading list in =books.org= (=my-booklist-file=): the hook that stamps a
+book's dates, rating and comment, and the =C-q l= keys.  Home only.
+
+The rest of the system lives with what it modifies: the =b= capture template in
+=40-org.org=, the =cb= view and its comparator in =46-agenda-personal.org=.  The
+states (=LEYENDO SIGUIENTE PENDIENTE PAUSADO | LEIDO ABANDONADO=) are defined by
+the =#+TODO= line of =books.org= itself, not here: a file-local keyword set
+replaces the global one, so they never appear in =tasks.org=.
+
+=books.org= deliberately has no link to org-roam.  Book notes are roam notes
+created by hand; reading ideas are captured into the dailies (=C-c n d r=) and
+moved into the book's note (=org-roam-refile=) at the daily review, so nothing
+stays in the dailies.
+
+* Lexical binding
+#+begin_src emacs-lisp
+  ;; -*- lexical-binding: t; -*-
+#+end_src
+
+* Dates, rating and comment on state change
+Only =books.org= is touched.  =FECHA_INICIO= is written once, so resuming a
+=PAUSADO= book keeps the original start.  =FECHA_FIN= repeats the =CLOSED:=
+line on purpose: properties are what column view and the =cb= comparator read.
+The reason for =PAUSADO= and =ABANDONADO= is asked for by the =@= in their
+keyword definitions, not here.
+#+begin_src emacs-lisp
+  (defun my/books--in-booklist-p ()
+    "Non-nil when the current buffer visits `my-booklist-file'."
+    (and buffer-file-name
+         (file-equal-p buffer-file-name my-booklist-file)))
+
+  (defun my/books--empty-prop-p (prop)
+    "Non-nil when PROP is missing or blank on the entry at point.
+  `org-entry-get' returns \"\" for a property written with no value."
+    (string-empty-p (or (org-entry-get nil prop) "")))
+
+  (defun my/books-on-state-change ()
+    "Stamp the dates, rating and comment of a book when its state changes."
+    (when (my/books--in-booklist-p)
+      (let ((today (format-time-string "%Y-%m-%d")))
+        (pcase org-state
+          ("LEYENDO"
+           (when (my/books--empty-prop-p "FECHA_INICIO")
+             (org-entry-put nil "FECHA_INICIO" today)))
+          ("LEIDO"
+           (org-entry-put nil "FECHA_FIN" today)
+           (org-entry-put nil "VALORACION"
+                          (completing-read "Valoración: " '("5" "4" "3" "2" "1") nil t))
+           (let ((comment (read-string "Comentario breve (vacío para omitir): ")))
+             (unless (string-empty-p comment)
+               (org-entry-put nil "COMENTARIO" comment))))
+          ("ABANDONADO"
+           (org-entry-put nil "FECHA_FIN" today))))))
+
+  (add-hook 'org-after-todo-state-change-hook #'my/books-on-state-change)
+#+end_src
+
+* Reading ideas left in the dailies
+The daily review should leave no =:read:= entry behind (the tag comes from the
+=r= dailies template).  This lists the ones still there; on each, =org-roam-refile=
+moves it into the book's note.
+#+begin_src emacs-lisp
+  (defun my/books-daily-leftovers ()
+    "Search the roam dailies for reading ideas not yet moved to a book note."
+    (interactive)
+    (consult-ripgrep (expand-file-name "daily/" my-roam-dir) ":read:"))
+#+end_src
+
+* Keys
+#+begin_src emacs-lisp
+  (let ((books (my/key-define-submap "l" "libros")))
+    (my/key-define "a" "añadir libro"
+                   (lambda () (interactive) (org-capture nil "b")) books)
+    (my/key-define "v" "vista de libros"
+                   (lambda () (interactive) (org-agenda nil "cb")) books)
+    (my/key-define "f" "buscar libro"
+                   (lambda () (interactive)
+                     (find-file my-booklist-file)
+                     (consult-org-heading))
+                   books)
+    (my/key-define "d" "ideas en diarios" #'my/books-daily-leftovers books)
+    (my/key-define "m" "mover a nota"     #'org-roam-refile          books))
+#+end_src

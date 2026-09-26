@@ -124,6 +124,7 @@ when its `use-package' form is deferred.")
     ("config/45-agenda"          . always)
     ("config/46-agenda-personal" . home)
     ("config/47-agenda-work"     . work)
+    ("config/48-books"           . home)
     ("config/50-org-roam"        . always)
     ("config/55-org-export"      . home)
     ("config/60-writing"         . home)
@@ -137,7 +138,7 @@ Each entry is a cons of a path relative to `my-config-dir', without
 the .org extension, and a condition symbol understood by
 `my/module-enabled-p'.  The keymap module must come after every module
 that registers `C-q' entries; only startup side effects, such as
-99-start-work, may follow it.")
+98-start-work, may follow it.")
 
 (defun my/module-enabled-p (condition)
   "Return non-nil when CONDITION holds for this machine and environment."

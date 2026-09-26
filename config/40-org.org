@@ -335,7 +335,7 @@ Create custom tags for different categories and contexts.
                           ("@home" . ?h) ("@errands" . ?E) ("@computer" . ?c) ("@online" . ?o) ("@penpaper" . ?P)
                           ;; interests
                           ("emacs" . ?e) ("writing" . ?w) ("reading" . ?r) ("calls" . ?C) ("blog" . ?b)
-                          ("books" . ?B)
+                          ("libros" . ?B)
                           ;; energy
                           ("low_energy" . ?l) ("high_energy" . ?g)))
     )
@@ -400,19 +400,14 @@ Here I will add template captures for doing several things:
 
                                  ;; A book for the reading list.  A plain org file rather than
                                  ;; org-books, which is unmaintained and whose URL fetching broke.
-                                 ("b" "Book to read" entry
+                                 ;; Title and author only: dates, rating and comment are
+                                 ;; stamped by the state-change hook in 48-books.
+                                 ("b" "Libro por leer" entry
                                   (file+headline my-booklist-file "Libros")
-                                  "* TOREAD %^{TITLE} :books:
+                                  "* PENDIENTE %^{Título}
   :PROPERTIES:
-  :AUTHOR: %^{Author}
-  :GENRE: %^{Genre|ficción|no-ficción|técnico|ensayo|poesia}
-  :FORMAT: %^{Format|fisico|ebook|audiolibro}
-  :PAGES: %^{Pages}
-  :DATE_ADDED: %<%Y-%m-%d>
-  :DATE_STARTED:
-  :DATE_FINISHED:
-  :RATING:
-  :ROAM_LINK:
+  :AUTOR: %^{Autor}
+  :FECHA_ALTA: %<%Y-%m-%d>
   :END:
   %?"
                                   :empty-lines 1)))

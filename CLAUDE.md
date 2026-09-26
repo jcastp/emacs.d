@@ -35,6 +35,7 @@ The config is split by **domain** (one module per subject), not by environment. 
 |`45-agenda`         |always              |both environments' agenda frames                                                     |
 |`46-agenda-personal`|home                |personal agenda commands                                                             |
 |`47-agenda-work`    |work                |work agenda commands, org-ql views, 1:1 tooling                                      |
+|`48-books`          |home                |reading list: state-change hook (dates, rating), `C-q l` keys                        |
 |`50-org-roam`       |always              |roam, its UI, capture templates; separate store + DB per environment                 |
 |`55-org-export`     |home                |every exporter; loads `ox` itself, independent of org-scribe                         |
 |`60-writing`        |home                |org-scribe, tempel, writeroom, story files, org-journal                              |
@@ -42,8 +43,8 @@ The config is split by **domain** (one module per subject), not by environment. 
 |`80-apps`           |always              |eww, dired, elfeed, nov, calibre, pdf, eshell, mastodon, dashboard                   |
 |`85-ai`             |`(home full-system)`|gptel                                                                                |
 |`90-keymap`         |always              |the `C-q q` direct-file-access sub-map                                               |
-|`98-scratch`        |*not loaded*        |staging area; tangles nothing                                                        |
-|`99-start-work`     |work                |startup side effects: opens today's roam daily + `my-work-file` side by side         |
+|`98-start-work`     |work                |startup side effects: opens today's roam daily + `my-work-file` side by side         |
+|`99-scratch`        |*not loaded*        |staging area; tangles nothing                                                        |
 
 Conditions understood by `my/module-enabled-p`: `always`, `home`, `work`, `full-system`, `clear` (encrypted dir mounted), or a **list**, meaning all of them must hold.
 
@@ -69,7 +70,7 @@ Conditions understood by `my/module-enabled-p`: `always`, `home`, `work`, `full-
 
 **To add a binding, edit the module that owns the command** — never collect it centrally. A module that does not load simply contributes nothing, so no `fboundp`/`boundp` guards are needed.
 
-Current entries: `a` AI · `b` buffers · `c` centered-mode · `d` daily agenda · `i` tempel-insert · `o` online · `p` open report (work) · `q` direct file access · `r` recent file · `s` org styling · `t` themes/fonts · `u` outline · `w` writing
+Current entries: `a` AI · `b` buffers · `c` centered-mode · `d` daily agenda · `i` tempel-insert · `l` libros (reading list) · `o` online · `p` open report (work) · `q` direct file access · `r` recent file · `s` org styling · `t` themes/fonts · `u` outline · `w` writing
 
 Note `my/key-define-submap` builds a **fresh** keymap, so two modules must never
 register the same letter — the second call silently discards the first module's
@@ -106,8 +107,8 @@ bindings.
 - **`:ensure` installs even when deferred.** Deferring saves startup time, not disk. Use `my-full-system-p` to keep heavy packages off the writing laptops.
 - **Work resets capture templates.** `40-org` sets `org-capture-templates` to `'()` before adding the work ones. The two environments' blocks are adjacent so this is visible.
 - **The agenda frames look parallel but are not.** Work does *not* skip DONE items (`org-agenda-skip-scheduled-if-done` is nil there) and the two category-icon alists differ. `45-agenda` documents what work lacks. Do not merge them without asking.
-- **`98-scratch.org` sets `:tangle no` at the file level.** Code there ships only if a block deliberately overrides it. Put experiments there, not in a live module.
-- **`99-start-work` loads after `90-keymap`**, so it must not register `C-q` keys. It acts on the frame at startup (finds files, splits the window), so keep it last and keep it to side effects.
+- **`99-scratch.org` sets `:tangle no` at the file level.** Code there ships only if a block deliberately overrides it. Put experiments there, not in a live module.
+- **`98-start-work` loads after `90-keymap`**, so it must not register `C-q` keys. It acts on the frame at startup (finds files, splits the window), so keep it last and keep it to side effects.
 - **`jinx-languages` also drives in-buffer completion.** `20-completion` sets `cape-dict-file` to `my/cape-dict-files`, which picks the hunspell word list from the buffer's `jinx-languages`, so spellcheck and `cape-dict` never disagree about the language. It is called on every completion, so `C-M-$` retunes both at once. Adding a language means adding it to `my-hunspell-dictionaries` there, not just to `jinx-languages` — an unlisted language falls back to English rather than going silent.
 - **org-scribe loads eagerly** (it calls `org-scribe-setup` at startup) and requires `ox`, which is why `55-org-export` does not bother deferring its exporters: a `with-eval-after-load 'ox` wrapper would save nothing at home. `55` does not *depend* on that — it loads `ox` itself and runs before `60` — so dropping org-scribe keeps the exporters working, and only then is deferral worth adding.
 
@@ -116,7 +117,7 @@ bindings.
 There is no test suite. To verify changes:
 
 - **Inside Emacs**: `C-c r r` (`my/reload-config`)
-- **Headless, both environments** — the work path needs a larger frame, because `99-start-work` splits the window at startup. **Clear `kill-emacs-hook` before exiting**: otherwise a test run saves its own recentf, savehist and perspective state over your real ones (`autosaved-persp` is not in git). At work, also neuter the roam autosync, which otherwise writes to the Nextcloud-synced work `org-roam.db`:
+- **Headless, both environments** — the work path needs a larger frame, because `98-start-work` splits the window at startup. **Clear `kill-emacs-hook` before exiting**: otherwise a test run saves its own recentf, savehist and perspective state over your real ones (`autosaved-persp` is not in git). At work, also neuter the roam autosync, which otherwise writes to the Nextcloud-synced work `org-roam.db`:
   ```sh
   rm -f config/*.el
   WORKING=HOME emacs --batch --debug-init -l ./early-init.el -l ./init.el \

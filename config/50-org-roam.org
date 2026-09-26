@@ -569,7 +569,7 @@ Elisp using `float-time' to handle org-roam's stored time format."
   (defun my/org-roam-creative-prompt ()
     "Open two random notes side by side and ask how they connect.
 Only distinct, file-level, non-daily notes.  The window layout is not
-cleared first: at work that is the side-by-side view `99-start-work' opens."
+cleared first: at work that is the side-by-side view `98-start-work' opens."
     (interactive)
     (let* ((daily (expand-file-name org-roam-dailies-directory org-roam-directory))
            (nodes (seq-filter
