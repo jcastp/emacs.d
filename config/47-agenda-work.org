@@ -23,7 +23,282 @@ I need a different custom agenda commands to see the tasks better.
 
   ;; Require CLOSED timestamp on done tasks (needed for weekly review)
   (setq org-log-done 'time)
+
+  ;; Category column capped at 12 characters in every view: a longer
+  ;; category is cut instead of pushing the line out of alignment.  The
+  ;; custom views below use the same %-12.12:c.
+  (setq org-agenda-prefix-format
+        '((agenda . " %i %-12.12:c%?-12t% s")
+          (todo   . " %i %-12.12:c")
+          (tags   . " %i %-12.12:c")
+          (search . " %i %-12.12:c")))
 #+end_src
+
+** Helpers for the planning (W) and review (R) views
+The Monday and Friday views need a few things plain tag searches can't express:
+date windows ("scheduled up to this Sunday", "before this Monday"), "not
+touched for a week", and matches built from this quarter's objective tags.
+
+The objective and goal matches are built from =my/work-objective-tags= and
+=my/work-goal-tags= (set in =company_info.el=) /each time a view runs/, so a
+task still carrying a retired objective tag drops out of "this quarter"
+automatically once the variable changes.  See the work =manual.org= ("The system") for
+why horizons are Mondays and why the week is capped at ~15h.
+
+#+begin_src emacs-lisp
+  (defvar my/work-week-capacity-hours 15
+    "Focus hours available in a typical week (estimated 10-20).
+  Used by the THIS WEEK block of the Monday view.")
+
+  ;; ── date bounds (absolute day numbers) ──────────────────────────────
+  (defun my/agenda--week-start ()
+    "Absolute day of this week's Monday."
+    (let* ((today (org-today))
+           (dow (calendar-day-of-week (calendar-gregorian-from-absolute today))))
+      (- today (mod (- dow 1) 7))))
+
+  (defun my/agenda--week-end ()
+    "Absolute day of this week's Sunday."
+    (+ (my/agenda--week-start) 6))
+
+  (defun my/agenda--month-end ()
+    "Absolute day of the last day of this month."
+    (let* ((d (calendar-gregorian-from-absolute (org-today)))
+           (m (car d)) (y (nth 2 d)))
+      (calendar-absolute-from-gregorian
+       (list m (calendar-last-day-of-month m y) y))))
+
+  (defun my/agenda--date (prop)
+    "Absolute day of the entry's PROP (\"SCHEDULED\" or \"DEADLINE\"), or nil."
+    (let ((ts (org-entry-get nil prop)))
+      (and ts (org-time-string-to-absolute ts))))
+
+  (defun my/agenda--repeater-p ()
+    "Non-nil if the entry's SCHEDULED timestamp repeats (a ritual)."
+    (let ((ts (org-entry-get nil "SCHEDULED")))
+      (and ts (string-match-p "[.+]?\\+[0-9]+[hdwmy]" ts))))
+
+  (defun my/agenda--skip ()
+    "Position to continue from when skipping the current entry."
+    (save-excursion (or (outline-next-heading) (point-max))))
+
+  ;; ── skip functions ──────────────────────────────────────────────────
+  (defun my/agenda-skip-unless-dated (prop from to &optional no-repeaters)
+    "Keep only entries whose PROP date lies in [FROM, TO] (absolute days).
+  FROM or TO may be nil for an open bound.  With NO-REPEATERS, also skip
+  entries whose SCHEDULED repeats (the recurring rituals)."
+    (let ((d (my/agenda--date prop)))
+      (unless (and d
+                   (or (null from) (>= d from))
+                   (or (null to) (<= d to))
+                   (not (and no-repeaters (my/agenda--repeater-p))))
+        (my/agenda--skip))))
+
+  (defun my/agenda-skip-if-scheduled ()
+    "Skip entries that have a SCHEDULED date: they already have a horizon."
+    (when (org-entry-get nil "SCHEDULED")
+      (my/agenda--skip)))
+
+  (defun my/agenda-skip-unless-stale (days)
+    "Keep only entries with no clock or state change in the last DAYS days.
+  Looks at the inactive timestamps between this heading and the next one,
+  which is where the LOGBOOK (clock lines and state changes) lives."
+    (let* ((limit (- (org-today) days))
+           (end (save-excursion (or (outline-next-heading) (point-max))))
+           (latest nil))
+      (save-excursion
+        (while (re-search-forward org-ts-regexp-inactive end t)
+          (let ((d (org-time-string-to-absolute (match-string 0))))
+            (when (or (null latest) (> d latest)) (setq latest d)))))
+      (when (and latest (>= latest limit))
+        (my/agenda--skip))))
+
+  ;; ── tag matches from the goal / objective variables ─────────────────
+  (defun my/agenda--objectives ()
+    (bound-and-true-p my/work-objective-tags))
+
+  (defun my/agenda--not-objectives ()
+    "\"-o_a-o_b...\": exclude every current objective tag."
+    (mapconcat (lambda (tag) (concat "-" tag)) (my/agenda--objectives) ""))
+
+  (defun my/agenda-match-objectives (&optional todo)
+    "Tag match for tasks serving a current-quarter objective, plus TODO part."
+    (let ((objs (my/agenda--objectives)))
+      (concat (if objs (mapconcat #'identity objs "|")
+                "no_objectives_defined")
+              (or todo ""))))
+
+  (defun my/agenda-match-goal-not-quarter (&optional todo)
+    "Tag match for goal work that serves no current-quarter objective."
+    (let ((goals (bound-and-true-p my/work-goal-tags))
+          (not-objs (my/agenda--not-objectives)))
+      (concat (if goals
+                  (mapconcat (lambda (g) (concat "+" g not-objs)) goals "|")
+                "no_goals_defined")
+              (or todo ""))))
+
+  (defun my/agenda-match-mandatory-a (&optional todo)
+    "Tag match for [#A] tasks that carry no current objective tag.
+  By the system's rules these are the mandatory ones."
+    (concat "+PRIORITY=\"A\"" (my/agenda--not-objectives) (or todo "")))
+
+  ;; ── the week's load ─────────────────────────────────────────────────
+  (defun my/scheduled-load (from to)
+    "Return (HOURS COUNT UNESTIMATED) for open tasks scheduled in [FROM, TO].
+  FROM and TO are absolute days; FROM nil means no lower bound.  Rituals
+  (repeaters) are left out: their time is not focus time."
+    (let ((minutes 0) (count 0) (unestimated 0))
+      (org-map-entries
+       (lambda ()
+         (let ((d (my/agenda--date "SCHEDULED"))
+               (effort (org-entry-get nil "Effort")))
+           (when (and d (or (null from) (>= d from)) (<= d to)
+                      (not (my/agenda--repeater-p)))
+             (setq count (1+ count))
+             (if (and effort (org-duration-p effort))
+                 (setq minutes (+ minutes (org-duration-to-minutes effort)))
+               (setq unestimated (1+ unestimated))))))
+       "/TODO|ONGOING|WAITING" 'agenda)
+      (list (/ minutes 60.0) count unestimated)))
+
+  (defun my/week-load ()
+    "Return (HOURS COUNT UNESTIMATED) for open tasks scheduled up to Sunday.
+  Slipped items (scheduled before this Monday, still open) count on purpose:
+  a slipped commitment still costs this week."
+    (my/scheduled-load nil (my/agenda--week-end)))
+
+  (defun my/week-load-header ()
+    "Header for the THIS WEEK block, with the load against capacity."
+    (pcase-let ((`(,hours ,count ,unestimated) (my/week-load)))
+      (format "[ THIS WEEK — committed: %d items, %.1fh of ~%dh%s%s ]"
+              count hours my/work-week-capacity-hours
+              (if (> unestimated 0) (format ", %d without Effort" unestimated) "")
+              (if (> hours my/work-week-capacity-hours) " — OVER CAPACITY" ""))))
+
+  (defun my/week-load-report ()
+    "Echo this week's committed load against `my/work-week-capacity-hours'."
+    (interactive)
+    (message "%s" (my/week-load-header)))
+
+  ;; ── looking ahead (N): next week and next month ─────────────────────
+  (defun my/agenda--next-week-start () (+ (my/agenda--week-start) 7))
+  (defun my/agenda--next-week-end () (+ (my/agenda--week-start) 13))
+
+  (defun my/agenda--next-month-bounds ()
+    "(FIRST LAST) absolute days of the calendar month after this one."
+    (let* ((first (1+ (my/agenda--month-end)))
+           (d (calendar-gregorian-from-absolute first))
+           (m (car d)) (y (nth 2 d)))
+      (list first (calendar-absolute-from-gregorian
+                   (list m (calendar-last-day-of-month m y) y)))))
+
+  (defun my/agenda--mondays-between (from to)
+    "Number of Mondays in [FROM, TO]: the weeks that start in that period."
+    (seq-count (lambda (d) (= 1 (calendar-day-of-week
+                                  (calendar-gregorian-from-absolute d))))
+               (number-sequence from to)))
+
+  (defun my/agenda--day-label (abs)
+    (format-time-string "%a %d %b" (org-time-from-absolute abs)))
+
+  (defun my/agenda--date-label (prop)
+    "The entry's PROP date as \"Mon 05 Oct\", padded; for agenda prefixes."
+    (let ((d (my/agenda--date prop)))
+      (format "%-11s" (if d (my/agenda--day-label d) ""))))
+
+  (defun my/agenda--load-header (label from to capacity)
+    "Header \"[ LABEL: N items, Xh of ~CAPACITYh … ]\" for scheduled work in [FROM, TO]."
+    (pcase-let ((`(,hours ,count ,unestimated) (my/scheduled-load from to)))
+      (format "[ %s: %d items, %.1fh of ~%dh%s%s ]"
+              label count hours capacity
+              (if (> unestimated 0) (format ", %d without Effort" unestimated) "")
+              (if (> hours capacity) " — OVER CAPACITY" ""))))
+
+  (defun my/next-week-header ()
+    (let ((from (my/agenda--next-week-start)) (to (my/agenda--next-week-end)))
+      (my/agenda--load-header
+       (format "NEXT WEEK — %s to %s" (my/agenda--day-label from) (my/agenda--day-label to))
+       from to my/work-week-capacity-hours)))
+
+  (defun my/next-month-header ()
+    (pcase-let ((`(,from ,to) (my/agenda--next-month-bounds)))
+      (my/agenda--load-header
+       (format "NEXT MONTH — %s" (format-time-string "%B %Y" (org-time-from-absolute from)))
+       from to (* my/work-week-capacity-hours (my/agenda--mondays-between from to)))))
+
+  ;; ── inbox triage (ci) ───────────────────────────────────────────────
+  (defun my/agenda-skip-unless-due-within (days)
+    "Keep only entries SCHEDULED or with a DEADLINE up to DAYS from today.
+  Past dates count too: a slipped item still needs an estimate."
+    (let ((limit (+ (org-today) days))
+          (s (my/agenda--date "SCHEDULED"))
+          (d (my/agenda--date "DEADLINE")))
+      (unless (or (and s (<= s limit)) (and d (<= d limit)))
+        (my/agenda--skip))))
+
+  ;; ── OKR alignment (co): one block per current objective ─────────────
+  (defun my/agenda--objective-title (tag)
+    "Heading of the objective carrying TAG in the * OKR tree of `my-work-file'."
+    (or (and (bound-and-true-p my-work-file)
+             (file-exists-p my-work-file)
+             (with-current-buffer (find-file-noselect my-work-file)
+               (org-with-wide-buffer
+                (car (org-map-entries (lambda () (org-get-heading t t t t))
+                                      (concat "+okr+" tag) 'file)))))
+        "objective not found under * OKR"))
+
+  (defun my/agenda--okr-command ()
+    "The co view: open work per current objective, then parked goal work.
+  An objective whose block is empty has had no work planned against it."
+    (list "co" "OKR alignment — this quarter"
+          (append
+           (mapcar (lambda (tag)
+                     `(tags-todo ,(concat "+" tag "/TODO|ONGOING|WAITING")
+                                 ((org-agenda-overriding-header
+                                   (format "[ %s — %s ]" ,tag (my/agenda--objective-title ,tag)))
+                                  (org-agenda-sorting-strategy '(todo-state-down priority-down effort-up)))))
+                   (bound-and-true-p my/work-objective-tags))
+           '((tags-todo (my/agenda-match-goal-not-quarter "/TODO|ONGOING|WAITING")
+                        ((org-agenda-overriding-header "[ GOAL WORK, NOT THIS QUARTER — parked ]")
+                         (org-agenda-sorting-strategy '(priority-down effort-up))))))
+          '((org-agenda-prefix-format " %i %-12.12:c %5e "))))
+
+  (defun my/agenda-install-okr-command (&rest _)
+    "Rebuild the co entry of `org-agenda-custom-commands' from the objectives.
+  Runs before every agenda call, so editing `my/work-objective-tags' takes
+  effect without a restart."
+    (let ((cmd (my/agenda--okr-command)))
+      (setq org-agenda-custom-commands
+            (if (assoc "co" org-agenda-custom-commands)
+                (mapcar (lambda (c) (if (equal (car c) "co") cmd c))
+                        org-agenda-custom-commands)
+              (append org-agenda-custom-commands (list cmd))))))
+
+  (advice-add 'org-agenda :before #'my/agenda-install-okr-command)
+
+  ;; ── time view (h): every file that can hold a clock line ───────────
+  (defun my/work-clock-files ()
+    "The permanent work agenda files plus every roam note.
+  `org-agenda-files' only includes a roam note while it has an open TODO, so
+  a meeting note with no (or only finished) actions would drop out of time
+  reports.  The h view uses this list instead."
+    (let ((base (or (bound-and-true-p my/agenda-files-base)
+                    (seq-filter #'identity
+                                (list (bound-and-true-p my-work-file)
+                                      (bound-and-true-p my-people-file)))))
+          (roam (and (bound-and-true-p org-roam-directory)
+                     (file-directory-p org-roam-directory)
+                     (directory-files-recursively org-roam-directory "\\.org\\'"))))
+      (delete-dups (mapcar #'file-truename (append base roam)))))
+
+  ;; super-agenda: an item belongs to "OKR" if it carries a current objective
+  (defun my/agenda-item-objective-p (item)
+    "Non-nil if agenda ITEM carries one of `my/work-objective-tags'."
+    (seq-some (lambda (tag) (member tag (bound-and-true-p my/work-objective-tags)))
+              (get-text-property 0 'tags item)))
+#+end_src
+
+** The views
 
 #+begin_src emacs-lisp
   (setq org-agenda-custom-commands
@@ -35,18 +310,19 @@ I need a different custom agenda commands to see the tasks better.
           ;; ──────────────────────────────────────────────────────────────────
           ("d" "Daily driver"
            (
-            ;; Priority A: explicit commitments
-            (tags-todo "+PRIORITY=\"A\""
-                       ((org-agenda-overriding-header "[ PRIORITY — must do today ]")
-                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("WAITING")))
-                        (org-agenda-sorting-strategy '(effort-up ts-up))
-                        (org-agenda-prefix-format " %i %-16:c %5e ")))
+            ;; No "priority — must do today" block: [#A] means importance,
+            ;; not today.  The week's commitment is the [ SCHEDULE ] block
+            ;; below (items scheduled on this week's Monday show as "Sched. Nx").
 
-            ;; Ongoing — what you were already in the middle of
+            ;; Ongoing — what you were already in the middle of.
+            ;; Tag searches ignore dates unless told otherwise; these two
+            ;; settings keep an item scheduled for a later period off today.
             (tags-todo "/ONGOING"
                        ((org-agenda-overriding-header "[ IN PROGRESS ]")
+                        (org-agenda-tags-todo-honor-ignore-options t)
+                        (org-agenda-todo-ignore-scheduled 'future)
                         (org-agenda-sorting-strategy '(priority-down effort-up ts-up))
-                        (org-agenda-prefix-format " %i %-16:c %5e ")))
+                        (org-agenda-prefix-format " %i %-12.12:c %5e ")))
 
             ;; Time-bound: scheduled for today, past due, active timestamps
             (agenda ""
@@ -58,12 +334,7 @@ I need a different custom agenda commands to see the tasks better.
                      (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "DELEGATED" "CANCELED")))
                      (org-agenda-sorting-strategy '(time-up priority-down))
                      (org-agenda-overriding-header "[ SCHEDULE ]")))
-
-            ;; Waiting — waiting on others, but worth a nudge if you have time
-            (tags-todo "/WAITING"
-                       ((org-agenda-overriding-header "[ WAITING — check in if possible ]")
-                        (org-agenda-sorting-strategy '(ts-up priority-down))
-                        (org-agenda-prefix-format " %i %-16:c ")))
+            ;; WAITING lives in the focus view (f) only.
             )
            )
 
@@ -75,13 +346,17 @@ I need a different custom agenda commands to see the tasks better.
            (
             (tags-todo "/ONGOING"
                        ((org-agenda-overriding-header "[ IN PROGRESS ]")
+                        (org-agenda-tags-todo-honor-ignore-options t)
+                        (org-agenda-todo-ignore-scheduled 'future)
                         (org-agenda-sorting-strategy '(priority-down effort-up ts-up))
-                        (org-agenda-prefix-format " %i %-16:c %5e ")))
+                        (org-agenda-prefix-format " %i %-12.12:c %5e ")))
 
             (tags-todo "/WAITING"
                        ((org-agenda-overriding-header "[ WAITING — waiting on others ]")
+                        (org-agenda-tags-todo-honor-ignore-options t)
+                        (org-agenda-todo-ignore-scheduled 'future)
                         (org-agenda-sorting-strategy '(ts-up priority-down))
-                        (org-agenda-prefix-format " %i %-16:c ")))
+                        (org-agenda-prefix-format " %i %-12.12:c ")))
             )
            )
 
@@ -100,35 +375,62 @@ I need a different custom agenda commands to see the tasks better.
                      (org-agenda-overriding-header "[ DEADLINES — next 2 weeks ]")
                      (org-agenda-sorting-strategy '(deadline-up priority-down))))
 
-            ;; Strategic: OKR-linked tasks that need attention
-            (tags-todo "+okr"
-                       ((org-agenda-overriding-header "[ OKR — strategic tasks ]")
-                        (org-agenda-sorting-strategy '(todo-state-up priority-down effort-up))
-                        (org-agenda-prefix-format " %i %-16:c %5e ")))
+            ;; The week as committed so far: scheduled up to Sunday, slipped
+            ;; items included, rituals left out.  The header carries the load.
+            (tags-todo "/TODO|ONGOING|WAITING"
+                       ((org-agenda-overriding-header (my/week-load-header))
+                        (org-agenda-skip-function
+                         '(my/agenda-skip-unless-dated "SCHEDULED" nil (my/agenda--week-end) t))
+                        (org-agenda-sorting-strategy '(priority-down effort-down))
+                        (org-agenda-prefix-format " %i %-12.12:c %5e ")))
+
+            ;; Where this week's items come from: the rest of the month
+            (tags-todo "/TODO|ONGOING|WAITING"
+                       ((org-agenda-overriding-header "[ LATER THIS MONTH — candidates ]")
+                        (org-agenda-skip-function
+                         '(my/agenda-skip-unless-dated "SCHEDULED" (1+ (my/agenda--week-end))
+                                                       (my/agenda--month-end) t))
+                        (org-agenda-sorting-strategy '(scheduled-up priority-down))
+                        (org-agenda-prefix-format " %i %-12.12:c %5e ")))
+
+            ;; This quarter's OKR work that has no horizon yet: place it
+            (tags-todo (my/agenda-match-objectives "/TODO|ONGOING|WAITING")
+                       ((org-agenda-overriding-header "[ THIS QUARTER'S OKR WORK — no horizon yet ]")
+                        (org-agenda-skip-function '(my/agenda-skip-if-scheduled))
+                        (org-agenda-sorting-strategy '(priority-down effort-up))
+                        (org-agenda-prefix-format " %i %-12.12:c %5e ")))
+
+            ;; [#A] without an objective = mandatory; also needs a horizon
+            (tags-todo (my/agenda-match-mandatory-a "/TODO|ONGOING|WAITING")
+                       ((org-agenda-overriding-header "[ MANDATORY [#A] — no horizon yet ]")
+                        (org-agenda-skip-function '(my/agenda-skip-if-scheduled))
+                        (org-agenda-sorting-strategy '(effort-up ts-up))
+                        (org-agenda-prefix-format " %i %-12.12:c %5e ")))
 
             ;; In flight: what was already ongoing going into this week
             (tags-todo "/ONGOING"
                        ((org-agenda-overriding-header "[ ONGOING — carryover from last week ]")
+                        (org-agenda-tags-todo-honor-ignore-options t)
+                        (org-agenda-todo-ignore-scheduled 'future)
                         (org-agenda-sorting-strategy '(priority-down effort-up))
-                        (org-agenda-prefix-format " %i %-16:c %5e ")))
+                        (org-agenda-prefix-format " %i %-12.12:c %5e ")))
 
             ;; Waiting: may need escalation before week is out
             (tags-todo "/WAITING"
                        ((org-agenda-overriding-header "[ WAITING — may need escalation ]")
+                        (org-agenda-tags-todo-honor-ignore-options t)
+                        (org-agenda-todo-ignore-scheduled 'future)
                         (org-agenda-sorting-strategy '(ts-up priority-down))
-                        (org-agenda-prefix-format " %i %-16:c ")))
+                        (org-agenda-prefix-format " %i %-12.12:c ")))
 
-            ;; Priority A not yet started: strong candidates for this week
-            (tags-todo "+PRIORITY=\"A\"/TODO"
-                       ((org-agenda-overriding-header "[ PRIORITY A — not yet started ]")
-                        (org-agenda-sorting-strategy '(effort-up ts-up))
-                        (org-agenda-prefix-format " %i %-16:c %5e ")))
-
-            ;; Priority B not yet started: good-if-you-get-to-it work
-            (tags-todo "+PRIORITY=\"B\"/TODO"
-                       ((org-agenda-overriding-header "[ PRIORITY B — fill-in work ]")
-                        (org-agenda-sorting-strategy '(effort-up ts-up))
-                        (org-agenda-prefix-format " %i %-16:c %5e ")))
+            ;; Goal work outside this quarter's OKRs: important, not now.
+            ;; Only look here to confirm it's parked, not to fill the week.
+            (tags-todo (my/agenda-match-goal-not-quarter "/TODO|ONGOING|WAITING")
+                       ((org-agenda-overriding-header "[ GOAL WORK, NOT THIS QUARTER — parked ]")
+                        (org-agenda-tags-todo-honor-ignore-options t)
+                        (org-agenda-todo-ignore-scheduled 'future)
+                        (org-agenda-sorting-strategy '(priority-down effort-up))
+                        (org-agenda-prefix-format " %i %-12.12:c %5e ")))
             )
            )
 
@@ -152,20 +454,104 @@ I need a different custom agenda commands to see the tasks better.
                     '(org-agenda-skip-entry-if 'nottodo '("DELEGATED")))
                    (org-agenda-sorting-strategy '(timestamp-down))))
 
+            ;; Commitments that expired without a decision.  Rituals
+            ;; (repeaters) included: they slip too.  Each one gets a named
+            ;; Monday, the pool (C-u C-c C-s), a delegate, or CANCELED.
+            (tags-todo "/TODO|ONGOING|WAITING"
+                       ((org-agenda-overriding-header "[ SLIPPED — scheduled before this Monday ]")
+                        (org-agenda-skip-function
+                         '(my/agenda-skip-unless-dated "SCHEDULED" nil (1- (my/agenda--week-start))))
+                        (org-agenda-sorting-strategy '(scheduled-up priority-down))
+                        (org-agenda-prefix-format " %i %-12.12:c %5e ")))
+
+            ;; Deadlines that passed: real ones get dealt with, dead ones deleted
+            (tags-todo "/TODO|ONGOING|WAITING"
+                       ((org-agenda-overriding-header "[ PAST DEADLINES — real or dead? ]")
+                        (org-agenda-skip-function
+                         '(my/agenda-skip-unless-dated "DEADLINE" nil (1- (org-today))))
+                        (org-agenda-sorting-strategy '(deadline-up priority-down))))
+
+            ;; ONGOING with no clock or state change in 7 days: back to TODO
+            (tags-todo "/ONGOING"
+                       ((org-agenda-overriding-header "[ STALE ONGOING — untouched for 7 days ]")
+                        (org-agenda-skip-function '(my/agenda-skip-unless-stale 7))
+                        (org-agenda-sorting-strategy '(priority-down))))
+
             ;; What is still waiting: decide to chase or park
             (tags-todo "/WAITING"
                        ((org-agenda-overriding-header "[ STILL WAITING — chase or park? ]")
+                        (org-agenda-tags-todo-honor-ignore-options t)
+                        (org-agenda-todo-ignore-scheduled 'future)
                         (org-agenda-sorting-strategy '(ts-up priority-down))))
 
-            ;; What has no schedule yet: needs to go somewhere next week
-            (tags-todo "/TODO"
-                       ((org-agenda-overriding-header "[ UNSCHEDULED — needs a home next week ]")
-                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'timestamp))
-                        (org-agenda-sorting-strategy '(priority-down effort-up))
-                        (org-agenda-prefix-format " %i %-16:c %5e ")))
+            ;; No UNSCHEDULED block: an undated task is in the pool on
+            ;; purpose, and the pool is reviewed monthly, not every Friday.
             )
            ;; shared by every block above unless it sets its own
-           ((org-agenda-prefix-format " %i %-16:c ")))
+           ((org-agenda-prefix-format " %i %-12.12:c ")))
+
+          ;; ──────────────────────────────────────────────────────────────────
+          ;; h — Hours: where did this week's time go?
+          ;; Friday, or any time. Timeline of clocked blocks + clock report,
+          ;; over all work files including every roam note (meetings!).
+          ;; Not "t": that key is Org's built-in global TODO list.
+          ;; ──────────────────────────────────────────────────────────────────
+          ("h" "Hours — clocked time this week"
+           ((agenda ""
+                    ((org-agenda-overriding-header "[ HOURS — clocked time, Monday to Sunday ]")
+                     (org-agenda-files (my/work-clock-files))
+                     (org-agenda-span 'week)
+                     (org-agenda-start-on-weekday 1)
+                     (org-agenda-entry-types '())
+                     (org-agenda-show-log '(clock))
+                     (org-agenda-log-mode-items '(clock))
+                     (org-agenda-time-grid nil)
+                     (org-agenda-clockreport-mode t)
+                     (org-agenda-clockreport-parameter-plist
+                      '(:link t :maxlevel 3 :fileskip0 t :hidefiles t :properties ("Effort")))
+                     (org-super-agenda-groups nil)))))
+
+          ;; ──────────────────────────────────────────────────────────────────
+          ;; N — Next: is next week / next month already planned?
+          ;; Any time, and at Monday planning or the monthly review.  Shows what
+          ;; is scheduled there (with its load against capacity) and what is
+          ;; due there.  Not "n": that key is a built-in agenda command.
+          ;; ──────────────────────────────────────────────────────────────────
+          ("N" "Next — next week and next month"
+           (
+            (tags-todo "/TODO|ONGOING|WAITING"
+                       ((org-agenda-overriding-header (my/next-week-header))
+                        (org-agenda-skip-function
+                         '(my/agenda-skip-unless-dated "SCHEDULED" (my/agenda--next-week-start)
+                                                       (my/agenda--next-week-end) t))
+                        (org-agenda-sorting-strategy '(scheduled-up priority-down))
+                        (org-agenda-prefix-format " %i %-12.12:c %(my/agenda--date-label \"SCHEDULED\") %5e ")))
+
+            (tags-todo "/TODO|ONGOING|WAITING"
+                       ((org-agenda-overriding-header "[ DUE NEXT WEEK ]")
+                        (org-agenda-skip-function
+                         '(my/agenda-skip-unless-dated "DEADLINE" (my/agenda--next-week-start)
+                                                       (my/agenda--next-week-end)))
+                        (org-agenda-sorting-strategy '(deadline-up priority-down))
+                        (org-agenda-prefix-format " %i %-12.12:c %(my/agenda--date-label \"DEADLINE\") %5e ")))
+
+            (tags-todo "/TODO|ONGOING|WAITING"
+                       ((org-agenda-overriding-header (my/next-month-header))
+                        (org-agenda-skip-function
+                         '(my/agenda-skip-unless-dated "SCHEDULED" (car (my/agenda--next-month-bounds))
+                                                       (cadr (my/agenda--next-month-bounds)) t))
+                        (org-agenda-sorting-strategy '(scheduled-up priority-down))
+                        (org-agenda-prefix-format " %i %-12.12:c %(my/agenda--date-label \"SCHEDULED\") %5e ")))
+
+            (tags-todo "/TODO|ONGOING|WAITING"
+                       ((org-agenda-overriding-header "[ DUE NEXT MONTH ]")
+                        (org-agenda-skip-function
+                         '(my/agenda-skip-unless-dated "DEADLINE" (car (my/agenda--next-month-bounds))
+                                                       (cadr (my/agenda--next-month-bounds))))
+                        (org-agenda-sorting-strategy '(deadline-up priority-down))
+                        (org-agenda-prefix-format " %i %-12.12:c %(my/agenda--date-label \"DEADLINE\") %5e ")))
+            )
+           ((org-agenda-prefix-format " %i %-12.12:c %5e ")))
 
           ;; ──────────────────────────────────────────────────────────────────
           ;; ca — By domain
@@ -197,56 +583,43 @@ I need a different custom agenda commands to see the tasks better.
                         (org-agenda-sorting-strategy '(priority-down effort-up))))
             )
            ((org-agenda-sorting-strategy '(todo-state-up priority-down effort-up))
-            (org-agenda-prefix-format " %i %-16:c %5e ")))
+            (org-agenda-prefix-format " %i %-12.12:c %5e ")))
 
           ;; ──────────────────────────────────────────────────────────────────
           ;; co — OKR alignment
           ;; Quarterly check-ins / manager 1:1. Question: are OKRs on track?
           ;; ──────────────────────────────────────────────────────────────────
-          ("co" "OKR alignment"
-           (
-            (tags-todo "+okr/ONGOING"
-                       ((org-agenda-overriding-header "[ OKR — in progress ]")
-                        (org-agenda-sorting-strategy '(priority-down effort-up ts-up))
-                        (org-agenda-prefix-format " %i %-20:c %5e ")))
-
-            (tags-todo "+okr/WAITING"
-                       ((org-agenda-overriding-header "[ OKR — WAITING — escalate ]")
-                        (org-agenda-sorting-strategy '(ts-up priority-down))))
-
-            (tags-todo "+okr/TODO"
-                       ((org-agenda-overriding-header "[ OKR — not yet started ]")
-                        (org-agenda-sorting-strategy '(priority-down effort-up))
-                        (org-agenda-prefix-format " %i %-20:c %5e ")))
-
-            (tags "+okr/DONE"
-                  ((org-agenda-overriding-header "[ OKR — recently completed ]")
-                   (org-agenda-sorting-strategy '(timestamp-down))
-                   (org-agenda-max-entries 20)))
-
-            (tags "+okr/DELEGATED"
-                  ((org-agenda-overriding-header "[ OKR — delegated ]")
-                   (org-agenda-sorting-strategy '(timestamp-down))))
-            )
-           ((org-agenda-prefix-format " %i %-20:c ")))
+          ("co" "OKR alignment — this quarter"
+           ;; Placeholder: replaced before every agenda call by
+           ;; `my/agenda-install-okr-command' with one block per current
+           ;; objective (from `my/work-objective-tags').
+           ((tags-todo "no_objectives_defined")))
 
           ;; ──────────────────────────────────────────────────────────────────
           ;; ci — Inbox triage
-          ;; After capture bursts. Question: what needs to be processed?
+          ;; Friday (and after capture bursts). Question: what needs processing?
+          ;; Every block here should be finishable in one sitting.
           ;; ──────────────────────────────────────────────────────────────────
           ("ci" "Inbox triage — process captured items"
            (
-            ;; Tasks with no domain: they are floating and invisible in the domain view
-            (tags-todo "-detection-automation-emailsec-edr-ai-okr-management"
-                       ((org-agenda-overriding-header "[ NEEDS DOMAIN TAG ]")
+            ;; Everything still in the Inbox: tags, bin, priority, refile
+            (tags-todo "+inbox"
+                       ((org-agenda-overriding-header "[ INBOX — triage every item ]")
                         (org-agenda-sorting-strategy '(ts-up))))
 
-            ;; Tasks without effort: cannot be scheduled
+            ;; Refiled tasks that still have no domain tag
+            (tags-todo "-inbox-detection-automation-emailsec-edr-ai-okr-management-people"
+                       ((org-agenda-overriding-header "[ NEEDS DOMAIN TAG — outside the Inbox ]")
+                        (org-agenda-sorting-strategy '(ts-up))))
+
+            ;; Effort only where planning needs it: scheduled or due within
+            ;; two weeks (slipped items included).  The undated pool doesn't.
             (tags-todo "EFFORT=\"\""
-                       ((org-agenda-overriding-header "[ NEEDS EFFORT ESTIMATE ]")
+                       ((org-agenda-overriding-header "[ NEEDS EFFORT — scheduled or due within 14 days ]")
+                        (org-agenda-skip-function '(my/agenda-skip-unless-due-within 14))
                         (org-agenda-sorting-strategy '(priority-down ts-up))))
             )
-           ((org-agenda-prefix-format " %i %-16:c ")))
+           ((org-agenda-prefix-format " %i %-12.12:c ")))
 
           ;; people tasks
           ("p" "People - direct reports"
@@ -255,7 +628,7 @@ I need a different custom agenda commands to see the tasks better.
             (tags-todo "+people"
                        ((org-agenda-overriding-header "[ OPEN PEOPLE ACTIONS ]")
                         (org-agenda-sorting-strategy '(priority-down ts-up))
-                        (org-agenda-prefix-format " %i %-12:c ")))
+                        (org-agenda-prefix-format " %i %-12.12:c ")))
             )
            )))
 #+end_src
@@ -270,7 +643,7 @@ The package itself is declared, and its mode enabled, in =45-agenda=.
           (:name "Today"          :time-grid t
                                   :scheduled today        :order 3)
           (:name "Priority A"     :priority "A"           :order 10)
-          (:name "OKR"            :tag "okr"              :order 11)
+          (:name "OKR"            :pred my/agenda-item-objective-p :order 11)
           (:name "In progress"    :todo "ONGOING"         :order 20)
           (:name "Waiting"        :todo "WAITING"         :order 21)
           (:name "Detection"      :tag "detection"        :order 30)
