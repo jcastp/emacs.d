@@ -48,6 +48,7 @@ brackets, e.g. [40-org], so you know where to look.
 | =C-q c= | centred mode                  | [[*Focus and layout][Focus]]         |
 | =C-q d= | daily agenda                  | [[*The agenda views][Agenda]]        |
 | =C-q i= | insert tempel template        | [[*Tempel templates][Tempel]]        |
+| =C-q l= | libros: the reading list      | [[*The reading list][Reading list]]  |
 | =C-q o= | online: eww, elfeed, mastodon | [[*Reading, feeds and the web][Reading]]       |
 | =C-q q= | open a favourite file         | below         |
 | =C-q r= | recent file                   | [[*Moving around][Moving around]] |
@@ -305,8 +306,16 @@ Two sequences, each selected with =C-c C-t= and a letter:
 | FINISHED    | =l=   | time        |
 | PURGE       | =ñ=   | note / time |
 
-=books.org= defines its own sequence in the file header:
-=TOREAD(r) READING(R) ONHOLD(H) | READ(D!) DROPPED(X@/!)=.
+=books.org= defines its own sequence in its header. It replaces the two above
+in that file only, so there is no clash with =TODO(t)=. See [[*The reading list][The reading list]].
+| Keyword    | Key | Meaning                   | Logs        |
+|------------+-----+---------------------------+-------------|
+| LEYENDO    | =l=   | reading now               | time        |
+| SIGUIENTE  | =s=   | chosen as next (keep ≤ 3) |             |
+| PENDIENTE  | =p=   | on the list               |             |
+| PAUSADO    | =z=   | paused                    | note / time |
+| LEIDO      | =t=   | finished ("terminado")    | time        |
+| ABANDONADO | =a=   | dropped                   | note / time |
 
 Keywords are coloured by meaning (active red, waiting amber, done green,
 cancelled struck through). In the agenda, ONGOING and the writing keywords use
@@ -315,31 +324,35 @@ the default keyword face; only org buffers colour them.
 ** Tags
 /[40-org]/
 =C-c C-q= (or =C-c C-c= on a heading) sets tags. Each has a fast-selection key:
-| Group     | Tags (key)                                                          |
-|-----------+---------------------------------------------------------------------|
-| Areas     | personal (=p=), health (=H=), financial (=f=)                             |
-| Contexts  | @home (=h=), @errands (=E=), @computer (=c=), @online (=o=), @penpaper (=P=)  |
-| Interests | emacs (=e=), writing (=w=), reading (=r=), calls (=C=), blog (=b=), books (=B=) |
-| Energy    | low_energy (=l=), high_energy (=g=)                                       |
+| Group     | Tags (key)                                                           |
+|-----------+----------------------------------------------------------------------|
+| Areas     | personal (=p=), health (=H=), financial (=f=)                              |
+| Contexts  | @home (=h=), @errands (=E=), @computer (=c=), @online (=o=), @penpaper (=P=)   |
+| Interests | emacs (=e=), writing (=w=), reading (=r=), calls (=C=), blog (=b=), libros (=B=) |
+| Energy    | low_energy (=l=), high_energy (=g=)                                      |
 
 The agenda views are built on these tags. An area tag puts a task in the
 /Areas of life/ view, and context plus energy tags drive the /Context and energy/
 view. Everything in =someday.org= carries =someday= through its =#+FILETAGS=,
 which is how the everyday views leave it out.
 
+=libros= sits on the /Libros/ heading of =books.org= and is inherited by every
+book. It keeps books out of the /no area/ block of /Areas of life/. =reading= is
+for reading that is not a book (articles, sites, courses).
+
 ** Capture
 /[40-org, 55-org-export, 80-apps]/
 =C-c c= opens the capture menu:
-| Key | Template         | Goes to                                                                          |
-|-----+------------------+----------------------------------------------------------------------------------|
-| =t= | Inbox task       | =agenda/tasks.org= → /Inbox/ (category =task=)                                   |
-| =p= | New project      | =tasks.org= → /Tasks/, asks for tags, counts child TODOs recursively             |
-| =h= | Compost heap     | =escritura/retazos/compost_heap.org=, as a list item                             |
-| =f= | Fleeting thought | the roam inbox, =org-roam/personal/fleeting_notes.org= (also =C-c n n=)          |
-| =w= | Writing idea     | =retazos/ideas.org= → /Ideas/, with Personajes / Ambientación / Eventos sections |
-| =P= | Personaje        | =retazos/personajes.org=                                                         |
-| =b= | Book to read     | =agenda/books.org= → /Libros/, asks for title, author, genre, format, pages      |
-| =B= | Blog draft       | the hugo blog's =all-posts.org= → /drafts/                                       |
+| Key | Template         | Goes to                                                                      |
+|-----+------------------+------------------------------------------------------------------------------|
+| =t=   | Inbox task       | =agenda/tasks.org= → /Inbox/ (category =task=)                                     |
+| =p=   | New project      | =tasks.org= → /Tasks/, asks for tags, counts child TODOs recursively             |
+| =h=   | Compost heap     | =escritura/retazos/compost_heap.org=, as a list item                           |
+| =f=   | Fleeting thought | the roam inbox, =org-roam/personal/fleeting_notes.org= (also =C-c n n=)          |
+| =w=   | Writing idea     | =retazos/ideas.org= → /Ideas/, with Personajes / Ambientación / Eventos sections |
+| =P=   | Personaje        | =retazos/personajes.org=                                                       |
+| =b=   | Libro por leer   | =agenda/books.org= → /Libros/ as =PENDIENTE=, asks for title and author only       |
+| =B=   | Blog draft       | the hugo blog's =all-posts.org= → /drafts/                                       |
 
 =C-c C= captures a =TODO= into the /current/ org file, under its top-level
 /Notes/ heading. This is useful for keeping notes and snippets per project. If
@@ -421,13 +434,13 @@ Each view is designed to answer one question at a set time:
 | =R=   | Weekly review      | Friday / weekend         | how did my week go?                            |
 | =ca=  | Areas of life      | monthly                  | how are my life areas doing?                   |
 | =cw=  | Writing pipeline   | before a writing session | what writing needs attention?                  |
-| =cb=  | Books              | anytime                  | what am I reading, what is next?               |
+| =cb=  | Libros             | anytime                  | what am I reading, what is next?               |
 | =cs=  | Someday and goals  | weekly / monthly         | what is in my someday list?                    |
 | =ce=  | Context and energy | a free slot              | what can I do, given where I am and my energy? |
 
 What each view shows, block by block:
-- *Daily*: today's agenda (deadlines warn 3 days ahead) · ONGOING ·
-  priority-A TODOs · WAITING.
+- *Daily*: today's agenda (deadlines warn 3 days ahead) · ONGOING · the book
+  you are reading (LEYENDO) · priority-A TODOs · WAITING.
 - *Week horizon*: deadlines for the next 2 weeks · ONGOING carry-over ·
   priority A · priority B · WAITING.
 - *Weekly review*: what was completed in the last 7 days (DONE and FINISHED) ·
@@ -436,8 +449,9 @@ What each view shows, block by block:
 - *Areas of life*: personal · health · financial · anything with /no/ area tag.
 - *Writing pipeline* (=writing= tag): TOWRITE · TOREVIEW · REDO ·
   RESTRUCTURE · the blog queue · the last 10 FINISHED.
-- *Books* (=books= tag): READING · ONHOLD · TOREAD · the last 20 READ, newest
-  first by =DATE_FINISHED=.
+- *Libros* (the =books.org= states): LEYENDO · PAUSADO /¿retomar o abandonar?/ ·
+  SIGUIENTE · PENDIENTE (alphabetical) · the last 20 LEIDO, newest first by
+  =FECHA_FIN=.
 - *Someday and goals*: =objetivos= · someday by area · other someday.
 - *Context and energy*: high energy + @computer · @home · @penpaper ·
   @errands · @online · calls · low energy /quick wins/.
@@ -445,9 +459,9 @@ What each view shows, block by block:
 All views except /Someday/ exclude =someday= items. In the plain agenda
 (=C-c a a=), org-super-agenda groups entries into Overdue, Today, Deadline this
 week, In progress, Priority A, Waiting, Health, Financial, Personal, Writing,
-Reading and Someday. Entries that match none of these appear at the end under
-/Other items/, so nothing scheduled or due is hidden. The grouping applies to
-this view only; every other agenda view is plain org.
+Lectura (the =libros= tag) and Someday. Entries that match none of these
+appear at the end under /Other items/, so nothing scheduled or due is hidden.
+The grouping applies to this view only; every other agenda view is plain org.
 
 ** Restricted agendas
 /[46-agenda-personal, 50-org-roam]/
@@ -460,17 +474,49 @@ this view only; every other agenda view is plain org.
 the main agenda.
 
 ** The reading list
-/[80-apps, 46-agenda-personal]/
-1. =C-c c b= captures a book into =books.org= as =TOREAD=, with =:AUTHOR:=,
-   =:GENRE:=, =:FORMAT:=, =:PAGES:= and =:DATE_ADDED:= filled in. =:DATE_STARTED:=,
-   =:DATE_FINISHED:=, =:RATING:= and =:ROAM_LINK:= are left for later.
-2. Move it through =READING= / =ONHOLD= to =READ= or =DROPPED=.
-3. Fill =:DATE_FINISHED:= when you finish. The /Books/ view sorts by it.
-4. For real notes, create a roam book note (=C-c n c b=) when you start reading
-   and put a link to it in =:ROAM_LINK:=. See [[*Books][Org-roam → Books]].
+/[40-org, 46-agenda-personal, 48-books]/
+=~/Nextcloud/agenda/books.org= is a plain list of books, in Spanish, with *no
+link to org-roam*: book notes live in roam and are made by hand (see
+[[*Books][Org-roam → Books]]).
 
-=books.org= has a column view (=C-c C-x C-c=) showing title, author, genre,
-pages, dates and rating.
+*The life of a book*
+1. You want to read it → =C-q l a= (same as =C-c c b=). It asks for the title and
+   the author and adds it as =PENDIENTE= with =:FECHA_ALTA:=. You can write why
+   you want it, or who recommended it, in the body before =C-c C-c=.
+2. You pick it as one of the next → =C-c C-t s= (=SIGUIENTE=). Keep three or
+   fewer.
+3. You start it → =C-c C-t l= (=LEYENDO=). =:FECHA_INICIO:= is stamped the first
+   time only, so pausing (=z=, which asks why) and resuming keeps it.
+4. You finish it → =C-c C-t t= (=LEIDO=). =:FECHA_FIN:= is stamped and it asks
+   for a rating (1–5, =:VALORACION:=) and a one-line comment (=:COMENTARIO:=,
+   skipped if empty).
+5. Or you give up → =C-c C-t a= (=ABANDONADO=). It asks why and stamps
+   =:FECHA_FIN:=.
+
+Finished books stay in the list as =LEIDO=. Archive them (=C-c C-x C-a=) once a
+year if the file gets long. Nothing else is asked for: add any other property
+by hand with =C-c C-x p=. The dates are stamped by a hook that only acts in
+=books.org=, and it works from the agenda too.
+
+*Seeing the list*
+- =C-q l v= (=C-c a cb=): the /Libros/ view, described above.
+- The /Vistas/ heading at the top of =books.org= holds two tables: /Por leer/
+  (SIGUIENTE and PENDIENTE) and /Leídos/ (with rating and comment). Refresh them
+  with =C-u C-c C-x C-u=. They list books in file order, so sort the list by
+  state first with =C-c ^ o= on /Libros/.
+- =C-c C-x C-c= on /Libros/ opens an editable column view. =S-left= / =S-right=
+  cycles the rating.
+- =C-q l f= opens =books.org= and jumps to a book by name.
+
+| Key     | Does                                        |
+|---------+---------------------------------------------|
+| =C-q l a= | add a book                                  |
+| =C-q l v= | the /Libros/ view                             |
+| =C-q l f= | find a book in =books.org=                    |
+| =C-q l d= | =:read:= entries in the dailies               |
+| =C-q l m= | move the idea at point into a note (refile) |
+
+=C-q l d= and =C-q l m= belong to the roam side: see [[*Books][Org-roam → Books]].
 
 * Org-roam — the knowledge base
 Org-roam holds ideas meant to be *reused*: concepts, claims about how people,
@@ -552,6 +598,8 @@ Three ways in, from lightest to heaviest:
   today's daily. Link the source note if it has one, and add a line of
   reaction. Keep it to a log line. If you find yourself arguing a point, that
   belongs in a claim note: write the note and link it from the daily.
+  An idea about a *book* you are reading is the exception: it doesn't stay in
+  the daily, because the daily pass moves it into the book's note (see [[*Books][Books]]).
 - *A new idea while writing a note*: =C-c n i=, type the new title, and choose
   template =s= (seed). The link goes in and you stay where you are. The new note
   is an empty placeholder tagged =seed=.
@@ -564,6 +612,10 @@ Open the inbox (=C-c n F=) and handle each entry in one of four ways:
 3. *Make a note of it*: =C-c n f=, type a new title (a sentence, for a claim),
    template =p=, then link it out once.
 4. *Send it elsewhere*: a story seed to =C-c c w=, a task to =C-c c t=.
+
+Then move the book ideas out: =C-q l d= lists the =:read:= entries in the
+dailies, and =C-q l m= on each book idea moves it into its book's note (see
+[[*Books][Books]]). Leave the other reading-log entries where they are.
 
 Delete the entry once it is handled. The goal is an empty inbox; if you skip a
 day, the weekly review catches up.
@@ -585,6 +637,8 @@ In this order, stopping when time runs out:
    with a line of context each.
 
 Dailies are never processed away: they are the record of what you took in.
+The one exception is book ideas, which the daily pass moves into the book's
+note.
 
 ** Using it when writing
 - Start from a hub or a concept (=C-c n f= /personajes/, /miedo/, /trama/ ...) and
@@ -595,16 +649,27 @@ Dailies are never processed away: they are the record of what you took in.
   appears in that note's backlinks.
 
 ** Books
-/[40-org, 50-org-roam, 80-apps]/
-The reading list (see [[*The reading list][The reading list]]) and the book notes work together:
-1. You want to read it → =C-c c b= adds it to =books.org= as =TOREAD=.
-2. You start reading → =C-c n c b= creates the book note. Store a link to it
-   (=C-c l= in the note) and insert it into the book's =:ROAM_LINK:= property
-   (=C-c C-l=).
-3. While reading → reactions go into the daily (=C-c n d r=), each linking the
-   book note.
-4. Chapter by chapter, or at the end → turn the best reactions into claim notes
-   and list them under the book note's /Notas/.
+/[48-books, 50-org-roam]/
+The reading list (=books.org=, see [[*The reading list][The reading list]]) and the book notes are kept
+*separate on purpose*: the list tracks states and dates, and the roam note is
+the book's *master note*, where everything you think about it ends up. Nothing
+links the two, so a book can be on the list without a note, and vice versa.
+
+1. *You want notes on a book* → =C-c n f=, type the title, and choose template
+   =b=. It asks for the author and the year.
+2. *While reading* → =C-c n d r= in the moment. The idea goes into today's daily,
+   tagged =:read:=.
+3. *At the daily pass* → =C-q l d= lists the =:read:= entries in the dailies.
+   On each book idea, =C-q l m= (=org-roam-refile=) and pick the book's note:
+   the entry is *moved* there, appended as a heading at the end, and removed
+   from the daily. =C-q l m= only offers notes that exist, so create the note
+   first (step 1).
+4. *In the note* → file the idea under /Temas/, /Conceptos/ or /Frases/, turn
+   mentions of other notes into links (=C-c n i=), and grow the best ideas into
+   claim notes listed under /Notas/.
+
+No book idea should survive the daily pass. =C-q l d= also lists the ordinary
+reading-log entries (they carry the same =:read:= tag), and those stay.
 
 ** Tags
 /[50-org-roam]/
@@ -682,6 +747,7 @@ repo. Edit those files to change the structure.
 /[50-org-roam]/
 One file per day in =daily/=, used as a reading log (see [[*Capturing][Capturing]]). There are
 two templates: =d= is a free entry and =r= a reading-log entry tagged =:read:=.
+Book ideas taken with =r= don't stay: see [[*Books][Books]].
 Both are stamped with the time. The keys live under =C-c n d= and are listed
 in [[*Keys][Keys]].
 
@@ -1023,8 +1089,8 @@ The encrypted directory holds the journal and the Mastodon token.
 | =C-c r ñ=     | new journal entry                   |
 
 ** Org-roam (=C-c n=)
-| Key   | Command                |
-|-------+------------------------|
+| Key | Command                |
+|-----+------------------------|
 | =f=   | find note              |
 | =i=   | insert link            |
 | =c=   | capture                |
@@ -1039,7 +1105,7 @@ The encrypted directory holds the journal and the Mastodon token.
 | =R=   | random note            |
 | =T=   | random TODO note       |
 | =a=   | roam agenda            |
-|-------+------------------------|
+|-----+------------------------|
 | =d d= | today                  |
 | =d y= | yesterday              |
 | =d t= | tomorrow               |
@@ -1055,25 +1121,28 @@ The encrypted directory holds the journal and the Mastodon token.
 | =d v= | capture into a date    |
 
 ** Personal prefix (=C-q=)
-| Key | Command            | Key | Command                 |
-|-----+--------------------+-----+-------------------------|
-| =a a= | gptel chat         | =s s= | set org style           |
-| =a s= | gptel send         | =s n= | next org style          |
-| =a m= | gptel menu         | =s ?= | describe org style      |
-| =a r= | gptel rewrite      | =t f= | font preset             |
-| =a x= | gptel abort        | =t t= | theme                   |
-| =b o= | org scratch        | =t v= | visual fill column      |
-| =c=   | centred mode       | =u=   | outline                 |
-| =d=   | daily agenda       | =w o= | writing session         |
-| =i=   | tempel insert      | =w a= | distraction-free        |
-| =o e= | eww                | =w f= | focus                   |
-| =o f= | elfeed             | =w e= | editing mode            |
-| =o m= | mastodon           | =w w= | word count → properties |
-| =q c= | config dir         | =w c= | context word count      |
-| =q k= | org-keys.org       | =w r= | exercise with prompt    |
-| =q t= | tasks.org          | =w q= | empty exercise          |
-| =q e= | novel projects dir | =w s= | synonyms                |
-| =r=   | recent file        | =w k= | org-scribe hydra        |
+| Key | Command                   | Key | Command                 |
+|-----+---------------------------+-----+-------------------------|
+| =a a= | gptel chat                | =q e= | novel projects dir      |
+| =a s= | gptel send                | =r=   | recent file             |
+| =a m= | gptel menu                | =s s= | set org style           |
+| =a r= | gptel rewrite             | =s n= | next org style          |
+| =a x= | gptel abort               | =s ?= | describe org style      |
+| =b o= | org scratch               | =t f= | font preset             |
+| =c=   | centred mode              | =t t= | theme                   |
+| =d=   | daily agenda              | =t v= | visual fill column      |
+| =i=   | tempel insert             | =u=   | outline                 |
+| =l a= | add a book                | =w o= | writing session         |
+| =l v= | libros view               | =w a= | distraction-free        |
+| =l f= | find a book               | =w f= | focus                   |
+| =l d= | :read: entries in dailies | =w e= | editing mode            |
+| =l m= | move idea to a note       | =w w= | word count → properties |
+| =o e= | eww                       | =w c= | context word count      |
+| =o f= | elfeed                    | =w r= | exercise with prompt    |
+| =o m= | mastodon                  | =w q= | empty exercise          |
+| =q c= | config dir                | =w s= | synonyms                |
+| =q k= | org-keys.org              | =w k= | org-scribe hydra        |
+| =q t= | tasks.org                 |     |                         |
 
 ** Navigation and search
 | Key     | Command                   |
