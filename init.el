@@ -131,7 +131,8 @@ when its `use-package' form is deferred.")
     ("config/80-apps"            . always)
     ("config/85-ai"              . (home full-system))
     ("config/90-keymap"          . always)
-    ("config/99-start-work"      . work))
+    ("config/98-start-work"      . work)
+	("config/99-scratch"         . always))
   "Config modules and the condition under which each one loads.
 Each entry is a cons of a path relative to `my-config-dir', without
 the .org extension, and a condition symbol understood by
