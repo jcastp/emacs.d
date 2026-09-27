@@ -335,9 +335,7 @@ Create custom tags for different categories and contexts.
                           ("@home" . ?h) ("@errands" . ?E) ("@computer" . ?c) ("@online" . ?o) ("@penpaper" . ?P)
                           ;; interests
                           ("emacs" . ?e) ("writing" . ?w) ("reading" . ?r) ("calls" . ?C) ("blog" . ?b)
-                          ("libros" . ?B)
-                          ;; energy
-                          ("low_energy" . ?l) ("high_energy" . ?g)))
+                          ("libros" . ?B)))
     )
 #+end_src
 

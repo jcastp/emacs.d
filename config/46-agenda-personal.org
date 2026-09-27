@@ -280,16 +280,12 @@ date must count as missing, not as a date that sorts before every other.
             (org-agenda-prefix-format " %i %-14:c ")))
 
           ;; ──────────────────────────────────────────────────────────────────
-          ;; ce — Context and energy
-          ;; Free time slot. Question: what can I do given where I am + energy?
+          ;; ce — Context
+          ;; Free time slot. Question: what can I do given where I am?
           ;; ──────────────────────────────────────────────────────────────────
-          ("ce" "Context and energy"
+          ("ce" "Context"
            (
-            (tags-todo "+high_energy+@computer-someday"
-                       ((org-agenda-overriding-header "[ HIGH ENERGY + COMPUTER — deep work ]")
-                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("WAITING")))))
-
-            (tags-todo "+@home-someday-high_energy"
+            (tags-todo "+@home-someday"
                        ((org-agenda-overriding-header "[ @HOME ]")))
 
             (tags-todo "+@penpaper-someday"
@@ -300,7 +296,7 @@ date must count as missing, not as a date that sorts before every other.
                         (org-agenda-sorting-strategy '(priority-down))
                         (org-agenda-prefix-format " %i %-14:c ")))
 
-            (tags-todo "+@online-someday-high_energy"
+            (tags-todo "+@online-someday"
                        ((org-agenda-overriding-header "[ @ONLINE ]")))
 
             (tags-todo "+calls-someday"
@@ -308,9 +304,6 @@ date must count as missing, not as a date that sorts before every other.
                         (org-agenda-sorting-strategy '(priority-down))
                         (org-agenda-prefix-format " %i %-14:c ")))
 
-            (tags-todo "+low_energy-someday"
-                       ((org-agenda-overriding-header "[ LOW ENERGY — quick wins ]")
-                        (org-agenda-sorting-strategy '(effort-up priority-down))))
             )
            ((org-agenda-sorting-strategy '(priority-down effort-up))
             (org-agenda-prefix-format " %i %-14:c %5e ")))

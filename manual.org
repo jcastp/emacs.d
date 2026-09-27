@@ -45,7 +45,7 @@ brackets, e.g. [40-org], so you know where to look.
 |-------+-------------------------------+---------------|
 | =C-q a= | AI (gptel) sub-map            | [[*AI assistant (gptel)][AI assistant]]  |
 | =C-q b= | buffers: =o= org scratch        | [[*Scratch buffers, indirect buffers and links][Org]]           |
-| =C-q c= | centred mode                  | [[*Focus and layout][Focus]]         |
+| =C-q c= | centered mode                 | [[*Focus and layout][Focus]]         |
 | =C-q d= | daily agenda                  | [[*The agenda views][Agenda]]        |
 | =C-q i= | insert tempel template        | [[*Tempel templates][Tempel]]        |
 | =C-q l= | libros: the reading list      | [[*The reading list][Reading list]]  |
@@ -70,8 +70,8 @@ brackets, e.g. [40-org], so you know where to look.
 ** Editing behaviour
 /[00-core]/
 - *Fill toggle*: =M-q= fills the paragraph (or the region). Press it again
-  straight away to unfill it; consecutive presses keep alternating. After any
-  other command, the next =M-q= fills again.
+  straight away to unfill it; consecutive presses keep alternating.
+  After any other command, the next =M-q= fills again.
 - *Kill a word*: =C-w= with no active region kills the word at point.
 - *Typing replaces a selection* (=delete-selection-mode=).
 - *Paragraph movement*: =M-n= / =M-p= go forward and back by paragraph.
@@ -329,11 +329,10 @@ the default keyword face; only org buffers colour them.
 | Areas     | personal (=p=), health (=H=), financial (=f=)                              |
 | Contexts  | @home (=h=), @errands (=E=), @computer (=c=), @online (=o=), @penpaper (=P=)   |
 | Interests | emacs (=e=), writing (=w=), reading (=r=), calls (=C=), blog (=b=), libros (=B=) |
-| Energy    | low_energy (=l=), high_energy (=g=)                                      |
 
-The agenda views are built on these tags. An area tag puts a task in the
-/Areas of life/ view, and context plus energy tags drive the /Context and energy/
-view. Everything in =someday.org= carries =someday= through its =#+FILETAGS=,
+The agenda views are built on these tags. An area tag puts a task in
+the /Areas of life/ view, and context tags drive the /Context/ view.
+Everything in =someday.org= carries =someday= through its =#+FILETAGS=,
 which is how the everyday views leave it out.
 
 =libros= sits on the /Libros/ heading of =books.org= and is inherited by every
@@ -409,7 +408,7 @@ The flow the configuration is built for:
 1. *Capture* anything into the /Inbox/ with =C-c c t=.
 2. *Refile* it (=C-c C-w=) into /Tasks/, /Writing/, a project, =someday.org= or
    =referencias.org=.
-3. *Tag* it with an area and, where it helps, a context and an energy level.
+3. *Tag* it with an area and, where it helps, a context.
 4. *Review* it through the views below.
 
 ** Look
@@ -427,16 +426,16 @@ The flow the configuration is built for:
 =C-c a= opens the dispatcher. =C-q d= goes straight to /Daily/.
 
 Each view is designed to answer one question at a set time:
-| Key | View               | When                     | Question                                       |
-|-----+--------------------+--------------------------+------------------------------------------------|
-| =d=   | Daily              | every morning            | what needs my attention today?                 |
-| =w=   | Week horizon       | Sunday evening / Monday  | what is coming up this week?                   |
-| =R=   | Weekly review      | Friday / weekend         | how did my week go?                            |
-| =ca=  | Areas of life      | monthly                  | how are my life areas doing?                   |
-| =cw=  | Writing pipeline   | before a writing session | what writing needs attention?                  |
-| =cb=  | Libros             | anytime                  | what am I reading, what is next?               |
-| =cs=  | Someday and goals  | weekly / monthly         | what is in my someday list?                    |
-| =ce=  | Context and energy | a free slot              | what can I do, given where I am and my energy? |
+| Key | View              | When                     | Question                         |
+|-----+-------------------+--------------------------+----------------------------------|
+| =d=   | Daily             | every morning            | what needs my attention today?   |
+| =w=   | Week horizon      | Sunday evening / Monday  | what is coming up this week?     |
+| =R=   | Weekly review     | Friday / weekend         | how did my week go?              |
+| =ca=  | Areas of life     | monthly                  | how are my life areas doing?     |
+| =cw=  | Writing pipeline  | before a writing session | what writing needs attention?    |
+| =cb=  | Libros            | anytime                  | what am I reading, what is next? |
+| =cs=  | Someday and goals | weekly / monthly         | what is in my someday list?      |
+| =ce=  | Contexts          | a free slot              | what can I do, given where I am? |
 
 What each view shows, block by block:
 - *Daily*: today's agenda (deadlines warn 3 days ahead) · ONGOING · the book
@@ -453,8 +452,7 @@ What each view shows, block by block:
   SIGUIENTE · PENDIENTE (alphabetical) · the last 20 LEIDO, newest first by
   =FECHA_FIN=.
 - *Someday and goals*: =objetivos= · someday by area · other someday.
-- *Context and energy*: high energy + @computer · @home · @penpaper ·
-  @errands · @online · calls · low energy /quick wins/.
+- *Context*: @computer · @home · @penpaper · @errands · @online · calls.
 
 All views except /Someday/ exclude =someday= items. In the plain agenda
 (=C-c a a=), org-super-agenda groups entries into Overdue, Today, Deadline this

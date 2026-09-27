@@ -39,7 +39,7 @@ Use gptel to interact with a local llama-swap instance.
   			      "phi4-mini-4b-augmented"
   			      "phi4-mini-4b"
   			      "phi4-reasoning"
-  			      "qwen3.5-27B"
+  			      "qwen3.8-27B"
   			      "qwen3-30b-VL")))
 
     (setq-default gptel-model "llama3.2"))
