@@ -526,7 +526,7 @@ As work is different from home, I need specific templates.
     (add-to-list 'org-capture-templates
     	     '("p" "1:1 meeting" entry
     	       (function my/capture-goto-person)
-    	       "** %<%Y-%m-%d %a %H:%M> - follow-up\n*** Notes\n%?\n*** Actions\n*** Questions\n"
+    	       "** %T - follow-up\n*** Notes\n%?\n*** Actions\n*** Questions\n"
     	       :jump-to-captured t))
 
     ;; And a quick action capture from within a 1:1 note:
