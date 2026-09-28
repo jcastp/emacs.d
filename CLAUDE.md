@@ -83,6 +83,25 @@ bindings.
 - `roamtemplates/` — Org-roam capture templates
 - `elpa/` — packages (gitignored)
 
+## Design notes
+
+Past decisions and proposed improvements live **outside the repo**, in
+`~/Nextcloud/config/emacs/design notes/` (note the space in the path; it is
+Nextcloud-synced and not committed). One Org file per subject, e.g.
+`books_orgmode.org` (reading-list system), `orgroam-system.org` (roam workflow),
+`improvements.org` (config review: what to simplify, fix and remove).
+
+- **Read before changing an area.** Check whether a note covers it: it records
+  what was decided, what was rejected ("dropped along the way") and why. Do not
+  re-propose a rejected option, or reverse a recorded decision, without saying so
+  and asking.
+- **Write proposals there, not in chat or the repo.** A non-trivial design
+  (alternatives, trade-offs, a migration) goes into a new or existing note as an
+  `.org` file with a `#+title:`. Keep a *Status* section at the top and a
+  *Decisions taken* section, and mark items proposed / done / dropped as they move.
+- **Keep them current.** When an implementation lands or a decision changes,
+  update the note that describes it, so it stays a record of what is true.
+
 ## Editing conventions
 
 - The editing target is `config/*.org` — **never edit `config/*.el`**, they are tangled output and gitignored

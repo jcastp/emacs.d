@@ -759,14 +759,15 @@ in [[*Keys][Keys]].
 * Writing
 
 ** Where things live
-| Path under =~/Nextcloud/escritura/= | Holds                                             |
-|-----------------------------------+---------------------------------------------------|
+| Path under =~/Nextcloud/escritura/= | Holds                                               |
+|-------------------------------------+-----------------------------------------------------|
 | =historias/novela/=                 | writing projects, one subdirectory each (=C-q q e=) |
-| =historias/ejercicios/=             | exercises created by =C-q w r= / =C-q w q=            |
+| =historias/ejercicios/=             | short pieces, once titled (=C-q w t=, =C-q w q=)    |
+| =historias/ejercicios/borradores/=  | untitled drafts (=C-q w n=, =C-q w r=)              |
 | =retazos/compost_heap.org=          | the compost heap (=C-c c h=)                        |
 | =retazos/ideas.org=                 | writing ideas (=C-c c w=), also a refile target     |
 | =retazos/personajes.org=            | characters (=C-c c P=)                              |
-| =software/org-scribe=               | org-scribe, loaded from here when present         |
+| =software/org-scribe=               | org-scribe, loaded from here when present           |
 | =software/writing_companion=        | the prompt generator used by =C-q w r=              |
 
 ** Starting a writing session
@@ -780,18 +781,20 @@ Press =F7= (or =C-q w o=):
 
 ** The writing keys
 /[60-writing]/
-| Key     | Does                                                                   |
-|---------+------------------------------------------------------------------------|
+| Key       | Does                                                                   |
+|-----------+------------------------------------------------------------------------|
 | =F7=      | start a writing session                                                |
 | =F8 F8=   | org-scribe's hydra menu                                                |
 | =C-q w o= | start a writing session                                                |
 | =C-q w a= | org-scribe distraction-free mode                                       |
 | =C-q w f= | org-scribe focus mode (distraction-free + narrowed to this section)    |
 | =C-q w e= | org-scribe editing mode (three panels)                                 |
-| =C-q w w= | count words and store =:WORDCOUNT:= on headings                          |
+| =C-q w w= | count words and store =:WORDCOUNT:= on headings                        |
 | =C-q w c= | context-aware word count (org-context-extended)                        |
-| =C-q w r= | new exercise file, seeded with a generated prompt                      |
-| =C-q w q= | new empty exercise file                                                |
+| =C-q w n= | new untitled draft, no questions asked                                 |
+| =C-q w r= | new untitled draft, seeded with a generated prompt                     |
+| =C-q w t= | give the current draft a title and move it to =ejercicios/=            |
+| =C-q w q= | new titled exercise file (asks for the title first)                    |
 | =C-q w s= | synonyms of the word at point (sidebar)                                |
 | =C-q w k= | org-scribe's hydra menu                                                |
 | =C-c W=   | capture a note to this project's notes file (org-scribe)               |
@@ -848,13 +851,35 @@ See [[*What goes where][Org-roam → What goes where]].
 Inside a project, org-scribe's =C-c W= and its entity captures (hydra /Manage/)
 file into the project itself.
 
-** Writing exercises
+** Writing on the spot
 /[60-writing]/
-=C-q w r= asks for a title and creates
-=historias/ejercicios/YYYYMMDD-title.org=. The file starts with front matter
-(title, author, email and the scene-break macro), followed by a prompt from
-=writing_companion.py -s all prompt=. =C-q w q= does the same without the
-prompt.
+For short pieces (500–1000 words) started from nothing or from one sentence,
+with no title needed up front. The novel tooling (=F7=, org-scribe's modes) stays
+out of the way.
+
+1. =C-q w n= opens a new draft in =historias/ejercicios/borradores/=, named after
+   the date and time (=20260928-2141.org=). It asks nothing. The file holds only
+   =#+language: es=, so spell-checking and in-buffer completion are Spanish.
+   Two drafts started in the same minute open the same file.
+2. Write. A sentence you brought from the phone is simply the first line.
+3. Once the piece has earned a title, =C-q w t= in the draft asks for it,
+   replaces the language line with the full header (title, author, email,
+   =#+language: es=, the scene-break macro), and moves the file to
+   =historias/ejercicios/YYYYMMDD-title.org=. The date is the day the draft was
+   /started/. It only works inside =borradores/= and never overwrites an
+   existing file.
+4. Sorting into =pendiente/=, =revisar/= and =terminado/= is by hand.
+
+=C-q w r= is the same as =C-q w n=, but seeds the draft with a prompt from
+=writing_companion.py -s all --no-export prompt=, as =#= comment lines (not
+spell-checked, not exported).
+
+=C-q w q= is the older way: it asks for a title first, then creates
+=historias/ejercicios/YYYYMMDD-title.org= with the full header.
+
+Drafts are not reviewed automatically; a review of =borradores/= is planned for
+later. The design and its reasoning, including some methods for writing short
+pieces, are in =~/Nextcloud/config/emacs/design notes/writing-on-the-spot.org=.
 
 ** Scene breaks
 /[60-writing]/
@@ -1119,8 +1144,8 @@ The encrypted directory holds the journal and the Mastodon token.
 | =d v= | capture into a date    |
 
 ** Personal prefix (=C-q=)
-| Key | Command                   | Key | Command                 |
-|-----+---------------------------+-----+-------------------------|
+| Key   | Command                   | Key   | Command                 |
+|-------+---------------------------+-------+-------------------------|
 | =a a= | gptel chat                | =q e= | novel projects dir      |
 | =a s= | gptel send                | =r=   | recent file             |
 | =a m= | gptel menu                | =s s= | set org style           |
@@ -1136,11 +1161,12 @@ The encrypted directory holds the journal and the Mastodon token.
 | =l d= | :read: entries in dailies | =w e= | editing mode            |
 | =l m= | move idea to a note       | =w w= | word count → properties |
 | =o e= | eww                       | =w c= | context word count      |
-| =o f= | elfeed                    | =w r= | exercise with prompt    |
-| =o m= | mastodon                  | =w q= | empty exercise          |
-| =q c= | config dir                | =w s= | synonyms                |
-| =q k= | org-keys.org              | =w k= | org-scribe hydra        |
-| =q t= | tasks.org                 |     |                         |
+| =o f= | elfeed                    | =w n= | new untitled draft      |
+| =o m= | mastodon                  | =w r= | draft with prompt       |
+| =q c= | config dir                | =w t= | title and move draft    |
+| =q k= | org-keys.org              | =w q= | titled exercise         |
+| =q t= | tasks.org                 | =w s= | synonyms                |
+|       |                           | =w k= | org-scribe hydra        |
 
 ** Navigation and search
 | Key     | Command                   |

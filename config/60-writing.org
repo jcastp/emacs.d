@@ -173,49 +173,115 @@ The macro expands to the literal text SCENE-BREAK.
 After Org finishes generating the export, the filter org-export-replace-scene-breaks replaces all SCENE-BREAK markers with the correct text (three newlines, <br>, etc.).
 
 * Create a story file on the fly
-Sometimes I want to create a story prompt on the fly. These functions allow for creating the prompts and the file, so I can immediately start writing.
+Sometimes I want to create a story on the fly.  A titled file goes straight
+into =my-writing-stories-directory=; the untitled drafts below are the usual way
+in.
 
-This code depends on a custom script that generates writing prompts based on a list of keywords and some templates.
+Every titled file shares one front matter, which declares =#+language: es= so
+jinx and cape-dict work in Spanish from the first word.
 
 #+begin_src emacs-lisp
   (defvar my-writing-stories-directory
     (expand-file-name "historias/ejercicios" my-escritura-dir)
-    "Directory where org files created by `my-writing--new-file' will be stored.")
+    "Directory where titled short pieces are stored.")
 
+  (defun my-writing--front-matter (title)
+    "Return the org header of a titled writing file called TITLE."
+    (format "#+TITLE: %s\n#+AUTHOR: %s\n#+EMAIL: %s\n#+language: es\n#+MACRO: scene-break SCENE-BREAK\n"
+            title user-full-name user-mail-address))
+
+  (defun my-writing--file-name (date title)
+    "Return the file name of a piece started on DATE (%Y%m%d) and called TITLE."
+    (concat date "-" (replace-regexp-in-string " " "_" title) ".org"))
+
+  (defun my-writing/create-empty-writing-file (title)
+    "Create and open a new empty writing file named after TITLE."
+    (interactive "sEnter file name: ")
+    (let ((file-path (expand-file-name
+                      (my-writing--file-name (format-time-string "%Y%m%d") title)
+                      my-writing-stories-directory)))
+      (with-temp-file file-path
+        (insert (my-writing--front-matter title)))
+      (find-file file-path)))
+#+end_src
+
+** Untitled drafts
+Writing on the spot, without a title first (design note:
+=writing-on-the-spot.org=).  =C-q w n= opens a new draft named after the current
+time in =borradores/=, asking nothing.  Once the piece has earned a title, =C-q w
+t= adds the header and moves it into =my-writing-stories-directory=, keeping the
+date it was started.  Sorting into =pendiente/revisar/terminado= stays by hand.
+
+The draft is written /before/ it is visited: jinx reads =#+language:= when it
+starts in the buffer, so a line inserted after =find-file= would be ignored.
+
+#+begin_src emacs-lisp
+  (defvar my-writing-drafts-directory
+    (expand-file-name "borradores" my-writing-stories-directory)
+    "Untitled short-fiction drafts, one file per writing session.")
+
+  (defun my/writing-new-draft (&optional prompt)
+    "Open a new untitled draft named after the current time.
+  No title is asked for.  When PROMPT is a string, it goes at the top as org
+  comment lines, so it is neither spell-checked nor exported."
+    (interactive)
+    (let ((file (expand-file-name (format-time-string "%Y%m%d-%H%M.org")
+                                  my-writing-drafts-directory)))
+      ;; two drafts in the same minute reopen the same file
+      (unless (file-exists-p file)
+        (make-directory my-writing-drafts-directory t)
+        (with-temp-file file
+          (insert "#+language: es\n\n")
+          (when prompt
+            (dolist (line (split-string (string-trim prompt) "\n"))
+              (insert (string-trim-right (concat "# " line)) "\n"))
+            (insert "\n"))))
+      (find-file file)
+      (goto-char (point-max))))
+
+  (defun my/writing-title-draft (title)
+    "Give the current draft TITLE and move it into `my-writing-stories-directory'.
+  The file keeps the date the draft was started: 20260928-2141.org becomes
+  20260928-TITLE.org."
+    (interactive "sTítulo: ")
+    (let ((old (buffer-file-name)))
+      (unless (and old (file-in-directory-p old my-writing-drafts-directory))
+        (user-error "Not a draft in %s" my-writing-drafts-directory))
+      (let ((new (expand-file-name
+                  (my-writing--file-name (substring (file-name-base old) 0 8) title)
+                  my-writing-stories-directory)))
+        (when (file-exists-p new)
+          (user-error "%s already exists" new))
+        (save-excursion
+          (goto-char (point-min))
+          ;; the draft's own language line is replaced by the full header
+          (when (looking-at "#\\+language:.*\n")
+            (replace-match ""))
+          (insert (my-writing--front-matter title)))
+        (save-buffer)
+        (rename-visited-file new))))
+#+end_src
+
+** Drafts from a generated prompt
+=C-q w r= opens an untitled draft seeded with a prompt from a custom script,
+which generates writing prompts from a list of keywords and some templates.
+=--no-export= matters: without it the script ends by asking whether to export
+to markdown, and with no terminal to answer, that question crashes it and the
+traceback lands in the draft.
+
+#+begin_src emacs-lisp
   (defvar my-writing-companion-script
     (expand-file-name "software/writing_companion/writing_companion.py"
                       my-escritura-dir)
     "The script that generates writing prompts.")
 
-  (defun my-writing--new-file (title &optional with-prompt)
-    "Create and open a new writing file named after TITLE.
-  The file is stored in `my-writing-stories-directory' with the name format
-  `%Y%m%d-<title>.org' (spaces in TITLE replaced by underscores) and a standard
-  org front matter.  When WITH-PROMPT is non-nil, append a writing prompt
-  generated by the writing_companion script."
-    (let* ((date (format-time-string "%Y%m%d"))
-           (file-name (concat date "-" (replace-regexp-in-string " " "_" title) ".org"))
-           (file-path (expand-file-name file-name my-writing-stories-directory))
-           (front-matter (format "#+TITLE: %s\n#+AUTHOR: %s\n#+EMAIL: %s\n#+MACRO: scene-break SCENE-BREAK\n"
-                                 title user-full-name user-mail-address))
-           (prompt (when with-prompt
-                     (shell-command-to-string
-                      (format "python %s -s all prompt"
-                              (shell-quote-argument my-writing-companion-script))))))
-      (with-temp-file file-path
-        (insert front-matter)
-        (when prompt (insert "\n\n" prompt)))
-      (find-file file-path)))
-
-  (defun my-writing/create-empty-writing-file (title)
-    "Create and open a new empty writing file named after TITLE."
-    (interactive "sEnter file name: ")
-    (my-writing--new-file title))
-
-  (defun my-writing/create-writing-exercise (title)
-    "Create and open a new writing file named after TITLE, seeded with a generated prompt."
-    (interactive "sEnter file name: ")
-    (my-writing--new-file title t))
+  (defun my-writing/create-writing-exercise ()
+    "Open a new untitled draft seeded with a generated writing prompt."
+    (interactive)
+    (my/writing-new-draft
+     (shell-command-to-string
+      (format "python %s -s all --no-export prompt"
+              (shell-quote-argument my-writing-companion-script)))))
 #+end_src
 
 * Open the writing environment
@@ -280,6 +346,9 @@ Create a custom keymap for the writing functions
     "e" #'org-scribe-editing-mode
     "w" #'org-scribe-ews-org-count-words
     "c" #'org-context-count-words
+    ;; untitled drafts
+    "n" #'my/writing-new-draft
+    "t" #'my/writing-title-draft
     ;; writing exercises
     "r" #'my-writing/create-writing-exercise
     "q" #'my-writing/create-empty-writing-file
