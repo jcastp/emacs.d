@@ -768,7 +768,7 @@ in [[*Keys][Keys]].
 | =retazos/ideas.org=                 | writing ideas (=C-c c w=), also a refile target     |
 | =retazos/personajes.org=            | characters (=C-c c P=)                              |
 | =software/org-scribe=               | org-scribe, loaded from here when present           |
-| =software/writing_companion=        | the prompt generator used by =C-q w r=              |
+| =software/archive/=                 | retired tools (writing_companion, gmc…)             |
 
 ** Starting a writing session
 /[60-writing]/
@@ -870,9 +870,10 @@ out of the way.
    existing file.
 4. Sorting into =pendiente/=, =revisar/= and =terminado/= is by hand.
 
-=C-q w r= is the same as =C-q w n=, but seeds the draft with a prompt from
-=writing_companion.py -s all --no-export prompt=, as =#= comment lines (not
-spell-checked, not exported).
+=C-q w r= is the same as =C-q w n=, but seeds the draft with a roll of the
+oráculo (=oraculo roll=, in =~/Nextcloud/codigo/python/writing_prompts=), as
+=#= comment lines (not spell-checked, not exported). The roll is an oráculo
+session: it goes to its history, and =oraculo reroll= works on it.
 
 =C-q w q= is the older way: it asks for a title first, then creates
 =historias/ejercicios/YYYYMMDD-title.org= with the full header.

@@ -263,25 +263,26 @@ starts in the buffer, so a line inserted after =find-file= would be ignored.
 #+end_src
 
 ** Drafts from a generated prompt
-=C-q w r= opens an untitled draft seeded with a prompt from a custom script,
-which generates writing prompts from a list of keywords and some templates.
-=--no-export= matters: without it the script ends by asking whether to export
-to markdown, and with no terminal to answer, that question crashes it and the
-traceback lands in the draft.
+=C-q w r= opens an untitled draft seeded with a roll of the oráculo
+(=oraculo roll=: the default Rápida recipe). The roll starts an oráculo
+session, so it lands in the oráculo's history like any other; =oraculo
+reroll=, =pregunta= and =nombre= work on it from a terminal. The program is
+run from its own virtual environment, so neither =uv= nor the package needs
+to be on Emacs's =PATH=. (Until 2026-10-12 this used writing_companion,
+now archived in =software/archive/=.)
 
 #+begin_src emacs-lisp
-  (defvar my-writing-companion-script
-    (expand-file-name "software/writing_companion/writing_companion.py"
-                      my-escritura-dir)
-    "The script that generates writing prompts.")
+  (defvar my-oraculo-program
+    (expand-file-name "codigo/python/writing_prompts/.venv/bin/oraculo"
+                      my-nextcloud-dir)
+    "The oráculo's command, in its project's virtual environment.")
 
   (defun my-writing/create-writing-exercise ()
-    "Open a new untitled draft seeded with a generated writing prompt."
+    "Open a new untitled draft seeded with a roll of the oráculo."
     (interactive)
     (my/writing-new-draft
      (shell-command-to-string
-      (format "python %s -s all --no-export prompt"
-              (shell-quote-argument my-writing-companion-script)))))
+      (format "%s roll" (shell-quote-argument my-oraculo-program)))))
 #+end_src
 
 * Open the writing environment
