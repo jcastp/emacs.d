@@ -208,6 +208,25 @@ clock left running through a long absence has to be caught.
       (org-clock-persistence-insinuate)))
 #+end_src
 
+* org-pomodoro
+A Pomodoro timer on top of org-clock: =M-x org-pomodoro= on a heading (or an
+agenda line) clocks in to it for 25 minutes, then starts a 5-minute break, and
+a 20-minute one every fourth time.  Each pomodoro leaves a normal =CLOCK:=
+line, so clock tables see it.  Starting one clocks out whatever was running.
+
+The timer lengths are the package defaults.  At home the writing environment
+(writeroom) hides the mode line and its countdown, so the end of a pomodoro
+is also a desktop notification.  The writing wrapper, =C-q w p=, is in
+=60-writing=.
+
+#+begin_src emacs-lisp
+  (use-package org-pomodoro
+    :commands org-pomodoro
+    :config
+    (when my-homeenvironment-p
+      (setq alert-default-style 'notifications)))
+#+end_src
+
 * Capture to this buffer
 Inspired by https://github.com/ballantony/emacs-writing/blob/main/DoomEmacsWriting.org
 

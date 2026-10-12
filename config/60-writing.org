@@ -285,6 +285,45 @@ now archived in =software/archive/=.)
       (format "%s roll" (shell-quote-argument my-oraculo-program)))))
 #+end_src
 
+* Writing habit
+The habit is kept by hand in =habitos.org=: writing time goes as =CLOCK:=
+lines under *Borrador* (new prose) or *Planificación*, and a clock table
+there shows the week day by day.  A day counts with 15 minutes.
+
+=C-q w p= starts a pomodoro clocked into one of those two headings, so the
+manuscript never gets a =LOGBOOK=, and the current buffer stays where it is.
+The file is saved on every clock-in and clock-out, so another machine sees an
+open session and a closed one as soon as Nextcloud syncs.
+
+#+begin_src emacs-lisp
+  (defvar my-habit-file (expand-file-name "habitos.org" my-escritura-dir)
+    "My hand-kept writing habit file.")
+
+  (defun my/save-habit-file ()
+    "Save `my-habit-file' if it is open and modified."
+    (when-let* ((buffer (find-buffer-visiting my-habit-file)))
+      (with-current-buffer buffer
+        (when (buffer-modified-p)
+          (save-buffer)))))
+
+  (add-hook 'org-clock-in-hook #'my/save-habit-file)
+  (add-hook 'org-clock-out-hook #'my/save-habit-file)
+
+  (defun my/writing-pomodoro (kind)
+    "Start a pomodoro clocked into KIND's heading in `my-habit-file'.
+  KIND is \"Borrador\" or \"Planificación\"."
+    (interactive
+     (list (completing-read "Pomodoro: " '("Borrador" "Planificación") nil t)))
+    (require 'org-pomodoro)
+    (with-current-buffer (find-file-noselect my-habit-file)
+      (let ((heading (org-find-exact-headline-in-buffer kind)))
+        (unless heading
+          (user-error "No heading \"%s\" in %s" kind my-habit-file))
+        (save-excursion
+          (goto-char heading)
+          (org-pomodoro)))))
+#+end_src
+
 * Open the writing environment
 One-key entry point to start a writing session, to reduce the friction of
 getting started. It prompts to pick a project among the subdirectories of
@@ -341,6 +380,7 @@ Create a custom keymap for the writing functions
     :doc "Functions related to writing"
     ;; open a writing session
     "o" #'my/start-writing-session
+    "p" #'my/writing-pomodoro
     ;; writing mode
     "a" #'org-scribe-writing-env-mode
     "f" #'org-scribe-writing-env-mode-focus

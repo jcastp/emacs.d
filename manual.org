@@ -375,6 +375,10 @@ targets are the agenda files (=tasks.org=, =someday.org=, =books.org=),
 =tasks.org= and =someday.org= define =Effort_ALL= values, so =C-c C-x e= offers a
 fixed list of estimates.
 
+=M-x org-pomodoro= on a heading or an agenda line clocks in to it for a
+25-minute pomodoro, then a 5-minute break (20 minutes every fourth time).
+Starting one clocks out whatever was running.
+
 ** Scratch buffers, indirect buffers and links
 /[40-org, 10-ui]/
 | Key     | Does                                                         |
@@ -786,6 +790,7 @@ Press =F7= (or =C-q w o=):
 | =F7=      | start a writing session                                                |
 | =F8 F8=   | org-scribe's hydra menu                                                |
 | =C-q w o= | start a writing session                                                |
+| =C-q w p= | pomodoro clocked into =habitos.org= (Borrador or Planificación)        |
 | =C-q w a= | org-scribe distraction-free mode                                       |
 | =C-q w f= | org-scribe focus mode (distraction-free + narrowed to this section)    |
 | =C-q w e= | org-scribe editing mode (three panels)                                 |
