@@ -47,6 +47,7 @@ brackets, e.g. [40-org], so you know where to look.
 | =C-q b= | buffers: =o= org scratch        | [[*Scratch buffers, indirect buffers and links][Org]]           |
 | =C-q c= | centered mode                 | [[*Focus and layout][Focus]]         |
 | =C-q d= | daily agenda                  | [[*The agenda views][Agenda]]        |
+| =C-q f= | files attached to org entries | [[*Attachments][Attachments]]   |
 | =C-q i= | insert tempel template        | [[*Tempel templates][Tempel]]        |
 | =C-q l= | libros: the reading list      | [[*The reading list][Reading list]]  |
 | =C-q o= | online: eww, elfeed, mastodon | [[*Reading, feeds and the web][Reading]]       |
@@ -265,7 +266,8 @@ writing theme) keep their own heading colour.
 - State-change notes go into a =:LOGBOOK:= drawer. Rescheduling and changing a
   deadline are *not* logged. Finishing a task records a =CLOSED:= timestamp,
   which the weekly review needs.
-- Inline images show at startup, up to 800 px wide.
+- Inline images show at startup at their natural size, capped at 800 px wide
+  (=#+attr_org: :width= has no effect).
 - Babel blocks run without asking for confirmation.
 
 ** Structure templates
@@ -392,6 +394,35 @@ Starting one clocks out whatever was running.
 Links to org headings use =id:= links. Storing a link from a heading without a
 =CUSTOM_ID= creates a UUID =:ID:= for it. The ID cache is =org-id-locations= in the
 data directory.
+
+** Attachments
+/[42-org-attach]/
+Files attached to an entry live in =data/<id>/= beside its org file, as copies
+(the original stays where it was). A heading without an =ID= uses its nearest
+ancestor's folder, and in a roam note that is the note's own, so attaching
+never turns a heading into a roam node.
+
+| Key       | Does                                                          |
+|-----------+---------------------------------------------------------------|
+| =C-c y=     | paste the clipboard; an image becomes an attachment, shown inline |
+| =C-q f i=   | attach a file from disk and insert its link (images inline)   |
+| =C-q f l=   | attach the newest file in =~/Downloads= (=C-u=: pick a directory) |
+| =C-q f a=   | the attachment dispatcher (same as =C-c C-a=)                     |
+| =C-q f d=   | the entry's attachment folder in dired                        |
+| =C-q f f=   | find an attachment, jump to its entry (=C-u=: open the file)    |
+| =C-q f o=   | list attachment folders no entry owns any more                |
+| =C-c C-x a= | in dired: attach the marked files to the entry in the other window |
+| =C-c C-x C-v= | toggle image previews in the entry                          |
+
+- *Pasting a screenshot*: copy it, =C-c y=, type a name or RET for a timestamp.
+  On X11 keep the screenshot tool open until you have pasted.
+- *Dragging a file* from the file manager onto an entry attaches a copy and
+  inserts a link; =C-c C-x C-v= shows it.
+- =C-c C-a a= attaches but inserts no link; prefer =C-q f i=.
+- A link with a description, =[[attachment:x.png][x.png]]=, is not shown
+  inline; =C-u 1 C-c C-x C-v= shows it anyway.
+- Refiling an entry into a file in another directory moves its folder along.
+  Deleting an entry leaves its folder; =C-q f o= finds it.
 
 ** org-ql
 /[40-org]/

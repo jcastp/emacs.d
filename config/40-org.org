@@ -275,7 +275,10 @@ https://lucidmanager.org/productivity/ricing-org-mode/
         org-hide-emphasis-markers t        ; org-appear autoemphasis
         org-link-descriptive t             ; org-appear autolinks
         org-startup-with-inline-images t
-        org-image-actual-width '(800))
+        ;; Images at their natural size, capped at 800 px, so a small
+        ;; screenshot is not blown up.  `#+attr_org: :width' is ignored.
+        org-image-actual-width t
+        org-image-max-width 800)
 
   ;; Line spacing, in pixels
   (setq-default line-spacing 0)

@@ -32,6 +32,7 @@ The config is split by **domain** (one module per subject), not by environment. 
 |`20-completion`     |always              |vertico, consult, corfu, cape, orderless, embark                                     |
 |`30-navigation`     |always              |windows, perspectives, avy, imenu-list, speedbar                                     |
 |`40-org`            |always              |org core + each environment's todo keywords, tags, all capture templates             |
+|`42-org-attach`     |always              |attachments: clipboard paste, drag and drop, `data/<id>/` folders, `C-q f` keys     |
 |`45-agenda`         |always              |both environments' agenda frames                                                     |
 |`46-agenda-personal`|home                |personal agenda commands                                                             |
 |`47-agenda-work`    |work                |work agenda commands, org-ql views, 1:1 tooling                                      |
@@ -70,7 +71,7 @@ Conditions understood by `my/module-enabled-p`: `always`, `home`, `work`, `full-
 
 **To add a binding, edit the module that owns the command** — never collect it centrally. A module that does not load simply contributes nothing, so no `fboundp`/`boundp` guards are needed.
 
-Current entries: `a` AI · `b` buffers · `c` centered-mode · `d` daily agenda · `i` tempel-insert · `l` libros (reading list) · `o` online · `p` open report (work) · `q` direct file access · `r` recent file · `s` org styling · `t` themes/fonts · `u` outline · `w` writing
+Current entries: `a` AI · `b` buffers · `c` centered-mode · `d` daily agenda · `f` attachments · `i` tempel-insert · `l` libros (reading list) · `o` online · `p` open report (work) · `q` direct file access · `r` recent file · `s` org styling · `t` themes/fonts · `u` outline · `w` writing
 
 Note `my/key-define-submap` builds a **fresh** keymap, so two modules must never
 register the same letter — the second call silently discards the first module's

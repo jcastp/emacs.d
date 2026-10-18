@@ -1,0 +1,279 @@
+#+title: Org attachments
+#+property: header-args:emacs-lisp :tangle "42-org-attach.el"
+#+startup: overview
+
+Files attached to Org entries: screenshots pasted from the clipboard,
+documents dropped or picked from disk.  Each entry's files live in
+=data/<id>/= beside its Org file.  The design notes are in
+=design notes/org-attach.org=.
+
+* Lexical binding
+#+begin_src emacs-lisp
+  ;; -*- lexical-binding: t; -*-
+#+end_src
+
+* Behaviour
+=org-attach-use-inheritance= is =t=: a heading without an ID uses its nearest
+ancestor's folder, and in a roam note that is the note's own.  So pasting
+into a heading never turns it into a roam node, and a link under a
+sub-heading still resolves.
+
+#+begin_src emacs-lisp
+  (with-eval-after-load 'org-attach
+    (setq org-attach-use-inheritance t
+          org-attach-method 'cp)
+    (add-to-list 'org-tags-exclude-from-inheritance "ATTACH"))
+
+  ;; Pasted images and dropped files become attachments, copied.
+  (setq org-yank-image-save-method 'attach
+        org-yank-dnd-method 'attach
+        org-yank-dnd-default-attach-method 'cp)
+#+end_src
+
+* Screenshot names
+#+begin_src emacs-lisp
+  (defun my/org-yank-image-filename ()
+    "Ask for a pasted image's base name; RET keeps a timestamp."
+    (let* ((default (format-time-string "%Y-%m-%d_%H-%M-%S"))
+           (name (read-string (format "Image name (%s): " default)
+                              nil nil default)))
+      (replace-regexp-in-string "[^[:alnum:]_.-]+" "-" (string-trim name))))
+
+  (setq org-yank-image-file-name-function #'my/org-yank-image-filename)
+#+end_src
+
+* Paste a screenshot so that it shows
+Org's handler inserts [[attachment:F][F]], and Org only previews links
+without a description.
+
+#+begin_src emacs-lisp
+  (defun my/org-yank-image (mimetype data)
+    "Attach the clipboard image and insert a link that previews."
+    (let ((start (point)))
+      (org--image-yank-media-handler mimetype data)
+      (save-excursion
+        (when (re-search-backward
+               "\\[\\[\\(attachment:[^]]+\\)\\]\\[[^]]*\\]\\]" start t)
+          (replace-match "[[\\1]]" t)))
+      (org-link-preview-region nil t start (point))))
+
+  ;; Registered after Org's own handler, so it replaces it.
+  (add-hook 'org-mode-hook
+            (lambda () (yank-media-handler "image/.*" #'my/org-yank-image)))
+
+  (keymap-global-set "C-c y" #'yank-media)
+#+end_src
+
+* Attach a file and link it here
+`C-c C-a a' attaches but inserts nothing, and the dispatcher has already
+moved point to the heading, so this is a command of its own.  An image
+gets a link without a description, so that it shows inline.
+
+#+begin_src emacs-lisp
+  (defun my/org-attach-insert (file)
+    "Attach FILE to the current entry and insert a link to it at point.
+  An image gets a link without a description, so it shows inline."
+    (interactive
+     (list (read-file-name "Attach and link: "
+                           (or (progn (require 'dired-aux)
+                                      (dired-dwim-target-directory))
+                               default-directory))))
+    (unless (derived-mode-p 'org-mode)
+      (user-error "Not in an Org buffer"))
+    (pcase-let ((`(,link ,desc) (org-attach-attach file))
+                (start (point)))
+      (if (string-match-p (image-file-name-regexp) file)
+          (progn (insert (org-link-make-string link))
+                 (org-link-preview-region nil t start (point)))
+        (insert (org-link-make-string link desc)))))
+#+end_src
+
+* Links keep working when an ancestor gains an ID
+With inheritance on, a link resolves against the nearest ancestor with an
+ID.  `C-c l' on a heading gives it one (`org-id-link-to-org-use-id'), and
+from then on links below it would look in its empty folder.  Fall back to
+the other ancestors' folders.  Following, preview and export all go
+through `org-attach-expand'.
+
+#+begin_src emacs-lisp
+  (defun my/org-attach--ancestor-ids ()
+    "IDs of the current entry, its ancestors and the file, nearest first."
+    (org-with-wide-buffer
+     (let (ids)
+       (unless (org-before-first-heading-p)
+         (org-back-to-heading t)
+         (while (progn (push (org-entry-get nil "ID") ids)
+                       (org-up-heading-safe))))
+       (goto-char (point-min))
+       (push (org-entry-get nil "ID") ids)
+       (nreverse (delq nil ids)))))
+
+  (defun my/org-attach-expand-up (orig file)
+    "Like ORIG, but also look for FILE in ancestors' attachment folders."
+    (let ((path (funcall orig file)))
+      (or (and (file-exists-p path) path)
+          (seq-some (lambda (id)
+                      (when-let* ((dir (org-attach-dir-from-id id 'existing))
+                                  (cand (expand-file-name file dir))
+                                  ((file-exists-p cand)))
+                        cand))
+                    (my/org-attach--ancestor-ids))
+          path)))
+
+  (advice-add 'org-attach-expand :around #'my/org-attach-expand-up)
+#+end_src
+
+* Attachments follow a refile
+Folders are relative to the Org file, so refiling into a file in another
+directory would leave them behind.  Both environments refile across
+directories.
+
+#+begin_src emacs-lisp
+  (defun my/org-attach--dir-elsewhere (id)
+    "Return an existing attachment folder for ID beside any open Org file."
+    (seq-some (lambda (buf)
+                (with-current-buffer buf
+                  (when (and buffer-file-name (derived-mode-p 'org-mode))
+                    (let ((dir (org-attach-dir-from-id id 'existing)))
+                      (and dir (file-directory-p dir) dir)))))
+              (buffer-list)))
+
+  (defun my/org-attach-follow-refile ()
+    "Move the attachment folders of a just-refiled subtree beside its new file.
+  The source buffer is always open after a refile, so only open buffers
+  are searched."
+    (org-map-entries
+     (lambda ()
+       (when-let* ((id (org-entry-get nil "ID"))
+                   (here (org-attach-dir-from-id id))
+                   ((not (file-directory-p here)))
+                   (there (my/org-attach--dir-elsewhere id)))
+         (make-directory (file-name-parent-directory here) t)
+         (rename-file there here)
+         (ignore-errors (delete-directory (file-name-parent-directory there)))
+         (message "Attachments moved to %s" (abbreviate-file-name here))))
+     nil 'tree))
+
+  (add-hook 'org-after-refile-insert-hook #'my/org-attach-follow-refile)
+#+end_src
+
+* Finding attachments
+The roots are the directories whose Org files can own attachments; the
+inbox directories are where new files land.
+
+#+begin_src emacs-lisp
+  (defvar my/org-attach-roots
+    (if my-workenvironment-p
+        (list my-work-dir)
+      (list my-agenda-dir my-personal-roam-dir my-escritura-dir))
+    "Directories whose Org files may own attachments.")
+
+  (defvar my/org-attach-inbox-dirs
+    (list (expand-file-name "~/Downloads/"))
+    "Directories where new files land: downloads, saved screenshots.")
+
+  (defun my/org-attach--files (&optional roots)
+    "Return (FILE . ID) for every attachment under ROOTS."
+    (let (out)
+      (dolist (root (or roots my/org-attach-roots))
+        (when (file-directory-p root)
+          (dolist (f (process-lines "find" (expand-file-name root)
+                                    "-path" "*/data/??/*" "-type" "f"))
+            (when (string-match "/data/\\([0-9a-f]\\{2\\}\\)/\\([-0-9a-f]+\\)/" f)
+              (push (cons f (concat (match-string 1 f) (match-string 2 f)))
+                    out)))))
+      (nreverse out)))
+
+  (defun my/org-attach--owner (file id)
+    "Return the Org file beside FILE's data/ folder whose entry has ID."
+    (let* ((top (substring file 0 (string-match "/data/[0-9a-f]\\{2\\}/" file)))
+           (orgs (directory-files top t "\\.org\\(_archive\\)?\\'")))
+      (and orgs
+           (car (ignore-errors
+                  (apply #'process-lines-ignore-status "grep" "-l" "-E"
+                         (format "^[[:space:]]*:ID:[[:space:]]+%s[[:space:]]*$" id)
+                         orgs))))))
+
+  (defun my/org-attach-find (&optional open-file)
+    "Pick an attachment and jump to the Org entry that owns it.
+  With OPEN-FILE (prefix argument), open the attachment itself."
+    (interactive "P")
+    (let* ((table (mapcar (lambda (c) (cons (abbreviate-file-name (car c)) c))
+                          (my/org-attach--files)))
+           (pick (cdr (assoc (completing-read "Attachment: " table nil t) table))))
+      (if open-file
+          (org-open-file (car pick))
+        (let ((owner (my/org-attach--owner (car pick) (cdr pick))))
+          (unless owner (user-error "No Org entry owns this; it is an orphan"))
+          (find-file owner)
+          (goto-char (point-min))
+          (re-search-forward (format "^[ \t]*:ID:[ \t]+%s[ \t]*$" (cdr pick)))
+          (org-back-to-heading-or-point-min t)
+          (org-fold-show-context)))))
+
+  (defun my/org-attach-orphans ()
+    "List attachment folders whose owning entry no longer exists."
+    (interactive)
+    (let ((dirs (seq-uniq (mapcar (lambda (c) (cons (file-name-directory (car c)) c))
+                                  (my/org-attach--files))
+                          (lambda (a b) (equal (car a) (car b)))))
+          orphans)
+      (dolist (d dirs)
+        (unless (my/org-attach--owner (cadr d) (cddr d))
+          (push (car d) orphans)))
+      (if (null orphans)
+          (message "No orphaned attachment folders")
+        (with-current-buffer (get-buffer-create "*attachment orphans*")
+          (erase-buffer)
+          (insert "Attachment folders with no owning entry beside them:\n"
+                  "refiled out of their directory, or the entry was deleted.\n\n")
+          (dolist (o (nreverse orphans))
+            (insert (format "- [[file:%s]]\n" (abbreviate-file-name o))))
+          (org-mode)
+          (pop-to-buffer (current-buffer))))))
+#+end_src
+
+* Attach the newest download
+For files that arrive in a folder rather than the clipboard: downloads,
+and at work, screenshots saved by Windows into a shared folder.
+
+#+begin_src emacs-lisp
+  (defun my/org-attach-latest (&optional dir)
+    "Attach the newest file in `my/org-attach-inbox-dirs' and link it here.
+  With a prefix argument, ask which directory DIR to take it from."
+    (interactive (list (when current-prefix-arg
+                         (read-directory-name "From: "))))
+    (let* ((files (seq-filter
+                   #'file-regular-p
+                   (mapcan (lambda (d) (and (file-directory-p d)
+                                            (directory-files d t "^[^.]")))
+                           (if dir (list dir) my/org-attach-inbox-dirs))))
+           (newest (car (sort files
+                              :key (lambda (f) (file-attribute-modification-time
+                                                (file-attributes f)))
+                              :reverse t))))
+      (unless newest (user-error "Nothing to attach"))
+      (when (y-or-n-p (format "Attach %s? " (file-name-nondirectory newest)))
+        (let ((start (point)))
+          (insert (org-link-make-string
+                   (car (org-attach-attach newest nil 'cp))))
+          (org-link-preview-region nil t start (point))))))
+#+end_src
+
+* Keys
+=C-c C-a= (the dispatcher) is Org's own.  =C-c C-x a= in dired attaches the
+marked files to the entry in the other window.
+
+#+begin_src emacs-lisp
+  (with-eval-after-load 'dired
+    (keymap-set dired-mode-map "C-c C-x a" #'org-attach-dired-to-subtree))
+
+  (let ((files (my/key-define-submap "f" "attachments")))
+    (my/key-define "a" "attach dispatcher" #'org-attach              files)
+    (my/key-define "p" "paste image"       #'yank-media              files)
+    (my/key-define "i" "attach and link"   #'my/org-attach-insert    files)
+    (my/key-define "l" "attach latest"     #'my/org-attach-latest    files)
+    (my/key-define "f" "find attachment"   #'my/org-attach-find      files)
+    (my/key-define "o" "orphans"           #'my/org-attach-orphans   files)
+    (my/key-define "d" "entry folder"      #'org-attach-reveal-in-emacs files))
+#+end_src
