@@ -99,6 +99,11 @@ why horizons are Mondays and why the week is capped at ~15h.
     (when (org-entry-get nil "SCHEDULED")
       (my/agenda--skip)))
 
+  (defun my/agenda-skip-if-dated ()
+    "Skip entries with a SCHEDULED date or a DEADLINE: keep the undated pool."
+    (when (or (org-entry-get nil "SCHEDULED") (org-entry-get nil "DEADLINE"))
+      (my/agenda--skip)))
+
   (defun my/agenda-skip-unless-stale (days)
     "Keep only entries with no clock or state change in the last DAYS days.
   Looks at the inactive timestamps between this heading and the next one,
@@ -550,6 +555,31 @@ why horizons are Mondays and why the week is capped at ~15h.
                                                        (cadr (my/agenda--next-month-bounds))))
                         (org-agenda-sorting-strategy '(deadline-up priority-down))
                         (org-agenda-prefix-format " %i %-12.12:c %(my/agenda--date-label \"DEADLINE\") %5e ")))
+            )
+           ((org-agenda-prefix-format " %i %-12.12:c %5e ")))
+
+          ;; ──────────────────────────────────────────────────────────────────
+          ;; P — Pool: open tasks with neither SCHEDULED nor DEADLINE
+          ;; Monthly review (see R). Question: what do I still need to plan?
+          ;; Blocks are split by state so each one reads as a decision:
+          ;; place it, chase it, or cancel it.
+          ;; ──────────────────────────────────────────────────────────────────
+          ("P" "Pool — undated tasks to plan"
+           (
+            (tags-todo "/ONGOING"
+                       ((org-agenda-overriding-header "[ ONGOING — no date ]")
+                        (org-agenda-skip-function '(my/agenda-skip-if-dated))
+                        (org-agenda-sorting-strategy '(priority-down effort-up))))
+
+            (tags-todo "/TODO"
+                       ((org-agenda-overriding-header "[ TODO — no date: schedule, delegate or cancel ]")
+                        (org-agenda-skip-function '(my/agenda-skip-if-dated))
+                        (org-agenda-sorting-strategy '(priority-down effort-up))))
+
+            (tags-todo "/WAITING"
+                       ((org-agenda-overriding-header "[ WAITING — no date ]")
+                        (org-agenda-skip-function '(my/agenda-skip-if-dated))
+                        (org-agenda-sorting-strategy '(priority-down effort-up))))
             )
            ((org-agenda-prefix-format " %i %-12.12:c %5e ")))
 
