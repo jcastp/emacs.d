@@ -472,7 +472,6 @@ Configure org-scribe:
   (setq org-scribe-editing-right-panel 'notes)            ; What the right pane shows
 
   ;; === Companion mode ===
->>>>>>> Stashed changes
   (setq org-scribe-companion-enable t)
  #+end_src
 
