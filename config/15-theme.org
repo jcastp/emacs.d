@@ -213,18 +213,19 @@ Three things about it are load-bearing:
               :variable-pitch-family "Aporetic Sans Mono"
               :variable-pitch-height 110
               :italic-family "Aporetic Sans Mono")
-             ;; bigger variable-width face, so I can focus on it
+             ;; bigger variable-width face, so I can focus on it.  Only the
+             ;; variable-pitch face changes: `default' (and so the minibuffer,
+             ;; echo area, hydra and transient) stays on the shared monospace
              (writing
-              :default-family "ETBembo"
-              :default-height 150
               :fixed-pitch-height 120
               :variable-pitch-family "ETBembo"
               :variable-pitch-height 150
+              ;; `italic' carries its own family, which beats the remapped
+              ;; default, so this is what keeps prose italics in ETBembo
               :italic-family "ETBembo"
               :line-spacing 1)
              (writing-big
               :inherit writing
-              :default-height 180
               :fixed-pitch-height 140
               :variable-pitch-height 180)
              ;; a different variable-width face for a different view when editing
