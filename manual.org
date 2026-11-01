@@ -402,17 +402,17 @@ Files attached to an entry live in =data/<id>/= beside its org file, as copies
 ancestor's folder, and in a roam note that is the note's own, so attaching
 never turns a heading into a roam node.
 
-| Key       | Does                                                          |
-|-----------+---------------------------------------------------------------|
-| =C-c y=     | paste the clipboard; an image becomes an attachment, shown inline |
-| =C-q f i=   | attach a file from disk and insert its link (images inline)   |
-| =C-q f l=   | attach the newest file in =~/Downloads= (=C-u=: pick a directory) |
-| =C-q f a=   | the attachment dispatcher (same as =C-c C-a=)                     |
-| =C-q f d=   | the entry's attachment folder in dired                        |
-| =C-q f f=   | find an attachment, jump to its entry (=C-u=: open the file)    |
-| =C-q f o=   | list attachment folders no entry owns any more                |
-| =C-c C-x a= | in dired: attach the marked files to the entry in the other window |
-| =C-c C-x C-v= | toggle image previews in the entry                          |
+| Key         | Does                                                               |
+|-------------+--------------------------------------------------------------------|
+| =C-c y=       | paste the clipboard; an image becomes an attachment, shown inline  |
+| =C-q f i=     | attach a file from disk and insert its link (images inline)        |
+| =C-q f l=     | attach the newest file in =~/Downloads= (=C-u=: pick a directory)      |
+| =C-q f a=     | the attachment dispatcher (same as =C-c C-a=)                        |
+| =C-q f d=     | the entry's attachment folder in dired                             |
+| =C-q f f=     | find an attachment, jump to its entry (=C-u=: open the file)         |
+| =C-q f o=     | list attachment folders no entry owns any more                     |
+| =C-c C-x a=   | in dired: attach the marked files to the entry in the other window |
+| =C-c C-x C-v= | toggle image previews in the entry                                 |
 
 - *Pasting a screenshot*: copy it, =C-c y=, type a name or RET for a timestamp.
   On X11 keep the screenshot tool open until you have pasted.

@@ -470,7 +470,9 @@ Configure org-scribe:
   (setq org-scribe-editing-right-width-percent 0.25)      ; Notes: 25%
   					; Manuscript: 50% (automatic)
   (setq org-scribe-editing-right-panel 'notes)            ; What the right pane shows
-  ;; === companion enabled ===
+
+  ;; === Companion mode ===
+>>>>>>> Stashed changes
   (setq org-scribe-companion-enable t)
  #+end_src
 
