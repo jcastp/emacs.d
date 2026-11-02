@@ -480,7 +480,7 @@ Configure org-scribe:
   (add-hook 'org-mode-hook #'org-scribe-mode)
 
   ;; Optional: set up keybindings
-  (org-scribe-setup)
+  ;;(org-scribe-setup)
 #+end_src
 
 Update word count on save:

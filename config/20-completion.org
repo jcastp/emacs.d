@@ -138,6 +138,13 @@ triggers completion on TAB; corfu just changes how results are
 displayed). It reuses the =orderless= completion style already set
 above, so filtering works the same as in the minibuffer.
 
+Corfu is enabled only in =prog-mode= buffers (via =:hook=, not
+=global-corfu-mode=), so text and Org buffers get no automatic popup.
+There, completion still works on demand: TAB calls
+=completion-at-point= and the same sources answer in the regular
+=*Completions*= buffer. To get the popup in another mode, add a hook
+for it (e.g. =(eshell-mode . corfu-mode)=).
+
 Sources feeding the popup:
 - =dabbrev-capf= (built-in since Emacs 28) for words already present
   in open buffers, in any language.
@@ -167,8 +174,7 @@ one shadowing the other.
 #+begin_src emacs-lisp
   (use-package corfu
     :ensure t
-    :init
-    (global-corfu-mode)
+    :hook (prog-mode . corfu-mode)   ; code only, not text/org buffers
     :custom
     (corfu-auto t)
     (corfu-auto-delay 0.4)
