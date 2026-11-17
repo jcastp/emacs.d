@@ -523,71 +523,59 @@ As work is different from home, I need specific templates.
                     (org-insert-time-stamp (org-read-date nil t))))
         ""))
 
-    ;; Work owns the full template list — reset it, then add each entry.
-    (setq org-capture-templates '())
+    ;; Work owns the full template list, in the order the menu shows it.
+    ;; One literal list rather than `add-to-list', which prepends and so
+    ;; reversed the menu.  Targets given as bare variables (`my-work-file')
+    ;; are resolved by org-capture when the template runs.
+    (setq org-capture-templates
+          `(("i" "Inbox (work)" entry
+             (file+headline my-work-file "Inbox")
+             "** TODO %? %^g")
 
-    (add-to-list 'org-capture-templates
-                 '("i" "Inbox (work)" entry
-                   (file+headline my-work-file "Inbox")
-                   "** TODO %? %^g"))
+            ;; people meetings
+            ("p" "1:1 meeting" entry
+             (function my/capture-goto-person)
+             "** %T - follow-up\n*** Notes\n%?\n*** Actions\n*** Questions\n"
+             :jump-to-captured t)
 
-    ;; (add-to-list 'org-capture-templates
-    ;;              '("b" "Backlog entry." entry
-    ;;                (file+headline my-backlog-file "Backlog")
-    ;;                "** TODO %?\n"))
+            ;; And a quick action capture from within a 1:1 note:
+            ("P" "People action item" entry
+             (function my/capture-goto-person)
+             "*** TODO [%(identity my/capture-person)] %<%Y-%m-%d %a %H:%M> %? :people:%(downcase my/capture-person):%(my/capture-optional-deadline)"
+             :jump-to-captured t)
 
-    ;; Disabled: work_meetings.org is history only.  New meetings are roam
-    ;; nodes: C-c n c, then m (see 50-org-roam).
-    ;; (add-to-list 'org-capture-templates
-    ;;              '("m" "Work meeting notes" entry
-    ;;                (file my-meetings-file)
-    ;;                "* %T - %?\n** Notes\n\n** Actions\n** Questions\n"
-    ;;                :jump-to-captured t))
+            ;; Tier 1 -- fast capture. Two prompts, usable mid-meeting.
+            ("D" "Decision (fast)" entry
+             (file+headline my-decisions-file "Inbox")
+             ,(concat "** %?\n"
+                      ":PROPERTIES:\n"
+                      ":DECIDED:  %U\n"
+                      ":STATUS:   accepted\n"
+                      ":SOURCE:   %^{Where|meeting|teams|email|1:1|solo}\n"
+                      ":END:\n")
+             :empty-lines-after 1)
 
-    ;; people meetings
-    (add-to-list 'org-capture-templates
-    	     '("p" "1:1 meeting" entry
-    	       (function my/capture-goto-person)
-    	       "** %T - follow-up\n*** Notes\n%?\n*** Actions\n*** Questions\n"
-    	       :jump-to-captured t))
+            ;; Tier 2 -- full record. Used when promoting at review, or straight
+            ;; away for a decision that is clearly hard to reverse.
+            ("R" "Decision (full record)" entry
+             (file+headline my-decisions-file "Decisions")
+             ,(concat "** %^{Decision}\n"
+                      ":PROPERTIES:\n"
+                      ":DECIDED:  %U\n"
+                      ":STATUS:   accepted\n"
+                      ":DECIDERS: %^{Deciders}\n"
+                      ":INFORMED: %^{Informed}\n"
+                      ":SOURCE:   %^{Where|meeting|teams|email|1:1|solo}\n"
+                      ":REVERSIBILITY: %^{Reversibility|easy|hard}\n"
+                      ":END:\n"
+                      "In the context of %^{Context}, facing %^{Concern}, "
+                      "we decided for %\\1 and neglected %^{Rejected}, "
+                      "accepting %^{Downside}.\n%?\n")
+             :empty-lines-after 1)
 
-    ;; And a quick action capture from within a 1:1 note:
-    (add-to-list 'org-capture-templates
-    	     '("P" "People action item" entry
-    	       (function my/capture-goto-person)
-    	       "*** TODO [%(identity my/capture-person)] %<%Y-%m-%d %a %H:%M> %? :people:%(downcase my/capture-person):%(my/capture-optional-deadline)"
-    	       :jump-to-captured t))
-
-    ;; Tier 1 -- fast capture. Two prompts, usable mid-meeting.
-    (add-to-list 'org-capture-templates
-                 `("D" "Decision (fast)" entry
-                   (file+headline my-decisions-file "Inbox")
-                   ,(concat "** %?\n"
-                            ":PROPERTIES:\n"
-                            ":DECIDED:  %U\n"
-                            ":STATUS:   accepted\n"
-                            ":SOURCE:   %^{Where|meeting|teams|email|1:1|solo}\n"
-                            ":END:\n")
-                   :empty-lines-after 1))
-
-    ;; Tier 2 -- full record. Used when promoting at review, or straight away
-    ;; for a decision that is clearly hard to reverse.
-    (add-to-list 'org-capture-templates
-                 `("R" "Decision (full record)" entry
-                   (file+headline my-decisions-file "Decisions")
-                   ,(concat "** %^{Decision}\n"
-                            ":PROPERTIES:\n"
-                            ":DECIDED:  %U\n"
-                            ":STATUS:   accepted\n"
-                            ":DECIDERS: %^{Deciders}\n"
-                            ":INFORMED: %^{Informed}\n"
-                            ":SOURCE:   %^{Where|meeting|teams|email|1:1|solo}\n"
-                            ":REVERSIBILITY: %^{Reversibility|easy|hard}\n"
-                            ":END:\n"
-                            "In the context of %^{Context}, facing %^{Concern}, "
-                            "we decided for %\\1 and neglected %^{Rejected}, "
-                            "accepting %^{Downside}.\n%?\n")
-                   :empty-lines-after 1))
+            ;; Disabled: work_meetings.org is history only.  New meetings are
+            ;; roam nodes: C-c n c, then m (see 50-org-roam).
+            ))
     )
 #+end_src
 
