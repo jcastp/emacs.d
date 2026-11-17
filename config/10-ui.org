@@ -66,12 +66,6 @@ Put time and date on the status line
   (display-time)
 #+end_src
 
-* Highlight matching parenthesis
-You can see the matching parenthesis
-#+begin_src emacs-lisp
-  (show-paren-mode 1)
-#+end_src
-
 * Tabs are 4 spaces
 #+begin_src emacs-lisp
   ;; `tab-width' is buffer-local: plain `setq' would only change the buffer
