@@ -379,17 +379,6 @@ Defines a set of abbreviations that permits complete words with just some charac
   (setq kill-region-dwim 'emacs-word)               ; EMACS-31: C-w with no region kills a word
 #+end_src
 
-* TODO diff file before saving
-#+begin_src emacs-lisp
-  ;; A Protesilaos life savier HACK
-  ;; Add option "d" to whenever using C-x s or C-x C-c, allowing a quick preview
-  ;; of the diff (if you choose `d') of what you're asked to save.
-  (add-to-list 'save-some-buffers-action-alist
-               (list "d"
-                     (lambda (buffer) (diff-buffer-with-file (buffer-file-name buffer)))
-                     "show diff between the buffer and its file"))
-#+end_src
-
 * Persistent state files
 The home and work instances must not overwrite each other's history, so the
 state files are suffixed per environment: one definition, one suffix, both
