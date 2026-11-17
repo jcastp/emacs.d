@@ -24,38 +24,33 @@ else, recolours them without being asked.
   (use-package doric-themes
     :ensure t)
   (use-package ef-themes
-    :ensure t
-    :init
-    ;; same reason as modus above: headings are 17-org-style's job
-    (setq ef-themes-headings '((t . (regular 1.0)))))
+    :ensure t)
 #+end_src
 
 ** Protesilaos modus themes
-Protesilaos very good themes. These themes are already included in the standard emacs, so we can get rid of the use-package definition, and retain only the config.
+=modus-themes= is not the copy bundled with Emacs: it comes from ELPA, as a
+dependency of =ef-themes= 2.x, which is built on top of it.  So its options
+shape the ef themes as well, and =ef-themes-headings= is just an alias of
+=modus-themes-headings= (setting it separately only logs an "overwriting
+value" warning at startup).  Only options that still exist in modus-themes 5
+are set; the older ones (=success-deuteranopia=, =intense-markup=,
+=tabs-accented=, =org-blocks=, =fringes=, =scale-headings=,
+=variable-pitch-headings=, =completions=) are gone and did nothing.
+
+The options go in =:init=, before the package loads, so they are in place when
+a theme is first enabled.
 #+begin_src emacs-lisp
   (use-package modus-themes
-    :ensure nil
-    :config
-    ;; Add all your customizations prior to loading the themes
-    (setq
-     modus-themes-completions nil
-     modus-themes-bold-constructs t
-     modus-themes-italic-constructs t
-     modus-themes-success-deuteranopia t
-     modus-themes-mixed-fonts t
-     modus-themes-intense-markup t
-     modus-themes-tabs-accented t
-     modus-themes-org-blocks '(tinted-background)
-     modus-themes-variable-pitch-ui nil
-     modus-themes-variable-pitch-headings nil
-
-     modus-themes-fringes nil ; {nil,'subtle,'intense}
-
-     ;; Headings are shaped by `my/org-set-faces' in 17-org-style, not here:
-     ;; flattened, modus contributes its palette and nothing structural, so
-     ;; the heading design does not change shape across the theme rotation.
-     modus-themes-headings '((t . (regular 1.0)))
-     modus-themes-scale-headings nil))
+    :init
+    (setq modus-themes-bold-constructs t
+          modus-themes-italic-constructs t
+          modus-themes-mixed-fonts t
+          modus-themes-variable-pitch-ui nil
+          ;; Headings are shaped by `my/org-set-faces' in 17-org-style, not
+          ;; here: flattened, modus and ef contribute their palette and
+          ;; nothing structural, so the heading design does not change shape
+          ;; across the theme rotation.
+          modus-themes-headings '((t . (regular 1.0)))))
 #+end_src
 
 ** poet theme

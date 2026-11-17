@@ -406,11 +406,13 @@ same keyword looked different depending on where it was read.
 
 * A note on the themes' own heading knobs
 
-=modus-themes-headings= and =ef-themes-headings= would otherwise fight the
-function above — modus gave H1 a background, an overline, a distinct hue *and* a
-size bump, and only on modus, so the heading design changed shape as the rotation
-moved.  Both are flattened to =((t . (regular 1.0)))= where each theme is
-declared, in =15-theme=, rather than here: that keeps one owner per package.
+=modus-themes-headings= would otherwise fight the function above — modus gave
+H1 a background, an overline, a distinct hue *and* a size bump, and only on
+modus, so the heading design changed shape as the rotation moved.  The ef
+themes are built on modus-themes 5 and read the same option (=ef-themes-headings=
+is only an alias of it).  It is flattened to =((t . (regular 1.0)))= where the
+package is declared, in =15-theme=, rather than here: that keeps one owner per
+package.
 
 * Heading line extent
 
