@@ -233,7 +233,6 @@ https://orgmode.org/worg/exporters/beamer/tutorial.html
 
 #+begin_src emacs-lisp
   (require 'ox-beamer)
-  (setq org-export-allow-bind-keywords t)
   (setq org-latex-src-block-backend 'minted)
 #+end_src
 
