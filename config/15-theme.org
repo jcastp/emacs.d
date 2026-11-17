@@ -90,9 +90,7 @@ fall back to whatever font happens to supply an italic glyph.
    '(font-lock-comment-delimiter-face ((t (:inherit fixed-pitch))))
    '(org-verbatim              ((t (:inherit (shadow fixed-pitch)))))
    '(org-indent                ((t (:inherit (org-hide fixed-pitch)))))
-   '(org-table                 ((t (:inherit (org-hide fixed-pitch)))))
-   ;; check if this works
-   '(org-comment               ((t (:inherit (org-hide fixed-pitch) :height 0.8)))))
+   '(org-table                 ((t (:inherit (org-hide fixed-pitch))))))
 #+end_src
 
 * fontaine
