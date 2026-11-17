@@ -56,7 +56,6 @@ https://github.com/minad/consult
 #+begin_src emacs-lisp
   (use-package consult
     :ensure t
-    :demand t
     :bind (
            ;; misc commands
            ;;("C-x b" . consult-buffer) ;; defined in perspective section

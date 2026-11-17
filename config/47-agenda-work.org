@@ -21,9 +21,6 @@ I need a different custom agenda commands to see the tasks better.
   (setq org-agenda-span 7)
   (setq org-agenda-start-on-weekday 1)
 
-  ;; Require CLOSED timestamp on done tasks (needed for weekly review)
-  (setq org-log-done 'time)
-
   ;; Category column capped at 12 characters in every view: a longer
   ;; category is cut instead of pushing the line out of alignment.  The
   ;; custom views below use the same %-12.12:c.
@@ -741,36 +738,34 @@ filtering) and the plain =C-c / m= tag search (which does not know about
 =STATUS=).
 
 #+begin_src emacs-lisp
-  (when my-workenvironment-p
+  (defun my/decisions--available-tags ()
+    "Return every tag used in `my-decisions-file', read fresh from the buffer."
+    (let (tags)
+      (with-current-buffer (find-file-noselect my-decisions-file)
+        (org-map-entries
+         (lambda () (setq tags (append (org-get-tags) tags)))))
+      (seq-uniq tags)))
 
-    (defun my/decisions--available-tags ()
-      "Return every tag used in `my-decisions-file', read fresh from the buffer."
-      (let (tags)
-        (with-current-buffer (find-file-noselect my-decisions-file)
-          (org-map-entries
-           (lambda () (setq tags (append (org-get-tags) tags)))))
-        (seq-uniq tags)))
-
-    (defun my/decisions-by-tag (tags)
-      "Show active (non-superseded) decisions carrying every tag in TAGS.
+  (defun my/decisions-by-tag (tags)
+    "Show active (non-superseded) decisions carrying every tag in TAGS.
 Interactively, prompt for one or more tags -- completion offers every tag
 actually used in `my-decisions-file' -- then run an `org-ql-search'
 restricted to that file: entries must carry ALL of TAGS and must not have
 a STATUS property of \"superseded\". A decision still in `Inbox' (no
 STATUS yet beyond the fast-capture default of \"accepted\") is treated as
 active and included."
-      (interactive
-       (list (completing-read-multiple "Tags (comma-separated): "
-                                        (my/decisions--available-tags)
-                                        nil t)))
-      (org-ql-search
-        (list my-decisions-file)
-        `(and (tags-all ,@tags)
-              (not (property "STATUS" "superseded")))
-        :title (format "Active decisions: %s" (string-join tags "+"))
-        :sort '(date)))
+    (interactive
+     (list (completing-read-multiple "Tags (comma-separated): "
+                                      (my/decisions--available-tags)
+                                      nil t)))
+    (org-ql-search
+      (list my-decisions-file)
+      `(and (tags-all ,@tags)
+            (not (property "STATUS" "superseded")))
+      :title (format "Active decisions: %s" (string-join tags "+"))
+      :sort '(date)))
 
-    (global-set-key (kbd "C-c q t") #'my/decisions-by-tag))
+  (global-set-key (kbd "C-c q t") #'my/decisions-by-tag)
 #+end_src
 
 * Open a direct report (one-key 1:1 prep)
@@ -817,9 +812,7 @@ of this module).
         (setq marker (org-find-olp (list my-people-file person))))
       (goto-char marker))
     (org-narrow-to-subtree)
-    (if (fboundp 'org-fold-show-subtree)
-        (org-fold-show-subtree)
-      (org-show-subtree)))
+    (org-fold-show-subtree))
 
   (keymap-global-set "<f6>" #'my/open-report)
 #+end_src

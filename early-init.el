@@ -36,8 +36,7 @@
 (scroll-bar-mode -1)
 
 ;; disable splash and startup screens
-(setq inhibit-splash-screen t
-      inhibit-startup-screen t)
+(setq inhibit-startup-screen t)
 
 (provide 'early-init)
 ;;; early-init.el ends here

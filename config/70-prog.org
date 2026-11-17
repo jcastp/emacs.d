@@ -18,7 +18,6 @@ https://cestlaz-nikola.github.io/posts/using-emacs-47-magit/
 #+begin_src emacs-lisp
   (use-package magit
     :ensure t
-    :after transient
     :bind
     (:map global-map
   	("C-x g" . magit-status)))

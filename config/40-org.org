@@ -97,14 +97,16 @@ Change notes are stored in the node's drawer, so we can fold it conveniently.
 
 * Custom notes and timestamp
 Put a note or a timestamp when something changes.
-=org-log-done= is set to ='time= in =46-agenda-personal= and =47-agenda-work=
-(the weekly review views need the CLOSED timestamps).
+=org-log-done= is ='time= in both environments: the weekly review views need
+the CLOSED timestamps.
 
 At work, date changes /are/ logged: the Friday review asks "slipped twice?",
 and only a LOGBOOK entry per reschedule can answer it.  With
 =org-log-into-drawer= set they go quietly into the drawer.
 
 #+begin_src emacs-lisp
+  ;; CLOSED timestamp on done tasks (needed for the weekly review)
+  (setq org-log-done 'time)
   ;; Don't log deadline/schedule date changes...
   (setq org-log-redeadline nil)
   (setq org-log-reschedule nil)

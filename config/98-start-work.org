@@ -16,7 +16,7 @@ This will automatically open the relevant file to start working right away:
   (defun my/work-initial-setup ()
     "Open my initial view of work: today's roam daily beside `my-work-file'."
     (interactive)
-    (org-roam-dailies-find-today)
+    (org-roam-dailies-goto-today)
     (split-window-right)
     (find-file my-work-file))
 

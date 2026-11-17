@@ -97,13 +97,15 @@ Then, always move focus to that right window."
   (global-set-key (kbd "C-c 8" ) 'my/org-tree-open-in-right-frame)
 #+end_src
 
-Open a branch into an indirect buffer that takes over the whole frame, hiding every other window:
+Open a branch into an indirect buffer that takes over the whole frame, hiding every other window.
+Org puts the buffer in the current window itself when
+=org-indirect-buffer-display= is =current-window=:
 #+begin_src emacs-lisp
 (defun my/org-tree-open-in-only-window ()
   "Open the current Org subtree in an indirect buffer, focus it, and hide all other windows."
   (interactive)
-  (org-tree-to-indirect-buffer)
-  (switch-to-buffer org-last-indirect-buffer)
+  (let ((org-indirect-buffer-display 'current-window))
+    (org-tree-to-indirect-buffer))
   (delete-other-windows))
 
   (global-set-key (kbd "C-c 9" ) 'my/org-tree-open-in-only-window)

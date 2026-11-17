@@ -78,18 +78,13 @@ https://github.com/minad/tempel
   (use-package tempel
     :ensure t
     :after org
-    ;; Require trigger prefix before template name when completing.
-    :custom
-    (tempel-trigger-prefix "<")
-
     :init
     ;; Setup completion at point
     (defun tempel-setup-capf ()
       ;; Add the Tempel Capf to `completion-at-point-functions'.
-      ;; `tempel-expand' only triggers on exact matches. Alternatively use
-      ;; `tempel-complete' if you want to see all matches, but then you
-      ;; should also configure `tempel-trigger-prefix', such that Tempel
-      ;; does not trigger too often when you don't expect it. NOTE: We add
+      ;; `tempel-expand' only triggers on exact matches: typing a template's
+      ;; name and completing (TAB) expands it, with no trigger prefix.
+      ;; (`tempel-trigger-prefix' no longer exists in tempel.)  NOTE: We add
       ;; `tempel-expand' *before* the main programming mode Capf, such
       ;; that it will be tried first.
       (setq-local completion-at-point-functions
@@ -369,8 +364,7 @@ sessions through savehist (see =my/last-writing-project= in the savehist config)
     (let ((default-directory (file-name-as-directory
                               (expand-file-name project my-writing-root))))
       (call-interactively #'project-find-file))
-    (when (fboundp 'org-scribe-writing-env-mode)
-      (org-scribe-writing-env-mode 1)))
+    (org-scribe-writing-env-mode 1))
 #+end_src
 
 * writing keybindings
@@ -405,11 +399,8 @@ Create a custom keymap for the writing functions
 * TODO org-scribe config
 I want to test my org-scribe package, so I'm using this config for that.
 
-Prerrequisites:
+Prerrequisites (org-ql is declared in =40-org=, which loads first):
 #+begin_src emacs-lisp
-  (use-package org-ql
-    :ensure t)
-
   (use-package writeroom-mode
     :ensure t)
 
@@ -493,10 +484,9 @@ Update word count on save:
 This is for journaling every day, if possible.
 https://github.com/bastibe/org-journal
 
-Only mounted when at home, and clear directory is mounted.
+Only when the clear directory is mounted (this module loads only at home).
 #+begin_src emacs-lisp
-  (if (and my-homeenvironment-p
-  	 my-clear-directory-is-mounted-p)
+  (when my-clear-directory-is-mounted-p
       (use-package org-journal
         :ensure t
         :bind

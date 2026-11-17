@@ -38,9 +38,6 @@ date must count as missing, not as a date that sorts before every other.
   (setq org-agenda-span 14)
   (setq org-agenda-start-on-weekday 1)
 
-  ;; CLOSED timestamps required for weekly review
-  (setq org-log-done 'time)
-
   (setq org-agenda-custom-commands
         '(
 
