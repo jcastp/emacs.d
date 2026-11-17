@@ -24,6 +24,10 @@ All the configurations needed for dired.
    (use-package dired
      :ensure nil
      :commands (dired dired-jump)
+     ;; Not redundant with `global-hl-line-mode' (10-ui): the local mode is
+     ;; sticky, so in a split dired (two-pane copy/move, `dired-dwim-target')
+     ;; the line stays highlighted in the window that is not selected.  The
+     ;; global mode only highlights the selected window.
      :hook
      (dired-mode . hl-line-mode)
      :config
@@ -38,26 +42,16 @@ All the configurations needed for dired.
  #+end_src
 
 ** dired preview
-I want to see a preview of the item at point:
+I want to see a preview of the item at point.
+
+Only the delay is mine (the package waits 0.7 s).  The ignore list is the
+package's own: archives, video, audio, epub and PDF files get a placeholder pane
+instead of a preview, and can be opened externally from it.  Image files are
+previewed, as are text files up to the default size limit of 1 MB.
 #+begin_src emacs-lisp
   (use-package dired-preview
     :config
-    ;; Default values for demo purposes
     (setq dired-preview-delay 0.3)
-    (setq dired-preview-max-size (expt 2 20))
-    (setq dired-preview-ignored-show-ignored-placeholders t)
-    (setq dired-preview-ignored-extensions-regexp
-          (concat "\\."
-                  "\\(gz\\|"
-                  "zst\\|"
-                  "tar\\|"
-                  "xz\\|"
-                  "rar\\|"
-                  "zip\\|"
-                  "iso\\|"
-                  "epub"
-                  "\\)"))
-
     ;; Enable `dired-preview-mode' in a given Dired buffer or do it
     ;; globally:
     (dired-preview-global-mode 1))
@@ -212,17 +206,15 @@ Read e-pub in emacs.
 https://tech.toryanderson.com/2022/11/23/viewing-epub-in-emacs/
 #+begin_src emacs-lisp
   (when my-homeenvironment-p
-    (use-package esxml
-      ;;:ensure (esxml :type git :host github :repo "tali713/esxml")
-      :ensure t)
-
+    ;; esxml, which nov needs, is installed as nov's dependency and loaded by
+    ;; nov itself when the first epub is opened.
+    ;;
     ;; `:mode' registers the auto-mode entry without loading nov, which is what
     ;; makes the deferral safe: an `add-to-list' in `:config' would never run.
     (use-package nov
       :ensure t
       :mode ("\\.epub\\'" . nov-mode)
       :config
-      (require 'esxml)
       (setq nov-text-width 100)
       (setq visual-fill-column-center-text t)
       ;; We save the place we left the e-pub in this file:

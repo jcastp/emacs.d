@@ -69,10 +69,10 @@ The fonts belong to the fontaine presets below: =default=, =fixed-pitch= and
 well: it outranks fontaine's every time a theme is enabled, so every theme
 change would silently reset the preset.
 
-Assign the variable font to prose mode:
+Assign the variable font to prose mode.  Org mode derives from =text-mode= (through
+=outline-mode=), so this one hook covers org buffers too:
 #+begin_src emacs-lisp
   (add-hook 'text-mode-hook 'variable-pitch-mode)
-  (add-hook 'org-mode-hook 'variable-pitch-mode)
 #+end_src
 
 Use fixed font for code blocks and other non prose blocks.

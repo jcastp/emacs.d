@@ -65,3 +65,14 @@ This is the manual for it: https://kickingvegas.github.io/casual/index.html#SEC_
     )
 #+end_src
 
+* markdown-mode, the non-tree-sitter alternative
+Markdown files open in the built-in =markdown-ts-mode= with no configuration
+(Emacs's own =auto-mode-alist= entries, plus =treesit-enabled-modes= in
+=70-prog=).  If it ever falls short, this is the classic package:
+
+#+begin_src emacs-lisp :tangle no
+  (use-package markdown-mode
+    :ensure t
+    :mode ("README\\.md\\'" . gfm-mode)
+    :init (setq markdown-command '("pandoc" "--from=markdown" "--to=html5")))
+#+end_src

@@ -40,7 +40,6 @@ test is for the capability itself (and costs no =lsb_release= subprocess).
     ;; below call functions that org-roam does not autoload.
     :demand t
     :init
-    (setq org-roam-v2-ack t)
     ;; `directory-file-name' keeps this slash-free, exactly as the old
     ;; literal path was; org-roam compares against it.
     (setq org-roam-directory (file-truename (directory-file-name my-roam-dir)))
@@ -64,6 +63,9 @@ test is for the capability itself (and costs no =lsb_release= subprocess).
     ("C-c n d" . org-roam-dailies-map)
     :config
     (setq org-roam-completion-everywhere t)
+    ;; Needed, not optional: org-roam does not load the dailies, and the
+    ;; `org-roam-dailies-map' keymap (bound in :bind above, and by
+    ;; :bind-keymap) only exists once they are loaded.
     (require 'org-roam-dailies)
     ;; org-roam-export pulls in the whole `ox' machinery, and is only needed
     ;; when actually exporting -- so load it with ox rather than at startup.
@@ -172,8 +174,6 @@ partition.
           '(("d" "default" entry "* %?"
              :if-new (file+head "%<%Y-%m-%d>.org"
                                 "#+title: %<%Y-%m-%d>\n#+filetags: daily\n#+category: daily\n")))))
-
-  (setq org-roam-dailies-directory "daily/")
 #+end_src
 
 =C-c n d r= captures a reading-log entry into today in one key.  The dailies
