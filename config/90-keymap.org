@@ -35,9 +35,12 @@ spelled out again here.
                    (my/find-file-command
                     (expand-file-name "tech/org-keys.org" my-nextcloud-dir))
                    files)
+    ;; my main task file: work.org at work, tasks.org at home
     (my/key-define "t" "tasks file"
                    (my/find-file-command
-                    (expand-file-name "tasks.org" my-agenda-dir))
+                    (if my-workenvironment-p
+                        my-work-file
+                      (expand-file-name "tasks.org" my-agenda-dir)))
                    files)
     (when my-homeenvironment-p
       ;; the writing projects root, from 60-writing (home only, like this entry)
