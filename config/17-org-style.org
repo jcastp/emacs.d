@@ -401,7 +401,8 @@ same keyword looked different depending on where it was read.
             ("RESTRUCTURE" . my/org-todo-waiting)
             ("FINISHED"  . my/org-todo-done)
             ("PURGE"     . my/org-todo-canceled)))
-    (with-eval-after-load 'org (global-org-modern-mode)))
+    ;; org-modern requires org, so org is already loaded here
+    (global-org-modern-mode))
 #+end_src
 
 * A note on the themes' own heading knobs

@@ -27,7 +27,9 @@
 
 ;; Native compilation
 (when (native-comp-available-p)
-  (setq native-comp-async-report-warnings-errors nil))
+  ;; `silent' logs async compilation warnings to *Warnings* without popping
+  ;; it up, in line with the rule above (nil would discard them).
+  (setq native-comp-async-report-warnings-errors 'silent))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; personal configuration
