@@ -21,10 +21,15 @@ https://github.com/minad/vertico
     (vertico-mode))
 #+end_src
 
-** prescient
+** prescient (on trial: disabled since 2026-11-17)
 For better auto completion suggestions:
 https://github.com/raxod502/prescient.el
-#+begin_src emacs-lisp
+
+Untangled for a one-week trial without it (design note
+=20261117-config-improvements.org=): vertico then sorts by its own default,
+recent first.  To bring it back, remove =:tangle no= -- and fix the save file
+first (set =prescient-save-file= in =:init=, via =my/state-file=; see the note).
+#+begin_src emacs-lisp :tangle no
   (use-package prescient
     :ensure t
     :config
