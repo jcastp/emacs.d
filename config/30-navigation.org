@@ -53,18 +53,19 @@ Shortcuts to commands using just quick key combinations.
 ** Imenu-list
 Imenu shows the outline of your file as a browsable sidebar in another window.
 #+begin_src emacs-lisp
+  ;; Plain imenu, not imenu-list: `M-i' (consult-imenu) uses it too, and a
+  ;; setting inside the use-package :config below would only apply once
+  ;; imenu-list had been opened.  The org depth is in 40-org.
+  (setq imenu-auto-rescan t)
+
   (use-package imenu-list
     :ensure t
     :bind ("M-g I" . imenu-list-smart-toggle)
     :config
     ;; set the width to % of the screen
     (setq imenu-list-size 0.20)
-    ;; rescan all the buffers
-    (setq imenu-auto-rescan t)
     ;; put the imenu in the position we want
     (setq imenu-list-position 'left)
-    ;; Establish the depth of the entries shown
-    (setq org-imenu-depth 5)
     ;; Auto-resize after update to nil
     (setq imenu-list-auto-resize nil)
     ;; Once you open imenu, focus on it
