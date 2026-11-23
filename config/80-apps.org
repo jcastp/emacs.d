@@ -281,11 +281,15 @@ RSS read in emacs.
 
 * Dashboard
 
-** emacs dashboard
+** CANCELED emacs dashboard
+CLOSED: [2026-11-23 lun 12:06]
+:LOGBOOK:
+- State "CANCELED"   from              [2026-11-23 lun 12:06]
+:END:
 Load it at the end of the config.
 https://github.com/emacs-dashboard/emacs-dashboard
 
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :tangle no
   (if my-homeenvironment-p
       (progn
         (use-package dashboard
