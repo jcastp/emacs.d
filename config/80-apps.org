@@ -4,7 +4,7 @@
 
 The things that are programs in their own right rather than editor
 behaviour: the browser and dired, the ebook and feed readers, the PDF viewer,
-eshell, mastodon and the dashboard.  None of it is needed at
+the terminal, mastodon and the dashboard.  None of it is needed at
 startup, so anything here that still loads eagerly is a candidate for deferral.
 
 * Lexical binding
@@ -101,37 +101,50 @@ regardless of =:defer=.
       :after pdf-view))
 #+end_src
 
-* eshell improvements
+* Terminal
+** eat
+A real terminal running zsh inside Emacs.  eat is pure Lisp (nothing to
+compile), so every machine gets it, writing laptops included.  See the design
+note =20261123-terminal.org= for why eat over vterm.
 
-** eshell-z
-Replicates the z function from zsh.
+eat's default input mode binds =C-q= to "send the next key raw", which would
+hide =my/key-prefix-map= in every terminal; it moves to =C-c C-q=.  These are
+eat's own keymaps, so changing them in =:config= is fine.
+
+Directory tracking and prompt navigation need eat's zsh integration, sourced
+at the end of =~/.zshrc= (a no-op outside eat):
+=[ -n "$EAT_SHELL_INTEGRATION_DIR" ] && source "$EAT_SHELL_INTEGRATION_DIR/zsh"=
 #+begin_src emacs-lisp
-  (use-package eshell-z
+  (use-package eat
     :ensure t
-    :after eshell
+    :commands (eat eat-other-window eat-project eat-project-other-window)
+    :custom
+    (eat-kill-buffer-on-exit t)          ; `exit' closes the buffer
+    (eat-enable-yank-to-terminal t)      ; C-y pastes into the shell
     :config
-    (add-hook 'eshell-mode-hook
-  	    (defun my-eshell-mode-hook ()
-  	      (require 'eshell-z))))
-#+end_src
+    (define-key eat-semi-char-mode-map (kbd "C-q") nil t)
+    (define-key eat-eshell-semi-char-mode-map (kbd "C-q") nil t)
+    (define-key eat-semi-char-mode-map (kbd "C-c C-q") #'eat-quoted-input))
 
-** eshell did-you-mean
-#+begin_src emacs-lisp
-  (use-package eshell-did-you-mean
-    :ensure t
-    :after eshell
-    :config
-    (eshell-did-you-mean-setup))
-#+end_src
-
-** Create new eshell
-https://www.emacswiki.org/emacs/EshellMultipleEshellBuffers
-#+begin_src emacs-lisp
-  (defun my/eshell-new()
-    "Open a new instance of eshell."
+  (defun my/eat-new ()
+    "Open a new eat terminal, even if one is already running."
     (interactive)
-    (eshell 'N))
-#+End_Src
+    (eat nil '(4)))
+
+  (let ((term (my/key-define-submap "e" "terminal")))
+    (my/key-define "e" "eat"          #'eat         term)
+    (my/key-define "n" "new eat"      #'my/eat-new  term)
+    (my/key-define "p" "eat (project)" #'eat-project term)
+    (my/key-define "s" "eshell"       #'eshell      term))
+#+end_src
+
+** eshell, kept for emergencies
+Full-screen programs (htop, less) run inside eshell through eat.
+#+begin_src emacs-lisp
+  (with-eval-after-load 'eshell
+    (eat-eshell-mode 1)
+    (eat-eshell-visual-command-mode 1))
+#+end_src
 
 * Buffer grouping
 

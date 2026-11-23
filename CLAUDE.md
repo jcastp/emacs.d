@@ -41,7 +41,7 @@ The config is split by **domain** (one module per subject), not by environment. 
 |`55-org-export`     |home                |every exporter; loads `ox` itself, independent of org-scribe                         |
 |`60-writing`        |home                |org-scribe, tempel, writeroom, story files, org-journal                              |
 |`70-prog`           |always              |magit, diff-hl, flymake, eglot, treesit, languages                                   |
-|`80-apps`           |always              |eww, dired, elfeed, nov, calibre, pdf, eshell, mastodon, dashboard                   |
+|`80-apps`           |always              |eww, dired, elfeed, nov, calibre, pdf, terminal (eat), eshell, mastodon            |
 |`85-ai`             |`(home full-system)`|gptel                                                                                |
 |`90-keymap`         |always              |the `C-q q` direct-file-access sub-map                                               |
 |`98-start-work`     |work                |startup side effects: opens today's roam daily + `my-work-file` side by side         |
@@ -71,7 +71,7 @@ Conditions understood by `my/module-enabled-p`: `always`, `home`, `work`, `full-
 
 **To add a binding, edit the module that owns the command** — never collect it centrally. A module that does not load simply contributes nothing, so no `fboundp`/`boundp` guards are needed.
 
-Current entries: `a` AI · `b` buffers · `c` centered-mode · `d` daily agenda · `f` attachments · `i` tempel-insert · `l` libros (reading list) · `o` online · `p` open report (work) · `q` direct file access · `r` recent file · `s` org styling · `t` themes/fonts · `u` outline · `w` writing
+Current entries: `a` AI · `b` buffers · `c` centered-mode · `d` daily agenda · `e` terminal · `f` attachments · `i` tempel-insert · `l` libros (reading list) · `o` online · `p` open report (work) · `q` direct file access · `r` recent file · `s` org styling · `t` themes/fonts · `u` outline · `w` writing
 
 Note `my/key-define-submap` builds a **fresh** keymap, so two modules must never
 register the same letter — the second call silently discards the first module's

@@ -35,9 +35,9 @@ Shortcuts to commands using just quick key combinations.
       ;; Should normally be a little longer than `key-chord-two-keys-delay'.
       (setq key-chord-one-key-delay 0.25) ; default 0.2
       
-      ;; eshell related commands
-      (key-chord-define-global "ññ" 'eshell)
-      (key-chord-define-global "ñl" 'my/eshell-new) ;; create a new eshell buffer
+      ;; terminal (eat, 80-apps)
+      (key-chord-define-global "ññ" 'eat)         ;; reuses the running terminal
+      (key-chord-define-global "ñl" 'my/eat-new)  ;; a new terminal
 
       ;; Window related commands
       ;; (key-chord-define-global "kk" 'other-window)

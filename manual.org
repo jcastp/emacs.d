@@ -47,6 +47,7 @@ brackets, e.g. [40-org], so you know where to look.
 | =C-q b= | buffers: =o= org scratch        | [[*Scratch buffers, indirect buffers and links][Org]]           |
 | =C-q c= | centered mode                 | [[*Focus and layout][Focus]]         |
 | =C-q d= | daily agenda                  | [[*The agenda views][Agenda]]        |
+| =C-q e= | terminal: eat, new, project, eshell | [[*Files and shells][Files and shells]] |
 | =C-q f= | files attached to org entries | [[*Attachments][Attachments]]   |
 | =C-q i= | insert tempel template        | [[*Tempel templates][Tempel]]        |
 | =C-q l= | libros: the reading list      | [[*The reading list][Reading list]]  |
@@ -1068,8 +1069,12 @@ it is installed, otherwise Firefox.
   and deleting are recursive, and with two dired windows the other one is the
   default target. A preview of the file at point appears after 0.3 s
   (archives and epubs excepted).
-- *eshell*: =ññ= (chord) opens eshell and =ñl= opens a new one. Inside, =z= jumps
-  to frequent directories and mistyped commands get suggestions.
+- *terminal (eat)*: zsh inside Emacs. =ññ= (chord) or =C-q e e= opens it (reusing
+  the running one), =ñl= or =C-q e n= opens another, =C-q e p= opens one at the
+  project root. Typing goes to zsh; =C-q=, =C-x=, =M-x= and =C-g= stay with Emacs.
+  =C-c C-e= switches to a normal buffer to select and copy output, =C-c C-j= back.
+  =C-c C-n= / =C-c C-p= jump between prompts. =C-c C-q= sends the next key raw.
+- *eshell*: kept for emergencies, =C-q e s=. Full-screen programs run inside it.
 
 ** Programming
 /[70-prog]/
@@ -1128,8 +1133,8 @@ The encrypted directory holds the journal and the Mastodon token.
 | =jk=    | avy timer jump  |
 | =jl=    | avy line jump   |
 | =hh=    | ace-window      |
-| =ññ=    | eshell          |
-| =ñl=    | new eshell      |
+| =ññ=    | terminal (eat)  |
+| =ñl=    | new terminal    |
 
 ** Org and agenda
 | Key         | Command                             |
