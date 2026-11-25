@@ -245,9 +245,15 @@ writing theme) keep their own heading colour.
 
 ** Other visual details
 /[10-ui, 17-org-style]/
-- Long lines wrap visually everywhere. =C-q t v= toggles visual-fill-column
-  (110 characters, centred).
-- Line numbers are on everywhere (except in writing focus mode).
+- Long lines wrap visually everywhere, without inserting newlines.  In text
+  buffers (org, markdown, commit messages) visual-fill-column also limits the
+  line to 72 columns, with the text at the left edge.  72 leaves 66 for scene
+  text under a level-3 heading, once =org-indent-mode= takes its 6 columns.
+  =C-q t v= toggles it in the current buffer, and
+  =M-x visual-fill-column-toggle-center-text= centres one buffer.  The width
+  is =my-prose-width= in =10-ui=, which also sets the =C-q c= and epub widths.
+- Line numbers are on in programming buffers only.  Text buffers (org,
+  markdown) have none, so the 72 columns all go to the text.
 - The modeline is doom-modeline, with time and date (and battery on laptops).
 - org-modern draws keywords, tags, timestamps, tables and block names more
   cleanly. =#+title= appears as =‣title=.
@@ -983,8 +989,10 @@ around a word) and =cut= (a "cut here" section).
 
 ** Focus and layout
 /[10-ui, 60-writing]/
-- =C-q c= centres the text of the current buffer with margins (100 columns;
-  change it with =M-x my/centered-content-width-value=).
+- =C-q c= centres the text of the current buffer with margins (72 columns;
+  change it for the session with =M-x my/centered-content-width-value=).  It
+  pauses the left-aligned 72-column wrap while it is on, and restores it when
+  turned off.
 - =C-c 5= is a lightweight focus mode built on that: centred text, 4 px line
   spacing and no line numbers.
 - org-scribe's modes (=C-q w a=, =f=, =e=) are the full version, with theme, font
@@ -1076,7 +1084,7 @@ advice that keeps your voice), /coding/, /spanish/ (answers in Spanish) and
 | =C-q o e=       | eww                                                      |
 | =C-q o f=       | elfeed, updating the feeds straight away                 |
 | =C-q o m=       | Mastodon (only with the encrypted directory mounted)     |
-| open an =.epub= | nov.el, 100 columns, remembers your place                |
+| open an =.epub= | nov.el, 72 columns, remembers your place                 |
 | open a =.pdf=   | pdf-tools, remembers your place (not on writing laptops) |
 | =M-x calibredb= | the Calibre library in =/home/calibre_libros/=             |
 

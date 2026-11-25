@@ -120,13 +120,18 @@ No audible bell, but visual one:
 
 * Line numbers
 This determines the style of line numbers in effect. If set to `nil', line numbers are disabled. For relative line numbers, set this to `relative'.
+
+Line numbers are on in programming buffers only.  In text buffers (org,
+markdown) they are off: Emacs draws them inside the text area, so they would
+take about 4 of the =my-prose-width= columns that visual-fill-column sets
+aside for prose.
 #+begin_src emacs-lisp
   ;; Calculate width based on total lines in buffer at start
   (setq display-line-numbers-width-start t)
   (setq display-line-numbers-offset 0)
   (setq display-line-numbers-type t)
   (setq display-line-numbers-grow-only t)
-  (global-display-line-numbers-mode 1)
+  (add-hook 'prog-mode-hook #'display-line-numbers-mode)
 #+end_src
 
 * Long lines get wrapped
@@ -139,16 +144,38 @@ Long lines get wrapped when they reach the edge. We activate it for all the buff
 We want to use the visual fill column mode to limit the width of the lines, even if they don't reach the right edge.
 
 When reaching the established width defined, the line will wrap, even before getting into the right border of the application.
+
+It turns on by itself in every =text-mode= buffer, which includes the modes
+derived from it (org, markdown, git commit messages).  =:hook= defers the
+package until the first such buffer; =:config= still runs before the mode
+does, because loading the file is what the autoload triggers first.
+
+=writeroom-mode= saves and restores this mode itself.  =my/centered-mode=
+sets the same window margins, so it pauses this mode while it is on.
+
+=my-prose-width= is the one place the line width is set.  At home it is 72,
+chosen for comfort when writing fiction: studies and typographic practice put
+the comfortable line at about 66 characters, and =org-indent-mode= takes 2
+columns per heading level, so 72 leaves 66 for scene text under a level-3
+heading.  Work keeps 100, for notes and agendas rather than prose.  The
+reasoning is in the design note =20261125-line-width.org=.  org-scribe's own
+widths are its business and are set in =60-writing=.
 #+begin_src emacs-lisp
+  (defvar my-prose-width (if my-workenvironment-p 100 72)
+    "Line width, in columns, for prose and text buffers.
+Used by `visual-fill-column-width', `my/centered-content-width' and
+`nov-text-width'.")
+
   ;; visual fill column mode
   (use-package visual-fill-column
     :ensure t
+    :hook (text-mode . visual-fill-column-mode)
     :config
     ;; This sets the value to all the buffers, as initially it is a per-buffer variable.
-    ;; Narrower at work, where I rarely have many windows open.
-    (setq-default visual-fill-column-width (if my-workenvironment-p 100 110))
-    ;; set the text in the center of the window
-    (setq-default visual-fill-column-center-text t))
+    (setq-default visual-fill-column-width my-prose-width)
+    ;; Keep the text at the left edge: the margin goes on the right only.
+    ;; `visual-fill-column-toggle-center-text' centres a single buffer.
+    (setq-default visual-fill-column-center-text nil))
 #+end_src
 
 * All the icons
@@ -272,7 +299,7 @@ Sometimes I have just a single window and this is a problem for me in a big scre
 Useful for reading books or long texts.
 
 #+begin_src emacs-lisp
-  (defcustom my/centered-content-width 100
+  (defcustom my/centered-content-width my-prose-width
     "Width of the centered content area in characters."
     :type 'integer
     :group 'editing-basics)
@@ -284,6 +311,11 @@ Useful for reading books or long texts.
 
   (defvar my/centered-mode nil)
 
+  (defvar-local my/centered--paused-visual-fill-column nil
+    "Non-nil if `my/centered-mode' turned off `visual-fill-column-mode'.
+Both modes set the window margins, so only one may be on at a time;
+turning `my/centered-mode' off turns the other one back on.")
+
   (define-minor-mode my/centered-mode
     "Minor mode to center buffer content using margins and visual line mode."
     :init-value nil
@@ -292,6 +324,9 @@ Useful for reading books or long texts.
     :group 'editing-basics
     (if my/centered-mode
         (progn
+          (when (bound-and-true-p visual-fill-column-mode)
+            (setq my/centered--paused-visual-fill-column t)
+            (visual-fill-column-mode -1))
           (visual-line-mode 1)
           (add-hook 'window-configuration-change-hook
                     #'my/centered--update-margins nil t)
@@ -303,7 +338,10 @@ Useful for reading books or long texts.
                      #'my/centered--update-margins t)
         ;; every window showing the buffer, not just the selected one
         (dolist (w (get-buffer-window-list nil nil t))
-          (set-window-margins w 0 0)))))
+          (set-window-margins w 0 0))
+        (when my/centered--paused-visual-fill-column
+          (setq my/centered--paused-visual-fill-column nil)
+          (visual-fill-column-mode 1)))))
 
   (defun my/centered--update-margins (&optional window)
     "Centre `my/centered-content-width' columns of text in WINDOW.

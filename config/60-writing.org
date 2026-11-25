@@ -21,7 +21,12 @@ Home only.
 Distraction-free writing using built-in features and =my/centered-mode=.
 Replaces =writeroom-mode=.
 
+Line numbers are restored to what they were, not switched on: text buffers
+have none (=10-ui=), so switching them on would add them.
 #+begin_src emacs-lisp
+  (defvar-local my/writing-focus--line-numbers nil
+    "Non-nil if `my/writing-focus-mode' hid this buffer's line numbers.")
+
   (defun my/writing-focus-mode ()
     "Toggle a distraction-free writing environment.
   Uses my/centered-mode for margins, extra line spacing, and hides line numbers."
@@ -30,11 +35,15 @@ Replaces =writeroom-mode=.
         (progn
           (my/centered-mode -1)
           (setq-local line-spacing 0)
-          (display-line-numbers-mode 1))
+          (when my/writing-focus--line-numbers
+            (setq my/writing-focus--line-numbers nil)
+            (display-line-numbers-mode 1)))
       (progn
         (my/centered-mode 1)
         (setq-local line-spacing 4)
-        (display-line-numbers-mode -1))))
+        (when (bound-and-true-p display-line-numbers-mode)
+          (setq my/writing-focus--line-numbers t)
+          (display-line-numbers-mode -1)))))
 
   (global-set-key (kbd "C-c 5") #'my/writing-focus-mode)
 #+end_src
