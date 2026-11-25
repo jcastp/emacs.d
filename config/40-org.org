@@ -282,8 +282,8 @@ https://lucidmanager.org/productivity/ricing-org-mode/
         org-image-actual-width t
         org-image-max-width 800)
 
-  ;; Line spacing, in pixels
-  (setq-default line-spacing 0)
+  ;; Line spacing is not set here: fontaine's presets own the default
+  ;; (15-theme), and prose buffers get `my-prose-line-spacing' (10-ui).
 
   ;; Change the ellipsis
   (setq org-ellipsis "…")

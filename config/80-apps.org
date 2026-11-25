@@ -224,11 +224,36 @@ https://tech.toryanderson.com/2022/11/23/viewing-epub-in-emacs/
     ;;
     ;; `:mode' registers the auto-mode entry without loading nov, which is what
     ;; makes the deferral safe: an `add-to-list' in `:config' would never run.
+    ;; Books are read in ETBembo with the prose line spacing, whatever the
+    ;; fontaine preset is (at startup it is `hack', a monospace font).  The
+    ;; faces are remapped in the book's buffer only, before nov renders it:
+    ;; nov fills the text when it renders, in the font in effect then, and
+    ;; `nov-mode-hook' would run too late (after the first render).
+    (defvar my-nov-reading-face '(:family "ETBembo" :height 150)
+      "Face attributes for the text of books in nov.")
+
+    (defvar-local my/nov--reading-face-set nil
+      "Non-nil once this nov buffer has its reading face.")
+
+    (defun my/nov-reading-face ()
+      "Give this book buffer `my-nov-reading-face' and the prose spacing, once.
+  Runs from `nov-pre-html-render-hook', which runs on every render."
+      (unless my/nov--reading-face-set
+        (setq my/nov--reading-face-set t)
+        (apply #'face-remap-add-relative 'variable-pitch my-nov-reading-face)
+        ;; `italic' carries the preset's own family, which would otherwise win
+        (face-remap-add-relative 'italic
+                                 :family (plist-get my-nov-reading-face :family))
+        (setq-local line-spacing my-prose-line-spacing)))
+
     (use-package nov
       :ensure t
       :mode ("\\.epub\\'" . nov-mode)
+      :hook (nov-pre-html-render . my/nov-reading-face)
       :config
-      (setq nov-text-width my-prose-width) ; 72: see `my-prose-width' (10-ui)
+      ;; 64 columns in ETBembo 150 give the same characters per line as the
+      ;; 72 prose columns give in Hack (about 70 on average, measured).
+      (setq nov-text-width 64)
       ;; We save the place we left the e-pub in this file:
       (setq nov-save-place-file (expand-file-name "nov-places" my-data-dir)))
     )

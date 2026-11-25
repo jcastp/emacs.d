@@ -23,24 +23,39 @@ Replaces =writeroom-mode=.
 
 Line numbers are restored to what they were, not switched on: text buffers
 have none (=10-ui=), so switching them on would add them.
+
+Line spacing works the same way.  On, the buffer gets the prose spacing
+(=my-prose-line-spacing=, =10-ui=), which text buffers already have, so only
+other buffers change.  Off, the buffer's previous spacing comes back, or its
+local value is removed if it had none, so the fontaine preset applies again.
+It used to set 4 px on and 0 off, which was less than the prose spacing and
+left a local 0 behind that hid every later preset change.
 #+begin_src emacs-lisp
   (defvar-local my/writing-focus--line-numbers nil
     "Non-nil if `my/writing-focus-mode' hid this buffer's line numbers.")
 
+  (defvar-local my/writing-focus--line-spacing nil
+    "Line spacing before `my/writing-focus-mode': (LOCAL-P . VALUE).")
+
   (defun my/writing-focus-mode ()
     "Toggle a distraction-free writing environment.
-  Uses my/centered-mode for margins, extra line spacing, and hides line numbers."
+  Uses my/centered-mode for margins, prose line spacing, and hides line numbers."
     (interactive)
     (if (bound-and-true-p my/centered-mode)
         (progn
           (my/centered-mode -1)
-          (setq-local line-spacing 0)
+          (pcase my/writing-focus--line-spacing
+            (`(t . ,value) (setq-local line-spacing value))
+            (_ (kill-local-variable 'line-spacing)))
+          (setq my/writing-focus--line-spacing nil)
           (when my/writing-focus--line-numbers
             (setq my/writing-focus--line-numbers nil)
             (display-line-numbers-mode 1)))
       (progn
         (my/centered-mode 1)
-        (setq-local line-spacing 4)
+        (setq my/writing-focus--line-spacing
+              (cons (local-variable-p 'line-spacing) line-spacing))
+        (setq-local line-spacing my-prose-line-spacing)
         (when (bound-and-true-p display-line-numbers-mode)
           (setq my/writing-focus--line-numbers t)
           (display-line-numbers-mode -1)))))

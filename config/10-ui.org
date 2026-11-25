@@ -121,7 +121,8 @@ No audible bell, but visual one:
 * Line numbers
 This determines the style of line numbers in effect. If set to `nil', line numbers are disabled. For relative line numbers, set this to `relative'.
 
-Line numbers are on in programming buffers only.  In text buffers (org,
+Line numbers are on in programming and configuration (=conf-mode=) buffers
+only.  In text buffers (org,
 markdown) they are off: Emacs draws them inside the text area, so they would
 take about 4 of the =my-prose-width= columns that visual-fill-column sets
 aside for prose.
@@ -132,6 +133,9 @@ aside for prose.
   (setq display-line-numbers-type t)
   (setq display-line-numbers-grow-only t)
   (add-hook 'prog-mode-hook #'display-line-numbers-mode)
+  ;; conf-mode (.ini, .toml, .gitconfig, /etc files) derives from neither
+  ;; prog-mode nor text-mode, so it needs its own hook.
+  (add-hook 'conf-mode-hook #'display-line-numbers-mode)
 #+end_src
 
 * Long lines get wrapped
@@ -160,11 +164,45 @@ columns per heading level, so 72 leaves 66 for scene text under a level-3
 heading.  Work keeps 100, for notes and agendas rather than prose.  The
 reasoning is in the design note =20261125-line-width.org=.  org-scribe's own
 widths are its business and are set in =60-writing=.
+
+*Proportional fonts.*  The width is counted in the font's /nominal/ character
+width, which for a proportional font is wider than its average letter.  At 72,
+ETBembo (=writing=) fit about 81 characters per line where Hack fits 63.
+So the presets with a proportional prose font get their own width, chosen so
+that their lines match Hack's at 72 (measured on Spanish prose under a level-3
+heading).  Any other preset, and every work preset, uses =my-prose-width=.  The
+width follows the preset through =fontaine-set-preset-hook=.  The measurements
+are in the design note =20261125-prose-visuals.org=.
 #+begin_src emacs-lisp
   (defvar my-prose-width (if my-workenvironment-p 100 72)
     "Line width, in columns, for prose and text buffers.
-Used by `visual-fill-column-width', `my/centered-content-width' and
-`nov-text-width'.")
+Used by `visual-fill-column-width' (unless the fontaine preset is in
+`my-prose-width-by-preset') and `my/centered-content-width'.")
+
+  (defvar my-prose-width-by-preset
+    '((writing     . 57)            ; ETBembo
+      (writing-big . 57)            ; ETBembo, larger: same count
+      (editing     . 65))           ; Gentium
+    "Prose width for fontaine presets whose prose font is proportional.
+Each value gives the same characters per line as `my-prose-width' does
+in Hack.  Presets not listed use `my-prose-width'.")
+
+  (defun my/prose-width ()
+    "The prose width for the current fontaine preset."
+    (alist-get (bound-and-true-p fontaine-current-preset)
+               my-prose-width-by-preset my-prose-width))
+
+  (defun my/prose-width-follow-preset ()
+    "Set the default prose width for the new preset and refit every window.
+Buffers with their own `visual-fill-column-width' (writeroom, org-scribe)
+keep it.  Runs from `fontaine-set-preset-hook'."
+    (when (featurep 'visual-fill-column)
+      (setq-default visual-fill-column-width (my/prose-width))
+      (dolist (window (window-list-1 nil 'nomini t))
+        (with-selected-window window
+          (visual-fill-column-adjust)))))
+
+  (add-hook 'fontaine-set-preset-hook #'my/prose-width-follow-preset)
 
   ;; visual fill column mode
   (use-package visual-fill-column
@@ -172,10 +210,32 @@ Used by `visual-fill-column-width', `my/centered-content-width' and
     :hook (text-mode . visual-fill-column-mode)
     :config
     ;; This sets the value to all the buffers, as initially it is a per-buffer variable.
-    (setq-default visual-fill-column-width my-prose-width)
+    (setq-default visual-fill-column-width (my/prose-width))
     ;; Keep the text at the left edge: the margin goes on the right only.
     ;; `visual-fill-column-toggle-center-text' centres a single buffer.
     (setq-default visual-fill-column-center-text nil))
+#+end_src
+
+* Prose line spacing
+Prose buffers get more space between lines than code: =my-prose-line-spacing=
+is set buffer-locally in every =text-mode= buffer (and in epubs, from
+=80-apps=), and it overrides the fontaine presets' =:line-spacing= there.  The
+presets still decide the spacing of code and everything else.
+
+It is a float, a fraction of the frame's line height: 0.3 brings prose to
+about 1.5 times the font size, which is where the accessibility guidelines
+put comfortable reading.  An integer would be pixels, which is what the
+presets use (0 or 1).  The reasoning is in the design note
+=20261125-prose-visuals.org=.
+#+begin_src emacs-lisp
+  (defvar my-prose-line-spacing 0.3
+    "Line spacing for prose buffers: a fraction of the frame's line height.")
+
+  (defun my/prose-line-spacing ()
+    "Give the current buffer `my-prose-line-spacing'."
+    (setq-local line-spacing my-prose-line-spacing))
+
+  (add-hook 'text-mode-hook #'my/prose-line-spacing)
 #+end_src
 
 * All the icons

@@ -212,12 +212,18 @@ Every theme change also recomputes the current-line colour and the org faces
 | =hack=                  | default at startup; Hack everywhere                  |
 | =regular=               | Aporetic Sans (prose) + Aporetic Sans Mono (code)    |
 | =regular-aporetic-mono= | Aporetic Sans Mono everywhere                        |
-| =writing=               | ETBembo 150, extra line spacing                      |
+| =writing=               | ETBembo 150                                          |
 | =writing-big=           | ETBembo 180 (org-scribe's distraction-free mode)     |
 | =editing=               | Gentium prose, mono code (org-scribe's editing mode) |
 
 Prose buffers (text and org) use the variable-pitch font. Code blocks, tables,
 tags, drawers and comments stay fixed-pitch. =M-+= / =M--= scale the text.
+
+Prose buffers and epubs also have their own line spacing (0.3 of a line,
+=my-prose-line-spacing= in =10-ui=), whatever the preset: the presets' own
+spacing applies only to code and everything else.  The ETBembo and Gentium
+presets narrow the prose width (57 and 65 columns) so that a line holds about
+as many characters as 72 columns of Hack; the width changes with the preset.
 
 ** Org heading styles
 /[17-org-style]/
@@ -247,12 +253,14 @@ writing theme) keep their own heading colour.
 /[10-ui, 17-org-style]/
 - Long lines wrap visually everywhere, without inserting newlines.  In text
   buffers (org, markdown, commit messages) visual-fill-column also limits the
-  line to 72 columns, with the text at the left edge.  72 leaves 66 for scene
-  text under a level-3 heading, once =org-indent-mode= takes its 6 columns.
+  line to 72 columns (57 in the ETBembo presets, 65 in =editing=), with the
+  text at the left edge.  72 leaves 66 for scene text under a level-3 heading,
+  once =org-indent-mode= takes its 6 columns.
   =C-q t v= toggles it in the current buffer, and
   =M-x visual-fill-column-toggle-center-text= centres one buffer.  The width
-  is =my-prose-width= in =10-ui=, which also sets the =C-q c= and epub widths.
-- Line numbers are on in programming buffers only.  Text buffers (org,
+  is =my-prose-width= in =10-ui= (per preset: =my-prose-width-by-preset=),
+  which also sets the =C-q c= width.
+- Line numbers are on in programming and config-file buffers only.  Text buffers (org,
   markdown) have none, so the 72 columns all go to the text.
 - The modeline is doom-modeline, with time and date (and battery on laptops).
 - org-modern draws keywords, tags, timestamps, tables and block names more
@@ -993,8 +1001,9 @@ around a word) and =cut= (a "cut here" section).
   change it for the session with =M-x my/centered-content-width-value=).  It
   pauses the left-aligned 72-column wrap while it is on, and restores it when
   turned off.
-- =C-c 5= is a lightweight focus mode built on that: centred text, 4 px line
-  spacing and no line numbers.
+- =C-c 5= is a lightweight focus mode built on that: centred text, the prose
+  line spacing (code buffers too) and no line numbers.  Off restores the
+  buffer's previous spacing and line numbers.
 - org-scribe's modes (=C-q w a=, =f=, =e=) are the full version, with theme, font
   and writeroom.
 - treemacs: =C-x t t= toggles the tree, =M-0= selects its window,
@@ -1084,7 +1093,7 @@ advice that keeps your voice), /coding/, /spanish/ (answers in Spanish) and
 | =C-q o e=       | eww                                                      |
 | =C-q o f=       | elfeed, updating the feeds straight away                 |
 | =C-q o m=       | Mastodon (only with the encrypted directory mounted)     |
-| open an =.epub= | nov.el, 72 columns, remembers your place                 |
+| open an =.epub= | nov.el, ETBembo, 64 columns, remembers your place        |
 | open a =.pdf=   | pdf-tools, remembers your place (not on writing laptops) |
 | =M-x calibredb= | the Calibre library in =/home/calibre_libros/=             |
 
