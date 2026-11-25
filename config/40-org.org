@@ -302,6 +302,170 @@ Some people find it noisy and distracting that the Org headlines start with a po
   (setq org-startup-indented t)
 #+end_src
 
+** Wide tables
+=global-visual-line-mode= (=10-ui=) wraps every long screen line, and Org
+cannot wrap text inside a cell, so a table that is too wide breaks onto
+several lines and loses its grid.  The fix is Org's own *width cookies*: a row
+of =<N>= tells Org to show a column as its first N characters plus =…=.  The
+file keeps the full text, and every exporter drops the cookie row.  Design
+note: =20261125-orgmode-table.org=.
+
+A table opens shrunk only if it has a cookie row; others are untouched.
+#+begin_src emacs-lisp
+  (setq org-startup-shrink-all-tables t)
+#+end_src
+
+=my/org-table-fit= (=C-q s f=) works the cookies out for the table at point.
+It measures the window in pixels, divided by the =org-table= font's width,
+because the writing presets draw tables in a bigger font than the one columns
+are counted in (=writing-big=: 140 against 120).  Columns narrower than an
+equal share keep their width; the wide ones split what is left.  It replaces
+any existing cookie row, including one tuned by hand, and removes it when the
+table already fits.  A numeric prefix (=C-u 75 C-q s f=) fits to that many
+columns instead, e.g. the narrowest org-scribe mode.
+
+Reading and editing the full text: =C-u C-u C-c TAB= expands the table,
+=C-u C-c TAB= shrinks it back, =C-c TAB= toggles one column, and =C-c `= edits
+one cell in its own wrapped buffer.  Typing into a shrunk cell expands its
+column by itself.
+
+#+begin_src emacs-lisp
+  (defun my/org-table--available-width (&optional cols)
+    "Columns of `org-table' text that fit on one screen line at point.
+  COLS is the line width; by default it is measured in pixels, so a table
+  face bigger than `default' (the writing presets) or a centred window is
+  accounted for.  The table's indentation, org-indent's included, is taken off.
+  The line numbers are taken off too: `window-body-width' still counts them
+  (`window-max-chars-per-line' does not, but subtracts them in `default'
+  columns, which is wrong when the table font is a different size)."
+    (let* ((char (max 1 (window-font-width nil 'org-table)))
+           (cols (or cols (/ (- (window-body-width nil t)
+                                (line-number-display-width t))
+                             char)))
+           (prefix (progn
+                     ;; org-indent adds its prefixes from an idle timer, so a
+                     ;; buffer opened a moment ago may not have them yet
+                     (when (and (bound-and-true-p org-indent-mode)
+                                (not (get-text-property (point) 'line-prefix)))
+                       (org-indent-add-properties (line-beginning-position)
+                                                  (line-end-position)))
+                     (get-text-property (point) 'line-prefix)))
+           (indent (+ (current-indentation)
+                      (if (stringp prefix) (string-width prefix) 0))))
+      (- cols indent 1)))                 ; 1: room for the wrap glyph
+
+  (defun my/org-table--cookie-row-p (row)
+    "Non-nil when ROW (a list of strings) holds only width cookies or blanks."
+    (and (listp row)
+         (cl-some (lambda (c) (string-match-p "\\`<[lrc]?[0-9]*>\\'" c)) row)
+         (cl-every (lambda (c) (or (string-empty-p c)
+                                   (string-match-p "\\`<[lrc]?[0-9]*>\\'" c)))
+                   row)))
+
+  (defun my/org-table--fit-widths (natural budget)
+    "Return a width per column (nil = leave it alone) so NATURAL fits BUDGET.
+  Water-filling: columns narrower than an equal share keep their width, the
+  rest share what is left.  A shrunk column costs one extra character for
+  `org-table-shrunk-column-indicator'."
+    (let ((n (length natural)))
+      (if (<= (apply #'+ natural) budget)
+          (make-list n nil)
+        (let ((wide (number-sequence 0 (1- n)))
+              (left budget)
+              (changed t))
+          ;; drop columns that fit in their share, until stable
+          (while changed
+            (setq changed nil)
+            (let ((share (/ (- left (length wide)) (max 1 (length wide)))))
+              (dolist (i wide)
+                (when (<= (nth i natural) share)
+                  (setq wide (delq i wide)
+                        left (- left (nth i natural))
+                        changed t)))))
+          (let ((share (max 3 (/ (- left (length wide)) (max 1 (length wide))))))
+            (cl-loop for i below n
+                     collect (and (memq i wide) share)))))))
+
+  (defun my/org-table--column-widths ()
+    "Visible width of each column of the aligned table at point, or nil.
+  Read from the table's first hline: Org pads every column to its *visible*
+  width, so the dashes are that width plus 2, and text Org hides (emphasis
+  markers, link targets) is not counted.  Nil when the table has no hline."
+    (save-excursion
+      (goto-char (org-table-begin))
+      (let ((end (org-table-end)))
+        (while (and (< (point) end) (not (org-at-table-hline-p)))
+          (forward-line))
+        (when (< (point) end)
+          (mapcar (lambda (dashes) (max 1 (- (length dashes) 2)))
+                  (split-string (buffer-substring-no-properties
+                                 (line-beginning-position) (line-end-position))
+                                "[ \t]*[|+][ \t]*" t))))))
+
+  (defun my/org-table-fit (&optional width)
+    "Shrink the wide columns of the table at point to fit the window.
+  Writes width cookies (a row of <N>) into the table, which Org shows
+  shrunk and every exporter drops.  WIDTH, or a numeric prefix, overrides
+  the measured window width.  Run it again after changing font preset or
+  window layout; a table that already fits loses its cookie row."
+    (interactive "P")
+    (unless (org-at-table-p) (user-error "Not in an Org table"))
+    (when (org-at-table.el-p) (user-error "A table.el table: nothing to fit"))
+    ;; Realigning rewrites the table, so `save-excursion' would lose the
+    ;; cell; come back to it by row and column instead.
+    (let ((row (count-lines (org-table-begin) (line-beginning-position)))
+          (col (org-table-current-column))
+          (shift 0))
+      (goto-char (org-table-begin))
+      (let* ((avail (my/org-table--available-width
+                     (and width (prefix-numeric-value width))))
+             (rows (org-table-to-lisp))
+             (old (cl-position-if #'my/org-table--cookie-row-p rows))
+             (data (cl-remove-if (lambda (r) (or (eq r 'hline)
+                                                 (my/org-table--cookie-row-p r)))
+                                 rows))
+             (ncol (apply #'max (mapcar #'length data)))
+             natural budget widths)
+        (org-table-expand)
+        ;; remove the old cookie row, if any (ROWS counts hlines as rows too)
+        (when old
+          (goto-char (org-table-begin))
+          (forward-line old)
+          (delete-region (line-beginning-position) (1+ (line-end-position)))
+          (when (< old row) (cl-decf shift)))
+        (goto-char (org-table-begin))
+        (org-table-align)
+        ;; Visible widths from the aligned table; without an hline, fall back
+        ;; to the raw text, which counts hidden markup and so errs narrow.
+        (setq natural
+              (or (my/org-table--column-widths)
+                  (cl-loop for i below ncol
+                           collect (apply #'max 1
+                                          (mapcar (lambda (r)
+                                                    (string-width (or (nth i r) "")))
+                                                  data))))
+              ;; "| " before each cell, " " after it, and the closing "|"
+              budget (- avail (* 3 (length natural)) 1)
+              widths (my/org-table--fit-widths natural budget))
+        (goto-char (org-table-begin))
+        (if (not (cl-some #'identity widths))
+            (progn (org-table-align)
+                   (message "Table fits in %d columns; no cookies needed" avail))
+          (insert (make-string (current-indentation) ?\s)
+                  "|" (mapconcat (lambda (w) (if w (format "<%d>" w) ""))
+                                 widths "|")
+                  "|\n")
+          (cl-incf shift)
+          (forward-line -1)
+          (org-table-align)
+          (org-table-shrink)
+          (message "Table fitted to %d columns" avail)))
+      ;; on the old cookie row itself, land on the first row instead
+      (goto-char (org-table-begin))
+      (forward-line (max 0 (+ row shift)))
+      (when (org-at-table-p) (org-table-goto-column col))))
+#+end_src
+
 * Orgmode extra packages
 ** TODO org-ql
 Query language for org files

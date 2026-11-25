@@ -479,5 +479,7 @@ bindings =15-theme= put there.
   (let ((style (my/key-define-submap "s" "org styling")))
     (my/key-define "s" "set style"   #'my/org-style-set     style)
     (my/key-define "n" "next style"  #'my/org-style-cycle   style)
-    (my/key-define "?" "describe"    #'my/org-style-describe style))
+    (my/key-define "?" "describe"    #'my/org-style-describe style)
+    ;; defined in 40-org (Wide tables)
+    (my/key-define "f" "fit table"   #'my/org-table-fit     style))
 #+end_src

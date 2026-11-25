@@ -236,6 +236,7 @@ Style =c= is the default.
 | =C-q s s= | choose a style                      |
 | =C-q s n= | next style (a → b → c)              |
 | =C-q s ?= | describe the active style and theme |
+| =C-q s f= | fit the table at point to the window (see [[*Wide tables][Wide tables]]) |
 
 Drawers, =#+keywords=, properties and tags are always smaller, fixed-pitch and
 dimmed: they are machinery, not content. Heading levels 5–8 fade toward the
@@ -381,6 +382,26 @@ fixed list of estimates.
 =M-x org-pomodoro= on a heading or an agenda line clocks in to it for a
 25-minute pomodoro, then a 5-minute break (20 minutes every fourth time).
 Starting one clocks out whatever was running.
+
+** Wide tables
+/[40-org]/
+Long lines wrap, but Org cannot wrap inside a cell, so a too-wide table breaks
+its grid. Instead, long columns are *shrunk*: a cookie row (=| <30> |=) shows
+the column as its first 30 characters plus =…=. The file keeps the full text,
+exports drop the cookie row, and a table with cookies opens already shrunk.
+
+| Key              | Does                                                    |
+|------------------+---------------------------------------------------------|
+| =C-q s f=          | fit the table at point to the window (writes cookies)   |
+| =C-u 75 C-q s f=   | fit it to 75 columns instead                            |
+| =C-c TAB=          | shrink / expand the column at point                     |
+| =C-u C-u C-c TAB=  | expand the whole table                                  |
+| =C-u C-c TAB=      | shrink it back to its cookies                           |
+| =C-c `=            | edit the cell at point in its own buffer (=C-c C-c= saves) |
+
+=C-q s f= replaces an existing cookie row, including one written by hand, and
+removes it if the table already fits. Re-run it after changing font preset or
+layout. Typing into a shrunk cell expands its column; =C-u C-c TAB= re-shrinks.
 
 ** Scratch buffers, indirect buffers and links
 /[40-org, 10-ui]/
