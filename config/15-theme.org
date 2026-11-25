@@ -89,8 +89,10 @@ fall back to whatever font happens to supply an italic glyph.
    '(font-lock-comment-face    ((t (:inherit fixed-pitch))))
    '(font-lock-comment-delimiter-face ((t (:inherit fixed-pitch))))
    '(org-verbatim              ((t (:inherit (shadow fixed-pitch)))))
+   ;; org-hide is right for org-indent only: it paints text in the background
+   ;; colour, which is what makes the indentation invisible
    '(org-indent                ((t (:inherit (org-hide fixed-pitch)))))
-   '(org-table                 ((t (:inherit (org-hide fixed-pitch))))))
+   '(org-table                 ((t (:inherit fixed-pitch)))))
 #+end_src
 
 * fontaine
