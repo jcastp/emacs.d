@@ -223,6 +223,16 @@ Three things about it are load-bearing:
               :inherit writing
               :fixed-pitch-height 140
               :variable-pitch-height 180)
+             ;; re-reading prose, and epubs (80-apps): Literata, a serif made
+             ;; for reading on screens, unlike the writing fonts.  123 gives
+             ;; the letter size ETBembo has at 150.  Regular weight: Literata
+             ;; has a Medium (the shared preset's weight), which would make it
+             ;; heavier than that comparison.
+             (reading
+              :variable-pitch-family "Literata"
+              :variable-pitch-weight normal
+              :variable-pitch-height 123
+              :italic-family "Literata")
              ;; a different variable-width face for a different view when editing
              (editing
               :default-height 130

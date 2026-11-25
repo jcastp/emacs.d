@@ -182,7 +182,8 @@ Used by `visual-fill-column-width' (unless the fontaine preset is in
   (defvar my-prose-width-by-preset
     '((writing     . 57)            ; ETBembo
       (writing-big . 57)            ; ETBembo, larger: same count
-      (editing     . 65))           ; Gentium
+      (editing     . 65)            ; Gentium
+      (reading     . 60))           ; Literata
     "Prose width for fontaine presets whose prose font is proportional.
 Each value gives the same characters per line as `my-prose-width' does
 in Hack.  Presets not listed use `my-prose-width'.")

@@ -215,15 +215,17 @@ Every theme change also recomputes the current-line colour and the org faces
 | =writing=               | ETBembo 150                                          |
 | =writing-big=           | ETBembo 180 (org-scribe's distraction-free mode)     |
 | =editing=               | Gentium prose, mono code (org-scribe's editing mode) |
+| =reading=               | Literata 123: re-reading prose; epubs use it too     |
 
 Prose buffers (text and org) use the variable-pitch font. Code blocks, tables,
 tags, drawers and comments stay fixed-pitch. =M-+= / =M--= scale the text.
 
 Prose buffers and epubs also have their own line spacing (0.3 of a line,
 =my-prose-line-spacing= in =10-ui=), whatever the preset: the presets' own
-spacing applies only to code and everything else.  The ETBembo and Gentium
-presets narrow the prose width (57 and 65 columns) so that a line holds about
-as many characters as 72 columns of Hack; the width changes with the preset.
+spacing applies only to code and everything else.  The ETBembo, Gentium and
+Literata presets narrow the prose width (57, 65 and 60 columns) so that a line
+holds about as many characters as 72 columns of Hack; the width changes with
+the preset.
 
 ** Org heading styles
 /[17-org-style]/
@@ -253,7 +255,8 @@ writing theme) keep their own heading colour.
 /[10-ui, 17-org-style]/
 - Long lines wrap visually everywhere, without inserting newlines.  In text
   buffers (org, markdown, commit messages) visual-fill-column also limits the
-  line to 72 columns (57 in the ETBembo presets, 65 in =editing=), with the
+  line to 72 columns (57 in the ETBembo presets, 65 in =editing=, 60 in
+  =reading=), with the
   text at the left edge.  72 leaves 66 for scene text under a level-3 heading,
   once =org-indent-mode= takes its 6 columns.
   =C-q t v= toggles it in the current buffer, and
@@ -1093,7 +1096,7 @@ advice that keeps your voice), /coding/, /spanish/ (answers in Spanish) and
 | =C-q o e=       | eww                                                      |
 | =C-q o f=       | elfeed, updating the feeds straight away                 |
 | =C-q o m=       | Mastodon (only with the encrypted directory mounted)     |
-| open an =.epub= | nov.el, ETBembo, 64 columns, remembers your place        |
+| open an =.epub= | nov.el, Literata, 64 columns, remembers your place       |
 | open a =.pdf=   | pdf-tools, remembers your place (not on writing laptops) |
 | =M-x calibredb= | the Calibre library in =/home/calibre_libros/=             |
 

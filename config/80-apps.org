@@ -224,13 +224,16 @@ https://tech.toryanderson.com/2022/11/23/viewing-epub-in-emacs/
     ;;
     ;; `:mode' registers the auto-mode entry without loading nov, which is what
     ;; makes the deferral safe: an `add-to-list' in `:config' would never run.
-    ;; Books are read in ETBembo with the prose line spacing, whatever the
-    ;; fontaine preset is (at startup it is `hack', a monospace font).  The
-    ;; faces are remapped in the book's buffer only, before nov renders it:
-    ;; nov fills the text when it renders, in the font in effect then, and
+    ;; Books are read in Literata, the `reading' preset's font (15-theme),
+    ;; with the prose line spacing, whatever the fontaine preset is (at
+    ;; startup it is `hack', a monospace font).  The weight is explicit
+    ;; because `hack' sets prose to Light, which Literata has.  The faces
+    ;; are remapped in the book's buffer only, before nov renders it: nov
+    ;; fills the text when it renders, in the font in effect then, and
     ;; `nov-mode-hook' would run too late (after the first render).
-    (defvar my-nov-reading-face '(:family "ETBembo" :height 150)
-      "Face attributes for the text of books in nov.")
+    (defvar my-nov-reading-face '(:family "Literata" :height 123 :weight normal)
+      "Face attributes for the text of books in nov.
+  Kept equal to the `reading' fontaine preset's prose font.")
 
     (defvar-local my/nov--reading-face-set nil
       "Non-nil once this nov buffer has its reading face.")
@@ -251,7 +254,7 @@ https://tech.toryanderson.com/2022/11/23/viewing-epub-in-emacs/
       :mode ("\\.epub\\'" . nov-mode)
       :hook (nov-pre-html-render . my/nov-reading-face)
       :config
-      ;; 64 columns in ETBembo 150 give the same characters per line as the
+      ;; 64 columns in Literata 123 give the same characters per line as the
       ;; 72 prose columns give in Hack (about 70 on average, measured).
       (setq nov-text-width 64)
       ;; We save the place we left the e-pub in this file:
